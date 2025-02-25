@@ -2,19 +2,19 @@
 
 namespace TheCoolerMath
 {
-	float vec2::operator[](const int index) const
+	float vec2::operator[](const int a_index) const
 	{
-		if (index < 0 || index > 1)
+		if (a_index < 0 || a_index > 1)
 		{
 			std::cout << "Error : overflow (vec2)\n";
 			return 0.f;
 		}
 
-		if (index == 0)
+		if (a_index == 0)
 		{
 			return x;
 		}
-		if (index == 1)
+		if (a_index == 1)
 		{
 			return y;
 		}
@@ -22,11 +22,11 @@ namespace TheCoolerMath
 		return 0.f;
 	}
 
-	float vec2::GetAngle(const vec2 v1, const vec2 v2)
+	float vec2::GetAngle(const vec2 a_v1, const vec2 a_v2)
 	{
-		float dotProduct = DotProduct(v1, v2);
-		float v1Norm = Norm(v1);
-		float v2Norm = Norm(v2);
+		float dotProduct = DotProduct(a_v1, a_v2);
+		float v1Norm = Norm(a_v1);
+		float v2Norm = Norm(a_v2);
 
 		if ((v1Norm * v2Norm) <= 0.0f)
 		{

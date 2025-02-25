@@ -188,23 +188,6 @@ namespace TheCoolerMath
 		z *= a_number;
 	}
 
-	inline float vec3::operator[](const int index) const
-	{
-		if (index < 0 || index > 2)
-		{
-			std::cout << "Error : overflow" << std::endl;
-			return 0.f;
-		}
-
-		if (index == 0)
-			return x;
-		if (index == 1)
-			return y;
-		if (index == 2)
-			return z;
-		return 0.f;
-	}
-
 	inline vec3 vec3::Add(const vec3 a_v1, const vec3 a_v2)
 	{
 		vec3 t_v;
@@ -265,7 +248,7 @@ namespace TheCoolerMath
 
 	inline vec3 vec3::Normalize(const vec3 a_v)
 	{
-		float t_norm = Norm(a_v);
+		const float t_norm = Norm(a_v);
 		return { a_v.x / t_norm, a_v.y / t_norm, a_v.z / t_norm };
 	}
 
