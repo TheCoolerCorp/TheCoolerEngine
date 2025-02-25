@@ -1,25 +1,31 @@
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.29.5)
 
 #---------------------------------------#
 #				SETUP					#
 #---------------------------------------#
 project(TheCoolerEngine)
 
-set(MY_BIN_OUTPUT_DIR "${CMAKE_SOURCE_DIR}/build/${CMAKE_CXX_COMPILER_ID}_$<CONFIG>")
+set(MY_BIN_OUTPUT_DIR "${CMAKE_SOURCE_DIR}/build/${CMAKE_CXX_COMPILERID}$<CONFIG>")
 message("[${CMAKE_PROJECT_NAME}]: Output directory: ${MY_BIN_OUTPUT_DIR}")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${MY_BIN_OUTPUT_DIR}")
 
 
+
 #---------------------------------------#
-#			SUB DIRECTORY				#
+#			COMPILE OPTION				#
 #---------------------------------------#
-add_subdirectory(Engine)
-set(BUILD_DEBUG_MODE OFF)
-set(BUILD_MODE ON)
+option(DEBUG_MODE "Compile in static library." ON)
+option(BUILD_MODE "Compile in dynamic library" OFF)
 
 
 
+#---------------------------------------#
+#				LIBS					#
+#---------------------------------------#
+# ADD LIBS LATER
+
 
 #---------------------------------------#
-#				Libs					#
+#			SUBDIRECTORY				#
 #---------------------------------------#
+add_subdirectory(libs/glm)
