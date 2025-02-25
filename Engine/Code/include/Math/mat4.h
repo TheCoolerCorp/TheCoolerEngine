@@ -125,7 +125,7 @@ namespace TheCoolerMath
 
     inline mat4::mat4(const std::array<float, 16>& a_elements)
     {
-        if constexpr (a_elements.size() > 16)
+        if (a_elements.size() > 16)
             abort();
 
         mElements = a_elements;
