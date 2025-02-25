@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.16)
 #---------------------------------------#
 #				SETUP					#
 #---------------------------------------#
-project(Engine)
+project(Editor)
 
 set(MY_BIN_OUTPUT_DIR "${CMAKE_SOURCE_DIR}/build/${CMAKE_CXX_COMPILER_ID}_$<CONFIG>")
 message("[${CMAKE_PROJECT_NAME}]: Output directory: ${MY_BIN_OUTPUT_DIR}")
@@ -19,32 +19,28 @@ file(GLOB_RECURSE Sources "Code/*.cpp")
 #---------------------------------------#
 #			BUILD MODE					#
 #---------------------------------------#
-option(BUILD_DEBUG_MODE "build in exe instead of dll" ON)
-option(BUILD_MODE "build dll to export" OFF)
+add_executable(${PROJECT_NAME} ${Sources})
 
-if(BUILD_DEBUG_MODE)
-	add_executable(${PROJECT_NAME} ${Sources})
-endif()
 
-if(BUILD_MODE)
-	add_library(${PROJECT_NAME} SHARED ${Sources})
-	SET(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
-endif()
+#---------------------------------------#
+#				ENGINE					#
+#---------------------------------------#
+target_link_libraries(${PROJECT_NAME} PRIVATE Engine)
 
 
 #---------------------------------------#
 #				INCLUDE					#
 #---------------------------------------#
-target_include_directories(Engine PUBLIC "Code/include")
+target_include_directories(${PROJECT_NAME} PUBLIC "Code/include")
 
 
 #---------------------------------------#
 #				COMPILE MODE			#
 #---------------------------------------#
-target_compile_features(Engine PRIVATE cxx_std_20)
+target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_20)
 
 if(MSVC)
-	target_compile_options(Engine PRIVATE /W4 /WX)
+	target_compile_options(${PROJECT_NAME} PRIVATE /W4 /WX)
 else()
-	target_compile_options(Engine PRIVATE -Wall -Wextra -Wpedantic -Werror)
+	target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic -Werror)
 endif()
