@@ -267,4 +267,4 @@ namespace TheCoolerMath
 
         return t_v3;
     }
-}
+} // namespace TheCoolerMath

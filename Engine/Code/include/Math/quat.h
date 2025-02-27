@@ -1,6 +1,6 @@
 #pragma once
-#include <iostream>
 #include <cmath>
+#include <iostream>
 
 #include "vec3.h"
 
@@ -10,10 +10,10 @@ namespace TheCoolerMath
     class quat
     {
     public:
-        // vector components
+        // quaternion components
         float x, y, z, w;
 
-        // different ways of initializing a vector
+        // different ways of initializing a quaternion
         quat() : x(0.f), y(0.f), z(0.f), w(1.f) {}
         quat(const float a_x, const float a_y, const float a_z, const float a_w) : x(a_x), y(a_y), z(a_z), w(a_w) {}
         explicit quat(const float a_coords) : x(a_coords), y(a_coords), z(a_coords), w(a_coords) {}
@@ -28,9 +28,7 @@ namespace TheCoolerMath
         void AddNumber(float a_number); // adds a number to the quaternion
         void MultiplyNumber(float a_number); // multiplies the quaternion by a number
 
-        float operator[](int a_index) const;
-
-        // get a component with an index
+        float operator[](int a_index) const; // get a component with an index
 
         static vec3 ToEulerAngles(quat a_q);
         static quat Conjugate(const quat& a_q); // returns the quaternion's opposite
@@ -252,4 +250,4 @@ namespace TheCoolerMath
     {
         return (a_q1.x * a_q2.x) + (a_q1.y * a_q2.y) + (a_q1.z * a_q2.z) + (a_q1.w * a_q2.w);
     }
-}
+} // namespace TheCoolerMath

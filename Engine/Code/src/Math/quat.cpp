@@ -1,5 +1,4 @@
 #include "Math/quat.h"
-
 #include "Math/TheCoolerMath.h"
 
 namespace TheCoolerMath
@@ -65,4 +64,4 @@ namespace TheCoolerMath
 
         return t_eulerAngles;
     }
-}
+} // namespace TheCoolerMath

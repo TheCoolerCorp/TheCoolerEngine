@@ -2,8 +2,8 @@
 #include <array>
 #include <cmath>
 
-#include "vec3.h"
 #include "quat.h"
+#include "vec3.h"
 
 namespace TheCoolerMath
 {
@@ -292,4 +292,4 @@ namespace TheCoolerMath
             0.f, 0.f, 0.f, 1.f
         });
     }
-}
+} // namespace TheCoolerMath

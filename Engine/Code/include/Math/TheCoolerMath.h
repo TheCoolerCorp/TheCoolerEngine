@@ -17,4 +17,4 @@ namespace TheCoolerMath
     {
         return a_rad * (180.f / PI);
     }
-}
+} // namespace TheCoolerMath

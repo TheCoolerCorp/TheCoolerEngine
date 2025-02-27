@@ -40,4 +40,4 @@ namespace TheCoolerMath
 
         return t_angle;
     }
-}
+} // namespace TheCoolerMath
