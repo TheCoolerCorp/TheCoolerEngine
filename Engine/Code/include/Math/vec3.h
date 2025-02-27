@@ -15,18 +15,9 @@ namespace TheCoolerMath
         float z;
 
         // different ways of initializing a vector
-        vec3() : x(0.f), y(0.f), z(0.f)
-        {
-        }
-
-        vec3(const float a_x, const float a_y, const float a_z) : x(a_x), y(a_y), z(a_z)
-        {
-        }
-
-        explicit vec3(const float a_coords) : x(a_coords), y(a_coords), z(a_coords)
-        {
-        }
-
+        vec3() : x(0.f), y(0.f), z(0.f) {}
+        vec3(const float a_x, const float a_y, const float a_z) : x(a_x), y(a_y), z(a_z) {}
+        explicit vec3(const float a_coords) : x(a_coords), y(a_coords), z(a_coords) {}
         ~vec3() = default;
 
         // different print methods

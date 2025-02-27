@@ -23,7 +23,7 @@ namespace TheCoolerMath
         [[nodiscard]] quat Diagonal() const; // method that returns the diagonal
         [[nodiscard]] float Trace() const; // method that returns the trace
 
-        float operator[](int a_index) const; // operator to get any element of the matirx with the index
+        float operator[](int a_index) const; // operator to get any element of the matrix with the index
 
         void Opposite(); // returns the opposite of a matrix
         void Inverse();

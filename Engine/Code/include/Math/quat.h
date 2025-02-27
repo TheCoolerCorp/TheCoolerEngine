@@ -14,18 +14,9 @@ namespace TheCoolerMath
         float x, y, z, w;
 
         // different ways of initializing a vector
-        quat() : x(0.f), y(0.f), z(0.f), w(1.f)
-        {
-        }
-
-        quat(const float a_x, const float a_y, const float a_z, const float a_w) : x(a_x), y(a_y), z(a_z), w(a_w)
-        {
-        }
-
-        explicit quat(const float a_coords) : x(a_coords), y(a_coords), z(a_coords), w(a_coords)
-        {
-        }
-
+        quat() : x(0.f), y(0.f), z(0.f), w(1.f) {}
+        quat(const float a_x, const float a_y, const float a_z, const float a_w) : x(a_x), y(a_y), z(a_z), w(a_w) {}
+        explicit quat(const float a_coords) : x(a_coords), y(a_coords), z(a_coords), w(a_coords) {}
         explicit quat(vec3 a_eulerAngles);
         ~quat() = default;
 

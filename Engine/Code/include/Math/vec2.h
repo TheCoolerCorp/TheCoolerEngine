@@ -12,18 +12,9 @@ namespace TheCoolerMath
         float x, y;
 
         // different ways of initializing a vector
-        vec2() : x(0.f), y(0.f)
-        {
-        }
-
-        vec2(const float a_x, const float a_y) : x(a_x), y(a_y)
-        {
-        }
-
-        explicit vec2(const float a_coords) : x(a_coords), y(a_coords)
-        {
-        }
-
+        vec2() : x(0.f), y(0.f) {}
+        vec2(const float a_x, const float a_y) : x(a_x), y(a_y) {}
+        explicit vec2(const float a_coords) : x(a_coords), y(a_coords) {}
         ~vec2() = default;
 
         // different print methods
