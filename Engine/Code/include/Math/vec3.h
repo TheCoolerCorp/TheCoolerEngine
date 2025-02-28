@@ -3,12 +3,13 @@
 
 #include <cmath>
 #include <iostream>
-#include <limits>
+
+#include "EngineExport.h"
 
 namespace TheCoolerMath
 {
     //Class for Vector3
-    class vec3
+    class ENGINE_API vec3
     {
     public:
         // vector components

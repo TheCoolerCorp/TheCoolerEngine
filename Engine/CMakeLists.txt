@@ -27,6 +27,14 @@ else()
     target_compile_options(Engine PUBLIC -Wall -Wextra -Wpedantic -Werror)
 endif()
 
+#---------------------------------------#
+#		EXPORTS / IMPORTS FOR DLL		#
+#---------------------------------------#
+target_compile_definitions(Engine PRIVATE ENGINE_EXPORTS)
+
+#---------------------------------------#
+#		UNIT TESTS CONFIGURATION		#
+#---------------------------------------#
 if(ENGINE_UNIT_TESTS)
     add_subdirectory(Tests)
 endif()

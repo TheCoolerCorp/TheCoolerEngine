@@ -4,10 +4,12 @@
 #include <cmath>
 #include <iostream>
 
+#include "EngineExport.h"
+
 namespace TheCoolerMath
 {
     // Class for Vector2
-    class vec2
+    class ENGINE_API vec2
     {
     public:
         // vector components

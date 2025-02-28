@@ -6,11 +6,12 @@
 
 #include "quat.h"
 #include "vec3.h"
+#include "EngineExport.h"
 
 namespace TheCoolerMath
 {
     // Class for 4x4 matrices
-    class mat4
+    class ENGINE_API mat4
     {
     public:
         std::array<float, 16> mElements{}; //vector to save the matrix's elements
@@ -46,7 +47,7 @@ namespace TheCoolerMath
         static mat4 Orthographic(float a_top, float a_bottom, float a_right, float a_left, float a_far, float a_near);
     };
 
-    float Mat3Determinant(const std::array<float, 9>& a_elements);
+    float ENGINE_API Mat3Determinant(const std::array<float, 9>& a_elements);
 } // namespace TheCoolerMath
 
 #include "mat4.inl"

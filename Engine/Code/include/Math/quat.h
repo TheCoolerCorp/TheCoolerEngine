@@ -5,11 +5,12 @@
 #include <iostream>
 
 #include "vec3.h"
+#include "EngineExport.h"
 
 namespace TheCoolerMath
 {
     // Class for Quaternion
-    class quat
+    class ENGINE_API quat
     {
     public:
         // quaternion components
