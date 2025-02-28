@@ -17,6 +17,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${MY_BIN_OUTPUT_DIR}")
 #			COMPILE OPTION				#
 #---------------------------------------#
 
+option(MY_OPTION "balbaa" ON)
 
 
 enable_testing()
