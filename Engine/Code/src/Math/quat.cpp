@@ -64,4 +64,57 @@ namespace TheCoolerMath
 
         return t_eulerAngles;
     }
+
+    quat quat::Conjugate(const quat& a_q)
+    {
+        quat t_q = a_q;
+        t_q.x *= -1.f;
+        t_q.y *= -1.f;
+        t_q.z *= -1.f;
+        return t_q;
+    }
+
+    quat quat::Multiply(const quat a_q1, const quat a_q2)
+    {
+        const float t_x = a_q1.w * a_q2.x + a_q1.x * a_q2.w + a_q1.y * a_q2.z - a_q1.z * a_q2.y;
+        const float t_y = a_q1.w * a_q2.y - a_q1.x * a_q2.z + a_q1.y * a_q2.w + a_q1.z * a_q2.x;
+        const float t_z = a_q1.w * a_q2.z + a_q1.x * a_q2.y - a_q1.y * a_q2.x + a_q1.z * a_q2.w;
+        const float t_w = a_q1.w * a_q2.w - a_q1.x * a_q2.x - a_q1.y * a_q2.y - a_q1.z * a_q2.z;
+        return quat{ t_x, t_y, t_z, t_w };
+    }
+
+    vec3 quat::Multiply(quat a_q, vec3 a_v)
+    {
+        quat t_quatVec(a_v.x, a_v.y, a_v.z, 0.f);
+        quat t_conjQ = Conjugate(a_q);
+        quat t_rot = (a_q * t_quatVec) * t_conjQ;
+        return { t_rot.x, t_rot.y, t_rot.z };
+    }
+
+    float quat::SquaredNorm(const quat a_q)
+    {
+        const float t_xSquared = powf(a_q.x, 2.f);
+        const float t_ySquared = powf(a_q.y, 2.f);
+        const float t_zSquared = powf(a_q.z, 2.f);
+        const float t_wSquared = powf(a_q.w, 2.f);
+        const float t_squaredNorm = t_xSquared + t_ySquared + t_zSquared + t_wSquared;
+
+        return t_squaredNorm;
+    }
+
+    float quat::Norm(const quat a_q)
+    {
+        return sqrtf(SquaredNorm(a_q));
+    }
+
+    quat quat::Normalize(const quat a_q)
+    {
+        const float t_norm = Norm(a_q);
+        return { a_q.x / t_norm, a_q.y / t_norm, a_q.z / t_norm, a_q.w / t_norm };
+    }
+
+    float quat::DotProduct(const quat a_q1, const quat a_q2)
+    {
+        return (a_q1.x * a_q2.x) + (a_q1.y * a_q2.y) + (a_q1.z * a_q2.z) + (a_q1.w * a_q2.w);
+    }
 } // namespace TheCoolerMath
