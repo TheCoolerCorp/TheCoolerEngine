@@ -13,12 +13,11 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${MY_BIN_OUTPUT_DIR}/libs")
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${MY_BIN_OUTPUT_DIR}/libs")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${MY_BIN_OUTPUT_DIR}")
 
-
+enable_testing()
 
 #---------------------------------------#
 #			COMPILE OPTION				#
 #---------------------------------------#
-option(ENGINE_UNIT_TESTS "Option to enable or disable unit tests for engine" OFF)
 
 
 #---------------------------------------#

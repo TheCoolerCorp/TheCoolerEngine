@@ -1,10 +1,8 @@
 #include <iostream>
-#include <glm/glm.hpp>
-#include <gtest/gtest.h>
+#include "include/vec2UT.h"
 
-int main()
+int main(int argc, char** argv) 
 {
-	glm::vec3 t;
-	std::cout << "hello world" << std::endl;
-	return 0;
+	testing::InitGoogleTest(&argc, argv);
+	return RUN_ALL_TESTS();
 }

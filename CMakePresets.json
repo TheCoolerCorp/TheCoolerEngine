@@ -11,6 +11,9 @@
                 "type": "equals",
                 "lhs": "${hostSystemName}",
                 "rhs": "Windows"
+            },
+            "cacheVariables": {
+                "ENGINE_UNIT_TESTS": true
             }
         },
         {
@@ -20,7 +23,8 @@
             "generator": "Ninja Multi-Config",
             "cacheVariables": {
                 "CMAKE_C_COMPILER": "gcc$env{gcc_compiler_v}",
-                "CMAKE_CXX_COMPILER": "g++$env{gcc_compiler_v}"
+                "CMAKE_CXX_COMPILER": "g++$env{gcc_compiler_v}",
+                "ENGINE_UNIT_TESTS":true
             }
         }
     ],
