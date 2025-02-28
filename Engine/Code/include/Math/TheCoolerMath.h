@@ -1,4 +1,6 @@
-#pragma once
+#ifndef THECOOLERMATH_H
+#define THECOOLERMATH_H
+
 namespace TheCoolerMath
 {
     constexpr float PI = 3.14159265358979323846f;
@@ -18,3 +20,5 @@ namespace TheCoolerMath
         return a_rad * (180.f / PI);
     }
 } // namespace TheCoolerMath
+
+#endif

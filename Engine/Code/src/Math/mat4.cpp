@@ -2,18 +2,6 @@
 
 namespace TheCoolerMath
 {
-    mat4::mat4(const bool a_identity)
-    {
-        if (a_identity)
-        {
-            mElements = {1.f, 0.f, 0.f, 0.f, 0.f, 1.f, 0.f, 0.f,
-                         0.f, 0.f, 1.f, 0.f, 0.f, 0.f, 0.f, 1.f};
-            return;
-        }
-        mElements = {0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f,
-                     0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f};
-    }
-
     void mat4::Inverse()
     {
         const float t_det = Determinant();

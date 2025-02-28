@@ -1,4 +1,6 @@
-#pragma once
+#ifndef VEC3_H
+#define VEC3_H
+
 #include <cmath>
 #include <iostream>
 #include <limits>
@@ -268,3 +270,5 @@ namespace TheCoolerMath
         return t_v3;
     }
 } // namespace TheCoolerMath
+
+#endif

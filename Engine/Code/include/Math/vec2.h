@@ -1,4 +1,6 @@
-#pragma once
+#ifndef VEC2_H
+#define VEC2_H
+
 #include <cmath>
 #include <iostream>
 
@@ -251,3 +253,5 @@ namespace TheCoolerMath
         return (a_v1.x * a_v2.y) - (a_v2.x * a_v1.y);
     }
 } // namespace TheCoolerMath
+
+#endif

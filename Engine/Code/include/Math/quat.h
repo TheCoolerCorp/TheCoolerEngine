@@ -1,4 +1,6 @@
-#pragma once
+#ifndef QUAT_H
+#define QUAT_H
+
 #include <cmath>
 #include <iostream>
 
@@ -251,3 +253,5 @@ namespace TheCoolerMath
         return (a_q1.x * a_q2.x) + (a_q1.y * a_q2.y) + (a_q1.z * a_q2.z) + (a_q1.w * a_q2.w);
     }
 } // namespace TheCoolerMath
+
+#endif

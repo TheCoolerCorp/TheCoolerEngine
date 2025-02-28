@@ -1,4 +1,6 @@
-#pragma once
+#ifndef MAT4_H
+#define MAT4_H
+
 #include <array>
 #include <cmath>
 
@@ -122,6 +124,19 @@ namespace TheCoolerMath
     {
         return a_m * a_f;
     }
+
+    inline mat4::mat4(const bool a_identity)
+    {
+        if (a_identity)
+        {
+            mElements = {1.f, 0.f, 0.f, 0.f, 0.f, 1.f, 0.f, 0.f,
+                         0.f, 0.f, 1.f, 0.f, 0.f, 0.f, 0.f, 1.f};
+            return;
+        }
+        mElements = {0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f,
+                     0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f, 0.f};
+    }
+
 
     inline mat4::mat4(const std::array<float, 16>& a_elements)
     {
@@ -293,3 +308,5 @@ namespace TheCoolerMath
         });
     }
 } // namespace TheCoolerMath
+
+#endif
