@@ -1,3 +1,5 @@
+#-----------------ROOT----------------------#
+
 cmake_minimum_required(VERSION 3.29.5)
 
 #---------------------------------------#
@@ -16,12 +18,8 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${MY_BIN_OUTPUT_DIR}")
 #---------------------------------------#
 #			COMPILE OPTION				#
 #---------------------------------------#
+#option(MY_OPTION "balbaa" ON)
 
-option(MY_OPTION "balbaa" ON)
-
-
-enable_testing()
-add_subdirectory(Engine)
 
 #---------------------------------------#
 #				LIBS					#
@@ -32,4 +30,5 @@ add_subdirectory(Engine)
 #---------------------------------------#
 #			SUBDIRECTORY				#
 #---------------------------------------#
-#add_subdirectory(libs/glm)
+add_subdirectory(Engine)
+add_subdirectory(Editor)
