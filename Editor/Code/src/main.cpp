@@ -1,6 +1,8 @@
 #include <iostream>
+#include "Math/vec3.h"
 
 int main()
 {
-	std::cout << "Hello, World !\n";
+	std::cout << " t \n";
+	return 0;
 }
