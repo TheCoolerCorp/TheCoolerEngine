@@ -27,4 +27,7 @@ else()
     target_compile_options(Engine PRIVATE -Wall -Wextra -Wpedantic -Werror)
 endif()
 
-add_subdirectory(Tests)
+if(ENGINE_UNIT_TESTS)
+    enable_testing()
+    add_subdirectory(Tests)
+endif()

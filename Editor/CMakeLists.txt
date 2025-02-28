@@ -20,12 +20,12 @@ target_include_directories(Editor PUBLIC "Code/include")
 #---------------------------------------#
 #				COMPILE MODE			#
 #---------------------------------------#
-target_compile_features(Engine PRIVATE cxx_std_20)
+target_compile_features(Editor PRIVATE cxx_std_20)
 
 if(MSVC)
-    target_compile_options(Engine PRIVATE /W4 /WX)
+    target_compile_options(Editor PRIVATE /W4 /WX)
 else()
-    target_compile_options(Engine PRIVATE -Wall -Wextra -Wpedantic -Werror)
+    target_compile_options(Editor PRIVATE -Wall -Wextra -Wpedantic -Werror)
 endif()
 
 #---------------------------------------#

@@ -18,7 +18,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${MY_BIN_OUTPUT_DIR}")
 #---------------------------------------#
 #			COMPILE OPTION				#
 #---------------------------------------#
-#option(MY_OPTION "balbaa" ON)
+option(ENGINE_UNIT_TESTS "Option to enable or disable unit tests for engine" OFF)
 
 
 #---------------------------------------#
