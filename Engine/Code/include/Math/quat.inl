@@ -71,24 +71,24 @@ namespace TheCoolerMath
         return quat::Multiply(a_q1, t_q3);
     }
 
-    inline quat operator+=(const quat& a_q, const float& a_f)
+    inline quat operator+=(quat& a_q, const float& a_f)
     {
-        return a_q + a_f;
+        return a_q = a_q + a_f;
     }
 
-    inline quat operator-=(const quat& a_q, const float& a_f)
+    inline quat operator-=(quat& a_q, const float& a_f)
     {
-        return a_q - a_f;
+        return a_q = a_q - a_f;
     }
 
-    inline quat operator*=(const quat& a_q, const float& a_f)
+    inline quat operator*=(quat& a_q, const float& a_f)
     {
-        return a_q * a_f;
+        return a_q = a_q * a_f;
     }
 
-    inline quat operator/=(const quat& a_q, const float& a_f)
+    inline quat operator/=(quat& a_q, const float& a_f)
     {
-        return a_q / a_f;
+        return a_q = a_q / a_f;
     }
 
     inline quat& operator+=(quat& a_q1, const quat& a_q2)

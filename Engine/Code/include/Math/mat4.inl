@@ -59,24 +59,24 @@ namespace TheCoolerMath
         return t_qR;
     }
 
-    inline mat4 operator+=(const mat4& a_mat1, const mat4& a_mat2)
+    inline mat4 operator+=(mat4& a_mat1, const mat4& a_mat2)
     {
-        return a_mat1 + a_mat2;
+        return a_mat1 = a_mat1 + a_mat2;
     }
 
-    inline mat4 operator-=(const mat4& a_mat1, const mat4& a_mat2)
+    inline mat4 operator-=(mat4& a_mat1, const mat4& a_mat2)
     {
-        return a_mat1 - a_mat2;
+        return a_mat1 = a_mat1 - a_mat2;
     }
 
-    inline mat4 operator*=(const mat4& a_mat1, const mat4& a_mat2)
+    inline mat4 operator*=(mat4& a_mat1, const mat4& a_mat2)
     {
-        return a_mat1 * a_mat2;
+        return a_mat1 = a_mat1 * a_mat2;
     }
 
-    inline mat4 operator*=(const mat4& a_m, const float& a_f)
+    inline mat4 operator*=(mat4& a_m, const float& a_f)
     {
-        return a_m * a_f;
+        return a_m = a_m * a_f;
     }
 
     inline mat4::mat4(const bool a_identity)
