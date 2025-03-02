@@ -68,24 +68,24 @@ namespace TheCoolerMath
         return vec2::Multiply(a_v1, t_v3);
     }
 
-    inline vec2 operator+=(const vec2& a_v, const float& a_f)
+    inline vec2& operator+=(vec2& a_v, const float& a_f)
     {
-        return a_v + a_f;
+        return a_v = a_v + a_f;
     }
 
-    inline vec2 operator-=(const vec2& a_v, const float& a_f)
+    inline vec2& operator-=(vec2& a_v, const float& a_f)
     {
-        return a_v - a_f;
+        return a_v = a_v - a_f;
     }
 
-    inline vec2 operator*=(const vec2& a_v, const float& a_f)
+    inline vec2& operator*=(vec2& a_v, const float& a_f)
     {
-        return a_v * a_f;
+        return a_v = a_v * a_f;
     }
 
-    inline vec2 operator/=(const vec2& a_v, const float& a_f)
+    inline vec2& operator/=(vec2& a_v, const float& a_f)
     {
-        return a_v / a_f;
+        return a_v = a_v / a_f;
     }
 
     inline vec2& operator+=(vec2& a_v1, const vec2& a_v2)
