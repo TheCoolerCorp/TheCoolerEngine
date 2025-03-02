@@ -34,7 +34,6 @@ namespace vec2UT
 	}
 
 	/*------------------------------------------Functions-----------------------------------------------------*/
-
 	TEST(Vector2, Opposite)
 	{
 		float t_value1 = 3.f;
@@ -325,7 +324,7 @@ namespace vec2UT
 		EXPECT_EQ(vO1g.y, vO2.y);
 	}
 
-	TEST(Vector2, OperatorSubstractNumber)
+	TEST(Vector2, OperatorSubtractNumber)
 	{
 		float t_value1 = 3.f;
 		float t_value2 = 5.f;
@@ -559,7 +558,7 @@ namespace vec2UT
 
 	}
 
-	TEST(Vector2, OperatorEqualSubstractNumber)
+	TEST(Vector2, OperatorEqualSubtractNumber)
 	{
 		float t_value1 = 3.f;
 		float t_value2 = 5.f;
