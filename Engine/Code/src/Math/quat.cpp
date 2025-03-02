@@ -13,7 +13,7 @@ namespace TheCoolerMath
         const float t_sinZ = sinf(a_eulerAngles.z * 0.5f);
 
         x = t_sinX * t_cosY * t_cosZ - t_cosX * t_sinY * t_sinZ;
-        y = t_cosX * t_sinY * t_cosZ + t_sinX * t_cosY * t_sinX;
+        y = t_cosX * t_sinY * t_cosZ + t_sinX * t_cosY * t_sinZ;
         z = t_cosX * t_cosY * t_sinZ - t_sinX * t_sinY * t_cosZ;
         w = t_cosX * t_cosY * t_cosZ + t_sinX * t_sinY * t_sinZ;
     }
@@ -54,9 +54,8 @@ namespace TheCoolerMath
         const float t_cosXCosY = 1.f - 2.f * (t_q.x * t_q.x + t_q.y * t_q.y);
         t_eulerAngles.x = atan2f(t_sinXCosY, t_cosXCosY);
 
-        const float t_sinY = sqrtf(1.f + 2.f * (t_q.w * t_q.y - t_q.x * t_q.z));
-        const float t_cosY = sqrtf(1.f - 2.f * (t_q.w * t_q.y - t_q.x * t_q.z));
-        t_eulerAngles.y = 2.f * atan2f(t_sinY, t_cosY) - (PI / 2.f);
+        const float t_sinY = 2.f * (t_q.w * t_q.y - t_q.x * t_q.z);
+        t_eulerAngles.y = fabs(t_sinY) >= 1.f ? copysignf(PI / 2.f, t_sinY) : asinf(t_sinY);
 
         const float t_sinZCosY = 2.f * (t_q.w * t_q.z + t_q.x * t_q.y);
         const float t_cosZCosY = 1.f - 2.f * (t_q.y * t_q.y + t_q.z * t_q.z);
@@ -80,7 +79,7 @@ namespace TheCoolerMath
         const float t_y = a_q1.w * a_q2.y - a_q1.x * a_q2.z + a_q1.y * a_q2.w + a_q1.z * a_q2.x;
         const float t_z = a_q1.w * a_q2.z + a_q1.x * a_q2.y - a_q1.y * a_q2.x + a_q1.z * a_q2.w;
         const float t_w = a_q1.w * a_q2.w - a_q1.x * a_q2.x - a_q1.y * a_q2.y - a_q1.z * a_q2.z;
-        return quat{ t_x, t_y, t_z, t_w };
+        return quat(t_x, t_y, t_z, t_w);
     }
 
     vec3 quat::Multiply(quat a_q, vec3 a_v)
