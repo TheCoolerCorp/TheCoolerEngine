@@ -1,5 +1,6 @@
 #include <iostream>
 #include "include/vec2UT.h"
+#include "inlcude/quatUT.h"
 
 int main(int argc, char** argv) 
 {

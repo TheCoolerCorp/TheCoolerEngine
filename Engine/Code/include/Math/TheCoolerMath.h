@@ -5,7 +5,7 @@
 
 namespace TheCoolerMath
 {
-    constexpr float ENGINE_API PI = 3.14159265358979323846f;
+    constexpr float PI = 3.14159265358979323846f;
 
     inline float ENGINE_API Lerp(const float& a_f1, const float& a_f2, const float& a_t)
     {
