@@ -252,8 +252,7 @@ namespace vec2UT
 		EXPECT_EQ(crossProduct, otherCrossProduct);
 	}
 
-	/*-------------------------Valid test, issue with glm set angle to 0 if the angle is below a certain point-------------------------*/
-	/*TEST(Vector2, GetAngle)
+	TEST(Vector2, GetAngle)
 	{
 		float t_value1 = 1.f;
 		float t_value2 = 0.f;
@@ -270,8 +269,8 @@ namespace vec2UT
 		glm::vec2 v2g = glm::vec2(t_value3, t_value4);
 
 		float gAngle = glm::angle(v1g, v2g);
-		EXPECT_EQ(angle, gAngle);
-	}*/
+		EXPECT_NEAR(angle, gAngle, 0.0001f);
+	}
 
 
 	/*------------------------------------------Operators-----------------------------------------------------*/

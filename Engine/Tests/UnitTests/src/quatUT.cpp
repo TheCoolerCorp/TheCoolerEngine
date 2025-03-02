@@ -124,6 +124,6 @@ namespace quatUT
 
 	TEST(Quaternion, Operators)
 	{
-		
+
 	}
 }
