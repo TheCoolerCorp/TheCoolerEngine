@@ -401,4 +401,223 @@ namespace mat4UT
 		}
 	}
 
+	TEST(Matrix4, OperatorAdd)
+	{
+		std::array<float, 16> array = { 0.f, 1.f, 2.f, 3.f,
+										4.f, 5.f, 6.f, 7.f,
+										8.f, 9.f, 10.f, 11.f,
+										12.f, 13.f, 14.f, 15.f };
+
+		mat4 m1(array);
+		mat4 m2(array);
+		mat4 m3(array);
+		mat4 m4(array);
+
+		mat4 result = mat4::Add(m1, m2);
+		mat4 result1 = m3 + m4;
+
+		for (int i = 0; i < 16; ++i)
+		{
+			EXPECT_FLOAT_EQ(result1[i], result[i]);
+		}
+	}
+
+	TEST(Matrix4, OperatorSubtract)
+	{
+		std::array<float, 16> array = { 0.f, 1.f, 2.f, 3.f,
+										4.f, 5.f, 6.f, 7.f,
+										8.f, 9.f, 10.f, 11.f,
+										12.f, 13.f, 14.f, 15.f };
+
+		mat4 m1(array);
+		mat4 m2(array);
+		mat4 m3(array);
+		mat4 m4(array);
+
+		m2.Opposite();
+
+		mat4 result = mat4::Add(m1, m2);
+		mat4 result1 = m3 - m4;
+
+		for (int i = 0; i < 16; ++i)
+		{
+			EXPECT_FLOAT_EQ(result1[i], result[i]);
+		}
+	}
+
+	TEST(Matrix4, OperatorMultiply)
+	{
+		std::array<float, 16> array = { 0.f, 1.f, 2.f, 3.f,
+										4.f, 5.f, 6.f, 7.f,
+										8.f, 9.f, 10.f, 11.f,
+										12.f, 13.f, 14.f, 15.f };
+
+		mat4 m1(array);
+		mat4 m2(array);
+		mat4 m3(array);
+		mat4 m4(array);
+
+		mat4 result = mat4::Multiply(m1, m2);
+		mat4 result1 = m3 * m4;
+
+		for (int i = 0; i < 16; ++i)
+		{
+			EXPECT_FLOAT_EQ(result1[i], result[i]);
+		}
+	}
+
+	TEST(Matrix4, OperatorMultiplyNumber)
+	{
+		std::array<float, 16> array = { 0.f, 1.f, 2.f, 3.f,
+										4.f, 5.f, 6.f, 7.f,
+										8.f, 9.f, 10.f, 11.f,
+										12.f, 13.f, 14.f, 15.f };
+
+		mat4 m1(array);
+		mat4 m2(array);
+		float nb = 5;
+
+		mat4 result = mat4::MultiplyNumber(m1, nb);
+		mat4 result1 = m2 * nb;
+
+		for (int i = 0; i < 16; ++i)
+		{
+			EXPECT_FLOAT_EQ(result1[i], result[i]);
+		}
+
+		mat4 result2 = nb * m2;
+		for (int i = 0; i < 16; ++i)
+		{
+			EXPECT_FLOAT_EQ(result2[i], result[i]);
+		}
+	}
+
+	TEST(Matrix4, OperatorMultiplyVector)
+	{
+		std::array<float, 16> array = { 0.f, 1.f, 2.f, 3.f,
+										4.f, 5.f, 6.f, 7.f,
+										8.f, 9.f, 10.f, 11.f,
+										12.f, 13.f, 14.f, 15.f };
+
+		mat4 m1(array);
+		vec3 v1 = vec3(56.f, 3.f, 12.f);
+		vec3 v2 = m1 * v1;
+
+		glm::mat4 mg1 = glm::mat4({ 0.f, 1.f, 2.f, 3.f,
+										4.f, 5.f, 6.f, 7.f,
+										8.f, 9.f, 10.f, 11.f,
+										12.f, 13.f, 14.f, 15.f });
+		mg1 = glm::transpose(mg1);
+		glm::vec4 vg1 = glm::vec4(56.f, 3.f, 12.f, 1.f);
+		glm::vec4 vg2 = mg1 * vg1;
+
+		EXPECT_FLOAT_EQ(v2.x, vg2.x);
+		EXPECT_FLOAT_EQ(v2.y, vg2.y);
+		EXPECT_FLOAT_EQ(v2.z, vg2.z);
+	}
+
+	TEST(Matrix4, OperatorMultiplyQuaternion)
+	{
+		std::array<float, 16> array = { 0.f, 1.f, 2.f, 3.f,
+										4.f, 5.f, 6.f, 7.f,
+										8.f, 9.f, 10.f, 11.f,
+										12.f, 13.f, 14.f, 15.f };
+
+		mat4 m1(array);
+		quat q1 = quat(56.f, 3.f, 12.f, 1.f);
+		quat q2 = m1 * q1;
+
+		glm::mat4 mg1 = glm::mat4({ 0.f, 1.f, 2.f, 3.f,
+										4.f, 5.f, 6.f, 7.f,
+										8.f, 9.f, 10.f, 11.f,
+										12.f, 13.f, 14.f, 15.f });
+		mg1 = glm::transpose(mg1);
+		glm::vec4 vg1 = glm::vec4(56.f, 3.f, 12.f, 1.f);
+		glm::vec4 vg2 = mg1 * vg1;
+
+		EXPECT_FLOAT_EQ(q2.x, vg2.x);
+		EXPECT_FLOAT_EQ(q2.y, vg2.y);
+		EXPECT_FLOAT_EQ(q2.z, vg2.z);
+		EXPECT_FLOAT_EQ(q2.w, vg2.w);
+	}
+
+	TEST(Matrix4, OperatorEqualAdd)
+	{
+		std::array<float, 16> array = { 0.f, 1.f, 2.f, 3.f,
+										4.f, 5.f, 6.f, 7.f,
+										8.f, 9.f, 10.f, 11.f,
+										12.f, 13.f, 14.f, 15.f };
+
+		mat4 m1(array);
+		mat4 m2(array);
+		mat4 m3 = m1 + m2;
+		mat4 m4(array);
+
+		m4 += m2;
+
+		for (int i = 0; i < 16; ++i)
+		{
+			EXPECT_FLOAT_EQ(m3[i], m4[i]);
+		}
+	}
+
+	TEST(Matrix4, OperatorEqualSubtract)
+	{
+		std::array<float, 16> array = { 0.f, 1.f, 2.f, 3.f,
+										4.f, 5.f, 6.f, 7.f,
+										8.f, 9.f, 10.f, 11.f,
+										12.f, 13.f, 14.f, 15.f };
+
+		mat4 m1(array);
+		mat4 m2(array);
+		mat4 m3 = m1 - m2;
+		mat4 m4(array);
+
+		m4 -= m2;
+
+		for (int i = 0; i < 16; ++i)
+		{
+			EXPECT_FLOAT_EQ(m3[i], m4[i]);
+		}
+	}
+
+	TEST(Matrix4, OperatorEqualMultiply)
+	{
+		std::array<float, 16> array = { 0.f, 1.f, 2.f, 3.f,
+										4.f, 5.f, 6.f, 7.f,
+										8.f, 9.f, 10.f, 11.f,
+										12.f, 13.f, 14.f, 15.f };
+
+		mat4 m1(array);
+		mat4 m2(array);
+		mat4 m3 = m1 * m2;
+		mat4 m4(array);
+
+		m4 *= m2;
+
+		for (int i = 0; i < 16; ++i)
+		{
+			EXPECT_FLOAT_EQ(m3[i], m4[i]);
+		}
+	}
+
+	TEST(Matrix4, OperatorEqualMultiplyNumber)
+	{
+		std::array<float, 16> array = { 0.f, 1.f, 2.f, 3.f,
+										4.f, 5.f, 6.f, 7.f,
+										8.f, 9.f, 10.f, 11.f,
+										12.f, 13.f, 14.f, 15.f };
+
+		mat4 m1(array);
+		float nb = 89.f;
+		mat4 m3 = m1 * nb;
+		mat4 m4(array);
+
+		m4 *= nb;
+
+		for (int i = 0; i < 16; ++i)
+		{
+			EXPECT_FLOAT_EQ(m3[i], m4[i]);
+		}
+	}
 }
