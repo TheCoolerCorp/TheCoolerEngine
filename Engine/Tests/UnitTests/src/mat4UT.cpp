@@ -13,25 +13,25 @@ namespace mat4UT
 			EXPECT_EQ(m1[i], 0.f);
 		}
 
-		EXPECT_EQ(m1[0], 1.f);
-		EXPECT_EQ(m1[1], 0.f);
-		EXPECT_EQ(m1[2], 0.f);
-		EXPECT_EQ(m1[3], 0.f);
+		EXPECT_EQ(m2[0], 1.f);
+		EXPECT_EQ(m2[1], 0.f);
+		EXPECT_EQ(m2[2], 0.f);
+		EXPECT_EQ(m2[3], 0.f);
 
-		EXPECT_EQ(m1[4], 0.f);
-		EXPECT_EQ(m1[5], 1.f);
-		EXPECT_EQ(m1[6], 0.f);
-		EXPECT_EQ(m1[7], 0.f);
+		EXPECT_EQ(m2[4], 0.f);
+		EXPECT_EQ(m2[5], 1.f);
+		EXPECT_EQ(m2[6], 0.f);
+		EXPECT_EQ(m2[7], 0.f);
 
-		EXPECT_EQ(m1[8], 0.f);
-		EXPECT_EQ(m1[9], 0.f);
-		EXPECT_EQ(m1[10], 1.f);
-		EXPECT_EQ(m1[11], 0.f);
+		EXPECT_EQ(m2[8], 0.f);
+		EXPECT_EQ(m2[9], 0.f);
+		EXPECT_EQ(m2[10], 1.f);
+		EXPECT_EQ(m2[11], 0.f);
 
-		EXPECT_EQ(m1[12], 0.f);
-		EXPECT_EQ(m1[13], 0.f);
-		EXPECT_EQ(m1[14], 0.f);
-		EXPECT_EQ(m1[15], 1.f);
+		EXPECT_EQ(m2[12], 0.f);
+		EXPECT_EQ(m2[13], 0.f);
+		EXPECT_EQ(m2[14], 0.f);
+		EXPECT_EQ(m2[15], 1.f);
 
 	}
 
@@ -123,40 +123,39 @@ namespace mat4UT
 		TheCoolerMath::mat4 m1(array);
 		m1.Transpose();
 		
-		glm::mat4 m1g = { 0.f, 1.f, 2.f, 3.f,
+		std::array<float, 16> array1 = { 0.f, 4.f, 8.f, 12.f,
+										1.f, 5.f, 9.f, 13.f,
+										2.f, 6.f, 10.f, 14.f,
+										3.f, 7.f, 11.f, 15.f };
+
+		for (int i = 0; i < 16; ++i)
+		{
+			EXPECT_EQ(m1[i], array1[i]);
+		}
+	}
+
+	TEST(Matrix4, Determinant)
+	{
+		std::array<float, 16> array = { 1.f, 1.f, 2.f, 3.f,
 										4.f, 5.f, 6.f, 7.f,
 										8.f, 9.f, 10.f, 11.f,
 										12.f, 13.f, 14.f, 15.f };
 
+		TheCoolerMath::mat4 m1(array);
 
-		for (int i = 0; i < 16; ++i)
-		{
-			//EXPECT_EQ(m1[i], m1g[i]);
-		}
+		float det = m1.Determinant();
+
+		glm::mat4 m1g = { 1.f, 1.f, 2.f, 3.f,
+						  4.f, 5.f, 6.f, 7.f,
+			   			  8.f, 9.f, 10.f, 11.f,
+						  12.f, 13.f, 14.f, 15.f };
+
+		m1g = glm::transpose(m1g);
+
+		float gDet = glm::determinant(m1g);
+
+		EXPECT_EQ(det, gDet);
 	}
-
-	//TEST(Matrix4, Determinant)
-	//{
-	//	std::array<float, 16> array = { 0.f, 1.f, 2.f, 3.f,
-	//									4.f, 5.f, 6.f, 7.f,
-	//									8.f, 9.f, 10.f, 11.f,
-	//									12.f, 13.f, 14.f, 15.f };
-
-	//	TheCoolerMath::mat4 m1(array);
-
-	//	float det = m1.Determinant();
-
-	//	glm::mat4 m1g = { 0.f, 1.f, 2.f, 3.f,
-	//					  4.f, 5.f, 6.f, 7.f,
-	//		   			  8.f, 9.f, 10.f, 11.f,
-	//					  12.f, 13.f, 14.f, 15.f };
-
-	//	m1g = glm::transpose(m1g);
-
-	//	float gDet = glm::determinant(m1g);
-
-	//	EXPECT_EQ(det, gDet);
-	//}
 	//// No glm implementation for comatrix
 	////TEST(Matrix4, Comatrix)
 	////{
