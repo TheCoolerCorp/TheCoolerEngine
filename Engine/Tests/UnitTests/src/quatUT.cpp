@@ -136,6 +136,17 @@ namespace quatUT
 		EXPECT_FLOAT_EQ(v2.z, testQ6.z);
 	}
 
+	TEST(Quaternion, Slerp)
+	{
+		quat q1 = quat(0.f, 1.f, 0.f, 0.f);
+		quat q2 = quat(0.f, 0.f, 0.f, 1.f);
+		quat q3 = quat::Slerp(q2, q1, 0.2f);
+		EXPECT_NEAR(q3.x, 0.f, 0.0001f);
+		EXPECT_NEAR(q3.y, 0.3090169943749474f, 0.0001f);
+		EXPECT_NEAR(q3.z, 0.f, 0.0001f);
+		EXPECT_NEAR(q3.w, 0.9510565162951535f, 0.0001f);
+	}
+
 	TEST(Quaternion, SquaredNorm)
 	{
 		quat q12 = quat(23.f, 154.f, 2.f, 78.f);

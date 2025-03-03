@@ -94,18 +94,18 @@ namespace TheCoolerMath
     {
         quat t_qT;
 
-        float cosHalfTheta = a_q1.x * a_q2.x + a_q1.y * a_q2.y + a_q1.z * a_q2.z + a_q1.w * a_q2.w;
+        float t_cosHalfTheta = a_q1.x * a_q2.x + a_q1.y * a_q2.y + a_q1.z * a_q2.z + a_q1.w * a_q2.w;
 
         quat a_q2Adjusted = a_q2;
-        if (cosHalfTheta < 0.f) {
+        if (t_cosHalfTheta < 0.f) {
             a_q2Adjusted.x = -a_q2.x;
             a_q2Adjusted.y = -a_q2.y;
             a_q2Adjusted.z = -a_q2.z;
             a_q2Adjusted.w = -a_q2.w;
-            cosHalfTheta = -cosHalfTheta;
+            t_cosHalfTheta = -t_cosHalfTheta;
         }
 
-        if (cosHalfTheta > 0.9995f) {
+        if (t_cosHalfTheta > 0.9995f) {
             t_qT.x = a_q1.x + a_t * (a_q2Adjusted.x - a_q1.x);
             t_qT.y = a_q1.y + a_t * (a_q2Adjusted.y - a_q1.y);
             t_qT.z = a_q1.z + a_t * (a_q2Adjusted.z - a_q1.z);
@@ -115,16 +115,16 @@ namespace TheCoolerMath
             return t_qT;
         }
 
-        float halfTheta = acosf(cosHalfTheta);
-        float sinHalfTheta = sqrtf(1.f - cosHalfTheta * cosHalfTheta);
+        const float t_halfTheta = acosf(t_cosHalfTheta);
+        const float t_sinHalfTheta = sqrtf(1.f - t_cosHalfTheta * t_cosHalfTheta);
 
-        float ratioA = sinf((1.f - a_t) * halfTheta) / sinHalfTheta;
-        float ratioB = sinf(a_t * halfTheta) / sinHalfTheta;
+        const float t_ratioA = sinf((1.f - a_t) * t_halfTheta) / t_sinHalfTheta;
+        const float t_ratioB = sinf(a_t * t_halfTheta) / t_sinHalfTheta;
 
-        t_qT.x = a_q1.x * ratioA + a_q2Adjusted.x * ratioB;
-        t_qT.y = a_q1.y * ratioA + a_q2Adjusted.y * ratioB;
-        t_qT.z = a_q1.z * ratioA + a_q2Adjusted.z * ratioB;
-        t_qT.w = a_q1.w * ratioA + a_q2Adjusted.w * ratioB;
+        t_qT.x = a_q1.x * t_ratioA + a_q2Adjusted.x * t_ratioB;
+        t_qT.y = a_q1.y * t_ratioA + a_q2Adjusted.y * t_ratioB;
+        t_qT.z = a_q1.z * t_ratioA + a_q2Adjusted.z * t_ratioB;
+        t_qT.w = a_q1.w * t_ratioA + a_q2Adjusted.w * t_ratioB;
 
         t_qT = Normalize(t_qT);
         return t_qT;
