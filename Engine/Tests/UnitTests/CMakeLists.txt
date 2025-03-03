@@ -1,7 +1,7 @@
 
 
 file(GLOB_RECURSE ENGINE_MATHS_UT_SOURCES "src/*.cpp")
-add_executable(Engine_Maths_UT ${ENGINE_MATHS_UT_SOURCES})
+add_executable(Engine_Maths_UT ${ENGINE_MATHS_UT_SOURCES} "src/Vec3UT.cpp" "include/Vec3UT.h")
 target_include_directories(Engine_Maths_UT PUBLIC "include")
 
 target_compile_features(Engine_Maths_UT PUBLIC cxx_std_20)
