@@ -4,6 +4,14 @@ file(GLOB_RECURSE ENGINE_MATHS_UT_SOURCES "src/*.cpp")
 add_executable(Engine_Maths_UT ${ENGINE_MATHS_UT_SOURCES})
 target_include_directories(Engine_Maths_UT PUBLIC "include")
 
+target_compile_features(Engine_Maths_UT PUBLIC cxx_std_20)
+
+if(MSVC)
+    target_compile_options(Engine_Maths_UT PUBLIC /W4 /WX)
+else()
+    target_compile_options(Engine_Maths_UT PUBLIC -Wall -Wextra -Wpedantic -Werror)
+endif()
+
 
 target_link_libraries(Engine_Maths_UT PRIVATE Engine)
 

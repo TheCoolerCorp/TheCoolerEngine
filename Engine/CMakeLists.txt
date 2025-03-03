@@ -14,7 +14,7 @@ add_library(Engine SHARED ${ENGINE_SOURCES})
 #				INCLUDE					#
 #---------------------------------------#
 target_include_directories(Engine PUBLIC "Code/include")
-option(ENGINE_UNIT_TESTS "Option to enable or disable unit tests for engine" OFF)
+option(ENGINE_UNIT_TESTS "Option to enable or disable unit tests for engine" ON)
 
 #---------------------------------------#
 #				COMPILE MODE			#
