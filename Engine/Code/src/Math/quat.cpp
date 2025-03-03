@@ -90,6 +90,46 @@ namespace TheCoolerMath
         return { t_rot.x, t_rot.y, t_rot.z };
     }
 
+    quat quat::Slerp(quat a_q1, quat a_q2, float a_t)
+    {
+        quat t_qT;
+
+        float cosHalfTheta = a_q1.x * a_q2.x + a_q1.y * a_q2.y + a_q1.z * a_q2.z + a_q1.w * a_q2.w;
+
+        quat a_q2Adjusted = a_q2;
+        if (cosHalfTheta < 0.f) {
+            a_q2Adjusted.x = -a_q2.x;
+            a_q2Adjusted.y = -a_q2.y;
+            a_q2Adjusted.z = -a_q2.z;
+            a_q2Adjusted.w = -a_q2.w;
+            cosHalfTheta = -cosHalfTheta;
+        }
+
+        if (cosHalfTheta > 0.9995f) {
+            t_qT.x = a_q1.x + a_t * (a_q2Adjusted.x - a_q1.x);
+            t_qT.y = a_q1.y + a_t * (a_q2Adjusted.y - a_q1.y);
+            t_qT.z = a_q1.z + a_t * (a_q2Adjusted.z - a_q1.z);
+            t_qT.w = a_q1.w + a_t * (a_q2Adjusted.w - a_q1.w);
+
+            t_qT = Normalize(t_qT);
+            return t_qT;
+        }
+
+        float halfTheta = acosf(cosHalfTheta);
+        float sinHalfTheta = sqrtf(1.f - cosHalfTheta * cosHalfTheta);
+
+        float ratioA = sinf((1.f - a_t) * halfTheta) / sinHalfTheta;
+        float ratioB = sinf(a_t * halfTheta) / sinHalfTheta;
+
+        t_qT.x = a_q1.x * ratioA + a_q2Adjusted.x * ratioB;
+        t_qT.y = a_q1.y * ratioA + a_q2Adjusted.y * ratioB;
+        t_qT.z = a_q1.z * ratioA + a_q2Adjusted.z * ratioB;
+        t_qT.w = a_q1.w * ratioA + a_q2Adjusted.w * ratioB;
+
+        t_qT = Normalize(t_qT);
+        return t_qT;
+    }
+
     float quat::SquaredNorm(const quat a_q)
     {
         const float t_xSquared = powf(a_q.x, 2.f);

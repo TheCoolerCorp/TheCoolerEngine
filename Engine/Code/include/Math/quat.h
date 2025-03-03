@@ -38,6 +38,7 @@ namespace TheCoolerMath
         static quat Add(quat a_q1, quat a_q2); // adds two quaternions
         static quat Multiply(quat a_q1, quat a_q2); // multiplies two quaternions
         static vec3 Multiply(quat a_q, vec3 a_v);
+        static quat Slerp(quat a_q1, quat a_q2, float a_t);
         static float SquaredNorm(quat a_q); // returns the squared norm of a quaternion
         static float Norm(quat a_q); // returns the norm of a quaternion
         static quat Normalize(quat a_q); //returns normalized quaternion
