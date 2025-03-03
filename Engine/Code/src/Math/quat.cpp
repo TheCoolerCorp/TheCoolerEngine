@@ -121,10 +121,10 @@ namespace TheCoolerMath
         const float t_ratioA = sinf((1.f - a_t) * t_halfTheta) / t_sinHalfTheta;
         const float t_ratioB = sinf(a_t * t_halfTheta) / t_sinHalfTheta;
 
-        t_qT.x = a_q1.x * t_ratioA + a_q2Adjusted.x * t_ratioB;
-        t_qT.y = a_q1.y * t_ratioA + a_q2Adjusted.y * t_ratioB;
-        t_qT.z = a_q1.z * t_ratioA + a_q2Adjusted.z * t_ratioB;
-        t_qT.w = a_q1.w * t_ratioA + a_q2Adjusted.w * t_ratioB;
+        t_qT.x = a_q1.x * t_ratioB + a_q2Adjusted.x * t_ratioA;
+        t_qT.y = a_q1.y * t_ratioB + a_q2Adjusted.y * t_ratioA;
+        t_qT.z = a_q1.z * t_ratioB + a_q2Adjusted.z * t_ratioA;
+        t_qT.w = a_q1.w * t_ratioB + a_q2Adjusted.w * t_ratioA;
 
         t_qT = Normalize(t_qT);
         return t_qT;

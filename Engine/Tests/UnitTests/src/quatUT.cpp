@@ -140,7 +140,7 @@ namespace quatUT
 	{
 		quat q1 = quat(0.f, 1.f, 0.f, 0.f);
 		quat q2 = quat(0.f, 0.f, 0.f, 1.f);
-		quat q3 = quat::Slerp(q2, q1, 0.2f);
+		quat q3 = quat::Slerp(q1, q2, 0.2f);
 		EXPECT_NEAR(q3.x, 0.f, 0.0001f);
 		EXPECT_NEAR(q3.y, 0.3090169943749474f, 0.0001f);
 		EXPECT_NEAR(q3.z, 0.f, 0.0001f);
