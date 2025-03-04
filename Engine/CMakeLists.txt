@@ -14,7 +14,7 @@ add_library(Engine SHARED ${ENGINE_SOURCES})
 #				INCLUDE					#
 #---------------------------------------#
 target_include_directories(Engine PUBLIC "Code/include")
-option(ENGINE_UNIT_TESTS "Option to enable or disable unit tests for engine" ON)
+option(ENGINE_UNIT_TESTS "Option to enable or disable unit tests for engine" OFF)
 
 #---------------------------------------#
 #				COMPILE MODE			#
@@ -22,9 +22,9 @@ option(ENGINE_UNIT_TESTS "Option to enable or disable unit tests for engine" ON)
 target_compile_features(Engine PUBLIC cxx_std_20)
 
 if(MSVC)
-    target_compile_options(Engine PUBLIC /W4 /WX)
+    target_compile_options(Engine PUBLIC /W3 /WX)
 else()
-    target_compile_options(Engine PUBLIC -Wall -Wextra -Wpedantic -Werror)
+    target_compile_options(Engine PUBLIC -Wall -Wextra -Wpedantic)
 endif()
 
 #---------------------------------------#

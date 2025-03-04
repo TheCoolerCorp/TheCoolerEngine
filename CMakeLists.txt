@@ -41,5 +41,6 @@ add_subdirectory(Editor)
 #---------------------------------------#
 target_link_libraries(Engine PUBLIC glfw)
 target_link_libraries(Engine PUBLIC Vulkan::Vulkan)
+
 target_link_libraries(Editor PUBLIC Vulkan::Vulkan)
 target_link_libraries(Editor PUBLIC imgui)
