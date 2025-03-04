@@ -15,16 +15,19 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${MY_BIN_OUTPUT_DIR}")
 
 enable_testing()
 
-#---------------------------------------#
-#			COMPILE OPTION				#
-#---------------------------------------#
-
 
 #---------------------------------------#
-#				LIBS					#
+#			LIBS FETCH					#
 #---------------------------------------#
-# ADD LIBS LATER
+add_subdirectory(libs/glfw)
+find_package(Vulkan REQUIRED)
 
+set(IMGUI_FILES_LOCATION "${CMAKE_SOURCE_DIR}/libs/imgui")
+file(GLOB_RECURSE IMGUI_SOURCES_FILES "${IMGUI_FILES_LOCATION}/*.cpp")	
+
+
+add_library(imgui STATIC ${IMGUI_SOURCES_FILES})
+target_include_directories(imgui PUBLIC ${IMGUI_FILES_LOCATION})
 
 #---------------------------------------#
 #			SUBDIRECTORY				#
@@ -32,5 +35,10 @@ enable_testing()
 add_subdirectory(Engine)
 add_subdirectory(Editor)
 
-add_subdirectory(libs/glfw)
-target_link_libraries(Engine glfw)
+
+#---------------------------------------#
+#			LIBS LINK					#
+#---------------------------------------#
+target_link_libraries(Engine PUBLIC glfw)
+target_link_libraries(Engine PUBLIC Vulkan::Vulkan)
+target_link_libraries(Editor PUBLIC imgui)
