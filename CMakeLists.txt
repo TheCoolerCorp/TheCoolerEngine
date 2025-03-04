@@ -23,8 +23,8 @@ add_subdirectory(libs/glfw)
 find_package(Vulkan REQUIRED)
 
 set(IMGUI_FILES_LOCATION "${CMAKE_SOURCE_DIR}/libs/imgui")
-file(GLOB_RECURSE IMGUI_SOURCES_FILES "${IMGUI_FILES_LOCATION}/*.cpp")	
-
+file(GLOB IMGUI_SOURCES_FILES "${IMGUI_FILES_LOCATION}/*.cpp")
+file(APPEND IMGUI_SOURCES_FILES "${IMGUI_FILES_LOCATION}/backends/vulkan/imgui_impl_vulkan.cpp")
 
 add_library(imgui STATIC ${IMGUI_SOURCES_FILES})
 target_include_directories(imgui PUBLIC ${IMGUI_FILES_LOCATION})
@@ -41,4 +41,5 @@ add_subdirectory(Editor)
 #---------------------------------------#
 target_link_libraries(Engine PUBLIC glfw)
 target_link_libraries(Engine PUBLIC Vulkan::Vulkan)
+target_link_libraries(Editor PUBLIC Vulkan::Vulkan)
 target_link_libraries(Editor PUBLIC imgui)
