@@ -51,7 +51,6 @@
 # CMake
 cmake-build-*/
 Engine/Tests/libs/*
-libs/*
 Testing/*
 # Mongo Explorer plugin
 .idea/**/mongoSettings.xml
