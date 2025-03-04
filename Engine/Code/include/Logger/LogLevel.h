@@ -3,6 +3,8 @@
 
 #include <string>
 
+#include "EngineExport.h"
+
 namespace Debug
 {
 	enum class LogLevel : int
@@ -14,7 +16,7 @@ namespace Debug
 		CRITICAL
 	};
 
-	inline std::string ToString(LogLevel a_level)
+	inline std::string ENGINE_API ToString(const LogLevel a_level)
 	{
 		switch (a_level)
 		{

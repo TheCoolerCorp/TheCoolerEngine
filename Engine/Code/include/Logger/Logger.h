@@ -1,21 +1,34 @@
 #ifndef LOGGER_H
 #define LOGGER_H
 
+#include <mutex>
+
 #include "LogLevel.h"
+#include "LogColor.h"
 
 namespace Debug
 {
-	class Logger
+	class ENGINE_API Logger
 	{
 	public:
-		void Log(const std::string& a_message, LogLevel a_level, const char* a_file, int a_line);
-#define LOG(Logger, level, message) (Logger).Log(message, level, __FILE__, __LINE__)
-#define LOG_DEBUG(Logger, message) LOG(Logger, logtard::LogLevel::DEBUG, message)
-#define LOG_INFO(Logger, message) LOG(Logger, logtard::LogLevel::INFO, message)
-#define LOG_WARNING(Logger, message) LOG(Logger, logtard::LogLevel::WARNING, message)
-#define LOG_ERROR(Logger, message) LOG(Logger, logtard::LogLevel::ERROR, message)
-#define LOG_CRITICAL(Logger, message) LOG(Logger, logtard::LogLevel::CRITICAL, message)
+		static Logger& Get();
+		void Log(const std::string& a_message, LogLevel a_level, const std::string& a_color,const char* a_file, int a_line);
+
+	private:
+		struct MutexStruct;
+		MutexStruct* m_mutexStruct;
+		Logger();
+		~Logger();
+		Logger(const Logger&) = delete;
+		Logger& operator=(const Logger&) = delete;
 	};
+
+#define LOG(level, message, color) Logger::Get().Log(message, level, color, (strrchr(__FILE__, '\\') ? strrchr(__FILE__, '\\') + 1 : __FILE__), __LINE__)
+#define LOG_DEBUG(message) LOG(LogLevel::DEBUG, message, ColorMap.at(LogColor::BOLD_BLUE))
+#define LOG_INFO(message) LOG(LogLevel::INFO, message, ColorMap.at(LogColor::BOLD_GREEN))
+#define LOG_WARNING(message) LOG(LogLevel::WARNING, message, ColorMap.at(LogColor::BOLD_YELLOW))
+#define LOG_ERROR(message) LOG(LogLevel::ERROR, message, ColorMap.at(LogColor::BOLD_RED))
+#define LOG_CRITICAL(message) LOG(LogLevel::CRITICAL, message, ColorMap.at(LogColor::BOLD_MAGENTA))
 }
 
 #endif

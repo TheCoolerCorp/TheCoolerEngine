@@ -1,8 +1,9 @@
 #include <iostream>
 #include "Math/vec3.h"
-#include "imgui.h"
+#include "Logger/Logger.h"
 
 using namespace Math;
+using namespace Debug;
 
 int main()
 {
@@ -10,5 +11,12 @@ int main()
     const vec3 t_vec2 = vec3(0.f, 3.f, 5.f);
     vec3 t_ve3 = vec3::CrossProduct(t_vec, t_vec2);
     t_ve3.Print();
+
+    LOG(LogLevel::DEBUG, "Message", ColorMap.at(LogColor::YELLOW));
+    LOG_DEBUG("Debug message");
+    LOG_INFO("Info message");
+    LOG_WARNING("Warning message");
+    LOG_ERROR("Error message");
+    LOG_CRITICAL("Critical message");
     return 0;
 }
