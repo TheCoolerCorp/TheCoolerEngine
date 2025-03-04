@@ -31,3 +31,6 @@ enable_testing()
 #---------------------------------------#
 add_subdirectory(Engine)
 add_subdirectory(Editor)
+
+add_subdirectory(libs/glfw)
+target_link_libraries(Engine glfw)
