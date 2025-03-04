@@ -1,8 +1,6 @@
 #ifndef LOGGER_H
 #define LOGGER_H
 
-#include <mutex>
-
 #include "LogLevel.h"
 #include "LogColor.h"
 
@@ -12,15 +10,19 @@ namespace Debug
 	{
 	public:
 		static Logger& Get();
-		void Log(const std::string& a_message, LogLevel a_level, const std::string& a_color,const char* a_file, int a_line);
+		void Log(const std::string& a_message, LogLevel a_level, const std::string& a_color, const char* a_file, int a_line) const;
 
 	private:
 		struct MutexStruct;
 		MutexStruct* m_mutexStruct;
+		struct LogFileStruct;
+		LogFileStruct* m_logFileStruct;
 		Logger();
 		~Logger();
 		Logger(const Logger&) = delete;
 		Logger& operator=(const Logger&) = delete;
+		static void PrintConsoleLog(const std::string& a_message, const std::string& a_logLevel, const std::string& a_color, const char* a_file, int a_line, const std::tm& a_localTime);
+		void PrintFileLog(const std::string& a_message, const std::string& a_logLevel, const char* a_file, int a_line, const std::tm& a_localTime) const;
 	};
 
 #define LOG(level, message, color) Logger::Get().Log(message, level, color, (strrchr(__FILE__, '\\') ? strrchr(__FILE__, '\\') + 1 : __FILE__), __LINE__)
