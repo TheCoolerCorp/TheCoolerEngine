@@ -1,6 +1,6 @@
 #include "MathUtilsUT.h"
 
-using namespace TheCoolerMath;
+using namespace Math;
 
 namespace MathUtilsUT
 {

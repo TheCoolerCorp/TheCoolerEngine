@@ -1,4 +1,4 @@
-namespace TheCoolerMath
+namespace Math
 {
     inline bool operator==(const vec3& a_v1, const vec3& a_v2)
     {
@@ -166,4 +166,4 @@ namespace TheCoolerMath
 
         return t_v;
     }
-} // namespace TheCoolerMath
+} // namespace Math

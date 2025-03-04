@@ -7,7 +7,7 @@
 #include "vec3.h"
 #include "EngineExport.h"
 
-namespace TheCoolerMath
+namespace Math
 {
     // Class for Quaternion
     class ENGINE_API quat
@@ -44,7 +44,7 @@ namespace TheCoolerMath
         static quat Normalize(quat a_q); //returns normalized quaternion
         static float DotProduct(quat a_q1, quat a_q2); // returns the dot product of two quaternions
     };
-} // namespace TheCoolerMath
+} // namespace Math
 
 #include "quat.inl"
 

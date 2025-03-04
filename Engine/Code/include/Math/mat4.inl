@@ -1,4 +1,4 @@
-namespace TheCoolerMath
+namespace Math
 {
     inline float Mat3Determinant(const std::array<float, 9>& a_elements)
     {
@@ -114,4 +114,4 @@ namespace TheCoolerMath
         }
         return mElements[a_index];
     }
-} // namespace TheCoolerMath
+} // namespace Math

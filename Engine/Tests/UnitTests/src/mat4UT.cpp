@@ -5,7 +5,7 @@
 #include "glm/detail/type_quat.hpp"
 #include "glm/gtx/quaternion.hpp"
 
-using namespace TheCoolerMath;
+using namespace Math;
 
 namespace mat4UT
 {

@@ -2,7 +2,7 @@
 #include "Math/vec3.h"
 #include "imgui.h"
 
-using namespace TheCoolerMath;
+using namespace Math;
 
 int main()
 {

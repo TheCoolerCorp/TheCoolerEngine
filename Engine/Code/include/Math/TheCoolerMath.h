@@ -3,7 +3,7 @@
 
 #include "EngineExport.h"
 
-namespace TheCoolerMath
+namespace Math
 {
     constexpr float PI = 3.14159265358979323846f;
 
@@ -21,6 +21,6 @@ namespace TheCoolerMath
     {
         return a_rad * (180.f / PI);
     }
-} // namespace TheCoolerMath
+} // namespace Math
 
 #endif
