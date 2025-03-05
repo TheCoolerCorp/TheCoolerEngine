@@ -12,6 +12,8 @@ namespace Core
 	class ENGINE_API VulkanInterface : public ApiInterface
 	{
 	public:
+		~VulkanInterface() override = default;
+
 		IWindow* InstantiateWindow() override { return new GLwindow; }
 	};
 }

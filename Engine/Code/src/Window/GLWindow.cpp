@@ -44,6 +44,7 @@ namespace Core
 	{
 		auto app = reinterpret_cast<GLwindow*>(glfwGetWindowUserPointer(a_window));
 		app->m_resized = true;
+		glfwGetFramebufferSize(a_window, &a_width, &a_height);
 	}
 
 	void GLwindow::GetFramebufferSize(int& a_width, int& a_height)
