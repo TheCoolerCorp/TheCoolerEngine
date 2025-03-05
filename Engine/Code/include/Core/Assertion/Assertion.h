@@ -6,7 +6,7 @@
 
 namespace Engine::Core::Debugging
 {
-#ifdef MY_DEBUG
+#ifdef TCDEBUG
 #ifdef _MSC_VER
 #define BREAKPOINT() __debugbreak()
 #else

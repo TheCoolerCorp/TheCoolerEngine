@@ -16,7 +16,7 @@
 #endif
 
 #if defined(_DEBUG) || defined(DEBUG) || defined(__DEBUG__) || defined(__DEBUG)
-	#define MY_DEBUG
+	#define TCDEBUG
 #endif
 
 #endif
