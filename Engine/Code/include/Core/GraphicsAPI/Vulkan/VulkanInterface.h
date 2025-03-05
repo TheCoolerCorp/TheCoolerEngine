@@ -7,18 +7,19 @@
 
 #include "Core/Window/GLWindow.h"
 
-
-#include  "vulkan/vulkan.h"
-
-namespace Engine::Core::GraphicsAPI
+namespace Engine
 {
-	class ENGINE_API VulkanInterface : public RHI::ApiInterface
+	namespace Core
 	{
-	public:
-		~VulkanInterface() override = default;
-		Window::IWindow* InstantiateWindow() override { return new Window::GLwindow; }
-	};
-
+		namespace GraphicsAPI
+		{
+			class ENGINE_API VulkanInterface : public RHI::ApiInterface
+			{
+			public:
+				~VulkanInterface() override = default;
+				Window::IWindow* InstantiateWindow() override { return new Window::GLwindow; }
+			};
+		}
+	}
 }
-
 #endif

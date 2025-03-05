@@ -8,21 +8,26 @@
 
 #include "Core/GraphicsAPI/Vulkan/VulkanUtils.h"
 
-namespace Engine::Core::GraphicsAPI
+namespace Engine
 {
-	class ENGINE_API VulkanInstance : public RHI::IInstance
+	namespace Core
 	{
-	public:
-		~VulkanInstance() override = default;
-		VulkanInstance* CastVulkan() override { return this; }
+		namespace GraphicsAPI
+		{
+			class ENGINE_API VulkanInstance : public RHI::IInstance
+			{
+			public:
+				~VulkanInstance() override = default;
+				VulkanInstance* CastVulkan() override { return this; }
 
-		void Create() override;
-		void Destroy() override;
+				void Create() override;
+				void Destroy() override;
 
-	private:
-		VkInstance m_instance = VK_NULL_HANDLE;
-	};
+			private:
+				VkInstance m_instance = VK_NULL_HANDLE;
+			};
+		}
+	}
+
 }
-
-
 #endif 

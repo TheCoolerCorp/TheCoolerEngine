@@ -13,25 +13,25 @@
 *
 */
 
-
-namespace Engine::Core::Renderer
+namespace Engine
 {
-	class ENGINE_API Renderer
+	namespace Core
 	{
-	public:
-		Renderer() = default;
-		~Renderer() = default;
+		class ENGINE_API Renderer
+		{
+		public:
+			Renderer() = default;
+			~Renderer() = default;
 
-		void Init();
-		void Run();
-		void Destroy();
-	private:
-		// Interface to instanciate your objects
-		RHI::ApiInterface* m_apiInterface = nullptr;
+			void Init();
+			void Run();
+			void Destroy();
+
+		private:
+			RHI::ApiInterface* m_interface = nullptr;
+
 			
-		// Objects
-		RHI::IInstance* m_instance = nullptr;
-	};
+		};
+	}
 }
-
 #endif

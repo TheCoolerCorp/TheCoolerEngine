@@ -8,35 +8,39 @@
 #define GLFW_INCLUDE_VULKAN
 #include "glfw/glfw3.h"
 
-#include  "vulkan/vulkan.h"
 
-namespace Engine::Core::Window
+namespace Engine
 {
-	class ENGINE_API GLwindow : public IWindow
+	namespace Core
 	{
-	public:
-		~GLwindow() override = default;
-		GLwindow* CastGLFW() override { return nullptr; }
+		namespace Window
+		{
+			class ENGINE_API GLwindow : public IWindow
+			{
+			public:
+				~GLwindow() override = default;
+				GLwindow* CastGLFW() override { return nullptr; }
 
-		void Create(int a_width, int a_height) override;
-		void Destroy() override;
+				void Create(int a_width, int a_height) override;
+				void Destroy() override;
 
-		void PollEvents() override;
-		void WaitEvents() override;
-		bool ShouldClose() override;
-		void GetFramebufferSize(int& a_width, int& a_height) override;
+				void PollEvents() override;
+				void WaitEvents() override;
+				bool ShouldClose() override;
+				void GetFramebufferSize(int& a_width, int& a_height) override;
 
-		const char** GetRequiredInstanceExtensions(uint32_t* count) override;
+				const char** GetRequiredInstanceExtensions(uint32_t* count) override;
 
-		bool GetResized() override { return m_resized; }
-	private:
-		GLFWwindow* m_window = nullptr;
-		int m_width = 800;
-		int m_height = 600;
-		bool m_resized = false;
+				bool GetResized() override { return m_resized; }
+			private:
+				GLFWwindow* m_window = nullptr;
+				int m_width = 800;
+				int m_height = 600;
+				bool m_resized = false;
 
-		static void ResizeFramebuffer(GLFWwindow* a_window, int a_width, int a_height);
-	};
+				static void ResizeFramebuffer(GLFWwindow* a_window, int a_width, int a_height);
+			};
+		}
+	}
 }
-
 #endif

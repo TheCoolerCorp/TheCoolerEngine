@@ -5,22 +5,25 @@
 
 #include "GraphicsAPI/Vulkan/VulkanInterface.h"
 
-namespace Engine::Core
+namespace Engine
 {
-	class ENGINE_API Application
+	namespace Core
 	{
-	public:
-		Application() = default;
-		~Application() = default;
+		class ENGINE_API Application
+		{
+		public:
+			Application() = default;
+			~Application() = default;
 
-		void Create(int a_width, int a_height);
-		void Run() const;
-		void Destroy() const;
+			void Create(int a_width, int a_height);
+			void Run() const;
+			void Destroy() const;
 
-	private:
-		RHI::ApiInterface* m_apiInterface = nullptr;
-		Window::IWindow* m_window = nullptr;
-	};
+		private:
+			RHI::ApiInterface* m_apiInterface = nullptr;
+			Window::IWindow* m_window = nullptr;
+		};
+	}
 }
 
 #endif

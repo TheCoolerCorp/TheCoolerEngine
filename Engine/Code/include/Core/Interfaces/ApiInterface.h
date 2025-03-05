@@ -5,16 +5,22 @@
 
 #include "Core/Window/IWindow.h"
 
-namespace Engine::Core::RHI
+namespace Engine
 {
-	class ENGINE_API ApiInterface
+	namespace Core
 	{
-	public:
-		virtual ~ApiInterface() = default;
+		namespace RHI
+		{
+			class ENGINE_API ApiInterface
+			{
+			public:
+				virtual ~ApiInterface() = default;
 
-		virtual Window::IWindow* InstantiateWindow() = 0;
-		virtual void DestroyWindow(Window::IWindow* a_window) { delete a_window; }
-	};
+				virtual Window::IWindow* InstantiateWindow() = 0;
+				virtual void DestroyWindow(Window::IWindow* a_window) { delete a_window; }
+			};
+		}
+	}
 }
 
 #endif

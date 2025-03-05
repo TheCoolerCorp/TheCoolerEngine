@@ -3,23 +3,33 @@
 
 #include "EngineExport.h"
 
-
-namespace Engine::Core::GraphicsAPI
+namespace Engine
 {
-	class ENGINE_API VulkanInstance;
+	namespace Core
+	{
+		namespace GraphicsAPI
+		{
+			class ENGINE_API VulkanInstance;
+		}
+	}
 }
 
 namespace Engine::Core::RHI
 {
-
-	class ENGINE_API IInstance
+	namespace Core
 	{
-	public:
-		virtual ~IInstance() = default;
-		virtual GraphicsAPI::VulkanInstance* CastVulkan() { return nullptr; }
+		namespace RHI
+		{
+			class ENGINE_API IInstance
+			{
+			public:
+				virtual ~IInstance() = default;
+				virtual GraphicsAPI::VulkanInstance* CastVulkan() { return nullptr; }
 
-		virtual void Create() = 0;
-		virtual void Destroy() = 0;
-	};
+				virtual void Create() = 0;
+				virtual void Destroy() = 0;
+			};
+		}
+	}
 }
 #endif
