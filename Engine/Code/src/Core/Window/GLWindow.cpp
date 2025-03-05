@@ -1,7 +1,6 @@
 #include "Core/Window/GLWindow.h"
 #include "Core/Logger/Logger.h"
 
-using namespace Debug;
 
 namespace Core
 {
@@ -39,17 +38,6 @@ namespace Core
 
 	bool GLwindow::ShouldClose()
 	{
-		/*int windowSizeW;
-		int windowSizeH;
-		int framebufferSizeW;
-		int framebufferSizeH;
-		glfwGetWindowSize(m_window, &windowSizeW, &windowSizeH);
-		glfwGetFramebufferSize(m_window, &framebufferSizeW, &framebufferSizeH);*/
-		
-		//LOG_INFO("window width : " + std::to_string(windowSizeW));
-		//LOG_INFO("window height : " + std::to_string(windowSizeH));
-		//LOG_INFO("frame width : " + std::to_string(framebufferSizeW));
-		//LOG_INFO("frame width : " + std::to_string(framebufferSizeH));
 		bool shouldClose = glfwWindowShouldClose(m_window);
 		return shouldClose;
 	}
