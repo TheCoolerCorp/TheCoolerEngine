@@ -5,9 +5,9 @@
 #include <string>
 
 #include "EngineExport.h"
+
 #include "LogLevel.h"
 #include "LogColor.h"
-
 namespace Engine
 {
 	namespace Core
@@ -35,12 +35,12 @@ namespace Engine
 				void PrintFileLog(const std::string& a_message, const std::string& a_logLevel, const char* a_file, int a_line, const std::tm& a_localTime) const;
 			};
 
-#define LOG(level, message, color) Logger::Get().Log(message, level, color, std::filesystem::path(__FILE__).filename().string().c_str(), __LINE__)
-#define LOG_DEBUG(message) LOG(LogLevel::DEBUGLOG, message, ColorMap.at(LogColor::BOLD_BLUE))
-#define LOG_INFO(message) LOG(LogLevel::INFO, message, ColorMap.at(LogColor::BOLD_GREEN))
-#define LOG_WARNING(message) LOG(LogLevel::WARNING, message, ColorMap.at(LogColor::BOLD_YELLOW))
-#define LOG_ERROR(message) LOG(LogLevel::ERROR, message, ColorMap.at(LogColor::BOLD_RED))
-#define LOG_CRITICAL(message) LOG(LogLevel::CRITICAL, message, ColorMap.at(LogColor::BOLD_MAGENTA))
+			#define LOG(level, message, color) Logger::Get().Log(message, level, color, std::filesystem::path(__FILE__).filename().string().c_str(), __LINE__)
+			#define LOG_DEBUG(message) LOG(LogLevel::DEBUGLOG, message, ColorMap.at(LogColor::BOLD_BLUE))
+			#define LOG_INFO(message) LOG(LogLevel::INFO, message, ColorMap.at(LogColor::BOLD_GREEN))
+			#define LOG_WARNING(message) LOG(LogLevel::WARNING, message, ColorMap.at(LogColor::BOLD_YELLOW))
+			#define LOG_ERROR(message) LOG(LogLevel::ERROR, message, ColorMap.at(LogColor::BOLD_RED))
+			#define LOG_CRITICAL(message) LOG(LogLevel::CRITICAL, message, ColorMap.at(LogColor::BOLD_MAGENTA))
 		}
 	}
 }

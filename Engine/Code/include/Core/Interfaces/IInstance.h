@@ -11,13 +11,6 @@ namespace Engine
 		{
 			class ENGINE_API VulkanInstance;
 		}
-	}
-}
-
-namespace Engine::Core::RHI
-{
-	namespace Core
-	{
 		namespace RHI
 		{
 			class ENGINE_API IInstance

@@ -16,7 +16,6 @@ namespace Engine
 				const std::string& a_color, const char* a_file, const int a_line, const std::tm& a_localTime)
 			{
 				std::cout << a_color << a_logLevel << ColorMap.at(LogColor::RESET) << " : ";
-
 				std::cout << "[" << std::put_time(&a_localTime, "%Y-%m-%d %H:%M:%S") << "]";
 
 				if (a_file != nullptr)

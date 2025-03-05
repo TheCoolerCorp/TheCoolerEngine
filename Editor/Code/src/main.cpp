@@ -11,8 +11,8 @@ int main()
     Engine::Math::vec3 t_ve3 = Engine::Math::vec3::CrossProduct(t_vec, t_vec2);
     t_ve3.Print();
 
-    LOG(Engine::Core::Debugging::LogLevel::DEBUGLOG, "Message", Engine::Core::Debugging::ColorMap.at(Engine::Core::Debugging::LogColor::YELLOW));
-    LOG_DEBUG("Debug message");
+    Engine::Core::Debugging::LOG(Engine::Core::Debugging::LogLevel::DEBUGLOG, "Message", Engine::Core::Debugging::ColorMap.at(Engine::Core::Debugging::LogColor::YELLOW));
+    /*LOG_DEBUG("Debug message");
     LOG_INFO("Info message");
     LOG_WARNING("Warning message");
     LOG_ERROR("Error message");
@@ -20,7 +20,7 @@ int main()
     LOG_DEBUG(t_ve3.x);
     LOG_ERROR(true);
     LOG_CRITICAL(6);
-    LOG_WARNING(56.264556);
+    LOG_WARNING(56.264556);*/
 
     bool t_testBool = true;
 

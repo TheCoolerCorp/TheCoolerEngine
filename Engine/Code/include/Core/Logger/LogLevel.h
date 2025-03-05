@@ -5,7 +5,7 @@
 
 #include "EngineExport.h"
 
-namespace Engin
+namespace Engine
 {
 	namespace Core
 	{
