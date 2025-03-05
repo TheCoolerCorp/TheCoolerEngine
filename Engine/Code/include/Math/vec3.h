@@ -6,7 +6,7 @@
 
 #include "EngineExport.h"
 
-namespace TheCoolerMath
+namespace Math
 {
     //Class for Vector3
     class ENGINE_API vec3
@@ -45,7 +45,7 @@ namespace TheCoolerMath
         static vec3 CrossProduct(vec3 a_v1, vec3 a_v2); // returns the cross product of two vectors
         static float GetAngle(vec3 a_v1, vec3 a_v2); // returns the angle between two vectors
     };
-} // namespace TheCoolerMath
+} // namespace Math
 
 #include "vec3.inl"
 

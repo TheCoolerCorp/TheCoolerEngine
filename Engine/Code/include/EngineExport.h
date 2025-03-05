@@ -2,9 +2,17 @@
 #define ENGINEEXPORT_H
 
 #ifdef ENGINE_EXPORTS
-	#define ENGINE_API __declspec(dllexport)
+	#ifdef _MSC_VER
+		#define ENGINE_API __declspec(dllexport)
+	#else
+		#define ENGINE_API __attribute__((visibility("default")))
+	#endif
 #else
-	#define ENGINE_API __declspec(dllimport)
+	#ifdef _MSC_VER
+		#define ENGINE_API __declspec(dllimport)
+	#else
+		#define ENGINE_API
+	#endif
 #endif
 
 #endif

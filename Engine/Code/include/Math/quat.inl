@@ -1,4 +1,4 @@
-namespace TheCoolerMath
+namespace Math
 {
     inline bool operator==(const quat& a_q1, const quat& a_q2)
     {
@@ -156,4 +156,4 @@ namespace TheCoolerMath
 
         return t_q;
     }
-} // namespace TheCoolerMath
+} // namespace Math

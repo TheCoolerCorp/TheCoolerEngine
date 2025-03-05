@@ -1,6 +1,6 @@
 #include "Math/mat4.h"
 
-namespace TheCoolerMath
+namespace Math
 {
     void mat4::Print() const
     {
@@ -231,4 +231,4 @@ namespace TheCoolerMath
             0.f, 0.f, 0.f, 1.f
             });
     }
-} // namespace TheCoolerMath
+} // namespace Math

@@ -13,7 +13,9 @@
                 "rhs": "Windows"
             },
             "cacheVariables": {
-                "ENGINE_UNIT_TESTS": true
+              "CMAKE_CXX_FLAGS_DEBUG": "-DDEBUG",
+              "CMAKE_CXX_FLAGS_RELEASE": "",
+              "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
             }
         },
         {
@@ -24,19 +26,21 @@
             "cacheVariables": {
                 "CMAKE_C_COMPILER": "gcc$env{gcc_compiler_v}",
                 "CMAKE_CXX_COMPILER": "g++$env{gcc_compiler_v}",
+                "CMAKE_CXX_FLAGS_DEBUG": "-DDEBUG",
+                "CMAKE_CXX_FLAGS_RELEASE": "",
                 "ENGINE_UNIT_TESTS":true
             }
         }
     ],
 
-    "buildPresets": [
+      "buildPresets": [
         {
-            "name": "VS_2022 Debug",
-            "description": "Visual Studio multi-config Debug preset",
-            "configurePreset": "VS_2022",
-            "configuration": "Debug",
-            "verbose": true,
-            "jobs": 8
+          "name": "VS_2022 Debug",
+          "description": "Visual Studio multi-config Debug preset",
+          "configurePreset": "VS_2022",
+          "configuration": "Debug",
+          "verbose": true,
+          "jobs": 8
         },
         {
             "name": "VS_2022 Release",

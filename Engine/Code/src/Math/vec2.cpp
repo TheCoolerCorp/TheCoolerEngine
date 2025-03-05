@@ -1,6 +1,6 @@
 #include "Math/vec2.h"
 
-namespace TheCoolerMath
+namespace Math
 {
     float vec2::operator[](const int a_index) const
     {
@@ -86,4 +86,4 @@ namespace TheCoolerMath
 
         return t_angle;
     }
-} // namespace TheCoolerMath
+} // namespace Math

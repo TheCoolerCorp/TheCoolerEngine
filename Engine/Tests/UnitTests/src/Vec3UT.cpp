@@ -1,7 +1,7 @@
 #include <iostream>
 #include "vec3UT.h"
 
-using namespace TheCoolerMath;
+using namespace Math;
 
 namespace vec3UT
 {
