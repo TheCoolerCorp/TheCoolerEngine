@@ -3,7 +3,7 @@
 
 #include "EngineExport.h"
 
-#include "Interfaces/VulkanInterface.h"
+#include "GraphicsAPI/Vulkan/VulkanInterface.h"
 
 namespace Core
 {
