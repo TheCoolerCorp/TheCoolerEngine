@@ -4,9 +4,13 @@
 #include <mutex>
 #include <string>
 
-namespace Engine::Core::Debugging
+namespace Engine
 {
-	inline ENGINE_API std::string ToString(const std::string& a_message)
+	namespace Core
+	{
+		namespace Debugging
+		{
+			inline ENGINE_API std::string ToString(const std::string& a_message)
 	{
 		return a_message;
 	}
@@ -66,5 +70,7 @@ namespace Engine::Core::Debugging
 
 		PrintConsoleLog(t_message, t_logLevel, a_color, a_file, a_line, t_localTime);
 		PrintFileLog(t_message, t_logLevel, a_file, a_line, t_localTime);
+	}
+		}
 	}
 }
