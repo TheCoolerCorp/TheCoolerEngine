@@ -13,7 +13,7 @@ namespace Engine::Core::GraphicsAPI
 namespace Engine::Core::RHI
 {
 
-	class IInstance
+	class ENGINE_API IInstance
 	{
 	public:
 		virtual ~IInstance() = default;

@@ -15,7 +15,7 @@ namespace Engine::Core::Debugging
 #define ASSERT(condition, message) \
 		do { \
 			if (!(condition)) { \
-				std::cerr << "Assertion failed: " << message << " in file " << (strrchr(__FILE__, '\\') ? strrchr(__FILE__, '\\') + 1 : __FILE__) << " at line " << __LINE__ << std::endl; \
+				std::cerr << "Assertion failed: " << (message) << " in file " << (strrchr(__FILE__, '\\') ? strrchr(__FILE__, '\\') + 1 : __FILE__) << " at line " << __LINE__ << '\n'; \
 				BREAKPOINT(); \
 			} \
 		} while(0)
@@ -23,7 +23,7 @@ namespace Engine::Core::Debugging
 #define ASSERT(condition, message) \
 		do { \
 			if (!(condition)) { \
-				std::cerr << "Assertion failed: " << message << " in file " << (strrchr(__FILE__, '\\') ? strrchr(__FILE__, '\\') + 1 : __FILE__) << " at line " << __LINE__ << std::endl; \
+				std::cerr << "Assertion failed: " << message << " in file " << (strrchr(__FILE__, '\\') ? strrchr(__FILE__, '\\') + 1 : __FILE__) << " at line " << __LINE__ << '\n; \
 				abort(); \
 			} \
 		} while(0)

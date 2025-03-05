@@ -4,17 +4,14 @@
 #include "Core/Logger/Logger.h"
 #include "Core/Assertion/Assertion.h"
 
-using namespace Engine::Math;
-using namespace Engine::Core::Debugging;
-
 int main()
 {
-    const vec3 t_vec = vec3(0.f, 1.f, 2.f);
-    const vec3 t_vec2 = vec3(0.f, 3.f, 5.f);
-    vec3 t_ve3 = vec3::CrossProduct(t_vec, t_vec2);
+    const Engine::Math::vec3 t_vec = Engine::Math::vec3(0.f, 1.f, 2.f);
+    const Engine::Math::vec3 t_vec2 = Engine::Math::vec3(0.f, 3.f, 5.f);
+    Engine::Math::vec3 t_ve3 = Engine::Math::vec3::CrossProduct(t_vec, t_vec2);
     t_ve3.Print();
 
-    LOG(LogLevel::DEBUGLOG, "Message", ColorMap.at(LogColor::YELLOW));
+    LOG(Engine::Core::Debugging::LogLevel::DEBUGLOG, "Message", Engine::Core::Debugging::ColorMap.at(Engine::Core::Debugging::LogColor::YELLOW));
     LOG_DEBUG("Debug message");
     LOG_INFO("Info message");
     LOG_WARNING("Warning message");
