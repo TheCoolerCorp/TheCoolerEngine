@@ -29,7 +29,7 @@ int main()
 
     ASSERT(t_testBool, "Test if bool is true");
 
-#ifdef DEBUG
+#ifdef MY_DEBUG
     std::cout << "Debug mode enabled\n";
 #else
     std::cout << "Release mode enabled\n";

@@ -23,8 +23,6 @@ target_compile_features(Engine PUBLIC cxx_std_20)
 
 if(MSVC)
     target_compile_options(Engine PUBLIC /W4 /WX)
-elseif(NOT MSVC AND CMAKE_BUILD_TYPE STREQUAL "Debug")
-    target_compile_options(Engine PUBLIC -Wall -Wextra -Wpedantic -Werror -DDEBUG)
 else()
     target_compile_options(Engine PUBLIC -Wall -Wextra -Werror -Wpedantic)
 endif()
