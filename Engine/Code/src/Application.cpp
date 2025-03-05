@@ -13,7 +13,7 @@ namespace Core
 	{
 		while (!m_window->ShouldClose())
 		{
-			glfwPollEvents();
+			m_window->PollEvents();
 		}
 	}
 
