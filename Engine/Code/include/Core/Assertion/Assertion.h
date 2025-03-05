@@ -2,6 +2,7 @@
 #define ASSERTION_H
 
 #include <cstring>
+#include <iostream>
 #include "EngineExport.h"
 
 namespace Engine::Core::Debugging
@@ -23,7 +24,7 @@ namespace Engine::Core::Debugging
 #define ASSERT(condition, message) \
 		do { \
 			if (!(condition)) { \
-				std::cerr << "Assertion failed: " << message << " in file " << (strrchr(__FILE__, '\\') ? strrchr(__FILE__, '\\') + 1 : __FILE__) << " at line " << __LINE__ << '\n; \
+				std::cerr << "Assertion failed: " << (message) << " in file " << (strrchr(__FILE__, '\\') ? strrchr(__FILE__, '\\') + 1 : __FILE__) << " at line " << __LINE__ << '\n; \
 				abort(); \
 			} \
 		} while(0)

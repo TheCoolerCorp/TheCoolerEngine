@@ -5,12 +5,8 @@
 
 #include "Core/Interfaces/IInstance.h"
 
-#include  "vulkan/vulkan.h"
 
-namespace Engine::Core::Window
-{
-	class IWindow;
-}
+#include "Core/GraphicsAPI/Vulkan/VulkanUtils.h"
 
 namespace Engine::Core::GraphicsAPI
 {
@@ -20,11 +16,11 @@ namespace Engine::Core::GraphicsAPI
 		~VulkanInstance() override = default;
 		VulkanInstance* CastVulkan() override { return this; }
 
-		void Create(Window::IWindow* a_window) override;
+		void Create() override;
 		void Destroy() override;
 
 	private:
-		VkInstance m_instance_ = VK_NULL_HANDLE;
+		VkInstance m_instance = VK_NULL_HANDLE;
 	};
 }
 
