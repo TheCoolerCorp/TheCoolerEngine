@@ -3,15 +3,16 @@
 
 #include "EngineExport.h"
 
-#include "Interfaces/ApiInterface.h"
+#include "ApiInterface.h"
 
-#include "Window/GLWindow.h"
+#include "Core/Window/GLWindow.h"
 
 namespace Core
 {
 	class ENGINE_API VulkanInterface : public ApiInterface
 	{
 	public:
+		~VulkanInterface() override = default;
 		IWindow* InstantiateWindow() override { return new GLwindow; }
 	};
 }
