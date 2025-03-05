@@ -10,7 +10,7 @@ namespace Core
 	class ENGINE_API IWindow
 	{
 	public:
-		~IWindow() = default;
+		virtual ~IWindow() = default;
 		virtual GLwindow* CastGLFW() { return nullptr; }
 
 		virtual void Create(int a_width, int a_height) = 0;

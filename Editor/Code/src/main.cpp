@@ -25,7 +25,7 @@ int main()
     LOG_CRITICAL(6);
     LOG_WARNING(56.264556);
 
-    bool t_testBool = false;
+    bool t_testBool = true;
 
     ASSERT(t_testBool, "Test if bool is true");
 
