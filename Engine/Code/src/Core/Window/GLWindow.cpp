@@ -53,6 +53,11 @@ namespace Engine::Core::Window
 		glfwSetWindowSize(app->m_window, app->m_width, app->m_height);
 	}
 
+	const char** GLwindow::GetRequiredInstanceExtensions(uint32_t* count)
+	{
+		return glfwGetRequiredInstanceExtensions(count);
+	}
+
 	void GLwindow::GetFramebufferSize(int& a_width, int& a_height)
 	{
 		a_width = m_width;

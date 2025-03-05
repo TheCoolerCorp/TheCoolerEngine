@@ -1,7 +1,10 @@
 #ifndef IWINDOW_H
 #define IWINDOW_H
 
+#include <cstdint>
+
 #include "EngineExport.h"
+
 
 namespace Engine::Core::Window
 {
@@ -20,6 +23,8 @@ namespace Engine::Core::Window
 		virtual void WaitEvents() = 0;
 		virtual bool ShouldClose() = 0;
 		virtual void GetFramebufferSize(int& a_width, int& a_height) = 0;
+
+		virtual const char** GetRequiredInstanceExtensions(uint32_t* count) { (void)count; return nullptr; }
 
 		virtual bool GetResized() { return false; }
 	};

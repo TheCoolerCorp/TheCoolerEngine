@@ -8,6 +8,8 @@
 #define GLFW_INCLUDE_VULKAN
 #include "glfw/glfw3.h"
 
+#include  "vulkan/vulkan.h"
+
 namespace Engine::Core::Window
 {
 	class ENGINE_API GLwindow : public IWindow
@@ -23,6 +25,8 @@ namespace Engine::Core::Window
 		void WaitEvents() override;
 		bool ShouldClose() override;
 		void GetFramebufferSize(int& a_width, int& a_height) override;
+
+		const char** GetRequiredInstanceExtensions(uint32_t* count) override;
 
 		bool GetResized() override { return m_resized; }
 	private:
