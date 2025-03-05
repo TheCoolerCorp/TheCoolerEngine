@@ -8,7 +8,7 @@
 #include "vec3.h"
 #include "EngineExport.h"
 
-namespace Math
+namespace Engine::Math
 {
     // Class for 4x4 matrices
     class ENGINE_API mat4
@@ -48,7 +48,7 @@ namespace Math
     };
 
     float ENGINE_API Mat3Determinant(const std::array<float, 9>& a_elements);
-} // namespace Math
+}
 
 #include "mat4.inl"
 

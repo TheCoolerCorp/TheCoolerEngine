@@ -3,7 +3,7 @@
 
 #include "EngineExport.h"
 
-namespace Core
+namespace Engine::Core::Window
 {
 	class ENGINE_API GLwindow;
 
@@ -24,4 +24,5 @@ namespace Core
 		virtual bool GetResized() { return false; }
 	};
 }
+
 #endif

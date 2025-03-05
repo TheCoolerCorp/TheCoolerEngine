@@ -1,6 +1,6 @@
 #include "Math/vec3.h"
 
-namespace Math
+namespace Engine::Math
 {
     float vec3::operator[](const int a_index) const
     {
@@ -98,4 +98,4 @@ namespace Math
 
         return t_angle;
     }
-} // namespace Math
+}

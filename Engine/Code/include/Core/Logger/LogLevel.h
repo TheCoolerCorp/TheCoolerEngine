@@ -5,7 +5,7 @@
 
 #include "EngineExport.h"
 
-namespace Debugging
+namespace Engine::Core::Debugging
 {
 	enum class LogLevel : int
 	{
@@ -22,15 +22,15 @@ namespace Debugging
 		{
 		case LogLevel::DEBUGLOG:
 			return "DEBUG";
-		case LogLevel::INFO: 
+		case LogLevel::INFO:
 			return "INFO";
-		case LogLevel::WARNING: 
+		case LogLevel::WARNING:
 			return "WARNING";
-		case LogLevel::ERROR: 
+		case LogLevel::ERROR:
 			return "ERROR";
-		case LogLevel::CRITICAL: 
+		case LogLevel::CRITICAL:
 			return "CRITICAL";
-		default: 
+		default:
 			return "unknown";
 		}
 	}

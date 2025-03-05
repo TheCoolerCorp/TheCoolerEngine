@@ -8,7 +8,7 @@
 #define GLFW_INCLUDE_VULKAN
 #include "glfw/glfw3.h"
 
-namespace Core
+namespace Engine::Core::Window
 {
 	class ENGINE_API GLwindow : public IWindow
 	{
@@ -34,4 +34,5 @@ namespace Core
 		static void ResizeFramebuffer(GLFWwindow* a_window, int a_width, int a_height);
 	};
 }
+
 #endif

@@ -7,7 +7,7 @@
 #include "LogLevel.h"
 #include "LogColor.h"
 
-namespace Debugging
+namespace Engine::Core::Debugging
 {
 	class ENGINE_API Logger
 	{

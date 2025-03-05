@@ -1,7 +1,7 @@
 #include "Math/quat.h"
 #include "Math/TheCoolerMath.h"
 
-namespace Math
+namespace Engine::Math
 {
     quat::quat(const vec3 a_eulerAngles)
     {
@@ -156,4 +156,4 @@ namespace Math
     {
         return (a_q1.x * a_q2.x) + (a_q1.y * a_q2.y) + (a_q1.z * a_q2.z) + (a_q1.w * a_q2.w);
     }
-} // namespace Math
+}

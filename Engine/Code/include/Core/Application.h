@@ -5,9 +5,8 @@
 
 #include "GraphicsAPI/Vulkan/VulkanInterface.h"
 
-namespace Core
+namespace Engine::Core
 {
-
 	class ENGINE_API Application
 	{
 	public:
@@ -15,12 +14,13 @@ namespace Core
 		~Application() = default;
 
 		void Create(int a_width, int a_height);
-		void Run();
-		void Destroy();
+		void Run() const;
+		void Destroy() const;
 
 	private:
-		ApiInterface* m_apiInterface = nullptr;
-		IWindow* m_window = nullptr;
+		RHI::ApiInterface* m_apiInterface = nullptr;
+		Window::IWindow* m_window = nullptr;
 	};
 }
+
 #endif

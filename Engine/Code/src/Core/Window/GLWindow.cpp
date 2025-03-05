@@ -2,7 +2,7 @@
 #include "Core/Logger/Logger.h"
 
 
-namespace Core
+namespace Engine::Core::Window
 {
 	void GLwindow::Create(int a_width, int a_height)
 	{
@@ -18,7 +18,7 @@ namespace Core
 
 		glfwSetFramebufferSizeCallback(m_window, ResizeFramebuffer);
 	}
-	
+
 	void GLwindow::Destroy()
 	{
 		glfwDestroyWindow(m_window);

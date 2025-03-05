@@ -1,6 +1,6 @@
 #include "Math/mat4.h"
 
-namespace Math
+namespace Engine::Math
 {
     void mat4::Print() const
     {
@@ -231,4 +231,4 @@ namespace Math
             0.f, 0.f, 0.f, 1.f
             });
     }
-} // namespace Math
+}

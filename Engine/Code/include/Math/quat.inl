@@ -1,4 +1,4 @@
-namespace Math
+namespace Engine::Math
 {
     inline bool operator==(const quat& a_q1, const quat& a_q2)
     {
@@ -156,4 +156,4 @@ namespace Math
 
         return t_q;
     }
-} // namespace Math
+}

@@ -4,8 +4,8 @@
 #include "Core/Logger/Logger.h"
 #include "Core/Assertion/Assertion.h"
 
-using namespace Math;
-using namespace Debugging;
+using namespace Engine::Math;
+using namespace Engine::Core::Debugging;
 
 int main()
 {
@@ -34,7 +34,7 @@ int main()
 #else
     std::cout << "Release mode enabled\n";
 #endif
-    Core::Application app = Core::Application();
+    Engine::Core::Application app = Engine::Core::Application();
     app.Create(1440, 1080);
     app.Run();
     app.Destroy();

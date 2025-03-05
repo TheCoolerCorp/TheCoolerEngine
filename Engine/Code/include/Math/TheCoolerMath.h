@@ -3,7 +3,7 @@
 
 #include "EngineExport.h"
 
-namespace Math
+namespace Engine::Math
 {
     constexpr float PI = 3.14159265358979323846f;
 
@@ -21,6 +21,6 @@ namespace Math
     {
         return a_rad * (180.f / PI);
     }
-} // namespace Math
+}
 
 #endif

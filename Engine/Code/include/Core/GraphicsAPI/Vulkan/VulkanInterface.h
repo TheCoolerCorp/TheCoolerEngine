@@ -7,13 +7,14 @@
 
 #include "Core/Window/GLWindow.h"
 
-namespace Core
+namespace Engine::Core::GraphicsAPI
 {
-	class ENGINE_API VulkanInterface : public ApiInterface
+	class ENGINE_API VulkanInterface : public RHI::ApiInterface
 	{
 	public:
 		~VulkanInterface() override = default;
-		IWindow* InstantiateWindow() override { return new GLwindow; }
+		Window::IWindow* InstantiateWindow() override { return new Window::GLwindow; }
 	};
 }
+
 #endif

@@ -6,7 +6,7 @@
 
 #include "EngineExport.h"
 
-namespace Math
+namespace Engine::Math
 {
     //Class for Vector3
     class ENGINE_API vec3
@@ -45,7 +45,7 @@ namespace Math
         static vec3 CrossProduct(vec3 a_v1, vec3 a_v2); // returns the cross product of two vectors
         static float GetAngle(vec3 a_v1, vec3 a_v2); // returns the angle between two vectors
     };
-} // namespace Math
+}
 
 #include "vec3.inl"
 
