@@ -3,7 +3,6 @@
 
 #include "EngineExport.h"
 
-#include "Core/Window/IWindow.h"
 
 namespace Engine::Core::GraphicsAPI
 {
@@ -13,13 +12,13 @@ namespace Engine::Core::GraphicsAPI
 namespace Engine::Core::RHI
 {
 
-	class IInstance
+	class ENGINE_API IInstance
 	{
 	public:
 		virtual ~IInstance() = default;
 		virtual GraphicsAPI::VulkanInstance* CastVulkan() { return nullptr; }
 
-		virtual void Create(Window::IWindow* a_window) = 0;
+		virtual void Create() = 0;
 		virtual void Destroy() = 0;
 	};
 }
