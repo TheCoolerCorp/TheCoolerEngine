@@ -3,9 +3,9 @@
 
 #include "EngineExport.h"
 
-#include "Interfaces/ApiInterface.h"
+#include "ApiInterface.h"
 
-#include "Window/GLWindow.h"
+#include "Core/Window/GLWindow.h"
 
 namespace Core
 {
@@ -13,7 +13,6 @@ namespace Core
 	{
 	public:
 		~VulkanInterface() override = default;
-
 		IWindow* InstantiateWindow() override { return new GLwindow; }
 	};
 }

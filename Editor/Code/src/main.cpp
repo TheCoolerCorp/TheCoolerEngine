@@ -1,8 +1,8 @@
 #include <iostream>
 #include "Math/vec3.h"
-#include "Application.h"
-#include "Logger/Logger.h"
-#include "Assertion/Assertion.h"
+#include "Core/Application.h"
+#include "Core/Logger/Logger.h"
+#include "Core/Assertion/Assertion.h"
 
 using namespace Math;
 using namespace Debug;

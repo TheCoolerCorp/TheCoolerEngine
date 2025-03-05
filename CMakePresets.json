@@ -13,9 +13,10 @@
                 "rhs": "Windows"
             },
             "cacheVariables": {
-              "CMAKE_CXX_FLAGS_DEBUG": "-DDEBUG",
-              "CMAKE_CXX_FLAGS_RELEASE": "",
-              "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+                "CMAKE_CXX_FLAGS_DEBUG": "-DDEBUG",
+                "CMAKE_CXX_FLAGS_RELEASE": "",
+                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+                "ENGINE_UNIT_TESTS": true
             }
         },
         {
