@@ -9,7 +9,7 @@ namespace Debug
 {
 	enum class LogLevel : int
 	{
-		DEBUG,
+		DEBUGLOG,
 		INFO,
 		WARNING,
 		ERROR,
@@ -20,7 +20,7 @@ namespace Debug
 	{
 		switch (a_level)
 		{
-		case LogLevel::DEBUG: 
+		case LogLevel::DEBUGLOG:
 			return "DEBUG";
 		case LogLevel::INFO: 
 			return "INFO";
