@@ -2,10 +2,11 @@
 #define ASSERTION_H
 
 #include <cstring>
+#include "EngineExport.h"
 
 namespace Engine::Core::Debugging
 {
-#ifdef DEBUG
+#ifdef TCDEBUG
 #ifdef _MSC_VER
 #define BREAKPOINT() __debugbreak()
 #else

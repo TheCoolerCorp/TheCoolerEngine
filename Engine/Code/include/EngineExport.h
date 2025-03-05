@@ -15,4 +15,8 @@
 	#endif
 #endif
 
+#if defined(_DEBUG) || defined(DEBUG) || defined(__DEBUG__) || defined(__DEBUG)
+	#define TCDEBUG
+#endif
+
 #endif
