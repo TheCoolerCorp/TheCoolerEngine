@@ -24,7 +24,7 @@ find_package(Vulkan REQUIRED)
 
 set(IMGUI_FILES_LOCATION "${CMAKE_SOURCE_DIR}/libs/imgui")
 file(GLOB IMGUI_SOURCES_FILES "${IMGUI_FILES_LOCATION}/*.cpp")
-file(APPEND IMGUI_SOURCES_FILES "${IMGUI_FILES_LOCATION}/backends/vulkan/imgui_impl_vulkan.cpp")
+file(GLOB IMGUI_SOURCES_FILES "${IMGUI_FILES_LOCATION}/*.cpp" "${IMGUI_FILES_LOCATION}/backends/vulkan/imgui_impl_vulkan.cpp")
 
 add_library(imgui STATIC ${IMGUI_SOURCES_FILES})
 target_include_directories(imgui PUBLIC ${IMGUI_FILES_LOCATION})

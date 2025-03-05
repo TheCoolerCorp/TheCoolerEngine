@@ -6,7 +6,7 @@
 
 #include "EngineExport.h"
 
-namespace Debug
+namespace Debugging
 {
     enum class LogColor : int
     {

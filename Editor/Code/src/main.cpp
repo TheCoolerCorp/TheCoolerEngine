@@ -5,7 +5,7 @@
 #include "Core/Assertion/Assertion.h"
 
 using namespace Math;
-using namespace Debug;
+using namespace Debugging;
 
 int main()
 {

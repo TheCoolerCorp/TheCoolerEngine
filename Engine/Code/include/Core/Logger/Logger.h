@@ -7,7 +7,7 @@
 #include "LogLevel.h"
 #include "LogColor.h"
 
-namespace Debug
+namespace Debugging
 {
 	class ENGINE_API Logger
 	{
