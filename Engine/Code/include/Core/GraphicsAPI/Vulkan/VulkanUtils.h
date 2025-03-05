@@ -24,7 +24,7 @@ namespace Engine
 					{ \
 						VkResult result = func;\
 						if (result != VK_SUCCESS) { \
-							std::cerr << result << "Assertion failed: " << message << " in file " << (strrchr(__FILE__, '\\') ? strrchr(__FILE__, '\\') + 1 : __FILE__) << " at line " << __LINE__ << '\n'; \
+							std::cerr << result << "Assertion failed: " << (message) << " in file " << (strrchr(__FILE__, '\\') ? strrchr(__FILE__, '\\') + 1 : __FILE__) << " at line " << __LINE__ << '\n'; \
 							BREAKPOINT(); \
 						} \
 					} 

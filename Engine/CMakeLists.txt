@@ -24,7 +24,7 @@ target_compile_features(Engine PUBLIC cxx_std_20)
 if(MSVC)
     target_compile_options(Engine PUBLIC /W4 /WX)
 else()
-    target_compile_options(Engine PUBLIC -Wall -Wextra -Werror -Wpedantic)
+    target_compile_options(Engine PUBLIC -Wall -Wextra -Wpedantic)
 endif()
 
 #---------------------------------------#

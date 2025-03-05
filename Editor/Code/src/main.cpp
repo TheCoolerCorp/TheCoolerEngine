@@ -3,6 +3,8 @@
 #include "Core/Application.h"
 #include "Core/Logger/Logger.h"
 #include "Core/Assertion/Assertion.h"
+#include "Core/GraphicsAPI/Vulkan/VulkanInstance.h"
+#include "Core/GraphicsAPI/Vulkan/VulkanValidationLayers.h"
 
 int main()
 {
@@ -11,7 +13,7 @@ int main()
     Engine::Math::vec3 t_ve3 = Engine::Math::vec3::CrossProduct(t_vec, t_vec2);
     t_ve3.Print();
 
-    Engine::Core::Debugging::LOG(Engine::Core::Debugging::LogLevel::DEBUGLOG, "Message", Engine::Core::Debugging::ColorMap.at(Engine::Core::Debugging::LogColor::YELLOW));
+    //Engine::Core::Debugging::LOG(Engine::Core::Debugging::LogLevel::DEBUGLOG, "Message", Engine::Core::Debugging::ColorMap.at(Engine::Core::Debugging::LogColor::YELLOW));
     /*LOG_DEBUG("Debug message");
     LOG_INFO("Info message");
     LOG_WARNING("Warning message");
@@ -33,8 +35,16 @@ int main()
 #endif
     Engine::Core::Application app = Engine::Core::Application();
     app.Create(1440, 1080);
+    Engine::Core::GraphicsAPI::VulkanInstance* instance = new Engine::Core::GraphicsAPI::VulkanInstance;
+    Engine::Core::GraphicsAPI::VulkanValidationLayers* layers = new Engine::Core::GraphicsAPI::VulkanValidationLayers;
+    instance->Create();
+    layers->Create(instance);
     app.Run();
     app.Destroy();
+    layers->Destroy(instance);
+    instance->Destroy();
+    delete layers;
+    delete instance;
 
     return 0;
 }

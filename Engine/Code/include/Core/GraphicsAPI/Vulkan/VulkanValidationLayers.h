@@ -1,11 +1,10 @@
 #ifndef VULKANVALIDATIONLAYERS_H
 #define VULKANVALIDATIONLAYERS_H
 
-#include  "EngineExport.h"
-
 #include "VulkanUtils.h"
 #include <vector>
 
+#include  "EngineExport.h"
 #include "Core/Interfaces/IValidationLayers.h"
 
 namespace Engine
@@ -23,10 +22,11 @@ namespace Engine
 
 				void Create(RHI::IInstance* a_instance) override;
 				void Setup(VkInstance a_instance);
-				void PopulateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& a_createInfo);
+				static void PopulateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& a_createInfo);
 				void Destroy(RHI::IInstance* a_instance) override;
-				void Check();
+				static void Check();
 				VulkanValidationLayers* CastVulkan() override { return this; }
+				static std::vector<const char*> GetRequiredExtensions();
 
 			private:
 				VkDebugUtilsMessengerEXT m_debugMessenger{};
@@ -34,7 +34,7 @@ namespace Engine
 				static VKAPI_ATTR VkBool32 VKAPI_CALL DebugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT a_messageSeverity, VkDebugUtilsMessageTypeFlagsEXT a_messageType, const VkDebugUtilsMessengerCallbackDataEXT* a_pCallbackData, void* a_pUserData);
 				static VkResult CreateDebugUtilsMessengerEXT(VkInstance a_instance, const VkDebugUtilsMessengerCreateInfoEXT* a_pCreateInfo, const VkAllocationCallbacks* a_pAllocator, VkDebugUtilsMessengerEXT* a_pDebugMessenger);
 				static void DestroyDebugUtilsMessengerEXT(VkInstance a_instance, VkDebugUtilsMessengerEXT a_debugMessenger, const VkAllocationCallbacks* a_pAllocator);
-				bool CheckValidationLayerSupport();
+				static bool CheckValidationLayerSupport();
 			};
 		}
 	}
