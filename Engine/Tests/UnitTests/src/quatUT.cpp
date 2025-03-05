@@ -3,7 +3,7 @@
 #include "glm/detail/type_quat.hpp"
 #include "Math/TheCoolerMath.h"
 
-using namespace Math;
+using namespace Engine::Math;
 
 namespace quatUT
 {

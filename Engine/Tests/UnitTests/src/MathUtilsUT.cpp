@@ -1,6 +1,6 @@
 #include "MathUtilsUT.h"
 
-using namespace Math;
+using namespace Engine::Math;
 
 namespace MathUtilsUT
 {

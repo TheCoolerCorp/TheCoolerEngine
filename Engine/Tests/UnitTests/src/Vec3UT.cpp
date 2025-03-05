@@ -1,7 +1,7 @@
 #include <iostream>
 #include "vec3UT.h"
 
-using namespace Math;
+using namespace Engine::Math;
 
 namespace vec3UT
 {

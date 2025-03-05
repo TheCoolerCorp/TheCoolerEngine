@@ -5,7 +5,7 @@
 #include "glm/detail/type_quat.hpp"
 #include "glm/gtx/quaternion.hpp"
 
-using namespace Math;
+using namespace Engine::Math;
 
 namespace mat4UT
 {
