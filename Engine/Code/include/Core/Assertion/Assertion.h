@@ -3,7 +3,7 @@
 
 #include <cstring>
 
-namespace Debug
+namespace Debugging
 {
 #ifdef DEBUG
 	#ifdef _MSC_VER

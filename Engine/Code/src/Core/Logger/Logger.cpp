@@ -6,7 +6,7 @@
 #include <fstream>
 #include <mutex>
 
-namespace Debug
+namespace Debugging
 {
 	void Logger::PrintConsoleLog(const std::string& a_message, const std::string& a_logLevel,
 		const std::string& a_color, const char* a_file, const int a_line, const std::tm& a_localTime)

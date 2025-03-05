@@ -4,7 +4,7 @@
 #include <mutex>
 #include <string>
 
-namespace Debug
+namespace Debugging
 {
 	inline ENGINE_API std::string ToString(const std::string& a_message)
 	{
