@@ -1,4 +1,4 @@
-#include "Window/GLWindow.h"
+#include "Core/Window/GLWindow.h"
 
 namespace Core
 {

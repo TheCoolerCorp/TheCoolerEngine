@@ -3,7 +3,7 @@
 
 #include "EngineExport.h"
 
-#include "Window/IWindow.h"
+#include "Core/Window/IWindow.h"
 
 #define GLFW_INCLUDE_VULKAN
 #include "glfw/glfw3.h"
