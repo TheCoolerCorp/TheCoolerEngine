@@ -14,7 +14,7 @@ namespace Engine
 			{
 			public:
 				~VulkanLogicalDevice() override = default;
-				void Create(RHI::IPhysicalDevice* a_physicalDevice) override;
+				void Create(RHI::IPhysicalDevice* a_physicalDevice, RHI::ISurface* a_surface) override;
 				void Destroy() override;
 				VulkanLogicalDevice* CastVulkan() override { return this; }
 				[[nodiscard]] VkDevice GetVkDevice() const { return m_device; }

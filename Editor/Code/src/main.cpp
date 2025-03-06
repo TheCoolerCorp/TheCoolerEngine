@@ -46,8 +46,8 @@ int main()
     instance->Create();
     layers->Create(instance);
     surface->Create(app.GetWindow(), instance);
-    physicalDevice->Create(instance);
-    logicalDevice->Create(physicalDevice);
+    physicalDevice->Create(instance, surface);
+    logicalDevice->Create(physicalDevice, surface);
     app.Run();
     logicalDevice->Destroy();
     layers->Destroy(instance);

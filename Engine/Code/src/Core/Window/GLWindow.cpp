@@ -72,7 +72,7 @@ namespace Engine
 
 			void GLwindow::CreateWindowSurface(RHI::IInstance* a_instance, RHI::ISurface* a_surface)
 			{
-				VkSurfaceKHR t_surface = a_surface->CastVulkan()->GetVkSurfaceKHR();
+				VkSurfaceKHR& t_surface = a_surface->CastVulkan()->GetVkSurfaceKHR();
 				VK_CHECK(glfwCreateWindowSurface(a_instance->CastVulkan()->GetVkInstance(), m_window, nullptr, &t_surface), "failed to create window surface!");
 			}
 		}

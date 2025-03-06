@@ -18,7 +18,7 @@ namespace Engine
 				void Create(Window::IWindow* a_window, RHI::IInstance* a_instance) override;
 				void Destroy(RHI::IInstance* a_instance) override;
 				VulkanSurface* CastVulkan() override { return this; }
-				VkSurfaceKHR GetVkSurfaceKHR() { return m_surface; }
+				VkSurfaceKHR& GetVkSurfaceKHR() { return m_surface; }
 
 			private:
 				VkSurfaceKHR m_surface = VK_NULL_HANDLE;

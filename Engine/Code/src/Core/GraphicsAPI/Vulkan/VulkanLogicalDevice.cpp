@@ -2,7 +2,9 @@
 
 #include "Core/GraphicsAPI/Vulkan/QueueFamilies.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanPhysicalDevice.h"
+#include "Core/GraphicsAPI/Vulkan/VulkanSurface.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanValidationLayers.h"
+#include "Core/GraphicsAPI/Vulkan/VulkanSurface.h"
 
 namespace Engine
 {
@@ -10,17 +12,18 @@ namespace Engine
 	{
 		namespace GraphicsAPI
 		{
-			void VulkanLogicalDevice::Create(RHI::IPhysicalDevice* a_physicalDevice)
+			void VulkanLogicalDevice::Create(RHI::IPhysicalDevice* a_physicalDevice, RHI::ISurface* a_surface)
 			{
                 VkPhysicalDevice t_physicalDevice = a_physicalDevice->CastVulkan()->GetVkPhysicalDevice();
+                VkSurfaceKHR t_surface = a_surface->CastVulkan()->GetVkSurfaceKHR();
 
-                QueueFamilyIndices t_indices = QueueFamilyIndices::FindQueueFamilies(t_physicalDevice);
+                QueueFamilyIndices t_indices = QueueFamilyIndices::FindQueueFamilies(t_physicalDevice, t_surface);
 
                 std::vector<VkDeviceQueueCreateInfo> t_queueCreateInfos;
                 std::set<uint32_t> t_uniqueQueueFamilies = 
                 {
                     t_indices.GetGraphicsFamily().value(),
-                    //t_indices.GetPresentFamily().value()
+                    t_indices.GetPresentFamily().value()
                 };
 
                 float t_queuePriority = 1.0f;

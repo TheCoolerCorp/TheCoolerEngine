@@ -20,8 +20,8 @@ namespace Engine
 
 			private:
 				void PickPhysicalDevice(VkInstance a_instance, VkSurfaceKHR a_surface);
-				static bool IsPhysicalDeviceSuitable(VkPhysicalDevice a_physicalDevice);
-				static uint32_t RatePhysicalDevice(VkPhysicalDevice a_physicalDevice);
+				static bool IsPhysicalDeviceSuitable(VkPhysicalDevice a_physicalDevice, VkSurfaceKHR a_surface);
+				static uint32_t RatePhysicalDevice(VkPhysicalDevice a_physicalDevice, VkSurfaceKHR a_surface);
 
 				VkPhysicalDevice m_physicalDevice = VK_NULL_HANDLE;
 			};
