@@ -3,7 +3,10 @@
 
 #include "EngineExport.h"
 
-#include "GraphicsAPI/Vulkan/VulkanInterface.h"
+#include "Core/GraphicsAPI/Vulkan/VulkanInterface.h"
+
+#include "Core/Window/GLWindow.h"
+#include "Core/Renderer/Renderer.h"
 
 namespace Engine
 {
@@ -20,8 +23,8 @@ namespace Engine
 			void Destroy() const;
 
 		private:
-			RHI::ApiInterface* m_apiInterface = nullptr;
-			Window::IWindow* m_window = nullptr;
+			Window::IWindow* m_mainWindow = nullptr;
+			Renderer* m_renderer = nullptr;
 		};
 	}
 }

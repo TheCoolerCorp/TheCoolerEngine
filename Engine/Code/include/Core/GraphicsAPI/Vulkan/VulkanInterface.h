@@ -6,6 +6,8 @@
 #include "Core/Interfaces/ApiInterface.h"
 
 #include "Core/Window/GLWindow.h"
+#include "Core/GraphicsAPI/Vulkan/VulkanInstance.h"
+#include "Core/GraphicsAPI/Vulkan/VulkanValidationLayers.h"
 
 namespace Engine
 {
@@ -17,7 +19,13 @@ namespace Engine
 			{
 			public:
 				~VulkanInterface() override = default;
+
 				Window::IWindow* InstantiateWindow() override { return new Window::GLwindow; }
+
+				RHI::IInstance* InstantiateInstance() override { return new GraphicsAPI::VulkanInstance; }
+
+				RHI::IValidationLayers* InstantiateValidationLayers() override { return new GraphicsAPI::VulkanValidationLayers; }
+
 			};
 		}
 	}
