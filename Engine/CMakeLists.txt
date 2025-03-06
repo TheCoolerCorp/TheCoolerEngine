@@ -22,7 +22,7 @@ option(ENGINE_UNIT_TESTS "Option to enable or disable unit tests for engine" OFF
 target_compile_features(Engine PUBLIC cxx_std_20)
 
 if(MSVC)
-    target_compile_options(Engine PUBLIC /W4 /WX)
+    target_compile_options(Engine PUBLIC /W3 /WX)
 else()
     target_compile_options(Engine PUBLIC -Wall -Wextra -Wpedantic)
 endif()
