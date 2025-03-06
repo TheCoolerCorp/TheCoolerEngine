@@ -2,6 +2,7 @@
 #define IINSTANCE_H
 
 #include "EngineExport.h"
+#include "Core/Logger/Logger.h"
 
 namespace Engine
 {
@@ -17,7 +18,7 @@ namespace Engine
 			{
 			public:
 				virtual ~IInstance() = default;
-				virtual GraphicsAPI::VulkanInstance* CastVulkan() { return nullptr; }
+				virtual GraphicsAPI::VulkanInstance* CastVulkan() { LOG_ERROR("Try to return wrong cast type : VulkanPhysicalDevice!"); return nullptr; }
 
 				virtual void Create() = 0;
 				virtual void Destroy() = 0;

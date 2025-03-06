@@ -25,6 +25,11 @@ namespace Engine
 		return std::to_string(a_message);
 	}
 
+	inline ENGINE_API std::string ToString(const unsigned int& a_message)
+	{
+		return std::to_string(a_message);
+	}
+
 	inline ENGINE_API std::string ToString(const float& a_message)
 	{
 		return std::to_string(a_message);

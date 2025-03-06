@@ -5,6 +5,7 @@
 #include "Core/Assertion/Assertion.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanInstance.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanValidationLayers.h"
+#include "Core/GraphicsAPI/Vulkan/VulkanPhysicalDevice.h"
 
 int main()
 {
@@ -37,12 +38,15 @@ int main()
     app.Create(1440, 1080);
     Engine::Core::RHI::IInstance* instance = new Engine::Core::GraphicsAPI::VulkanInstance;
     Engine::Core::RHI::IValidationLayers* layers = new Engine::Core::GraphicsAPI::VulkanValidationLayers;
+    Engine::Core::RHI::IPhysicalDevice* physicalDevice = new Engine::Core::GraphicsAPI::VulkanPhysicalDevice;
     instance->Create();
     layers->Create(instance);
+    physicalDevice->Create(instance);
     app.Run();
     app.Destroy();
     layers->Destroy(instance);
     instance->Destroy();
+    delete physicalDevice;
     delete layers;
     delete instance;
 
