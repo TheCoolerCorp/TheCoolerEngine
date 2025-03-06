@@ -21,12 +21,14 @@ namespace Engine
 		namespace RHI
 		{
 			class IInstance;
+			class IPhysicalDevice;
 
 			class ENGINE_API ISurface
 			{
 			public:
 				virtual ~ISurface() = default;
 				virtual void Create(Window::IWindow* window, IInstance* instance) = 0;
+				virtual void SetupInfo(IPhysicalDevice* a_physicalDevice) {};
 				virtual void Destroy(IInstance* instance) = 0;
 				virtual GraphicsAPI::VulkanSurface* CastVulkan() { LOG_ERROR("Try to return wrong cast type : VulkanSurface!"); return nullptr; }
 

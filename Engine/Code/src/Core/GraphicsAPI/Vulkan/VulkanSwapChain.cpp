@@ -11,12 +11,29 @@ namespace Engine
 		{
 			void VulkanSwapchain::Create(RHI::ISurface* a_surface)
 			{
+				uint32_t imageCount = 0;
+				GraphicsAPI::VulkanSurface::SurfaceInfo info = a_surface->CastVulkan()->GetSurfaceInfo();
+				if (mMaxFrame <= 0)
+				{
+					imageCount = info.capabilities.minImageCount + 1;
+
+					if (info.capabilities.maxImageCount > 0 && imageCount > info.capabilities.maxImageCount) {
+						imageCount = info.capabilities.maxImageCount;
+					}
+				}
+				else
+				{
+					imageCount = mMaxFrame;
+				}
+
+
+
 				VkSwapchainCreateInfoKHR createInfo;
 				createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
 
 				createInfo.surface = a_surface->CastVulkan()->GetVkSurfaceKHR();
-				//createInfo.imageCount;
-				//createInfo.imageFormat = surfaceFormat.format;
+				createInfo.minImageCount = imageCount;
+				//createInfo.imageFormat = info.format;
 				//createInfo.imageColorSpace = surfaceFormat.colorSpace;
 				//createInfo.imageExtent = extent;
 				//createInfo.imageArrayLayers = 1;
