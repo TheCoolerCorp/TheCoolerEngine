@@ -44,7 +44,6 @@ namespace Engine
 			void VulkanInstance::Destroy()
 			{
 				vkDestroyInstance(m_Instance, nullptr);
-
 			}
 
 			std::vector<const char*> VulkanInstance::GetRequiredExtensions()

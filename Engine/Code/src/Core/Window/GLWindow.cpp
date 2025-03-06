@@ -1,6 +1,8 @@
 #include "Core/Window/GLWindow.h"
 #include "Core/Logger/Logger.h"
-
+#include "Core/GraphicsAPI/Vulkan/VulkanInstance.h"
+#include "Core/GraphicsAPI/Vulkan/VulkanSurface.h"
+#include "Core/GraphicsAPI/Vulkan/VulkanUtils.h"
 
 namespace Engine
 {
@@ -66,6 +68,12 @@ namespace Engine
 			{
 				a_width = m_width;
 				a_height = m_height;
+			}
+
+			void GLwindow::CreateWindowSurface(RHI::IInstance* a_instance, RHI::ISurface* a_surface)
+			{
+				VkSurfaceKHR t_surface = a_surface->CastVulkan()->GetVkSurfaceKHR();
+				VK_CHECK(glfwCreateWindowSurface(a_instance->CastVulkan()->GetVkInstance(), m_window, nullptr, &t_surface), "failed to create window surface!");
 			}
 		}
 	}

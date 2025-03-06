@@ -21,6 +21,7 @@ namespace Engine
 			void Create(int a_width, int a_height);
 			void Run() const;
 			void Destroy() const;
+			Window::IWindow* GetWindow() const { return m_mainWindow; }
 
 		private:
 			Window::IWindow* m_mainWindow = nullptr;

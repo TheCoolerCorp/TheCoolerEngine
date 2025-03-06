@@ -4,6 +4,7 @@
 #include "Core/GraphicsAPI/Vulkan/VulkanInstance.h"
 #include "Core/Interfaces/IInstance.h"
 #include <Core/GraphicsAPI/Vulkan/QueueFamilies.h>
+#include "Core/GraphicsAPI/Vulkan/VulkanSurface.h"
 #include <map>
 
 namespace Engine
@@ -12,12 +13,12 @@ namespace Engine
 	{
 		namespace GraphicsAPI
 		{
-			void VulkanPhysicalDevice::Create(RHI::IInstance* a_instance)
+			void VulkanPhysicalDevice::Create(RHI::IInstance* a_instance, RHI::ISurface* a_surface)
 			{
-				PickPhysicalDevice(a_instance->CastVulkan()->GetVkInstance());
+				PickPhysicalDevice(a_instance->CastVulkan()->GetVkInstance(), a_surface->CastVulkan()->GetVkSurfaceKHR());
 			}
 
-			void VulkanPhysicalDevice::PickPhysicalDevice(const VkInstance a_instance)
+			void VulkanPhysicalDevice::PickPhysicalDevice(const VkInstance a_instance, VkSurfaceKHR a_surface)
 			{
 				uint32_t t_physicalDeviceCount = 0;
 				vkEnumeratePhysicalDevices(a_instance, &t_physicalDeviceCount, nullptr);
