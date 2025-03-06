@@ -10,10 +10,10 @@ namespace Engine
 		{
 			bool QueueFamilyIndices::IsComplete() const
 			{
-				return m_graphicsFamily.has_value();
+				return m_graphicsFamily.has_value() && m_presentFamily.has_value();
 			}
 
-			QueueFamilyIndices QueueFamilyIndices::FindQueueFamilies(VkPhysicalDevice a_physicalDevice)
+			QueueFamilyIndices QueueFamilyIndices::FindQueueFamilies(const VkPhysicalDevice a_physicalDevice, const VkSurfaceKHR a_surface)
 			{
                 QueueFamilyIndices t_indices;
 
@@ -30,6 +30,14 @@ namespace Engine
                     {
                         t_indices.m_graphicsFamily = i;
                     }
+
+                    VkBool32 presentSupport = false;
+                    vkGetPhysicalDeviceSurfaceSupportKHR(a_physicalDevice, i, a_surface, &presentSupport);
+
+                    if (presentSupport) {
+                        t_indices.m_presentFamily = i;
+                    }
+
 
                     if (t_indices.IsComplete()) 
                     {

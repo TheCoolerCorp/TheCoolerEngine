@@ -31,7 +31,7 @@ namespace Engine
 				std::multimap<uint32_t, VkPhysicalDevice> candidates;
 
 				for (const auto& t_physicalDevice : t_physicalDevices) {
-					uint32_t score = RatePhysicalDevice(t_physicalDevice);
+					uint32_t score = RatePhysicalDevice(t_physicalDevice, a_surface);
 					candidates.insert(std::make_pair(score, t_physicalDevice));
 				}
 
@@ -44,14 +44,14 @@ namespace Engine
 
 			}
 
-			uint32_t VulkanPhysicalDevice::RatePhysicalDevice(const VkPhysicalDevice a_physicalDevice)
+			uint32_t VulkanPhysicalDevice::RatePhysicalDevice(const VkPhysicalDevice a_physicalDevice, const VkSurfaceKHR a_surface)
 			{
 				VkPhysicalDeviceProperties t_physicalDeviceProperties;
 				VkPhysicalDeviceFeatures t_physicalDeviceFeatures;
 				vkGetPhysicalDeviceProperties(a_physicalDevice, &t_physicalDeviceProperties);
 				vkGetPhysicalDeviceFeatures(a_physicalDevice, &t_physicalDeviceFeatures);
 
-				if (!t_physicalDeviceFeatures.geometryShader || !IsPhysicalDeviceSuitable(a_physicalDevice)) 
+				if (!t_physicalDeviceFeatures.geometryShader || !IsPhysicalDeviceSuitable(a_physicalDevice, a_surface)) 
 				{
 					return 0;
 				}
@@ -68,9 +68,9 @@ namespace Engine
 				return t_score;
 			}
 
-			bool VulkanPhysicalDevice::IsPhysicalDeviceSuitable(VkPhysicalDevice a_physicalDevice)
+			bool VulkanPhysicalDevice::IsPhysicalDeviceSuitable(const VkPhysicalDevice a_physicalDevice, const VkSurfaceKHR a_surface)
 			{
-				const QueueFamilyIndices t_indices = QueueFamilyIndices::FindQueueFamilies(a_physicalDevice);
+				const QueueFamilyIndices t_indices = QueueFamilyIndices::FindQueueFamilies(a_physicalDevice, a_surface);
 
 				return t_indices.IsComplete();
 			}
