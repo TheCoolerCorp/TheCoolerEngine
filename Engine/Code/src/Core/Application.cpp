@@ -6,25 +6,29 @@ namespace Engine
 	{
 		void Application::Create(int a_width, int a_height)
 		{
-			m_apiInterface = new GraphicsAPI::VulkanInterface();
-			m_window = m_apiInterface->InstantiateWindow();
-			m_window->Create(a_width, a_height);
+			m_mainWindow = new Window::GLwindow();
+			m_mainWindow->Create(a_width, a_height);
+
+			m_renderer = new Renderer();
+			m_renderer->Init(RendererType::VULKAN);
+
 		}
 
 		void Application::Run() const
 		{
-			while (!m_window->ShouldClose())
+			while (!m_mainWindow->ShouldClose())
 			{
-				m_window->PollEvents();
+				m_mainWindow->PollEvents();
 			}
 		}
 
 		void Application::Destroy() const
 		{
-			m_window->Destroy();
-			m_apiInterface->DestroyWindow(m_window);
+			m_renderer->Destroy();
+			delete m_renderer;
 
-			delete m_apiInterface;
+			m_mainWindow->Destroy();
+			delete m_mainWindow;
 		}
 	}
 }
