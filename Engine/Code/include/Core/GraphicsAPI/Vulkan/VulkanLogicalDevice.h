@@ -1,8 +1,7 @@
 #ifndef VULKANLOGICALDEVICE_H
 #define VULKANLOGICALDEVICE_H
 
-#include <vulkan/vulkan.h>
-
+#include "Core/GraphicsAPI/Vulkan/VulkanUtils.h"
 #include "Core/Interfaces/ILogicalDevice.h"
 
 namespace Engine

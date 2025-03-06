@@ -55,9 +55,10 @@ namespace Engine
                     t_createInfo.enabledLayerCount = 0;
                 }
 
-                if (vkCreateDevice(t_physicalDevice, &t_createInfo, nullptr, &m_device) != VK_SUCCESS) {
-                    throw std::runtime_error("failed to create logical device!");
-                }
+                //if (vkCreateDevice(t_physicalDevice, &t_createInfo, nullptr, &m_device) != VK_SUCCESS) {
+                //    throw std::runtime_error("failed to create logical device!");
+                //}
+                VK_CHECK(vkCreateDevice(t_physicalDevice, &t_createInfo, nullptr, &m_device), "failed to create logical device!");
 
                 vkGetDeviceQueue(m_device, t_indices.GetGraphicsFamily().value(), 0, &m_graphicsQueue);
                 //vkGetDeviceQueue(m_device, t_indices.GetPresentFamily().value(), 0, &m_presentQueue);
