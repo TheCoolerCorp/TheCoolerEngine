@@ -13,7 +13,7 @@ namespace Engine
 	{
 		namespace GraphicsAPI
 		{
-			const std::vector<const char*> validationLayers = {"VK_LAYER_KHRONOS_validation"};
+			const std::vector<const char*> VALIDATION_LAYERS = {"VK_LAYER_KHRONOS_validation"};
 
 			class ENGINE_API VulkanValidationLayers : public RHI::IValidationLayers
 			{
@@ -26,7 +26,6 @@ namespace Engine
 				void Destroy(RHI::IInstance* a_instance) override;
 				static void Check();
 				VulkanValidationLayers* CastVulkan() override { return this; }
-				static std::vector<const char*> GetRequiredExtensions();
 
 			private:
 				VkDebugUtilsMessengerEXT m_debugMessenger{};
