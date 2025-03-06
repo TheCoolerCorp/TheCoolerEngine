@@ -13,7 +13,7 @@ namespace Engine
 		{
 			void VulkanValidationLayers::Create(RHI::IInstance* a_instance)
 			{
-				Setup(a_instance->CastVulkan()->mInstance);
+				Setup(a_instance->CastVulkan()->GetVkInstance());
 			}
 
 			void VulkanValidationLayers::Setup(VkInstance a_instance)
@@ -44,7 +44,7 @@ namespace Engine
 			{
 				if (RHI::ENABLEVALIDATIONLAYERS) 
 				{
-					DestroyDebugUtilsMessengerEXT(a_instance->CastVulkan()->mInstance, m_debugMessenger, nullptr);
+					DestroyDebugUtilsMessengerEXT(a_instance->CastVulkan()->GetVkInstance(), m_debugMessenger, nullptr);
 				}
 
 			}

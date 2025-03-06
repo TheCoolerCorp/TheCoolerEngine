@@ -20,12 +20,12 @@ namespace Engine
 				createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
 				createInfo.pApplicationInfo = &appInfo;
 
-				VK_CHECK(vkCreateInstance(&createInfo, nullptr, &mInstance), "failed to create instance");
+				VK_CHECK(vkCreateInstance(&createInfo, nullptr, &m_Instance), "failed to create instance");
 			}
 
 			void VulkanInstance::Destroy()
 			{
-				vkDestroyInstance(mInstance, nullptr);
+				vkDestroyInstance(m_Instance, nullptr);
 
 			}
 		}

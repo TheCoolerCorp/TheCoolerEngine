@@ -23,8 +23,10 @@ namespace Engine
 				void Create() override;
 				void Destroy() override;
 
-				VkInstance mInstance = VK_NULL_HANDLE;
+				VkInstance GetVkInstance() { return m_Instance; }
+
 			private:
+				VkInstance m_Instance = VK_NULL_HANDLE;
 			};
 		}
 	}
