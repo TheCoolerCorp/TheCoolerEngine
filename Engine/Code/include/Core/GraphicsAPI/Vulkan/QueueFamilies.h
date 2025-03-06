@@ -14,6 +14,8 @@ namespace Engine
 			struct QueueFamilyIndices {
 				bool IsComplete() const;
 				static QueueFamilyIndices FindQueueFamilies(VkPhysicalDevice a_physicalDevice);
+				std::optional<uint32_t> GetGraphicsFamily() const { return m_graphicsFamily; }
+				std::optional<uint32_t> GetPresentFamily() const { return m_presentFamily; }
 
 			private:
 				std::optional<uint32_t> m_graphicsFamily;
