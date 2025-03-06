@@ -1,6 +1,8 @@
 #ifndef VKINSTANCE_H
 #define VKINSTANCE_H
 
+#include <vector>
+
 #include "EngineExport.h"
 
 #include "Core/Interfaces/IInstance.h"
@@ -26,6 +28,8 @@ namespace Engine
 				VkInstance GetVkInstance() { return m_Instance; }
 
 			private:
+				static std::vector<const char*> GetRequiredExtensions();
+
 				VkInstance m_Instance = VK_NULL_HANDLE;
 			};
 		}

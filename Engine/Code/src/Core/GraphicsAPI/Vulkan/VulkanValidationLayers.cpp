@@ -1,9 +1,9 @@
 #include "Core/GraphicsAPI/Vulkan/VulkanValidationLayers.h"
 
+#include "Core/Assertion/Assertion.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanInstance.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanUtils.h"
 #include "Core/Logger/Logger.h"
-#include "GLFW/glfw3.h"
 
 namespace Engine
 {
@@ -26,16 +26,16 @@ namespace Engine
 				VkDebugUtilsMessengerCreateInfoEXT createInfo;
 				PopulateDebugMessengerCreateInfo(createInfo);
 
-				std::cout << a_instance << '\n';
+				VK_CHECK(CreateDebugUtilsMessengerEXT(a_instance, &createInfo, nullptr, &m_debugMessenger), "failed to set up debug messenger!")
 
-				VK_CHECK(CreateDebugUtilsMessengerEXT(a_instance, &createInfo, nullptr, &m_debugMessenger), "failed to set up debug messenger!");
+				Check();
 			}
 
 			void VulkanValidationLayers::PopulateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& a_createInfo)
 			{
 				a_createInfo = {};
 				a_createInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
-				a_createInfo.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
+				a_createInfo.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
 				a_createInfo.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
 				a_createInfo.pfnUserCallback = DebugCallback;
 			}
@@ -51,29 +51,11 @@ namespace Engine
 
 			void VulkanValidationLayers::Check()
 			{
-				if (RHI::ENABLEVALIDATIONLAYERS && !CheckValidationLayerSupport())
+				if (!CheckValidationLayerSupport())
 				{
 					LOG_ERROR("validation layers requested, but not available!");
 				}
-
 			}
-
-			std::vector<const char*> VulkanValidationLayers::GetRequiredExtensions()
-			{
-				uint32_t t_glfwExtensionCount = 0;
-				const char** t_glfwExtensions = glfwGetRequiredInstanceExtensions(&t_glfwExtensionCount); // TODO : replace with IWindow function
-
-				std::vector<const char*> extensions(t_glfwExtensions, t_glfwExtensions + t_glfwExtensionCount);
-
-				if (RHI::ENABLEVALIDATIONLAYERS) 
-				{
-					extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
-				}
-
-				return extensions;
-
-			}
-
 
 			VKAPI_ATTR VkBool32 VKAPI_CALL VulkanValidationLayers::DebugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT a_messageSeverity, VkDebugUtilsMessageTypeFlagsEXT a_messageType, const VkDebugUtilsMessengerCallbackDataEXT* a_pCallbackData, void* a_pUserData)
 			{
@@ -110,21 +92,19 @@ namespace Engine
 
 			VkResult VulkanValidationLayers::CreateDebugUtilsMessengerEXT(VkInstance a_instance, const VkDebugUtilsMessengerCreateInfoEXT* a_pCreateInfo, const VkAllocationCallbacks* a_pAllocator, VkDebugUtilsMessengerEXT* a_pDebugMessenger)
 			{
-				const PFN_vkCreateDebugUtilsMessengerEXT t_func = reinterpret_cast<PFN_vkCreateDebugUtilsMessengerEXT>(
+				const auto t_func = reinterpret_cast<PFN_vkCreateDebugUtilsMessengerEXT>(
 					vkGetInstanceProcAddr(a_instance, "vkCreateDebugUtilsMessengerEXT"));
 				if (t_func != nullptr)
 				{
 					return t_func(a_instance, a_pCreateInfo, a_pAllocator, a_pDebugMessenger);
 				}
-				else {
-					return VK_ERROR_EXTENSION_NOT_PRESENT;
-				}
-
+				
+				return VK_ERROR_EXTENSION_NOT_PRESENT;
 			}
 
 			void VulkanValidationLayers::DestroyDebugUtilsMessengerEXT(VkInstance a_instance, VkDebugUtilsMessengerEXT a_debugMessenger, const VkAllocationCallbacks* a_pAllocator)
 			{
-				PFN_vkDestroyDebugUtilsMessengerEXT t_func = reinterpret_cast<PFN_vkDestroyDebugUtilsMessengerEXT>(
+				const auto t_func = reinterpret_cast<PFN_vkDestroyDebugUtilsMessengerEXT>(
 					vkGetInstanceProcAddr(a_instance, "vkDestroyDebugUtilsMessengerEXT"));
 				if (t_func != nullptr)
 				{
@@ -141,7 +121,7 @@ namespace Engine
 				std::vector<VkLayerProperties> t_availableLayers(t_layerCount);
 				vkEnumerateInstanceLayerProperties(&t_layerCount, t_availableLayers.data());
 
-				for (const char* t_layerName : validationLayers) {
+				for (const char* t_layerName : VALIDATION_LAYERS) {
 					bool t_layerFound = false;
 
 					for (const auto& t_layerProperties : t_availableLayers) {

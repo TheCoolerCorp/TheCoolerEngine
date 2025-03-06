@@ -35,8 +35,8 @@ int main()
 #endif
     Engine::Core::Application app = Engine::Core::Application();
     app.Create(1440, 1080);
-    Engine::Core::GraphicsAPI::VulkanInstance* instance = new Engine::Core::GraphicsAPI::VulkanInstance;
-    Engine::Core::GraphicsAPI::VulkanValidationLayers* layers = new Engine::Core::GraphicsAPI::VulkanValidationLayers;
+    Engine::Core::RHI::IInstance* instance = new Engine::Core::GraphicsAPI::VulkanInstance;
+    Engine::Core::RHI::IValidationLayers* layers = new Engine::Core::GraphicsAPI::VulkanValidationLayers;
     instance->Create();
     layers->Create(instance);
     app.Run();
