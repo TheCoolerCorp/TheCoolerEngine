@@ -27,7 +27,7 @@ namespace Engine
 				void PollEvents() override;
 				void WaitEvents() override;
 				bool ShouldClose() override;
-				void GetFramebufferSize(int& a_width, int& a_height) override;
+				void GetFramebufferSize(int* a_width, int* a_height) override;
 				void CreateWindowSurface(RHI::IInstance* a_instance, RHI::ISurface* a_surface) override;
 
 				const char** GetRequiredInstanceExtensions(uint32_t* count) override;

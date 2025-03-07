@@ -20,7 +20,6 @@ namespace Engine
 					VkSurfaceCapabilitiesKHR capabilities;
 					std::vector<VkSurfaceFormatKHR> formats;
 					std::vector<VkPresentModeKHR> presentModes;
-					void QueryInfo();
 				};
 				void Create(Window::IWindow* a_window, RHI::IInstance* a_instance) override;
 				void SetupInfo(RHI::IPhysicalDevice* a_physicalDevice) override;

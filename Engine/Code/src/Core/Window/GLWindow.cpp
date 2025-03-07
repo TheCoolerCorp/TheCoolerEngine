@@ -64,10 +64,10 @@ namespace Engine
 				return glfwGetRequiredInstanceExtensions(count);
 			}
 
-			void GLwindow::GetFramebufferSize(int& a_width, int& a_height)
+			void GLwindow::GetFramebufferSize(int* a_width, int* a_height)
 			{
-				a_width = m_width;
-				a_height = m_height;
+				a_width = &m_width;
+				a_height = &m_height;
 			}
 
 			void GLwindow::CreateWindowSurface(RHI::IInstance* a_instance, RHI::ISurface* a_surface)
