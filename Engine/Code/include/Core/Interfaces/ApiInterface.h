@@ -6,6 +6,10 @@
 #include "Core/Window/IWindow.h"
 #include "Core/Interfaces/IInstance.h"
 #include "Core/Interfaces/IValidationLayers.h"
+#include "Core/Interfaces/ISurface.h"
+#include "Core/Interfaces/IPhysicalDevice.h"
+#include "Core/Interfaces/ILogicalDevice.h"
+#include "Core/Interfaces/ISwapChain.h"
 
 namespace Engine
 {
@@ -22,11 +26,23 @@ namespace Engine
 				virtual void DestroyWindow(Window::IWindow* a_window) { delete a_window; }
 				
 				virtual IInstance* InstantiateInstance() = 0;
-				virtual void DestroyInstance(RHI::IInstance* a_instance) { delete a_instance; }
+				virtual void DestroyInstance(IInstance* a_instance) { delete a_instance; }
 
 				
 				virtual IValidationLayers* InstantiateValidationLayers() = 0;
-				virtual void DestroyValidationLayers(RHI::IValidationLayers* a_validationLayers) { delete a_validationLayers; }
+				virtual void DestroyValidationLayers(IValidationLayers* a_validationLayers) { delete a_validationLayers; }
+
+				virtual ISurface* InstantiateSurface() = 0;
+				virtual void DeleteSurface(ISurface* a_surface) { delete a_surface; }
+
+				virtual IPhysicalDevice* InstantiatePhysicalDevice() = 0;
+				virtual void DeletePhysicalDevice(IPhysicalDevice* a_physicalDevice) { delete a_physicalDevice; }
+
+				virtual ILogicalDevice* InstantiateLogicalDevice() = 0;
+				virtual void DeleteLogicalDevice(ILogicalDevice* a_logicalDevice) { delete a_logicalDevice; }
+
+				virtual ISwapChain* InstantiateSwapChain() = 0;
+				virtual void DeleteSwapChain(ISwapChain* a_swapChain) { delete a_swapChain; }
 			};
 		}
 	}
