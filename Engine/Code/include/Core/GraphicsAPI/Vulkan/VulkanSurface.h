@@ -17,9 +17,9 @@ namespace Engine
 			public:
 				struct SurfaceInfo
 				{
-					VkSurfaceCapabilitiesKHR capabilities;
-					std::vector<VkSurfaceFormatKHR> formats;
-					std::vector<VkPresentModeKHR> presentModes;
+					VkSurfaceCapabilitiesKHR mCapabilities{};
+					std::vector<VkSurfaceFormatKHR> mFormats;
+					std::vector<VkPresentModeKHR> mPresentModes;
 				};
 				void Create(Window::IWindow* a_window, RHI::IInstance* a_instance) override;
 				void SetupInfo(RHI::IPhysicalDevice* a_physicalDevice) override;

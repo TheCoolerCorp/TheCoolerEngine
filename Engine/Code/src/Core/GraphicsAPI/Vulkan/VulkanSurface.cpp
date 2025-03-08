@@ -18,7 +18,7 @@ namespace Engine
 			{
 				VkPhysicalDevice t_device = a_physicalDevice->CastVulkan()->GetVkPhysicalDevice();
 
-				VK_CHECK(vkGetPhysicalDeviceSurfaceCapabilitiesKHR(t_device, m_surface, &m_info.capabilities), "Failed to get Surface capabilities");
+				VK_CHECK(vkGetPhysicalDeviceSurfaceCapabilitiesKHR(t_device, m_surface, &m_info.mCapabilities), "Failed to get Surface capabilities");
 
 				uint32_t formatCount;
 				VK_CHECK(vkGetPhysicalDeviceSurfaceFormatsKHR(t_device, m_surface, &formatCount, nullptr), "Failed to get Surface capabilities");
@@ -27,13 +27,13 @@ namespace Engine
 				VK_CHECK(vkGetPhysicalDeviceSurfacePresentModesKHR(t_device, m_surface, &presentModeCount, nullptr), "Failed to get Surface capabilities");
 
 				if (formatCount != 0) {
-					m_info.formats.resize(formatCount);
-					VK_CHECK(vkGetPhysicalDeviceSurfaceFormatsKHR(t_device, m_surface, &formatCount, m_info.formats.data()), "Failed to get Surface capabilities");
+					m_info.mFormats.resize(formatCount);
+					VK_CHECK(vkGetPhysicalDeviceSurfaceFormatsKHR(t_device, m_surface, &formatCount, m_info.mFormats.data()), "Failed to get Surface capabilities");
 				}
 
 				if (presentModeCount != 0) {
-					m_info.presentModes.resize(presentModeCount);
-					VK_CHECK(vkGetPhysicalDeviceSurfacePresentModesKHR(t_device, m_surface, &presentModeCount, m_info.presentModes.data()), "Failed to get Surface capabilities");
+					m_info.mPresentModes.resize(presentModeCount);
+					VK_CHECK(vkGetPhysicalDeviceSurfacePresentModesKHR(t_device, m_surface, &presentModeCount, m_info.mPresentModes.data()), "Failed to get Surface capabilities");
 				}
 			}
 

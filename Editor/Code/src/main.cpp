@@ -8,6 +8,7 @@
 #include "Core/GraphicsAPI/Vulkan/VulkanPhysicalDevice.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanLogicalDevice.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanSurface.h"
+#include "Core/GraphicsAPI/Vulkan/VulkanSwapChain.h"
 
 int main()
 {
@@ -43,17 +44,21 @@ int main()
     Engine::Core::RHI::IPhysicalDevice* physicalDevice = new Engine::Core::GraphicsAPI::VulkanPhysicalDevice;
     Engine::Core::RHI::ILogicalDevice* logicalDevice = new Engine::Core::GraphicsAPI::VulkanLogicalDevice;
     Engine::Core::RHI::ISurface* surface = new Engine::Core::GraphicsAPI::VulkanSurface;
+    Engine::Core::RHI::ISwapChain* swapChain = new Engine::Core::GraphicsAPI::VulkanSwapchain;
     instance->Create();
     layers->Create(instance);
     surface->Create(app.GetWindow(), instance);
     physicalDevice->Create(instance, surface);
     logicalDevice->Create(physicalDevice, surface);
+    swapChain->Create(surface, app.GetWindow(), physicalDevice, logicalDevice);
     app.Run();
+    swapChain->Destroy(logicalDevice);
     logicalDevice->Destroy();
     layers->Destroy(instance);
     surface->Destroy(instance);
     instance->Destroy();
     app.Destroy();
+    delete swapChain;
     delete surface;
     delete logicalDevice;
     delete physicalDevice;
