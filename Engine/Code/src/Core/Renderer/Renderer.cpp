@@ -28,9 +28,10 @@ namespace Engine
 			m_logicalDevice = m_interface->InstantiateLogicalDevice();
 			m_logicalDevice->Create(m_physicalDevice, m_surface);
 
-			//m_surface->SetupInfo(m_physicalDevice);
+			m_surface->SetupInfo(m_physicalDevice);
 
-
+			m_swapChain = m_interface->InstantiateSwapChain();
+			m_swapChain->Create(m_surface, a_window, m_physicalDevice, m_logicalDevice);
 		}
 
 		void Renderer::Run()
@@ -40,6 +41,9 @@ namespace Engine
 
 		void Renderer::Destroy()
 		{
+			m_swapChain->Destroy(m_logicalDevice);
+			m_interface->DestroySwapChain(m_swapChain);
+
 			m_logicalDevice->Destroy();
 			m_interface->DestroyLogicalDevice(m_logicalDevice);
 

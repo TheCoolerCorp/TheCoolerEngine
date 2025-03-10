@@ -64,7 +64,7 @@ namespace Engine
                 VK_CHECK(vkCreateDevice(t_physicalDevice, &t_createInfo, nullptr, &m_device), "failed to create logical device!");
 
                 vkGetDeviceQueue(m_device, t_indices.GetGraphicsFamily().value(), 0, &m_graphicsQueue);
-                vkGetDeviceQueue(m_device, t_indices.GetPresentFamily().value(), 0, &m_presentQueue);
+                //vkGetDeviceQueue(m_device, t_indices.GetPresentFamily().value(), 0, &m_presentQueue);
 			}
 
 			void VulkanLogicalDevice::Destroy()
