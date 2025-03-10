@@ -33,16 +33,16 @@ namespace Engine
 				virtual void DestroyValidationLayers(IValidationLayers* a_validationLayers) { delete a_validationLayers; }
 
 				virtual ISurface* InstantiateSurface() = 0;
-				virtual void DeleteSurface(ISurface* a_surface) { delete a_surface; }
+				virtual void DestroySurface(ISurface* a_surface) { delete a_surface; }
 
 				virtual IPhysicalDevice* InstantiatePhysicalDevice() = 0;
-				virtual void DeletePhysicalDevice(IPhysicalDevice* a_physicalDevice) { delete a_physicalDevice; }
+				virtual void DestroyPhysicalDevice(IPhysicalDevice* a_physicalDevice) { delete a_physicalDevice; }
 
 				virtual ILogicalDevice* InstantiateLogicalDevice() = 0;
-				virtual void DeleteLogicalDevice(ILogicalDevice* a_logicalDevice) { delete a_logicalDevice; }
+				virtual void DestroyLogicalDevice(ILogicalDevice* a_logicalDevice) { delete a_logicalDevice; }
 
 				virtual ISwapChain* InstantiateSwapChain() = 0;
-				virtual void DeleteSwapChain(ISwapChain* a_swapChain) { delete a_swapChain; }
+				virtual void DestroySwapChain(ISwapChain* a_swapChain) { delete a_swapChain; }
 			};
 		}
 	}

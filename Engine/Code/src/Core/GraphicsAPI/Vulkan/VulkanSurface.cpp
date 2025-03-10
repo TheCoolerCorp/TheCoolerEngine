@@ -11,6 +11,7 @@ namespace Engine
 		{
 			void VulkanSurface::Create(Window::IWindow* a_window, RHI::IInstance* a_instance) 
 			{
+				a_window->CastGLFW();
 				a_window->CreateWindowSurface(a_instance, this);
 			}
 

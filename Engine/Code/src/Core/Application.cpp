@@ -10,7 +10,7 @@ namespace Engine
 			m_mainWindow->Create(a_width, a_height);
 
 			m_renderer = new Renderer();
-			m_renderer->Init(RendererType::VULKAN);
+			m_renderer->Init(RendererType::VULKAN, m_mainWindow);
 
 		}
 

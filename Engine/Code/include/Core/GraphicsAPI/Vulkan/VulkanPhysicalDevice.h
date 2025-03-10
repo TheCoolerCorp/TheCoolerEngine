@@ -15,6 +15,7 @@ namespace Engine
 			{
 			public:
 				void Create(RHI::IInstance* a_instance, RHI::ISurface* a_surface) override;
+				void Destroy() override {}
 				VulkanPhysicalDevice* CastVulkan() override { return this; }
 				VkPhysicalDevice GetVkPhysicalDevice() const { return m_physicalDevice; }
 
