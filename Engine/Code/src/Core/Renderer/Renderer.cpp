@@ -33,6 +33,9 @@ namespace Engine
 
 			m_swapChain = m_interface->InstantiateSwapChain();
 			m_swapChain->Create(m_surface, a_window, m_physicalDevice, m_logicalDevice);
+
+			m_renderPass = m_interface->InstantiateRenderPass();
+			m_renderPass->Create(m_swapChain, m_physicalDevice, m_logicalDevice);
 		}
 
 		void Renderer::Run()
@@ -42,6 +45,9 @@ namespace Engine
 
 		void Renderer::Destroy()
 		{
+			m_renderPass->Destroy(m_logicalDevice);
+			m_interface->DestroyRenderPass(m_renderPass);
+
 			m_swapChain->Destroy(m_logicalDevice);
 			m_interface->DestroySwapChain(m_swapChain);
 

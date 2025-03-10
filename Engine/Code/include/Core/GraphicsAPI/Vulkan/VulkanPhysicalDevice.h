@@ -1,7 +1,7 @@
 #ifndef VULKANPHYSICALDEVICE_H
 #define VULKANPHYSICALDEVICE_H
 
-#include <vulkan/vulkan.h>
+#include "Core/GraphicsAPI/Vulkan/VulkanUtils.h"
 
 #include "Core/Interfaces/IPhysicalDevice.h"
 
@@ -18,6 +18,8 @@ namespace Engine
 				void Destroy() override {}
 				VulkanPhysicalDevice* CastVulkan() override { return this; }
 				VkPhysicalDevice GetVkPhysicalDevice() const { return m_physicalDevice; }
+
+				VkFormat FindSupportedFormat(const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features);
 
 			private:
 				void PickPhysicalDevice(VkInstance a_instance, VkSurfaceKHR a_surface);

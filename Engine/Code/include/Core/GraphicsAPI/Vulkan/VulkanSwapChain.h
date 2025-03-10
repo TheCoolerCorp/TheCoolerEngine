@@ -22,12 +22,16 @@ namespace Engine
 				void Create(RHI::ISurface* a_surface, Window::IWindow* a_window, RHI::IPhysicalDevice* a_physicalDevice, RHI::ILogicalDevice* a_logicalDevice) override;
 				void Destroy(RHI::ILogicalDevice* a_logicalDevice) override;
 
+				GraphicsAPI::VulkanSwapchain* CastVulkan() override { return this; }
+
+				VkFormat GetImageFormat() { return m_swapChainImageFormat; }
+
 				uint32_t mMaxFrame = 0;
 
 			private:
 				VkSwapchainKHR m_swapChain = VK_NULL_HANDLE;
 
-				VkFormat m_swapChainImageFormat;
+				VkFormat m_swapChainImageFormat = VK_FORMAT_UNDEFINED;
 				VkExtent2D m_swapChainExtent;
 
 				struct Vectors;

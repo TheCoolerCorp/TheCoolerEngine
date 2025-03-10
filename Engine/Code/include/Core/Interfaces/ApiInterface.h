@@ -10,6 +10,7 @@
 #include "Core/Interfaces/IPhysicalDevice.h"
 #include "Core/Interfaces/ILogicalDevice.h"
 #include "Core/Interfaces/ISwapChain.h"
+#include "Core/Interfaces/IRenderPass.h"
 
 namespace Engine
 {
@@ -43,6 +44,9 @@ namespace Engine
 
 				virtual ISwapChain* InstantiateSwapChain() = 0;
 				virtual void DestroySwapChain(ISwapChain* a_swapChain) { delete a_swapChain; }
+
+				virtual IRenderPass* InstantiateRenderPass() = 0;
+				virtual void DestroyRenderPass(IRenderPass* a_renderPass) { delete a_renderPass; }
 			};
 		}
 	}

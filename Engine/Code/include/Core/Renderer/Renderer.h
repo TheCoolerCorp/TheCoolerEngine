@@ -42,6 +42,7 @@ namespace Engine
 			RHI::ILogicalDevice* m_logicalDevice = nullptr;
 			RHI::ISurface* m_surface = nullptr;
 			RHI::ISwapChain* m_swapChain = nullptr;
+			RHI::IRenderPass* m_renderPass = nullptr;
 			
 		};
 	}

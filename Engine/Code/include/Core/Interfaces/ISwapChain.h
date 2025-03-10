@@ -27,7 +27,7 @@ namespace Engine
 			public:
 				virtual ~ISwapChain() = default;
 
-				GraphicsAPI::VulkanSwapchain* CastVulkan() {return nullptr;}
+				virtual GraphicsAPI::VulkanSwapchain* CastVulkan() { return nullptr; }
 
 				virtual void Create(ISurface* a_surface, Window::IWindow* a_window, RHI::IPhysicalDevice* a_physicalDevice, RHI::ILogicalDevice* a_logical_device) = 0;
 				virtual void Destroy(RHI::ILogicalDevice* a_logical_device) = 0;
