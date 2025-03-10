@@ -57,7 +57,7 @@ namespace Engine
 				const VkExtent2D t_extent = ChooseSurfaceExtent(t_info.mCapabilities, a_window);
 
 
-				VkSwapchainCreateInfoKHR createInfo;
+				VkSwapchainCreateInfoKHR createInfo = {};
 				createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
 
 				createInfo.surface = a_surface->CastVulkan()->GetVkSurfaceKHR();

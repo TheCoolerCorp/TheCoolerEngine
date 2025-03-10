@@ -14,6 +14,7 @@ namespace Engine
 			enum class LogLevel : int
 			{
 				DEBUGLOG,
+				VERBOSE,
 				INFO,
 				WARNING,
 				ERROR,
@@ -26,6 +27,8 @@ namespace Engine
 				{
 				case LogLevel::DEBUGLOG:
 					return "DEBUG";
+				case LogLevel::VERBOSE:
+					return "VERBOSE";
 				case LogLevel::INFO:
 					return "INFO";
 				case LogLevel::WARNING:

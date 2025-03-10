@@ -59,21 +59,6 @@ namespace Engine
 
 			VKAPI_ATTR VkBool32 VKAPI_CALL VulkanValidationLayers::DebugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT a_messageSeverity, VkDebugUtilsMessageTypeFlagsEXT a_messageType, const VkDebugUtilsMessengerCallbackDataEXT* a_pCallbackData, void* a_pUserData)
 			{
-				std::string severity;
-
-				if (a_messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT) {
-					severity = "VERBOSE";
-				}
-				else if (a_messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT) {
-					severity = "INFO";
-				}
-				else if (a_messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT) {
-					severity = "WARNING";
-				}
-				else if (a_messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT) {
-					severity = "ERROR";
-				}
-
 				std::string messageType;
 
 				if (a_messageType & VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT) {
@@ -86,7 +71,19 @@ namespace Engine
 					messageType = "PERFORMANCE";
 				}
 
-				LOG_ERROR("[Vulkan] : Validation layers: " + severity + messageType + Debugging::ToString(a_pCallbackData->pMessage) + '\n');
+				if (a_messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT) {
+					LOG_VERBOSE("[Vulkan] : Validation layers: " + messageType + " " + Debugging::ToString(a_pCallbackData->pMessage) + '\n');
+				}
+				else if (a_messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT) {
+					LOG_INFO("[Vulkan] : Validation layers: " + messageType + " " + Debugging::ToString(a_pCallbackData->pMessage) + '\n');
+				}
+				else if (a_messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT) {
+					LOG_WARNING("[Vulkan] : Validation layers: " + messageType + " " + Debugging::ToString(a_pCallbackData->pMessage) + '\n');
+				}
+				else if (a_messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT) {
+					LOG_ERROR("[Vulkan] : Validation layers: " + messageType + " " + Debugging::ToString(a_pCallbackData->pMessage) + '\n');
+				}
+
 				return VK_FALSE;
 			}
 
