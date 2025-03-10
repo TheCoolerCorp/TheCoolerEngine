@@ -1,5 +1,6 @@
 #include  "Core/GraphicsAPI/Vulkan/VulkanSwapChain.h"
 
+#include "Core/Assertion/Assertion.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanSurface.h"
 #include "Core/Interfaces/ISurface.h"
 #include "Core/Window/GLWindow.h"
@@ -98,6 +99,7 @@ namespace Engine
 
 				vkGetSwapchainImagesKHR(a_logicalDevice->CastVulkan()->GetVkDevice(), m_swapChain, &t_imageCount, nullptr);
 				m_vectorsStruct->mImages.resize(t_imageCount);
+				m_vectorsStruct->mImageViews.resize(t_imageCount);
 				vkGetSwapchainImagesKHR(a_logicalDevice->CastVulkan()->GetVkDevice(), m_swapChain, &t_imageCount, m_vectorsStruct->mImages.data());
 
 				m_swapChainImageFormat = t_formats.format;
@@ -128,11 +130,12 @@ namespace Engine
 
 			VkSurfaceFormatKHR VulkanSwapchain::ChooseSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& a_availableFormats)
 			{
-				for (const auto& availableFormat : a_availableFormats)
+				ASSERT(!a_availableFormats.empty(), "No available formats !");
+				for (const auto& t_availableFormat : a_availableFormats)
 				{
-					if (availableFormat.format == VK_FORMAT_B8G8R8A8_SRGB && availableFormat.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR) 
+					if (t_availableFormat.format == VK_FORMAT_B8G8R8A8_SRGB && t_availableFormat.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR) 
 					{
-						return availableFormat;
+						return t_availableFormat;
 					}
 				}
 

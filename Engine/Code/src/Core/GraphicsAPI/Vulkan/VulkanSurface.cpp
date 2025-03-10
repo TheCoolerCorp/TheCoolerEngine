@@ -21,20 +21,20 @@ namespace Engine
 
 				VK_CHECK(vkGetPhysicalDeviceSurfaceCapabilitiesKHR(t_device, m_surface, &m_info.mCapabilities), "Failed to get Surface capabilities");
 
-				uint32_t formatCount;
-				VK_CHECK(vkGetPhysicalDeviceSurfaceFormatsKHR(t_device, m_surface, &formatCount, nullptr), "Failed to get Surface capabilities");
+				uint32_t t_formatCount;
+				VK_CHECK(vkGetPhysicalDeviceSurfaceFormatsKHR(t_device, m_surface, &t_formatCount, nullptr), "Failed to get Surface capabilities");
 
-				uint32_t presentModeCount;
-				VK_CHECK(vkGetPhysicalDeviceSurfacePresentModesKHR(t_device, m_surface, &presentModeCount, nullptr), "Failed to get Surface capabilities");
+				uint32_t t_presentModeCount;
+				VK_CHECK(vkGetPhysicalDeviceSurfacePresentModesKHR(t_device, m_surface, &t_presentModeCount, nullptr), "Failed to get Surface capabilities");
 
-				if (formatCount != 0) {
-					m_info.mFormats.resize(formatCount);
-					VK_CHECK(vkGetPhysicalDeviceSurfaceFormatsKHR(t_device, m_surface, &formatCount, m_info.mFormats.data()), "Failed to get Surface capabilities");
+				if (t_formatCount != 0) {
+					m_info.mFormats.resize(t_formatCount);
+					VK_CHECK(vkGetPhysicalDeviceSurfaceFormatsKHR(t_device, m_surface, &t_formatCount, m_info.mFormats.data()), "Failed to get Surface capabilities");
 				}
 
-				if (presentModeCount != 0) {
-					m_info.mPresentModes.resize(presentModeCount);
-					VK_CHECK(vkGetPhysicalDeviceSurfacePresentModesKHR(t_device, m_surface, &presentModeCount, m_info.mPresentModes.data()), "Failed to get Surface capabilities");
+				if (t_presentModeCount != 0) {
+					m_info.mPresentModes.resize(t_presentModeCount);
+					VK_CHECK(vkGetPhysicalDeviceSurfacePresentModesKHR(t_device, m_surface, &t_presentModeCount, m_info.mPresentModes.data()), "Failed to get Surface capabilities");
 				}
 			}
 

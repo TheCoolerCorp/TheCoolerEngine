@@ -38,6 +38,25 @@ namespace Engine
 
                 VkPhysicalDeviceFeatures t_deviceFeatures{};
 
+                uint32_t extensionCount = 0;
+                vkEnumerateDeviceExtensionProperties(t_physicalDevice, nullptr, &extensionCount, nullptr);
+
+                std::vector<VkExtensionProperties> availableExtensions(extensionCount);
+                vkEnumerateDeviceExtensionProperties(t_physicalDevice, nullptr, &extensionCount, availableExtensions.data());
+
+                bool t_swapchainsExtensionAvailable = false;
+                for (const auto& t_extension : availableExtensions) {
+                    if (strcmp(t_extension.extensionName, VK_KHR_SWAPCHAIN_EXTENSION_NAME) == 0) {
+                        t_swapchainsExtensionAvailable = true;
+                        break;
+                    }
+                }
+
+                std::vector<const char*> deviceExtensions;
+                if (t_swapchainsExtensionAvailable) {
+                    deviceExtensions.push_back(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
+                }
+
                 VkDeviceCreateInfo t_createInfo{};
                 t_createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
 
@@ -46,7 +65,8 @@ namespace Engine
 
                 t_createInfo.pEnabledFeatures = &t_deviceFeatures;
 
-                t_createInfo.enabledExtensionCount = 0;
+                t_createInfo.enabledExtensionCount = static_cast<uint32_t>(deviceExtensions.size());
+                t_createInfo.ppEnabledExtensionNames = deviceExtensions.data();
 
                 if (RHI::ENABLEVALIDATIONLAYERS) 
                 {
@@ -58,9 +78,6 @@ namespace Engine
                     t_createInfo.enabledLayerCount = 0;
                 }
 
-                //if (vkCreateDevice(t_physicalDevice, &t_createInfo, nullptr, &m_device) != VK_SUCCESS) {
-                //    throw std::runtime_error("failed to create logical device!");
-                //}
                 VK_CHECK(vkCreateDevice(t_physicalDevice, &t_createInfo, nullptr, &m_device), "failed to create logical device!");
 
                 vkGetDeviceQueue(m_device, t_indices.GetGraphicsFamily().value(), 0, &m_graphicsQueue);
