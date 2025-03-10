@@ -1,5 +1,5 @@
 #ifndef ILOGICALDEVICE_H
-#define ILOGICALDEVICDE_H
+#define ILOGICALDEVICE_H
 
 #include "EngineExport.h"
 #include "Core/Logger/Logger.h"
