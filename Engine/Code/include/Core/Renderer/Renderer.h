@@ -27,7 +27,7 @@ namespace Engine
 			Renderer() = default;
 			~Renderer() = default;
 
-			void Init(RendererType a_type);
+			void Init(RendererType a_type, Window::IWindow* a_window);
 			void Run();
 			void Destroy();
 
@@ -38,8 +38,9 @@ namespace Engine
 			RHI::ApiInterface* m_interface = nullptr;
 			RHI::IInstance* m_apiInstance = nullptr;
 		    RHI::IValidationLayers* m_valiationLayers = nullptr;
-
-
+			RHI::IPhysicalDevice* m_physicalDevice = nullptr;
+			RHI::ILogicalDevice* m_logicalDevice = nullptr;
+			RHI::ISurface* m_surface = nullptr;
 			
 		};
 	}

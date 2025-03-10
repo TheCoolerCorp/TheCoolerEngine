@@ -23,6 +23,7 @@ namespace Engine
 			public:
 				virtual ~IPhysicalDevice() = default;
 				virtual void Create(IInstance* instance, ISurface* a_surface) = 0;
+				virtual void Destroy() = 0;
 				virtual GraphicsAPI::VulkanPhysicalDevice* CastVulkan() { LOG_ERROR("Try to return wrong cast type : VulkanPhysicalDevice!"); return nullptr; }
 			};
 		}
