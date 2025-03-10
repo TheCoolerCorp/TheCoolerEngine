@@ -1,4 +1,5 @@
 #include "Core/Renderer/Renderer.h"
+#include "Core/Logger/Logger.h"
 
 namespace Engine
 {
@@ -8,7 +9,7 @@ namespace Engine
 		{
 			if (a_type != RendererType::VULKAN)
 			{
-				// LOG ERROR NOT IMPLEMENTED
+				LOG_ERROR("Only vulkan is implemented !");
 			}
 			m_interface = new GraphicsAPI::VulkanInterface();
 

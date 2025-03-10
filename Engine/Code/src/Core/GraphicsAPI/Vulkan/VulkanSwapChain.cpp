@@ -57,16 +57,16 @@ namespace Engine
 				const VkExtent2D t_extent = ChooseSurfaceExtent(t_info.mCapabilities, a_window);
 
 
-				VkSwapchainCreateInfoKHR createInfo = {};
-				createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
+				VkSwapchainCreateInfoKHR t_createInfo = {};
+				t_createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
 
-				createInfo.surface = a_surface->CastVulkan()->GetVkSurfaceKHR();
-				createInfo.minImageCount = t_imageCount;
-				createInfo.imageFormat = t_formats.format;
-				createInfo.imageColorSpace = t_formats.colorSpace;
-				createInfo.imageExtent = t_extent;
-				createInfo.imageArrayLayers = 1;
-				createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+				t_createInfo.surface = a_surface->CastVulkan()->GetVkSurfaceKHR();
+				t_createInfo.minImageCount = t_imageCount;
+				t_createInfo.imageFormat = t_formats.format;
+				t_createInfo.imageColorSpace = t_formats.colorSpace;
+				t_createInfo.imageExtent = t_extent;
+				t_createInfo.imageArrayLayers = 1;
+				t_createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
 
 				const QueueFamilyIndices t_indices = QueueFamilyIndices::FindQueueFamilies(
 					a_physicalDevice->CastVulkan()->GetVkPhysicalDevice(), a_surface->CastVulkan()->GetVkSurfaceKHR());
@@ -76,23 +76,25 @@ namespace Engine
 
 				if (t_indices.GetGraphicsFamily() != t_indices.GetPresentFamily())
 				{
-					createInfo.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
-					createInfo.queueFamilyIndexCount = 2;
-					createInfo.pQueueFamilyIndices = t_queueFamilyIndices;
+					t_createInfo.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
+					t_createInfo.queueFamilyIndexCount = 2;
+					t_createInfo.pQueueFamilyIndices = t_queueFamilyIndices;
 				}
 				else
 				{
-					createInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
+					t_createInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
+					t_createInfo.queueFamilyIndexCount = 0;
+					t_createInfo.pQueueFamilyIndices = nullptr;
 				}
 
-				createInfo.preTransform = t_info.mCapabilities.currentTransform;
-				createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
-				createInfo.presentMode = t_presentMode;
-				createInfo.clipped = VK_TRUE;
+				t_createInfo.preTransform = t_info.mCapabilities.currentTransform;
+				t_createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
+				t_createInfo.presentMode = t_presentMode;
+				t_createInfo.clipped = VK_TRUE;
 
-				createInfo.oldSwapchain = VK_NULL_HANDLE;
+				t_createInfo.oldSwapchain = VK_NULL_HANDLE;
 
-				VK_CHECK(vkCreateSwapchainKHR(a_logicalDevice->CastVulkan()->GetVkDevice(), &createInfo, nullptr, &m_swapChain), "failed to create swap chain!");
+				VK_CHECK(vkCreateSwapchainKHR(a_logicalDevice->CastVulkan()->GetVkDevice(), &t_createInfo, nullptr, &m_swapChain), "failed to create swap chain!");
 
 				vkGetSwapchainImagesKHR(a_logicalDevice->CastVulkan()->GetVkDevice(), m_swapChain, &t_imageCount, nullptr);
 				m_vectorsStruct->mImages.resize(t_imageCount);
