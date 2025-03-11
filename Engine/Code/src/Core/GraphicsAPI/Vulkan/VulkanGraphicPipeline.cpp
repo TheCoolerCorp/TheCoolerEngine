@@ -92,7 +92,7 @@ namespace Engine
 					//pipelineInfo.basePipelineIndex = -1; // Optional
 					//pipelineInfo.pDepthStencilState = &depthStencil;
 
-					VK_CHECK(vkCreateGraphicsPipelines(a_logicalDevice->CastVulkan()->GetVkDevice(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_pipeline), )
+					VK_CHECK(vkCreateGraphicsPipelines(a_logicalDevice->CastVulkan()->GetVkDevice(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_pipeline), "Failed to create graphic pipeline");
 
 
 					// Destroy shader, already load don't need to store them
