@@ -19,7 +19,7 @@ namespace Engine
 				VulkanPhysicalDevice* CastVulkan() override { return this; }
 				VkPhysicalDevice GetVkPhysicalDevice() const { return m_physicalDevice; }
 
-				VkFormat FindSupportedFormat(const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features);
+				VkFormat FindSupportedFormat(const std::vector<VkFormat>& a_candidates, VkImageTiling a_tiling, VkFormatFeatureFlags a_features) const;
 
 			private:
 				void PickPhysicalDevice(VkInstance a_instance, VkSurfaceKHR a_surface);

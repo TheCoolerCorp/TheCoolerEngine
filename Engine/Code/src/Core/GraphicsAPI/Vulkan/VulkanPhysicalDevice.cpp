@@ -18,7 +18,7 @@ namespace Engine
 				PickPhysicalDevice(a_instance->CastVulkan()->GetVkInstance(), a_surface->CastVulkan()->GetVkSurfaceKHR());
 			}
 
-			void VulkanPhysicalDevice::PickPhysicalDevice(const VkInstance a_instance, VkSurfaceKHR a_surface)
+			void VulkanPhysicalDevice::PickPhysicalDevice(const VkInstance a_instance, const VkSurfaceKHR a_surface)
 			{
 				uint32_t t_physicalDeviceCount = 0;
 				vkEnumeratePhysicalDevices(a_instance, &t_physicalDeviceCount, nullptr);
@@ -28,18 +28,18 @@ namespace Engine
 				std::vector<VkPhysicalDevice> t_physicalDevices(t_physicalDeviceCount);
 				vkEnumeratePhysicalDevices(a_instance, &t_physicalDeviceCount, t_physicalDevices.data());
 
-				std::multimap<uint32_t, VkPhysicalDevice> candidates;
+				std::multimap<uint32_t, VkPhysicalDevice> t_candidates;
 
 				for (const auto& t_physicalDevice : t_physicalDevices) {
 					uint32_t score = RatePhysicalDevice(t_physicalDevice, a_surface);
-					candidates.insert(std::make_pair(score, t_physicalDevice));
+					t_candidates.insert(std::make_pair(score, t_physicalDevice));
 				}
 
-				ASSERT(candidates.rbegin()->first > 0, "failed to find a suitable GPU!");
+				ASSERT(t_candidates.rbegin()->first > 0, "failed to find a suitable GPU!");
 
-				m_physicalDevice = candidates.rbegin()->second;
+				m_physicalDevice = t_candidates.rbegin()->second;
 
-				candidates.clear();
+				t_candidates.clear();
 				t_physicalDevices.clear();
 
 			}
@@ -75,17 +75,17 @@ namespace Engine
 				return t_indices.IsComplete();
 			}
 
-			VkFormat VulkanPhysicalDevice::FindSupportedFormat(const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features)
+			VkFormat VulkanPhysicalDevice::FindSupportedFormat(const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features) const
 			{
-				for (VkFormat format : candidates)
+				for (const VkFormat t_format : candidates)
 				{
-					VkFormatProperties props;
-					vkGetPhysicalDeviceFormatProperties(m_physicalDevice, format, &props);
-					if (tiling == VK_IMAGE_TILING_LINEAR && (props.linearTilingFeatures & features) == features) {
-						return format;
+					VkFormatProperties t_props;
+					vkGetPhysicalDeviceFormatProperties(m_physicalDevice, t_format, &t_props);
+					if (tiling == VK_IMAGE_TILING_LINEAR && (t_props.linearTilingFeatures & features) == features) {
+						return t_format;
 					}
-					else if (tiling == VK_IMAGE_TILING_OPTIMAL && (props.optimalTilingFeatures & features) == features) {
-						return format;
+					if (tiling == VK_IMAGE_TILING_OPTIMAL && (t_props.optimalTilingFeatures & features) == features) {
+						return t_format;
 					}
 				}
 				return VK_FORMAT_UNDEFINED;
