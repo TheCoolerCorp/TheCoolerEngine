@@ -87,12 +87,13 @@ namespace Engine
 				renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
 				renderPassInfo.attachmentCount = static_cast<uint32_t>(descriptors.size());
 				renderPassInfo.pAttachments = descriptors.data();
-				renderPassInfo.subpassCount = 1;
+                renderPassInfo.subpassCount = static_cast<uint32_t>(subpasses.size());
 				renderPassInfo.pSubpasses = subpasses.data();
 				renderPassInfo.dependencyCount = 1;
 				renderPassInfo.pDependencies = dependencies.data();
 
                 VK_CHECK(vkCreateRenderPass(a_logicalDevice->CastVulkan()->GetVkDevice(), &renderPassInfo, nullptr, &m_renderPass), "Failed to create swapchain");
+                m_subpasses = static_cast<uint32_t>(subpasses.size());
 			}
 
 

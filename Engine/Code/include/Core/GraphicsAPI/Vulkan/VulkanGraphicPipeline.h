@@ -6,7 +6,8 @@
 #include "Core/GraphicsAPI/Vulkan/VulkanUtils.h"
 #include "Core/Utils.h"
 #include "Core/Interfaces/IGraphicPipeline.h"
-
+#include "Ressources/Vertex.h"
+#include <array>
 namespace Engine
 {
 	namespace Core
@@ -27,6 +28,7 @@ namespace Engine
 
 				VkPipeline m_pipeline = VK_NULL_HANDLE;
 				VkPipelineLayout m_layout = VK_NULL_HANDLE;
+				VkDescriptorSetLayout m_descriptor = VK_NULL_HANDLE;
 			};
 		}
 	}

@@ -20,9 +20,11 @@ namespace Engine
 				void Create(RHI::ISwapChain* a_swapChain, RHI::IPhysicalDevice* a_physicalDevice, RHI::ILogicalDevice* a_logicalDevice) override;
 				void Destroy(RHI::ILogicalDevice* a_logicalDevice) override;
 
+				VkRenderPass GetRenderPass() { return m_renderPass; }
+				uint32_t GetSubpassesCount() { return m_subpasses; }
 			private:
 				VkRenderPass m_renderPass = VK_NULL_HANDLE;
-
+				uint32_t m_subpasses = 0;
 			};
 		}
 	}

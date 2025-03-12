@@ -13,6 +13,7 @@
 #include "Core/GraphicsAPI/Vulkan/VulkanLogicalDevice.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanSwapChain.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanRenderPass.h"
+#include  "Core/GraphicsAPI/Vulkan/VulkanGraphicPipeline.h"
 namespace Engine
 {
 	namespace Core
@@ -39,6 +40,9 @@ namespace Engine
 				RHI::ISwapChain* InstantiateSwapChain() override { return new VulkanSwapchain; }
 
 				RHI::IRenderPass* InstantiateRenderPass() override { return new VulkanRenderPass; }
+
+				RHI::IGraphicPipeline* InstantiateGraphicPipeline() override { return new VulkanGraphicPipeline; }
+
 			};
 		}
 	}

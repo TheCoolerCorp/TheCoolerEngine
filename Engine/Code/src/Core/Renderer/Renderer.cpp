@@ -36,6 +36,9 @@ namespace Engine
 
 			m_renderPass = m_interface->InstantiateRenderPass();
 			m_renderPass->Create(m_swapChain, m_physicalDevice, m_logicalDevice);
+
+			m_graphicPipeline = m_interface->InstantiateGraphicPipeline();
+			m_graphicPipeline->Create(m_logicalDevice, m_renderPass);
 		}
 
 		void Renderer::Run()
@@ -45,6 +48,9 @@ namespace Engine
 
 		void Renderer::Destroy()
 		{
+			m_graphicPipeline->Destroy(m_logicalDevice);
+			m_interface->DestroyGraphicPipeline(m_graphicPipeline);
+
 			m_renderPass->Destroy(m_logicalDevice);
 			m_interface->DestroyRenderPass(m_renderPass);
 

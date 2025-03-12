@@ -11,7 +11,7 @@
 #include "Core/Interfaces/ILogicalDevice.h"
 #include "Core/Interfaces/ISwapChain.h"
 #include "Core/Interfaces/IRenderPass.h"
-
+#include "Core/Interfaces/IGraphicPipeline.h"
 namespace Engine
 {
 	namespace Core
@@ -47,6 +47,9 @@ namespace Engine
 
 				virtual IRenderPass* InstantiateRenderPass() = 0;
 				virtual void DestroyRenderPass(IRenderPass* a_renderPass) { delete a_renderPass; }
+
+				virtual IGraphicPipeline* InstantiateGraphicPipeline() = 0;
+				virtual void DestroyGraphicPipeline(IGraphicPipeline* a_graphicPipeline) { delete a_graphicPipeline; }
 			};
 		}
 	}
