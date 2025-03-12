@@ -1,0 +1,38 @@
+#ifndef VULKANIMAGE_H
+#define VULKANIMAGE_H
+
+#include "EngineExport.h"
+#include "Core/Logger/Logger.h"
+#include  "Core/GraphicsAPI/Vulkan/VulkanUtils.h"
+
+#include "Core/Interfaces/IImage.h"
+
+namespace Engine
+{
+	namespace Core
+	{
+		namespace GraphicsAPI
+		{
+			class ENGINE_API VulkanImage : public RHI::IImage
+			{
+			public:
+				~VulkanImage() override = default;
+				GraphicsAPI::VulkanImage* CastVulkan() override { return this; }
+
+				void Create() override;
+				void Destroy() override;
+
+				VkImage GetImage() { return m_image; }
+				VkImageView GetView() { return m_view; }
+				VkDeviceMemory GetMemory() { return m_memory; }
+
+			private:
+				VkImage m_image = VK_NULL_HANDLE;
+				VkImageView m_view = VK_NULL_HANDLE;
+				VkDeviceMemory m_memory = VK_NULL_HANDLE;
+			};
+		}
+	}
+}
+
+#endif
