@@ -8,6 +8,7 @@
 #include "Core/GraphicsAPI/Vulkan/VulkanLogicalDevice.h"
 #include "Core/GraphicsAPI/Vulkan/QueueFamilies.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanUtils.h"
+#include "Core/GraphicsAPI/Vulkan/VulkanRenderPass.h"
 
 namespace Engine
 {
@@ -25,6 +26,8 @@ namespace Engine
 				std::vector<VkSemaphore> mImageAvailableSemaphores;
 				std::vector<VkSemaphore> mRenderFinishedSemaphores;
 				std::vector<VkFence> mInFlightFences;
+
+				std::vector < VkFramebuffer > m_framebuffers;
 			};
 
 			VulkanSwapchain::VulkanSwapchain() : m_swapChainImageFormat(), m_swapChainExtent(),
@@ -111,8 +114,42 @@ namespace Engine
 					m_vectorsStruct->mImageViews[i] = CreateImageView(m_vectorsStruct->mImages[i],
 					                                                  m_swapChainImageFormat, VK_IMAGE_ASPECT_COLOR_BIT,
 					                                                  a_logicalDevice->CastVulkan()->GetVkDevice());
+
+					// ADD HERE DEPTH IMAGE CREATION
 				}
 
+			}
+
+			void VulkanSwapchain::CreateFramebuffers(RHI::ILogicalDevice* a_logicalDevice, RHI::IRenderPass* a_renderPass)
+			{
+				VulkanLogicalDevice* m_logicalDevice = a_logicalDevice->CastVulkan();
+				VulkanRenderPass* m_renderPass = a_renderPass->CastVulkan();
+
+				m_vectorsStruct->mFramebuffers.resize(m_vectorsStruct->mImageViews.size());
+
+				for (size_t i = 0; i < m_vectorsStruct->mFramebuffers.size(); i++)
+				{
+					std::vector<VkImageView> attachments;
+
+					/*if (depthImage)
+					{
+						VulkanImage* vkDepthImage = depthImage->CastVulkan();
+						attachments.push_back(swapChainImageViews[i]);
+						attachments.push_back(vkDepthImage->imageView);
+					}
+					VkFramebufferCreateInfo framebufferInfo{};
+					framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+					framebufferInfo.renderPass = vkRenderPass->renderPass;
+					framebufferInfo.attachmentCount = static_cast<uint32_t>(attachments.size());
+					framebufferInfo.pAttachments = attachments.data();
+					framebufferInfo.width = swapChainExtent.width;
+					framebufferInfo.height = swapChainExtent.height;
+					framebufferInfo.layers = 1;
+
+					if (vkCreateFramebuffer(vkDevice->device, &framebufferInfo, nullptr, &swapChainFramebuffers[i]) != VK_SUCCESS) {
+						throw std::runtime_error("failed to create framebuffer!");
+					}*/
+				}
 			}
 
 			void VulkanSwapchain::Destroy(RHI::ILogicalDevice* a_logicalDevice)

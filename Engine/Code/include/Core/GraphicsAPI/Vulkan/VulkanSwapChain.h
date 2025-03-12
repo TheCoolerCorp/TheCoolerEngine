@@ -2,7 +2,7 @@
 #define IVULKANSWAPCHAIN_H
 
 #include "Core/Interfaces/ISwapChain.h"
-
+#include  "Core/Interfaces/IRenderPass.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanUtils.h"
 #include <vector>
 
@@ -21,6 +21,8 @@ namespace Engine
 
 				void Create(RHI::ISurface* a_surface, Window::IWindow* a_window, RHI::IPhysicalDevice* a_physicalDevice, RHI::ILogicalDevice* a_logicalDevice) override;
 				void Destroy(RHI::ILogicalDevice* a_logicalDevice) override;
+
+				void CreateFramebuffers(RHI::ILogicalDevice* a_logicalDevice, RHI::IRenderPass* a_renderPass);
 
 				GraphicsAPI::VulkanSwapchain* CastVulkan() override { return this; }
 
