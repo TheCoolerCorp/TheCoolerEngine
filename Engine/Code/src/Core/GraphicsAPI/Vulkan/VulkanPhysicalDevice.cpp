@@ -75,16 +75,16 @@ namespace Engine
 				return t_indices.IsComplete();
 			}
 
-			VkFormat VulkanPhysicalDevice::FindSupportedFormat(const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features) const
+			VkFormat VulkanPhysicalDevice::FindSupportedFormat(const std::vector<VkFormat>& a_candidates, VkImageTiling a_tiling, VkFormatFeatureFlags a_features) const
 			{
-				for (const VkFormat t_format : candidates)
+				for (const VkFormat t_format : a_candidates)
 				{
 					VkFormatProperties t_props;
 					vkGetPhysicalDeviceFormatProperties(m_physicalDevice, t_format, &t_props);
-					if (tiling == VK_IMAGE_TILING_LINEAR && (t_props.linearTilingFeatures & features) == features) {
+					if (a_tiling == VK_IMAGE_TILING_LINEAR && (t_props.linearTilingFeatures & a_features) == a_features) {
 						return t_format;
 					}
-					if (tiling == VK_IMAGE_TILING_OPTIMAL && (t_props.optimalTilingFeatures & features) == features) {
+					if (a_tiling == VK_IMAGE_TILING_OPTIMAL && (t_props.optimalTilingFeatures & a_features) == a_features) {
 						return t_format;
 					}
 				}
