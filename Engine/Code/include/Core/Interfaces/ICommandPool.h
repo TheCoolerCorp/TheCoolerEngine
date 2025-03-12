@@ -23,6 +23,7 @@ namespace Engine
 			public:
 				virtual ~ICommandPool() = default;
 				virtual void Create(IPhysicalDevice* a_physicalDevice, ISurface* a_surface, ILogicalDevice* a_logicalDevice) = 0;
+				virtual void Destroy(ILogicalDevice* a_logicalDevice) = 0;
 			};
 		}
 	}

@@ -6,7 +6,6 @@
 #include "Core/GraphicsAPI/Vulkan/QueueFamilies.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanUtils.h"
 
-
 namespace Engine
 {
 	namespace Core
@@ -23,6 +22,11 @@ namespace Engine
 				t_poolInfo.queueFamilyIndex = t_queueFamilyIndices.GetGraphicsFamily().value();
 
 				VK_CHECK(vkCreateCommandPool(a_logicalDevice->CastVulkan()->GetVkDevice(), &t_poolInfo, nullptr, &m_commandPool), "failed to create command pool!");
+			}
+
+			void VulkanCommandPool::Destroy(RHI::ILogicalDevice* a_logicalDevice)
+			{
+				vkDestroyCommandPool(a_logicalDevice->CastVulkan()->GetVkDevice(), m_commandPool, nullptr);
 			}
 		}
 	}
