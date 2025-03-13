@@ -26,16 +26,21 @@ namespace Engine
 				DEPTH = 2,
 			};
 
+			struct ImageData
+			{
+				int mWidth = 0;
+				int mHeight = 0;
+				unsigned char* data = nullptr;
+			};
+
 			class ENGINE_API IImage
 			{
 			public:
 				virtual ~IImage() = default;
 				virtual GraphicsAPI::VulkanImage* CastVulkan() { LOG_ERROR("Try to return wrong cast type : VulkanPhysicalDevice!"); return nullptr; }
 
-				virtual void Create(int a_width, int a_height, ImageType a_type, IPhysicalDevice* a_physicalDevice, ILogicalDevice* a_logicalDevice, ICommandPool* a_commandPool) = 0;
-				virtual void CreateDepth() = 0;
-				virtual void CreateTexture() = 0;
-				virtual void Destroy() = 0;
+				virtual void Create(ImageType a_type, ImageData a_data, IPhysicalDevice* a_physicalDevice, ILogicalDevice* a_logicalDevice, ICommandPool* a_commandPool) = 0;
+				virtual void Destroy(ILogicalDevice* a_logicalDevice) = 0;
 			};
 		}
 	}
