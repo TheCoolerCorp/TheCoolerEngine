@@ -21,12 +21,16 @@ namespace Engine
 				t_poolInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
 				t_poolInfo.queueFamilyIndex = t_queueFamilyIndices.GetGraphicsFamily().value();
 
-				VK_CHECK(vkCreateCommandPool(a_logicalDevice->CastVulkan()->GetVkDevice(), &t_poolInfo, nullptr, &m_commandPool), "failed to create command pool!");
+				const VkDevice t_device = a_logicalDevice->CastVulkan()->GetVkDevice();
+
+				VK_CHECK(vkCreateCommandPool(t_device, &t_poolInfo, nullptr, &m_commandPool), "failed to create command pool!");
 			}
 
 			void VulkanCommandPool::Destroy(RHI::ILogicalDevice* a_logicalDevice)
 			{
-				vkDestroyCommandPool(a_logicalDevice->CastVulkan()->GetVkDevice(), m_commandPool, nullptr);
+				const VkDevice t_device = a_logicalDevice->CastVulkan()->GetVkDevice();
+
+				vkDestroyCommandPool(t_device, m_commandPool, nullptr);
 			}
 		}
 	}

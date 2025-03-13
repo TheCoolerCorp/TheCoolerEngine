@@ -17,6 +17,7 @@ namespace Engine
 				void Create(RHI::IPhysicalDevice* a_physicalDevice, RHI::ISurface* a_surface, RHI::ILogicalDevice* a_logicalDevice) override;
 				VkCommandPool GetVkCommandPool() const { return m_commandPool; }
 				void Destroy(RHI::ILogicalDevice* a_logicalDevice) override;
+				GraphicsAPI::VulkanCommandPool* CastVulkan() override { return this; }
 
 			private:
 				VkCommandPool m_commandPool = VK_NULL_HANDLE;
