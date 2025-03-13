@@ -4,6 +4,7 @@
 #include "Core/Interfaces/ISwapChain.h"
 #include  "Core/Interfaces/IRenderPass.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanUtils.h"
+#include "Core/GraphicsAPI/Vulkan/VulkanImage.h"
 #include <vector>
 
 
@@ -22,7 +23,7 @@ namespace Engine
 				void Create(RHI::ISurface* a_surface, Window::IWindow* a_window, RHI::IPhysicalDevice* a_physicalDevice, RHI::ILogicalDevice* a_logicalDevice) override;
 				void Destroy(RHI::ILogicalDevice* a_logicalDevice) override;
 
-				void CreateFramebuffers(RHI::ILogicalDevice* a_logicalDevice, RHI::IRenderPass* a_renderPass);
+				void CreateFramebuffers(RHI::ILogicalDevice* a_logicalDevice, RHI::IRenderPass* a_renderPass) override;
 
 				GraphicsAPI::VulkanSwapchain* CastVulkan() override { return this; }
 
@@ -43,7 +44,12 @@ namespace Engine
 
 				uint32_t m_imageIndex;
 
-				void CreateSwapChain(VkSurfaceKHR a_surface);
+				// Depth
+				VkImage m_depthImage;
+				VkImageView m_depthImageView;
+				VkDeviceMemory m_depthMemory;
+				VkFormat m_depthFormat;
+
 				static VkSurfaceFormatKHR ChooseSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& a_availableFormats);
 				static VkPresentModeKHR ChooseSurfacePresentMode(const std::vector<VkPresentModeKHR>& a_availablePresentModes);
 				static VkExtent2D ChooseSurfaceExtent(const VkSurfaceCapabilitiesKHR& a_availableCapabilities, Window::IWindow* a_window);

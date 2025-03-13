@@ -39,6 +39,8 @@ namespace Engine
 
 			m_graphicPipeline = m_interface->InstantiateGraphicPipeline();
 			m_graphicPipeline->Create(m_logicalDevice, m_renderPass);
+
+			m_swapChain->CreateFramebuffers(m_logicalDevice, m_renderPass);
 		}
 
 		void Renderer::Run()

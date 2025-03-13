@@ -9,6 +9,7 @@
 #include "Core/GraphicsAPI/Vulkan/QueueFamilies.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanUtils.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanRenderPass.h"
+#include "Core/GraphicsAPI/Vulkan/VulkanImage.h"
 
 namespace Engine
 {
@@ -26,8 +27,6 @@ namespace Engine
 				std::vector<VkSemaphore> mImageAvailableSemaphores;
 				std::vector<VkSemaphore> mRenderFinishedSemaphores;
 				std::vector<VkFence> mInFlightFences;
-
-				std::vector < VkFramebuffer > m_framebuffers;
 			};
 
 			VulkanSwapchain::VulkanSwapchain() : m_swapChainImageFormat(), m_swapChainExtent(),
@@ -111,44 +110,39 @@ namespace Engine
 				// Create imagesViews;
 				for (int i = 0; i < m_vectorsStruct->mImages.size(); ++i)
 				{
-					m_vectorsStruct->mImageViews[i] = CreateImageView(m_vectorsStruct->mImages[i],
-					                                                  m_swapChainImageFormat, VK_IMAGE_ASPECT_COLOR_BIT,
-					                                                  a_logicalDevice->CastVulkan()->GetVkDevice());
+					VulkanImage::CreateImageView(&m_vectorsStruct->mImages[i], &m_vectorsStruct->mImageViews[i], a_logicalDevice->CastVulkan()->GetVkDevice(), m_swapChainImageFormat, VK_IMAGE_ASPECT_COLOR_BIT);
 
-					// ADD HERE DEPTH IMAGE CREATION
+
+					m_depthFormat = a_physicalDevice->CastVulkan()->FindSupportedFormat({ VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT },
+																									VK_IMAGE_TILING_OPTIMAL,
+																									VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
+					VulkanImage::CreateImage(&m_depthImage, &m_depthMemory, a_logicalDevice->CastVulkan()->GetVkDevice(), a_physicalDevice->CastVulkan()->GetVkPhysicalDevice(), m_swapChainExtent.width, m_swapChainExtent.height, m_depthFormat, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
+					VulkanImage::CreateImageView(&m_depthImage, &m_depthImageView, a_logicalDevice->CastVulkan()->GetVkDevice(), m_depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT);
 				}
 
 			}
 
 			void VulkanSwapchain::CreateFramebuffers(RHI::ILogicalDevice* a_logicalDevice, RHI::IRenderPass* a_renderPass)
 			{
-				VulkanLogicalDevice* m_logicalDevice = a_logicalDevice->CastVulkan();
-				VulkanRenderPass* m_renderPass = a_renderPass->CastVulkan();
-
 				m_vectorsStruct->mFramebuffers.resize(m_vectorsStruct->mImageViews.size());
 
 				for (size_t i = 0; i < m_vectorsStruct->mFramebuffers.size(); i++)
 				{
 					std::vector<VkImageView> attachments;
 
-					/*if (depthImage)
-					{
-						VulkanImage* vkDepthImage = depthImage->CastVulkan();
-						attachments.push_back(swapChainImageViews[i]);
-						attachments.push_back(vkDepthImage->imageView);
-					}
+					attachments.push_back(m_vectorsStruct->mImageViews[i]);
+					attachments.push_back(m_depthImageView);
+
 					VkFramebufferCreateInfo framebufferInfo{};
 					framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-					framebufferInfo.renderPass = vkRenderPass->renderPass;
+					framebufferInfo.renderPass = a_renderPass->CastVulkan()->GetRenderPass();
 					framebufferInfo.attachmentCount = static_cast<uint32_t>(attachments.size());
 					framebufferInfo.pAttachments = attachments.data();
-					framebufferInfo.width = swapChainExtent.width;
-					framebufferInfo.height = swapChainExtent.height;
+					framebufferInfo.width = m_swapChainExtent.width;
+					framebufferInfo.height = m_swapChainExtent.height;
 					framebufferInfo.layers = 1;
 
-					if (vkCreateFramebuffer(vkDevice->device, &framebufferInfo, nullptr, &swapChainFramebuffers[i]) != VK_SUCCESS) {
-						throw std::runtime_error("failed to create framebuffer!");
-					}*/
+					VK_CHECK(vkCreateFramebuffer(a_logicalDevice->CastVulkan()->GetVkDevice(), &framebufferInfo, nullptr, &m_vectorsStruct->mFramebuffers[i]), "Failed to create framebuffers in swapchain");
 				}
 			}
 

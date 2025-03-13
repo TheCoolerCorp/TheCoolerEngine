@@ -12,6 +12,7 @@
 #include "Core/Interfaces/ISwapChain.h"
 #include "Core/Interfaces/IRenderPass.h"
 #include "Core/Interfaces/IGraphicPipeline.h"
+
 namespace Engine
 {
 	namespace Core
