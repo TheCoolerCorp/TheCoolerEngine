@@ -24,7 +24,7 @@ namespace Engine
 				void RecordCommandBuffer(uint32_t a_imageIndex, RHI::IRenderPass* a_renderPass, RHI::ISwapChain* a_swapChain, RHI::IGraphicPipeline* a_graphicPipeline) override;
 
 				VkCommandBuffer BeginSingleTimeCommands(VkDevice a_device) const;
-				void EndSingleTimeCommands(VkCommandBuffer a_commandBuffer, const VulkanLogicalDevice* a_logicalDevice);
+				void EndSingleTimeCommands(VkCommandBuffer a_commandBuffer, const VulkanLogicalDevice* a_logicalDevice) const;
 
 			private:
 				VkCommandPool m_commandPool = VK_NULL_HANDLE;
