@@ -7,6 +7,9 @@
 
 #include "Core/Interfaces/IImage.h"
 
+#include <iostream>
+#include <cstdarg>
+
 namespace Engine
 {
 	namespace Core
@@ -19,16 +22,16 @@ namespace Engine
 				~VulkanImage() override = default;
 				GraphicsAPI::VulkanImage* CastVulkan() override { return this; }
 
-				void Create(int a_width, int a_height, RHI::ImageType a_type, RHI::IPhysicalDevice* a_physicalDevice, RHI::ILogicalDevice* a_logicalDevice, RHI::ICommandPool* a_commandPool) override;
-				void Destroy() override;
+				void Create(RHI::ImageType a_type, RHI::ImageData a_data, RHI::IPhysicalDevice* a_physicalDevice, RHI::ILogicalDevice* a_logicalDevice, RHI::ICommandPool* a_commandPool) override;
+				void Destroy(RHI::ILogicalDevice* a_logicalDevice) override;
 
 				VkImage GetImage() { return m_image; }
 				VkImageView GetView() { return m_view; }
 				VkDeviceMemory GetMemory() { return m_memory; }
 
 			private:
-				void CreateImage(VkDevice device, VkPhysicalDevice physicalDevice, uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties);
-				void CreateImageView(VkDevice device, VkFormat format, VkImageAspectFlags aspectFlags);
+				void CreateImage(VkDevice a_device, VkPhysicalDevice a_physicalDevice, uint32_t a_width, uint32_t a_height, VkFormat a_format, VkImageTiling a_tiling, VkImageUsageFlags a_usage, VkMemoryPropertyFlags properties, VkImageLayout a_layoyt);
+				void CreateImageView(VkDevice a_device, VkFormat a_format, VkImageAspectFlags a_aspectFlags);
 
 				VkImage m_image = VK_NULL_HANDLE;
 				VkImageView m_view = VK_NULL_HANDLE;
