@@ -18,7 +18,8 @@ namespace Engine
 				void Destroy() override;
 				VulkanLogicalDevice* CastVulkan() override { return this; }
 				[[nodiscard]] VkDevice GetVkDevice() const { return m_device; }
-
+				VkQueue GetGraphicsQueue() const { return m_graphicsQueue; }
+				VkQueue GetPresentQueue() const { return m_presentQueue; }
 
 			private:
 				VkDevice m_device = VK_NULL_HANDLE;
