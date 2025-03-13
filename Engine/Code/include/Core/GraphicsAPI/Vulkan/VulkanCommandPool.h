@@ -23,8 +23,8 @@ namespace Engine
 				void CreateCommandBuffer(RHI::ILogicalDevice* a_logicalDevice) override;
 				void RecordCommandBuffer(uint32_t a_imageIndex, RHI::IRenderPass* a_renderPass, RHI::ISwapChain* a_swapChain, RHI::IGraphicPipeline* a_graphicPipeline) override;
 
-				VkCommandBuffer BeginSingleTimeCommands(VkDevice a_device) const;
-				void EndSingleTimeCommands(VkCommandBuffer a_commandBuffer, const VulkanLogicalDevice* a_logicalDevice) const;
+				static VkCommandBuffer BeginSingleTimeCommands(VkDevice a_device, VkCommandPool a_commandPool);
+				static void EndSingleTimeCommands(VkCommandBuffer a_commandBuffer, VkCommandPool a_commandPool, VkDevice a_logicalDevice, VkQueue a_queue);
 
 			private:
 				VkCommandPool m_commandPool = VK_NULL_HANDLE;

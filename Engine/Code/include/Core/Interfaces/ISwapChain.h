@@ -22,6 +22,7 @@ namespace Engine
 			class IPhysicalDevice;
 			class ILogicalDevice;
 			class IRenderPass;
+			class ICommandPool;
 
 			class ENGINE_API ISwapChain
 			{
@@ -31,7 +32,7 @@ namespace Engine
 				virtual GraphicsAPI::VulkanSwapchain* CastVulkan() { return nullptr; }
 
 				virtual void Create(ISurface* a_surface, Window::IWindow* a_window, RHI::IPhysicalDevice* a_physicalDevice, RHI::ILogicalDevice* a_logical_device) = 0;
-				virtual void CreateFramebuffers(RHI::ILogicalDevice* a_logicalDevice, RHI::IRenderPass* a_renderPass) = 0;
+				virtual void CreateFramebuffers(RHI::ILogicalDevice* a_logicalDevice, RHI::IPhysicalDevice* a_physicalDevice, RHI::IRenderPass* a_renderPass, RHI::ICommandPool* a_commandPool) = 0;
 				virtual void Destroy(RHI::ILogicalDevice* a_logical_device) = 0;
 			};
 		}

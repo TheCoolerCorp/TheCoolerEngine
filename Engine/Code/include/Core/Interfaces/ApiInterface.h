@@ -12,6 +12,7 @@
 #include "Core/Interfaces/ISwapChain.h"
 #include "Core/Interfaces/IRenderPass.h"
 #include "Core/Interfaces/IGraphicPipeline.h"
+#include "Core/Interfaces/ICommandPool.h"
 
 namespace Engine
 {
@@ -51,6 +52,9 @@ namespace Engine
 
 				virtual IGraphicPipeline* InstantiateGraphicPipeline() = 0;
 				virtual void DestroyGraphicPipeline(IGraphicPipeline* a_graphicPipeline) { delete a_graphicPipeline; }
+
+				virtual ICommandPool* InstantiateCommandPool() = 0;
+				virtual void DestroyCommandPool(ICommandPool* a_commandPool) { delete a_commandPool; }
 			};
 		}
 	}

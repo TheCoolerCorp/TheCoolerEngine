@@ -99,15 +99,15 @@ namespace Engine
 
 				vkCmdEndRenderPass(m_commandBuffer);
 
-				VK_CHECK(vkEndCommandBuffer(m_commandBuffer), "failed to record command buffer!");
+				VK_CHECK(vkEndCommandBuffer(m_commandBuffer), "failed to end command buffer!");
 			}
 
-			VkCommandBuffer VulkanCommandPool::BeginSingleTimeCommands(const VkDevice a_device) const
+			VkCommandBuffer VulkanCommandPool::BeginSingleTimeCommands(const VkDevice a_device, VkCommandPool a_commandPool)
 			{
 				VkCommandBufferAllocateInfo t_allocInfo{};
 				t_allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
 				t_allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-				t_allocInfo.commandPool = m_commandPool;
+				t_allocInfo.commandPool = a_commandPool;
 				t_allocInfo.commandBufferCount = 1;
 
 				VkCommandBuffer t_commandBuffer;
@@ -122,12 +122,8 @@ namespace Engine
 				return t_commandBuffer;
 			}
 
-			void VulkanCommandPool::EndSingleTimeCommands(const VkCommandBuffer a_commandBuffer,
-				const VulkanLogicalDevice* a_logicalDevice) const
+			void VulkanCommandPool::EndSingleTimeCommands(VkCommandBuffer a_commandBuffer, VkCommandPool a_commandPool, VkDevice a_logicalDevice, VkQueue a_queue)
 			{
-				const VkDevice t_device = a_logicalDevice->GetVkDevice();
-				const VkQueue t_graphicsQueue = a_logicalDevice->GetGraphicsQueue();
-
 				vkEndCommandBuffer(a_commandBuffer);
 
 				VkSubmitInfo t_submitInfo{};
@@ -135,10 +131,10 @@ namespace Engine
 				t_submitInfo.commandBufferCount = 1;
 				t_submitInfo.pCommandBuffers = &a_commandBuffer;
 
-				vkQueueSubmit(t_graphicsQueue, 1, &t_submitInfo, VK_NULL_HANDLE);
-				vkQueueWaitIdle(t_graphicsQueue);
+				vkQueueSubmit(a_queue, 1, &t_submitInfo, VK_NULL_HANDLE);
+				vkQueueWaitIdle(a_queue);
 
-				vkFreeCommandBuffers(t_device, m_commandPool, 1, &a_commandBuffer);
+				vkFreeCommandBuffers(a_logicalDevice, a_commandPool, 1, &a_commandBuffer);
 			}
 		}
 	}

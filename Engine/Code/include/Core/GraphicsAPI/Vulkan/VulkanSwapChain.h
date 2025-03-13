@@ -23,7 +23,7 @@ namespace Engine
 				void Create(RHI::ISurface* a_surface, Window::IWindow* a_window, RHI::IPhysicalDevice* a_physicalDevice, RHI::ILogicalDevice* a_logicalDevice) override;
 				void Destroy(RHI::ILogicalDevice* a_logicalDevice) override;
 
-				void CreateFramebuffers(RHI::ILogicalDevice* a_logicalDevice, RHI::IRenderPass* a_renderPass) override;
+				void CreateFramebuffers(RHI::ILogicalDevice* a_logicalDevice, RHI::IPhysicalDevice* a_physicalDevice, RHI::IRenderPass* a_renderPass, RHI::ICommandPool* a_commandPool) override;
 
 				GraphicsAPI::VulkanSwapchain* CastVulkan() override { return this; }
 

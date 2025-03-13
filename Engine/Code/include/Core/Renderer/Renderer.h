@@ -47,6 +47,7 @@ namespace Engine
 			RHI::ISwapChain* m_swapChain = nullptr;
 			RHI::IRenderPass* m_renderPass = nullptr;
 			RHI::IGraphicPipeline* m_graphicPipeline = nullptr;
+			RHI::ICommandPool* m_commandPool = nullptr;
 			
 		};
 	}

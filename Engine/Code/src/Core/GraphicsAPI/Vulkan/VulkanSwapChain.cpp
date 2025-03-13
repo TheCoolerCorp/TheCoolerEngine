@@ -10,6 +10,7 @@
 #include "Core/GraphicsAPI/Vulkan/VulkanUtils.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanRenderPass.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanImage.h"
+#include "Core/GraphicsAPI/Vulkan/VulkanCommandPool.h"
 
 namespace Engine
 {
@@ -110,20 +111,25 @@ namespace Engine
 				// Create imagesViews;
 				for (int i = 0; i < m_vectorsStruct->mImages.size(); ++i)
 				{
-					VulkanImage::CreateImageView(&m_vectorsStruct->mImages[i], &m_vectorsStruct->mImageViews[i], a_logicalDevice->CastVulkan()->GetVkDevice(), m_swapChainImageFormat, VK_IMAGE_ASPECT_COLOR_BIT);
+					VulkanImage::CreateImageView(m_vectorsStruct->mImages[i], &m_vectorsStruct->mImageViews[i], a_logicalDevice->CastVulkan()->GetVkDevice(), m_swapChainImageFormat, VK_IMAGE_ASPECT_COLOR_BIT);
 
 
 					m_depthFormat = a_physicalDevice->CastVulkan()->FindSupportedFormat({ VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT },
 																									VK_IMAGE_TILING_OPTIMAL,
 																									VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
-					VulkanImage::CreateImage(&m_depthImage, &m_depthMemory, a_logicalDevice->CastVulkan()->GetVkDevice(), a_physicalDevice->CastVulkan()->GetVkPhysicalDevice(), m_swapChainExtent.width, m_swapChainExtent.height, m_depthFormat, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
-					VulkanImage::CreateImageView(&m_depthImage, &m_depthImageView, a_logicalDevice->CastVulkan()->GetVkDevice(), m_depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT);
 				}
 
 			}
 
-			void VulkanSwapchain::CreateFramebuffers(RHI::ILogicalDevice* a_logicalDevice, RHI::IRenderPass* a_renderPass)
+			void VulkanSwapchain::CreateFramebuffers(RHI::ILogicalDevice* a_logicalDevice, RHI::IPhysicalDevice* a_physicalDevice ,RHI::IRenderPass* a_renderPass, RHI::ICommandPool* a_commandPool)
 			{
+				VkFormat t_depthFormat = a_physicalDevice->CastVulkan()->FindSupportedFormat({ VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT },
+					VK_IMAGE_TILING_OPTIMAL,
+					VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
+				VulkanImage::CreateImage(&m_depthImage, &m_depthMemory, a_logicalDevice->CastVulkan()->GetVkDevice(), a_physicalDevice->CastVulkan()->GetVkPhysicalDevice(), m_swapChainExtent.width, m_swapChainExtent.height, m_depthFormat, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+				VulkanImage::CreateImageView(m_depthImage, &m_depthImageView, a_logicalDevice->CastVulkan()->GetVkDevice(), m_depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT);
+				VulkanImage::TransitionImageLayout(&m_depthImage, a_logicalDevice->CastVulkan()->GetVkDevice(), a_logicalDevice->CastVulkan()->GetGraphicsQueue(), a_commandPool->CastVulkan()->GetVkCommandPool(), t_depthFormat, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
+
 				m_vectorsStruct->mFramebuffers.resize(m_vectorsStruct->mImageViews.size());
 
 				for (size_t i = 0; i < m_vectorsStruct->mFramebuffers.size(); i++)
@@ -160,7 +166,9 @@ namespace Engine
 				for (size_t i = 0; i < m_vectorsStruct->mImageViews.size(); i++) {
 					vkDestroyImageView(a_logicalDevice->CastVulkan()->GetVkDevice(), m_vectorsStruct->mImageViews[i], nullptr);
 				}
-
+				vkDestroyImage(a_logicalDevice->CastVulkan()->GetVkDevice(), m_depthImage, nullptr);
+				vkDestroyImageView(a_logicalDevice->CastVulkan()->GetVkDevice(), m_depthImageView, nullptr);
+				vkFreeMemory(a_logicalDevice->CastVulkan()->GetVkDevice(), m_depthMemory, nullptr);
 				vkDestroySwapchainKHR(a_logicalDevice->CastVulkan()->GetVkDevice(), m_swapChain, nullptr);
 			}
 

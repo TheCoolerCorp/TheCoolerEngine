@@ -40,7 +40,9 @@ namespace Engine
 			m_graphicPipeline = m_interface->InstantiateGraphicPipeline();
 			m_graphicPipeline->Create(m_logicalDevice, m_renderPass);
 
-			m_swapChain->CreateFramebuffers(m_logicalDevice, m_renderPass);
+			m_commandPool = m_interface->InstantiateCommandPool();
+			m_commandPool->Create(m_physicalDevice, m_surface, m_logicalDevice);
+			m_swapChain->CreateFramebuffers(m_logicalDevice, m_physicalDevice, m_renderPass, m_commandPool);
 		}
 
 		void Renderer::Run()
@@ -50,6 +52,9 @@ namespace Engine
 
 		void Renderer::Destroy()
 		{
+			m_commandPool->Destroy(m_logicalDevice);
+			m_interface->DestroyCommandPool(m_commandPool);
+
 			m_graphicPipeline->Destroy(m_logicalDevice);
 			m_interface->DestroyGraphicPipeline(m_graphicPipeline);
 
