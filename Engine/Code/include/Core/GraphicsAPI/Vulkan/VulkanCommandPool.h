@@ -17,10 +17,13 @@ namespace Engine
 				void Create(RHI::IPhysicalDevice* a_physicalDevice, RHI::ISurface* a_surface, RHI::ILogicalDevice* a_logicalDevice) override;
 				VkCommandPool GetVkCommandPool() const { return m_commandPool; }
 				void Destroy(RHI::ILogicalDevice* a_logicalDevice) override;
-				GraphicsAPI::VulkanCommandPool* CastVulkan() override { return this; }
+				VulkanCommandPool* CastVulkan() override { return this; }
+				void CreateCommandBuffer(RHI::ILogicalDevice* a_logicalDevice) override;
+				void RecordCommandBuffer(uint32_t a_imageIndex, RHI::IRenderPass* a_renderPass) override;
 
 			private:
 				VkCommandPool m_commandPool = VK_NULL_HANDLE;
+				VkCommandBuffer m_commandBuffer = VK_NULL_HANDLE;
 			};
 		}
 	}

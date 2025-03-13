@@ -18,6 +18,7 @@ namespace Engine
 			class ISurface;
 			class ILogicalDevice;
 			class IPhysicalDevice;
+			class IRenderPass;
 
 			class ENGINE_API ICommandPool
 			{
@@ -25,6 +26,8 @@ namespace Engine
 				virtual ~ICommandPool() = default;
 				virtual void Create(IPhysicalDevice* a_physicalDevice, ISurface* a_surface, ILogicalDevice* a_logicalDevice) = 0;
 				virtual void Destroy(ILogicalDevice* a_logicalDevice) = 0;
+				virtual void CreateCommandBuffer(ILogicalDevice* a_logicalDevice) = 0;
+				virtual void RecordCommandBuffer(uint32_t a_imageIndex, IRenderPass* a_renderPass) = 0;
 				virtual GraphicsAPI::VulkanCommandPool* CastVulkan() { LOG_ERROR("Try to return wrong cast type : VulkanCommandPool!"); return nullptr; }
 			};
 		}
