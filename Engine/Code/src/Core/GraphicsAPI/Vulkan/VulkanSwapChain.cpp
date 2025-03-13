@@ -146,6 +146,11 @@ namespace Engine
 				}
 			}
 
+			std::vector<VkFramebuffer> VulkanSwapchain::GetFramebuffers() const
+			{
+				return m_vectorsStruct->mFramebuffers;
+			}
+
 			void VulkanSwapchain::Destroy(RHI::ILogicalDevice* a_logicalDevice)
 			{
 				for (size_t i = 0; i < m_vectorsStruct->mFramebuffers.size(); i++) {

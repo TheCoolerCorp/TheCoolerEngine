@@ -1,10 +1,14 @@
 #include "Core/GraphicsAPI/Vulkan/VulkanCommandPool.h"
 
+#include <array>
+
 #include "Core/GraphicsAPI/Vulkan/VulkanPhysicalDevice.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanSurface.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanLogicalDevice.h"
 #include "Core/GraphicsAPI/Vulkan/QueueFamilies.h"
+#include "Core/GraphicsAPI/Vulkan/VulkanGraphicPipeline.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanRenderPass.h"
+#include "Core/GraphicsAPI/Vulkan/VulkanSwapChain.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanUtils.h"
 #include "Core/Interfaces/IRenderPass.h"
 
@@ -48,21 +52,55 @@ namespace Engine
 				VK_CHECK(vkAllocateCommandBuffers(t_device, &t_allocInfo, &m_commandBuffer), "failed to allocate command buffers!");
 			}
 
-			void VulkanCommandPool::RecordCommandBuffer(uint32_t a_imageIndex, RHI::IRenderPass* a_renderPass)
+			void VulkanCommandPool::RecordCommandBuffer(const uint32_t a_imageIndex, RHI::IRenderPass* a_renderPass, RHI::ISwapChain* a_swapChain, RHI::IGraphicPipeline* a_graphicPipeline)
 			{
-				VkRenderPass t_renderPass = a_renderPass->CastVulkan()->GetRenderPass();
+				const VkRenderPass t_renderPass = a_renderPass->CastVulkan()->GetRenderPass();
+				const VulkanSwapchain* t_swapChain = a_swapChain->CastVulkan();
+				const VkPipeline t_graphicPipeline = a_graphicPipeline->CastVulkan()->GetPipeline();
+				const VkExtent2D t_swapChainExtent = t_swapChain->GetExtent2D();
 
 				VkCommandBufferBeginInfo t_beginInfo{};
 				t_beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-				t_beginInfo.flags = 0;
-				t_beginInfo.pInheritanceInfo = nullptr;
 
 				VK_CHECK(vkBeginCommandBuffer(m_commandBuffer, &t_beginInfo), "failed to begin recording command buffer!");
 
 				VkRenderPassBeginInfo t_renderPassInfo{};
 				t_renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
 				t_renderPassInfo.renderPass = t_renderPass;
-				//t_renderPassInfo.framebuffer = swapChainFramebuffers[imageIndex];
+				t_renderPassInfo.framebuffer = t_swapChain->GetFramebuffers()[a_imageIndex];
+				t_renderPassInfo.renderArea.offset = { .x= 0, .y= 0};
+				t_renderPassInfo.renderArea.extent = t_swapChainExtent;
+
+				std::array<VkClearValue, 2> t_clearValues{};
+				t_clearValues[0].color = { {0.467f, 0.71f, 1.f, 0.996f} };
+				t_clearValues[1].depthStencil = { .depth= 1.0f, .stencil= 0};
+
+				t_renderPassInfo.clearValueCount = static_cast<uint32_t>(t_clearValues.size());
+				t_renderPassInfo.pClearValues = t_clearValues.data();
+
+				vkCmdBeginRenderPass(m_commandBuffer, &t_renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+
+				vkCmdBindPipeline(m_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, t_graphicPipeline);
+
+				VkViewport t_viewport;
+				t_viewport.x = 0.0f;
+				t_viewport.y = 0.0f;
+				t_viewport.width = static_cast<float>(t_swapChain->GetExtent2D().width);
+				t_viewport.height = static_cast<float>(t_swapChainExtent.height);
+				t_viewport.minDepth = 0.0f;
+				t_viewport.maxDepth = 1.0f;
+				vkCmdSetViewport(m_commandBuffer, 0, 1, &t_viewport);
+
+				VkRect2D t_scissor;
+				t_scissor.offset = { .x= 0, .y= 0};
+				t_scissor.extent = t_swapChainExtent;
+				vkCmdSetScissor(m_commandBuffer, 0, 1, &t_scissor);
+
+				vkCmdDraw(m_commandBuffer, 3, 1, 0, 0);
+
+				vkCmdEndRenderPass(m_commandBuffer);
+
+				VK_CHECK(vkEndCommandBuffer(m_commandBuffer), "failed to record command buffer!");
 			}
 		}
 	}

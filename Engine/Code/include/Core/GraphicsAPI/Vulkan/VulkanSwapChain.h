@@ -27,7 +27,9 @@ namespace Engine
 
 				GraphicsAPI::VulkanSwapchain* CastVulkan() override { return this; }
 
-				VkFormat GetImageFormat() { return m_swapChainImageFormat; }
+				VkFormat GetImageFormat() const { return m_swapChainImageFormat; }
+				std::vector<VkFramebuffer> GetFramebuffers() const;
+				VkExtent2D GetExtent2D() const { return m_swapChainExtent; }
 
 				uint32_t mMaxFrame = 0;
 

@@ -23,6 +23,8 @@ namespace Engine
 				void Create(RHI::ILogicalDevice* a_logicalDevice, RHI::IRenderPass* a_renderPass) override;
 				void Destroy(RHI::ILogicalDevice* a_logicalDevice) override;
 
+				VkPipeline GetPipeline() const { return m_pipeline; }
+
 			private:
 				VkShaderModule CreateShader(const std::string& a_path, VkDevice a_device);
 

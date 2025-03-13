@@ -19,7 +19,7 @@ namespace Engine
 				void Destroy(RHI::ILogicalDevice* a_logicalDevice) override;
 				VulkanCommandPool* CastVulkan() override { return this; }
 				void CreateCommandBuffer(RHI::ILogicalDevice* a_logicalDevice) override;
-				void RecordCommandBuffer(uint32_t a_imageIndex, RHI::IRenderPass* a_renderPass) override;
+				void RecordCommandBuffer(uint32_t a_imageIndex, RHI::IRenderPass* a_renderPass, RHI::ISwapChain* a_swapChain, RHI::IGraphicPipeline* a_graphicPipeline) override;
 
 			private:
 				VkCommandPool m_commandPool = VK_NULL_HANDLE;
