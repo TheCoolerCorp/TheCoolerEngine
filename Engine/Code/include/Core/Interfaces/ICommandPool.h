@@ -2,6 +2,7 @@
 #define ICOMMANDPOOL_H
 
 #include "EngineExport.h"
+#include "Core/Logger/Logger.h"
 
 namespace Engine
 {
@@ -24,6 +25,7 @@ namespace Engine
 				virtual ~ICommandPool() = default;
 				virtual void Create(IPhysicalDevice* a_physicalDevice, ISurface* a_surface, ILogicalDevice* a_logicalDevice) = 0;
 				virtual void Destroy(ILogicalDevice* a_logicalDevice) = 0;
+				virtual GraphicsAPI::VulkanCommandPool* CastVulkan() { LOG_ERROR("Try to return wrong cast type : VulkanCommandPool!"); return nullptr; }
 			};
 		}
 	}
