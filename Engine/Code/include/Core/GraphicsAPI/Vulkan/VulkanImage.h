@@ -29,10 +29,11 @@ namespace Engine
 				VkImageView GetView() { return m_view; }
 				VkDeviceMemory GetMemory() { return m_memory; }
 
-			private:
-				void CreateImage(VkDevice a_device, VkPhysicalDevice a_physicalDevice, uint32_t a_width, uint32_t a_height, VkFormat a_format, VkImageTiling a_tiling, VkImageUsageFlags a_usage, VkMemoryPropertyFlags properties, VkImageLayout a_layoyt);
-				void CreateImageView(VkDevice a_device, VkFormat a_format, VkImageAspectFlags a_aspectFlags);
+		
+				static void CreateImage(VkImage* a_image, VkDeviceMemory* a_memory, VkDevice a_logicalDevice, VkPhysicalDevice a_physicalDevice, uint32_t a_width, uint32_t a_height, VkFormat a_format, VkImageTiling a_tiling, VkImageUsageFlags a_usage, VkMemoryPropertyFlags properties, VkImageLayout a_layout);
+				static void CreateImageView(VkImage* a_image, VkImageView* a_view, VkDevice a_logicalDevice, VkFormat a_format, VkImageAspectFlags a_aspectFlags);
 
+			private:
 				VkImage m_image = VK_NULL_HANDLE;
 				VkImageView m_view = VK_NULL_HANDLE;
 				VkDeviceMemory m_memory = VK_NULL_HANDLE;
