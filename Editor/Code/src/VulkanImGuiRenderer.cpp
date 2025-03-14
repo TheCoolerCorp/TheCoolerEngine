@@ -1,6 +1,5 @@
 #include "VulkanImGuiRenderer.h"
 
-#include "vector"
 
 //ImGui includes
 #include "imgui.h"
@@ -8,9 +7,18 @@
 #include "backends/imgui_impl_vulkan.h"
 
 //Vulkan includes
-#include <Core/GraphicsAPI/Vulkan/VulkanUtils.h>
-#include <Core/Logger/Logger.h>
-#include <Core/GraphicsAPI/Vulkan/QueueFamilies.h>
+#include "Core/Renderer/Renderer.h"
+#include "Core/GraphicsAPI/Vulkan/VulkanUtils.h"
+#include "Core/Logger/Logger.h"
+#include "Core/GraphicsAPI/Vulkan/QueueFamilies.h"
+#include "Core/GraphicsAPI/Vulkan/VulkanBuffer.h"
+#include "Core/GraphicsAPI/Vulkan/VulkanInstance.h"
+#include "Core/GraphicsAPI/Vulkan/VulkanPhysicalDevice.h"
+#include "Core/GraphicsAPI/Vulkan/VulkanLogicalDevice.h"
+#include "Core/GraphicsAPI/Vulkan/VulkanSurface.h"
+
+//glfw includes
+#include <GLFW/glfw3.h>
 
 using namespace Engine::Core::GraphicsAPI;
 

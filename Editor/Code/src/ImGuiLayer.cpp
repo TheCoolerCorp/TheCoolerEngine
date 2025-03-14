@@ -16,8 +16,8 @@ void ImGuiLayer::Update()
 
 void ImGuiLayer::NewFrame()
 {
-	ImGui_ImplVulkan_NewFrame();
-	ImGui_ImplGlfw_NewFrame();
+	//ImGui_ImplVulkan_NewFrame();
+	//ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
 }
 
