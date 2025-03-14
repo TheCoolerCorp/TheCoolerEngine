@@ -19,7 +19,7 @@ namespace Engine
 			{
 			public:
 				~GLwindow() override = default;
-				GLwindow* CastGLFW() override { return nullptr; }
+				GLwindow* CastGLFW() override { return this; }
 
 				void Create(int a_width, int a_height) override;
 				void Destroy() override;

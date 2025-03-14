@@ -32,7 +32,8 @@ namespace Engine
 		
 				static void CreateImage(VkImage* a_image, VkDeviceMemory* a_memory, VkDevice a_logicalDevice, VkPhysicalDevice a_physicalDevice, uint32_t a_width, uint32_t a_height, VkFormat a_format, VkImageTiling a_tiling, VkImageUsageFlags a_usage, VkMemoryPropertyFlags properties);
 				static void CreateImageView(VkImage a_image, VkImageView* a_view, VkDevice a_logicalDevice, VkFormat a_format, VkImageAspectFlags a_aspectFlags);
-				static void TransitionImageLayout(VkImage* a_image, VkDevice a_logicalDevice, VkQueue a_queue, VkCommandPool a_commandPool, VkFormat a_format, VkImageLayout oldLayout, VkImageLayout newLayout);
+				static void TransitionImageLayout(VkImage a_image, VkDevice a_logicalDevice, VkQueue a_queue, VkCommandPool a_commandPool, VkFormat a_format, VkImageLayout oldLayout, VkImageLayout newLayout);
+				static void CopyBufferToImage(VkDevice a_logicalDevice, VkQueue a_queue, VkCommandPool a_commandPool, VkBuffer a_buffer, VkImage a_image, uint32_t a_width, uint32_t a_height);
 
 				static bool HasStencilComponent(VkFormat format);
 
