@@ -5,7 +5,7 @@
 class VulkanImGuiRenderer : RHIImGuiRenderer
 {
 public:
-	void Init() override;
+	void Init(IWindow* window, Renderer* renderer) override;
 
 	void NewFrame() override;
 	void Render() override;

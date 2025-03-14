@@ -12,7 +12,7 @@
 //Custom includes
 #include "MainWindow.h"
 #include "SubWindow.h"
-
+#include "VulkanImGuiRenderer.h"
 
 class ImGuiLayer
 {
@@ -28,6 +28,8 @@ public:
 	static void End();
 
 private:
+	static std::unique_ptr<RHIImGuiRenderer> m_ImGuiRenderer;
+
 	static std::unique_ptr<MainWindow> m_MainWindow;
 	static std::vector<std::shared_ptr<SubWindow>> m_SubWindows;
 };

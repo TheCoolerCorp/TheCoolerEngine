@@ -19,7 +19,7 @@ namespace Engine
 			{
 			public:
 				~GLwindow() override = default;
-				GLwindow* CastGLFW() override { return nullptr; }
+				GLwindow* CastGLFW() override { return this; }
 
 				void Create(int a_width, int a_height) override;
 				void Destroy() override;
@@ -33,6 +33,7 @@ namespace Engine
 				const char** GetRequiredInstanceExtensions(uint32_t* count) override;
 
 				bool GetResized() override { return m_resized; }
+				GLFWwindow* GetWindow() const { return m_window; }
 			private:
 				GLFWwindow* m_window = nullptr;
 				int m_width = 800;

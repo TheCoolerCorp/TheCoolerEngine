@@ -31,6 +31,21 @@ namespace Engine
 			void Run();
 			void Destroy();
 
+			RHI::ApiInterface* GetApiInterface() const { return m_interface; }
+
+			RHI::IInstance* GetApiInstance() const { return m_apiInstance; }
+			RHI::IValidationLayers* GetValidationLayers() const { return m_valiationLayers; }
+
+			RHI::IPhysicalDevice* GetPhysicalDevice() const { return m_physicalDevice; }
+			RHI::ILogicalDevice* GetLogicalDevice() const { return m_logicalDevice; }
+
+			RHI::ISurface* GetSurface() const { return m_surface; }
+
+			RHI::ISwapChain* GetSwapChain() const { return m_swapChain; }
+			RHI::IRenderPass* GetRenderPass() const { return m_renderPass; }
+			RHI::IGraphicPipeline* GetGraphicPipeline() const { return m_graphicPipeline; }
+			RHI::ICommandPool* GetCommandPool() const { return m_commandPool; }
+			RHI::IDescriptorPool* GetDescriptorPool() const { return m_descriptorPool; }
 		private:
 			RendererType m_type = RendererType::VULKAN;
 
