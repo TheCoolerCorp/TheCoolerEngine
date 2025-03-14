@@ -19,15 +19,9 @@ enable_testing()
 #---------------------------------------#
 #			LIBS FETCH					#
 #---------------------------------------#
-add_subdirectory(libs/glfw)
+add_subdirectory(libs)
+
 find_package(Vulkan REQUIRED)
-
-set(IMGUI_FILES_LOCATION "${CMAKE_SOURCE_DIR}/libs/imgui")
-file(GLOB IMGUI_SOURCES_FILES "${IMGUI_FILES_LOCATION}/*.cpp")
-file(GLOB IMGUI_SOURCES_FILES "${IMGUI_FILES_LOCATION}/*.cpp" "${IMGUI_FILES_LOCATION}/backends/vulkan/imgui_impl_vulkan.cpp")
-
-add_library(imgui STATIC ${IMGUI_SOURCES_FILES})
-target_include_directories(imgui PUBLIC ${IMGUI_FILES_LOCATION})
 
 #---------------------------------------#
 #			SUBDIRECTORY				#
@@ -39,6 +33,8 @@ add_subdirectory(Editor)
 #---------------------------------------#
 #			LIBS LINK					#
 #---------------------------------------#
+target_link_libraries(Engine PUBLIC stb)
+target_link_libraries(Engine PUBLIC assimp::assimp)
 target_link_libraries(Engine PUBLIC glfw)
 target_link_libraries(Engine PUBLIC Vulkan::Vulkan)
 
