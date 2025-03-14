@@ -107,6 +107,7 @@ namespace Engine
 
 				m_swapChainImageFormat = t_formats.format;
 				m_swapChainExtent = t_extent;
+				mMaxFrame = t_imageCount;
 
 				// Create imagesViews;
 				for (int i = 0; i < m_vectorsStruct->mImages.size(); ++i)
