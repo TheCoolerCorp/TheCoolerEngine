@@ -11,15 +11,18 @@ namespace Engine
 	{
 		namespace GraphicsAPI
 		{
+			class VulkanCommandPool;
+			class VulkanLogicalDevice;
+
 			class ENGINE_API VulkanBuffer : public RHI::IBuffer
 			{
 			public:
-				void CreateVertexBuffer(std::vector<Ressources::Vertex> a_vertices) override;
-				void CreateIndexBuffer(std::vector<uint32_t> a_indices) override;
+				void Create(RHI::BufferType a_type, RHI::BufferData a_data, RHI::IPhysicalDevice* a_physicalDevice, RHI::ILogicalDevice* a_logicalDevice, RHI::ICommandPool* a_commandPool) override;
 				void Destroy(RHI::ILogicalDevice* a_logicalDevice) override;
 				VulkanBuffer* CastVulkan() override { return this; }
 
 				static void CreateBuffer(VkDeviceSize a_size, VkBufferUsageFlags a_usage, VkMemoryPropertyFlags a_properties, VkBuffer& a_buffer, VkDeviceMemory& a_bufferMemory, VkDevice a_device, VkPhysicalDevice a_physicalDevice);
+				static void CopyBuffer(const VulkanCommandPool* a_commandPool, VkBuffer a_srcBuffer, VkBuffer a_dstBuffer, VkDeviceSize a_size, const VulkanLogicalDevice* a_logicalDevice);
 
 			private:
 				static uint32_t FindMemoryType(uint32_t a_typeFilter, VkMemoryPropertyFlags a_properties, VkPhysicalDevice a_physicalDevice);

@@ -19,13 +19,27 @@ namespace Engine
 		namespace RHI
 		{
 			class ILogicalDevice;
+			class ICommandPool;
+			class IPhysicalDevice;
+
+			enum class BufferType : int
+			{
+				NONE = 0,
+				VERTEX = 1,
+				INDEX = 2
+			};
+
+			struct BufferData
+			{
+				std::vector<Ressources::Vertex> mVertices{};
+				std::vector<unsigned int> mIndices{};
+			};
 
 			class ENGINE_API IBuffer
 			{
 			public:
 				virtual ~IBuffer() = default;
-				virtual void CreateVertexBuffer(std::vector<Ressources::Vertex> a_vertices) = 0;
-				virtual void CreateIndexBuffer(std::vector<uint32_t> a_indices) = 0;
+				virtual void Create(BufferType a_type, BufferData a_data, IPhysicalDevice* a_physicalDevice, ILogicalDevice* a_logicalDevice, ICommandPool* a_commandPool) = 0;
 				virtual void Destroy(ILogicalDevice* a_logicalDevice) = 0;
 				virtual GraphicsAPI::VulkanBuffer* CastVulkan() { LOG_ERROR("Try to return wrong cast type : VulkanCommandPool!"); return nullptr; }
 			};
