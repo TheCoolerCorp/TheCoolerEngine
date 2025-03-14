@@ -40,10 +40,10 @@ namespace Engine
 
 			Data* GetData() { return m_data; }
 
-		private:
 			void ProcessMesh(const aiMesh* a_mesh);
 
 			Data* m_data = nullptr;
+		private:
 
 		};
 	}

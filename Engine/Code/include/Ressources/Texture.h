@@ -25,12 +25,12 @@ namespace Engine
 			Texture();
 			~Texture() { delete m_data; }
 
-			void Create(std::string& a_path);
+			void Create(std::string a_path);
 			void Destroy();
+			Data* m_data = nullptr;
+
 
 		private:
-
-			Data* m_data = nullptr;
 
 		};
 	}

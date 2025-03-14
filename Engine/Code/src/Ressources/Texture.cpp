@@ -10,7 +10,7 @@ namespace Engine
     {
         Texture::Texture() : m_data(new Data) {}
 
-        void Texture::Create(std::string& a_path)
+        void Texture::Create(std::string a_path)
         {
             int texWidth, texHeight, texChannels;
             stbi_uc* pixels = stbi_load(a_path.c_str(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
