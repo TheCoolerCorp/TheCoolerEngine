@@ -49,10 +49,10 @@ namespace Engine
 				uint32_t m_imageIndex;
 
 				// Depth
-				VkImage m_depthImage;
-				VkImageView m_depthImageView;
-				VkDeviceMemory m_depthMemory;
-				VkFormat m_depthFormat;
+				VkImage m_depthImage = VK_NULL_HANDLE;
+				VkImageView m_depthImageView = VK_NULL_HANDLE;
+				VkDeviceMemory m_depthMemory = VK_NULL_HANDLE;
+				VkFormat m_depthFormat = VK_FORMAT_UNDEFINED;
 
 				static VkSurfaceFormatKHR ChooseSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& a_availableFormats);
 				static VkPresentModeKHR ChooseSurfacePresentMode(const std::vector<VkPresentModeKHR>& a_availablePresentModes);

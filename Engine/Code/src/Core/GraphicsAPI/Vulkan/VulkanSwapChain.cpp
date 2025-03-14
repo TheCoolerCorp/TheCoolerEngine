@@ -31,7 +31,7 @@ namespace Engine
 			};
 
 			VulkanSwapchain::VulkanSwapchain() : m_swapChainImageFormat(), m_swapChainExtent(),
-			                                     m_vectorsStruct(new Vectors), m_imageIndex(0) {}
+			                                     m_vectorsStruct(new Vectors), m_imageIndex(0){}
 
 			VulkanSwapchain::~VulkanSwapchain()
 			{
@@ -129,7 +129,7 @@ namespace Engine
 					VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
 				VulkanImage::CreateImage(&m_depthImage, &m_depthMemory, a_logicalDevice->CastVulkan()->GetVkDevice(), a_physicalDevice->CastVulkan()->GetVkPhysicalDevice(), m_swapChainExtent.width, m_swapChainExtent.height, m_depthFormat, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
 				VulkanImage::CreateImageView(m_depthImage, &m_depthImageView, a_logicalDevice->CastVulkan()->GetVkDevice(), m_depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT);
-				VulkanImage::TransitionImageLayout(&m_depthImage, a_logicalDevice->CastVulkan()->GetVkDevice(), a_logicalDevice->CastVulkan()->GetGraphicsQueue(), a_commandPool->CastVulkan()->GetVkCommandPool(), t_depthFormat, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
+				VulkanImage::TransitionImageLayout(m_depthImage, a_logicalDevice->CastVulkan()->GetVkDevice(), a_logicalDevice->CastVulkan()->GetGraphicsQueue(), a_commandPool->CastVulkan()->GetVkCommandPool(), t_depthFormat, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
 
 				m_vectorsStruct->mFramebuffers.resize(m_vectorsStruct->mImageViews.size());
 

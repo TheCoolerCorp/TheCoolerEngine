@@ -23,7 +23,7 @@ namespace Engine
 			{
 				UNDEFINED = 0,
 				TEXTURE = 1,
-				DEPTH = 2,
+				DEPTH = 2
 			};
 
 			struct ImageData

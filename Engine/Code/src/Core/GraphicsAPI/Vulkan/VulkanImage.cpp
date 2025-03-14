@@ -19,25 +19,25 @@ namespace Engine
 
 				if (a_type == RHI::ImageType::TEXTURE)
 				{
-					//VkDeviceSize t_imageSize = a_data.mWidth * a_data.mHeight * 4;
-					//VkBuffer stagingBuffer;
-					//VkDeviceMemory stagingBufferMemory;
-					//VulkanBuffer::VulkanCreateStagingBuffer(imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory, vkDevice->device, vkDevice->physicalDevice);
-					//void* data;
-					//vkMapMemory(t_logicalDevice, stagingBufferMemory, 0, t_imageSize, 0, &data);
-					//memcpy(data, a_data.data, static_cast<size_t>(t_imageSize));
-					//vkUnmapMemory(t_logicalDevice, stagingBufferMemory);
+					VkDeviceSize t_imageSize = a_data.mWidth * a_data.mHeight * 4;
+					VkBuffer t_stagingBuffer;
+					VkDeviceMemory t_stagingBufferMemory;
+					VulkanBuffer::CreateBuffer(t_imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, t_stagingBuffer, t_stagingBufferMemory, t_logicalDevice, t_physicalDevice);
+					void* data;
+					vkMapMemory(t_logicalDevice, t_stagingBufferMemory, 0, t_imageSize, 0, &data);
+					memcpy(data, a_data.data, static_cast<size_t>(t_imageSize));
+					vkUnmapMemory(t_logicalDevice, t_stagingBufferMemory);
 
+					CreateImage(&m_image, &m_memory, t_logicalDevice, t_physicalDevice, a_data.mWidth, a_data.mHeight, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_DST_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+					TransitionImageLayout(m_image, t_logicalDevice, a_logicalDevice->CastVulkan()->GetGraphicsQueue(), t_commandPool, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+					CopyBufferToImage(t_logicalDevice, a_logicalDevice->CastVulkan()->GetGraphicsQueue(), t_commandPool, t_stagingBuffer, m_image, a_data.mWidth, a_data.mHeight);
+					TransitionImageLayout(m_image, t_logicalDevice, a_logicalDevice->CastVulkan()->GetGraphicsQueue(), t_commandPool, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 
-					//CreateImage(t_logicalDevice, vkDevice->physicalDevice, t_textureWidth, t_textureHeight, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
-					//TransitionImageLayout(vkDevice->device, vkDevice->graphicsQueue, vkCommandPool->commandPool, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
-					//CopyBufferToImage(vkDevice->device, vkDevice->graphicsQueue, vkCommandPool->commandPool, stagingBuffer, image, static_cast<uint32_t>(texWidth), static_cast<uint32_t>(texHeight));
-					//TransitionImageLayout(vkDevice->device, vkDevice->graphicsQueue, vkCommandPool->commandPool, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+					vkDestroyBuffer(t_logicalDevice, t_stagingBuffer, nullptr);
+					vkFreeMemory(t_logicalDevice, t_stagingBufferMemory, nullptr);
 
-					//vkDestroyBuffer(vkDevice->device, stagingBuffer, nullptr);
-					//vkFreeMemory(vkDevice->device, stagingBufferMemory, nullptr);
+					CreateImageView(m_image, &m_view, t_logicalDevice, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT);
 
-					//VulkanCreateImageView(vkDevice->device, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT);
 				}
 				else if (a_type == RHI::ImageType::DEPTH)
 				{
@@ -47,11 +47,11 @@ namespace Engine
 
 					CreateImage(&m_image, &m_memory,t_logicalDevice, t_physicalDevice, a_data.mWidth, a_data.mHeight, t_depthFormat, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
 					CreateImageView(m_image, &m_view,t_logicalDevice, t_depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT);
-					TransitionImageLayout(&m_image, a_logicalDevice->CastVulkan()->GetVkDevice(), a_logicalDevice->CastVulkan()->GetGraphicsQueue(), a_commandPool->CastVulkan()->GetVkCommandPool(), t_depthFormat, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
+					TransitionImageLayout(m_image, a_logicalDevice->CastVulkan()->GetVkDevice(), a_logicalDevice->CastVulkan()->GetGraphicsQueue(), a_commandPool->CastVulkan()->GetVkCommandPool(), t_depthFormat, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
 				}
 				else
 				{
-					// Not define
+					LOG_ERROR("Image type undefined!");
 				}
 			}
 
@@ -122,7 +122,7 @@ namespace Engine
 				VK_CHECK(vkCreateImageView(a_logicalDevice, &viewInfo, nullptr, a_view), "Failed to create image view");
 			}
 
-			void VulkanImage::TransitionImageLayout(VkImage* a_image, VkDevice a_logicalDevice, VkQueue a_queue, VkCommandPool a_commandPool, VkFormat a_format, VkImageLayout oldLayout, VkImageLayout newLayout)
+			void VulkanImage::TransitionImageLayout(VkImage a_image, VkDevice a_logicalDevice, VkQueue a_queue, VkCommandPool a_commandPool, VkFormat a_format, VkImageLayout oldLayout, VkImageLayout newLayout)
 			{
 				VkCommandBuffer t_commandBuffer = VulkanCommandPool::BeginSingleTimeCommands(a_logicalDevice, a_commandPool);
 
@@ -132,7 +132,7 @@ namespace Engine
 				barrier.newLayout = newLayout;
 				barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
 				barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-				barrier.image = *a_image;
+				barrier.image = a_image;
 				barrier.subresourceRange.baseMipLevel = 0;
 				barrier.subresourceRange.levelCount = 1;
 				barrier.subresourceRange.baseArrayLayer = 0;
@@ -183,6 +183,26 @@ namespace Engine
 				}
 
 				vkCmdPipelineBarrier(t_commandBuffer, sourceStage, destinationStage, 0, 0, nullptr, 0, nullptr, 1, &barrier);
+
+				VulkanCommandPool::EndSingleTimeCommands(t_commandBuffer, a_commandPool, a_logicalDevice, a_queue);
+			}
+
+			void VulkanImage::CopyBufferToImage(VkDevice a_logicalDevice, VkQueue a_queue, VkCommandPool a_commandPool, VkBuffer a_buffer, VkImage a_image, uint32_t a_width, uint32_t a_height)
+			{
+				VkCommandBuffer t_commandBuffer = VulkanCommandPool::BeginSingleTimeCommands(a_logicalDevice, a_commandPool);
+
+				VkBufferImageCopy region{};
+				region.bufferOffset = 0;
+				region.bufferRowLength = 0;
+				region.bufferImageHeight = 0;
+				region.imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+				region.imageSubresource.mipLevel = 0;
+				region.imageSubresource.baseArrayLayer = 0;
+				region.imageSubresource.layerCount = 1;
+				region.imageOffset = { 0, 0, 0 };
+				region.imageExtent = { a_width,a_height,1 };
+
+				vkCmdCopyBufferToImage(t_commandBuffer, a_buffer, a_image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,1,&region);
 
 				VulkanCommandPool::EndSingleTimeCommands(t_commandBuffer, a_commandPool, a_logicalDevice, a_queue);
 			}
