@@ -27,15 +27,18 @@ namespace Engine
 		public:
 			struct Data
 			{
-				std::vector<Vertex> vertices = std::vector<Vertex>();
-				std::vector<unsigned int> indexs = std::vector<unsigned int>();
+				std::vector<Vertex> mVertices = std::vector<Vertex>();
+				std::vector<unsigned int> mIndexs = std::vector<unsigned int>();
+				int mSize = 0;
 			};
 
 			Mesh();
 			~Mesh() { delete m_data; }
 
-			void Create(std::string& a_path, Core::RHI::ILogicalDevice* a_logicalDevice, Core::RHI::ICommandPool* a_commandPool);
-			void Destroy(Core::RHI::ILogicalDevice* device);
+			void Create(std::string& a_path);
+			void Destroy();
+
+			Data* GetData() { return m_data; }
 
 		private:
 			void ProcessMesh(const aiMesh* a_mesh);

@@ -7,11 +7,25 @@ namespace Engine
         Mesh::Mesh() : m_data(new Data) {}
 
 
-		void Mesh::Create(std::string& a_path, Core::RHI::ILogicalDevice* a_logicalDevice, Core::RHI::ICommandPool* a_commandPool)
+		void Mesh::Create(std::string& a_path)
 		{
-			
+            Assimp::Importer importer{};
+            const aiScene* scene = importer.ReadFile(a_path, aiProcess_Triangulate | aiProcess_FlipUVs);
+            if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
+            {
+                std::cout << "ERROR::ASSIMP::" << importer.GetErrorString() << '\n';
+                return;
+            }
+            std::string directory = a_path.substr(0, a_path.find_last_of('/'));
+
+            for (unsigned int i = 0; i < scene->mNumMeshes; ++i)
+            {
+                const aiMesh* mesh = scene->mMeshes[i];
+                ProcessMesh(mesh);
+            }
+
 		}
-		void Mesh::Destroy(Core::RHI::ILogicalDevice* device)
+		void Mesh::Destroy()
 		{
 			
 		}
@@ -53,7 +67,7 @@ namespace Engine
                     vertex.mUv = Math::vec2(0.0f, 0.0f);
                 }
 
-                m_data->vertices.push_back(vertex);
+                m_data->mVertices.push_back(vertex);
             }
 
             for (unsigned int i = 0; i < mesh->mNumFaces; ++i)
@@ -62,7 +76,7 @@ namespace Engine
 
                 for (unsigned int j = 0; j < face.mNumIndices; ++j)
                 {
-                    m_data->indexs.push_back(face.mIndices[j]);
+                    m_data->mIndexs.push_back(face.mIndices[j]);
                 }
             }
         }
