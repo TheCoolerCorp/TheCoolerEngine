@@ -49,7 +49,8 @@ namespace Engine
 
 			Ressources::Texture texture = Ressources::Texture();
 			texture.Create("a");
-			//Ressources::Mesh	
+			Ressources::Mesh mesh = Ressources::Mesh();
+			mesh.Create("a");
 
 		}
 

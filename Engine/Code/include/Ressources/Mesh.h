@@ -35,7 +35,7 @@ namespace Engine
 			Mesh();
 			~Mesh() { delete m_data; }
 
-			void Create(std::string& a_path);
+			void Create(std::string a_path);
 			void Destroy();
 
 			Data* GetData() { return m_data; }

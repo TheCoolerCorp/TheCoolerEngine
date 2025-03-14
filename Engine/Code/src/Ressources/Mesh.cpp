@@ -7,7 +7,7 @@ namespace Engine
         Mesh::Mesh() : m_data(new Data) {}
 
 
-		void Mesh::Create(std::string& a_path)
+		void Mesh::Create(std::string a_path)
 		{
             Assimp::Importer importer{};
             const aiScene* scene = importer.ReadFile(a_path, aiProcess_Triangulate | aiProcess_FlipUVs);

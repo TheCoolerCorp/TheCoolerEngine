@@ -1,5 +1,6 @@
-#ifndef MESH_H
-#define MESH_H
+#ifndef TEXTURE_H
+#define TEXTURE_H
+
 
 #include "EngineExport.h"
 #include <string>
