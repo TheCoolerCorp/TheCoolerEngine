@@ -175,7 +175,7 @@ namespace Engine
 
 				VkShaderModule VulkanGraphicPipeline::CreateShader(const std::string& a_path, VkDevice a_device)
 				{
-					const std::vector<char>& code = ReadFile(a_path);
+					const std::vector<char>& code = Utils::ReadFile(a_path);
 
 					VkShaderModuleCreateInfo createInfo{};
 					createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;

@@ -22,12 +22,12 @@ namespace Engine
 		{
 		public:
 			Math::vec3 mPos;
-			Math::vec3 mColor;
+			Math::vec3 mNormals;
 			Math::vec2 mUv;
 
 			bool operator==(const Vertex& other) const
 			{
-				return mPos == other.mPos && mColor == other.mColor && mUv == other.mUv;
+				return mPos == other.mPos && mNormals == other.mNormals && mUv == other.mUv;
 			}
 		};
 	}
