@@ -13,6 +13,7 @@
 #include "Core/Interfaces/IRenderPass.h"
 #include "Core/Interfaces/IGraphicPipeline.h"
 #include "Core/Interfaces/ICommandPool.h"
+#include "Core/Interfaces/IDescriptorPool.h"
 
 namespace Engine
 {
@@ -27,7 +28,8 @@ namespace Engine
 
 				virtual Window::IWindow* InstantiateWindow() = 0;
 				virtual void DestroyWindow(Window::IWindow* a_window) { delete a_window; }
-				
+
+
 				virtual IInstance* InstantiateInstance() = 0;
 				virtual void DestroyInstance(IInstance* a_instance) { delete a_instance; }
 
@@ -35,26 +37,37 @@ namespace Engine
 				virtual IValidationLayers* InstantiateValidationLayers() = 0;
 				virtual void DestroyValidationLayers(IValidationLayers* a_validationLayers) { delete a_validationLayers; }
 
+
 				virtual ISurface* InstantiateSurface() = 0;
 				virtual void DestroySurface(ISurface* a_surface) { delete a_surface; }
+
 
 				virtual IPhysicalDevice* InstantiatePhysicalDevice() = 0;
 				virtual void DestroyPhysicalDevice(IPhysicalDevice* a_physicalDevice) { delete a_physicalDevice; }
 
+
 				virtual ILogicalDevice* InstantiateLogicalDevice() = 0;
 				virtual void DestroyLogicalDevice(ILogicalDevice* a_logicalDevice) { delete a_logicalDevice; }
+
 
 				virtual ISwapChain* InstantiateSwapChain() = 0;
 				virtual void DestroySwapChain(ISwapChain* a_swapChain) { delete a_swapChain; }
 
+
 				virtual IRenderPass* InstantiateRenderPass() = 0;
 				virtual void DestroyRenderPass(IRenderPass* a_renderPass) { delete a_renderPass; }
+
 
 				virtual IGraphicPipeline* InstantiateGraphicPipeline() = 0;
 				virtual void DestroyGraphicPipeline(IGraphicPipeline* a_graphicPipeline) { delete a_graphicPipeline; }
 
+
 				virtual ICommandPool* InstantiateCommandPool() = 0;
 				virtual void DestroyCommandPool(ICommandPool* a_commandPool) { delete a_commandPool; }
+
+
+				virtual IDescriptorPool* InstantiateDescriptorPool() = 0;
+				virtual void DestroyDescriptorPool(IDescriptorPool* a_descriptorPool) { delete a_descriptorPool; }
 			};
 		}
 	}

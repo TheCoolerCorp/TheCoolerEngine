@@ -33,6 +33,8 @@ namespace Engine
 
 				uint32_t mMaxFrame = 0;
 
+				int GetMaxFrame() override { return static_cast<uint32_t>(mMaxFrame); }
+
 			private:
 				VkSwapchainKHR m_swapChain = VK_NULL_HANDLE;
 

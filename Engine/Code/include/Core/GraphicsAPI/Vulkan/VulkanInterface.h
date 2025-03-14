@@ -15,6 +15,7 @@
 #include "Core/GraphicsAPI/Vulkan/VulkanRenderPass.h"
 #include  "Core/GraphicsAPI/Vulkan/VulkanGraphicPipeline.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanCommandPool.h"
+#include "Core/GraphicsAPI/Vulkan/VulkanDescriptorPool.h"
 
 namespace Engine
 {
@@ -46,6 +47,8 @@ namespace Engine
 				RHI::IGraphicPipeline* InstantiateGraphicPipeline() override { return new VulkanGraphicPipeline; }
 
 				RHI::ICommandPool* InstantiateCommandPool() override { return new VulkanCommandPool; }
+
+				RHI::IDescriptorPool* InstantiateDescriptorPool() override { return new VulkanDescriptorPool; }
 
 			};
 		}

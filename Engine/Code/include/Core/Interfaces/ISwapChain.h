@@ -30,10 +30,13 @@ namespace Engine
 				virtual ~ISwapChain() = default;
 
 				virtual GraphicsAPI::VulkanSwapchain* CastVulkan() { return nullptr; }
+				virtual int GetMaxFrame() = 0;
 
 				virtual void Create(ISurface* a_surface, Window::IWindow* a_window, RHI::IPhysicalDevice* a_physicalDevice, RHI::ILogicalDevice* a_logical_device) = 0;
 				virtual void CreateFramebuffers(RHI::ILogicalDevice* a_logicalDevice, RHI::IPhysicalDevice* a_physicalDevice, RHI::IRenderPass* a_renderPass, RHI::ICommandPool* a_commandPool) = 0;
 				virtual void Destroy(RHI::ILogicalDevice* a_logical_device) = 0;
+
+
 			};
 		}
 	}
