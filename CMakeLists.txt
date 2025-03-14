@@ -19,6 +19,10 @@ enable_testing()
 #---------------------------------------#
 #			LIBS FETCH					#
 #---------------------------------------#
+add_subdirectory(libs)
+
+add_subdirectory(libs/assimp)
+
 add_subdirectory(libs/glfw)
 find_package(Vulkan REQUIRED)
 
@@ -39,6 +43,8 @@ add_subdirectory(Editor)
 #---------------------------------------#
 #			LIBS LINK					#
 #---------------------------------------#
+target_link_libraries(Engine PUBLIC stb)
+target_link_libraries(Engine PUBLIC assimp::assimp)
 target_link_libraries(Engine PUBLIC glfw)
 target_link_libraries(Engine PUBLIC Vulkan::Vulkan)
 
