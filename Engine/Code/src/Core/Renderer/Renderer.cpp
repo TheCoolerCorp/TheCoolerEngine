@@ -46,12 +46,6 @@ namespace Engine
 
 			m_descriptorPool = m_interface->InstantiateDescriptorPool();
 			m_descriptorPool->Create(m_logicalDevice, static_cast<int>(m_swapChain->GetMaxFrame()));
-
-			Ressources::Texture texture = Ressources::Texture();
-			texture.Create("a");
-			Ressources::Mesh mesh = Ressources::Mesh();
-			mesh.Create("a");
-
 		}
 
 		void Renderer::Run()
