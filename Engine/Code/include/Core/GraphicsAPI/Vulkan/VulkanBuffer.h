@@ -24,6 +24,8 @@ namespace Engine
 				static void CreateBuffer(VkDeviceSize a_size, VkBufferUsageFlags a_usage, VkMemoryPropertyFlags a_properties, VkBuffer& a_buffer, VkDeviceMemory& a_bufferMemory, VkDevice a_device, VkPhysicalDevice a_physicalDevice);
 				static void CopyBuffer(const VulkanCommandPool* a_commandPool, VkBuffer a_srcBuffer, VkBuffer a_dstBuffer, VkDeviceSize a_size, const VulkanLogicalDevice* a_logicalDevice);
 
+				VkBuffer GetBuffer() const { return m_buffer; }
+
 			private:
 				static uint32_t FindMemoryType(uint32_t a_typeFilter, VkMemoryPropertyFlags a_properties, VkPhysicalDevice a_physicalDevice);
 
