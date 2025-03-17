@@ -22,8 +22,11 @@ namespace Engine
 
 				ENGINE_API void Create(RHI::ISurface* a_surface, Window::IWindow* a_window, RHI::IPhysicalDevice* a_physicalDevice, RHI::ILogicalDevice* a_logicalDevice) override;
 				ENGINE_API void Destroy(RHI::ILogicalDevice* a_logicalDevice) override;
+				ENGINE_API void CleanupSwapChain(const VkDevice a_device) const;
 
 				ENGINE_API void CreateFramebuffers(RHI::ILogicalDevice* a_logicalDevice, RHI::IPhysicalDevice* a_physicalDevice, RHI::IRenderPass* a_renderPass, RHI::ICommandPool* a_commandPool) override;
+
+				ENGINE_API void CreateSyncObjects(RHI::ILogicalDevice* a_logicalDevice) override;
 
 				ENGINE_API VulkanSwapchain* CastVulkan() override { return this; }
 
@@ -55,12 +58,16 @@ namespace Engine
 				VkDeviceMemory m_depthMemory = VK_NULL_HANDLE;
 				VkFormat m_depthFormat = VK_FORMAT_UNDEFINED;
 
+				std::vector<VkSemaphore> m_imageAvailableSemaphores;
+				std::vector<VkSemaphore> m_renderFinishedSemaphores;
+				std::vector<VkFence> m_inFlightFences;
+
+
 				ENGINE_API static VkSurfaceFormatKHR ChooseSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& a_availableFormats);
 				ENGINE_API static VkPresentModeKHR ChooseSurfacePresentMode(const std::vector<VkPresentModeKHR>& a_availablePresentModes);
 				ENGINE_API static VkExtent2D ChooseSurfaceExtent(const VkSurfaceCapabilitiesKHR& a_availableCapabilities, Window::IWindow* a_window);
 
 				ENGINE_API static VkImageView CreateImageView(VkImage a_image, VkFormat a_format, VkImageAspectFlags a_aspectFlags, VkDevice a_device);
-
 
 			};
 		}

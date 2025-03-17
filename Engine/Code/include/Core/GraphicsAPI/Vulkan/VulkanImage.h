@@ -30,12 +30,12 @@ namespace Engine
 				ENGINE_API VkDeviceMemory GetMemory() { return m_memory; }
 
 		
-				ENGINE_API static void CreateImage(VkImage* a_image, VkDeviceMemory* a_memory, VkDevice a_logicalDevice, VkPhysicalDevice a_physicalDevice, uint32_t a_width, uint32_t a_height, VkFormat a_format, VkImageTiling a_tiling, VkImageUsageFlags a_usage, VkMemoryPropertyFlags properties);
+				ENGINE_API static void CreateImage(VkImage* a_image, VkDeviceMemory* a_memory, VkDevice a_logicalDevice, VkPhysicalDevice a_physicalDevice, uint32_t a_width, uint32_t a_height, VkFormat a_format, VkImageTiling a_tiling, VkImageUsageFlags a_usage, VkMemoryPropertyFlags a_properties);
 				ENGINE_API static void CreateImageView(VkImage a_image, VkImageView* a_view, VkDevice a_logicalDevice, VkFormat a_format, VkImageAspectFlags a_aspectFlags);
-				ENGINE_API static void TransitionImageLayout(VkImage a_image, VkDevice a_logicalDevice, VkQueue a_queue, VkCommandPool a_commandPool, VkFormat a_format, VkImageLayout oldLayout, VkImageLayout newLayout);
+				ENGINE_API static void TransitionImageLayout(VkImage a_image, VkDevice a_logicalDevice, VkQueue a_queue, VkCommandPool a_commandPool, VkFormat a_format, VkImageLayout a_oldLayout, VkImageLayout a_newLayout);
 				ENGINE_API static void CopyBufferToImage(VkDevice a_logicalDevice, VkQueue a_queue, VkCommandPool a_commandPool, VkBuffer a_buffer, VkImage a_image, uint32_t a_width, uint32_t a_height);
 
-				ENGINE_API static bool HasStencilComponent(VkFormat format);
+				ENGINE_API static bool HasStencilComponent(VkFormat a_format);
 
 			private:
 				VkImage m_image = VK_NULL_HANDLE;
