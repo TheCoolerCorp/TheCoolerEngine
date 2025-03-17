@@ -1,7 +1,5 @@
 #include <filesystem>
 #include <iomanip>
-#include <fstream>
-#include <mutex>
 #include <string>
 
 namespace Engine
@@ -45,25 +43,10 @@ namespace Engine
 		return a_message ? "true" : "false";
 	}
 
-	struct Logger::MutexStruct
-	{
-		std::mutex m_logMutex;
-	};
-
-	struct Logger::LogFileStruct
-	{
-		std::ofstream m_logFile;
-	};
-
 	template <typename T>
-	void Logger::Log(const T& a_message, const LogLevel a_level, const std::string& a_color, const char* a_file, const int a_line) const
+	void Logger::Log(const T& a_message, const LogLevel a_level, const std::string& a_color, const char* a_file, const int a_line)
 	{
-		if (!m_mutexStruct)
-		{
-			return;
-		}
-
-		std::lock_guard<std::mutex> t_lock(m_mutexStruct->m_logMutex);
+		std::lock_guard<std::mutex> t_lock(m_logMutex);
 
 		std::time_t t_now = std::time(nullptr);
 		std::tm t_localTime;
