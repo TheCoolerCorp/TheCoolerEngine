@@ -22,7 +22,7 @@ namespace Engine
 
 				ENGINE_API void Create(RHI::ISurface* a_surface, Window::IWindow* a_window, RHI::IPhysicalDevice* a_physicalDevice, RHI::ILogicalDevice* a_logicalDevice) override;
 				ENGINE_API void Destroy(RHI::ILogicalDevice* a_logicalDevice) override;
-				ENGINE_API void CleanupSwapChain(const VkDevice a_device);
+				ENGINE_API void CleanupSwapChain(const VkDevice a_device) const;
 
 				ENGINE_API void CreateFramebuffers(RHI::ILogicalDevice* a_logicalDevice, RHI::IPhysicalDevice* a_physicalDevice, RHI::IRenderPass* a_renderPass, RHI::ICommandPool* a_commandPool) override;
 
