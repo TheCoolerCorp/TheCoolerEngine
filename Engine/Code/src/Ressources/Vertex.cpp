@@ -2,7 +2,7 @@
 
 namespace Engine
 {
-	namespace Ressources
+	namespace Resource
 	{
 		VkVertexInputBindingDescription VulkanVertexSpec::getBindingDescription()
 		{

@@ -6,33 +6,26 @@
 #include <string>
 
 #include "Core/Logger/Logger.h"
+#include "IResource.h"
 
 namespace Engine
 {
-	namespace Ressources
+	namespace Resource
 	{
-
-		class Texture
+		class Texture : public IResource
 		{
 		public:
-			struct Data
-			{
-				int mWidth = 0;
-				int mHeight = 0;
-				int mChannel = 0;
-				unsigned char* mImage;
-			};
+			ENGINE_API void Create(std::string a_path) override;
+			ENGINE_API void Destroy() override;
 
-			ENGINE_API Texture();
-			ENGINE_API ~Texture() { delete m_data; }
-
-			ENGINE_API void Create(std::string a_path);
-			ENGINE_API void Destroy();
-			Data* m_data = nullptr;
-
+			ENGINE_API int GetWidth() { return m_width; }
+			ENGINE_API int GetHeight() { return m_height; }
+			ENGINE_API unsigned char* GetData() { if (m_data) { return m_data; } LOG_ERROR("No image data."); return nullptr; }
 
 		private:
-
+			int m_width = 0;
+			int m_height = 0;
+			unsigned char* m_data = nullptr;
 		};
 	}
 }
