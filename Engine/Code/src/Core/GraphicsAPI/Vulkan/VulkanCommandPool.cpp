@@ -19,14 +19,19 @@ namespace Engine
 		{
 			struct VulkanCommandPool::CommandBuffers
 			{
-				std::vector<VkCommandBuffer> mCommandBuffers{};
+				std::vector<std::vector<std::tuple<VkCommandBuffer, VkRenderPass, VkPipeline>>> mCommandBuffers{};
 			};
 
-			VulkanCommandPool::VulkanCommandPool() : m_commandBuffersStruct(new CommandBuffers){}
+			VulkanCommandPool::VulkanCommandPool() : mCommandBuffersStruct(new CommandBuffers){}
 
 			VulkanCommandPool::~VulkanCommandPool()
 			{
-				delete m_commandBuffersStruct;
+				for (auto& t_commandBuffer : mCommandBuffersStruct->mCommandBuffers)
+				{
+					t_commandBuffer.clear();
+				}
+				mCommandBuffersStruct->mCommandBuffers.clear();
+				delete mCommandBuffersStruct;
 			}
 
 			void VulkanCommandPool::Create(RHI::IPhysicalDevice* a_physicalDevice, RHI::ISurface* a_surface, RHI::ILogicalDevice* a_logicalDevice)
@@ -50,27 +55,35 @@ namespace Engine
 				vkDestroyCommandPool(t_device, m_commandPool, nullptr);
 			}
 
-			void VulkanCommandPool::CreateCommandBuffer(RHI::ILogicalDevice* a_logicalDevice)
+			void VulkanCommandPool::CreateCommandBuffer(RHI::ILogicalDevice* a_logicalDevice, RHI::ISwapChain* a_swapChain, RHI::IRenderPass* a_renderPass, RHI::IGraphicPipeline* a_graphicPipeline)
 			{
-				VkCommandBuffer t_commandBuffer = VK_NULL_HANDLE;
-				VkCommandBufferAllocateInfo t_allocInfo{};
-				t_allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-				t_allocInfo.commandPool = m_commandPool;
-				t_allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-				t_allocInfo.commandBufferCount = 1;
+				std::vector<std::tuple<VkCommandBuffer, VkRenderPass, VkPipeline>> t_commandBuffers;
+				const uint32_t t_maxFrames = a_swapChain->CastVulkan()->GetMaxFrame();
+				VkRenderPass t_renderPass = a_renderPass->CastVulkan()->GetRenderPass();
+				VkPipeline t_pipeline = a_graphicPipeline->CastVulkan()->GetPipeline();
 
-				const VkDevice t_device = a_logicalDevice->CastVulkan()->GetVkDevice();
+				for (uint32_t i = 0; i < t_maxFrames; ++i)
+				{
+					VkCommandBuffer t_commandBuffer;
+					VkCommandBufferAllocateInfo t_allocInfo{};
+					t_allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+					t_allocInfo.commandPool = m_commandPool;
+					t_allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+					t_allocInfo.commandBufferCount = 1;
 
-				VK_CHECK(vkAllocateCommandBuffers(t_device, &t_allocInfo, &t_commandBuffer), "failed to allocate command buffers!");
-				m_commandBuffersStruct->mCommandBuffers.push_back(t_commandBuffer);
+					const VkDevice t_device = a_logicalDevice->CastVulkan()->GetVkDevice();
+
+					VK_CHECK(vkAllocateCommandBuffers(t_device, &t_allocInfo, &t_commandBuffer), "failed to allocate command buffers!");
+
+					t_commandBuffers[i] = { t_commandBuffer, t_renderPass, t_pipeline };
+				}
+
+				mCommandBuffersStruct->mCommandBuffers.push_back(t_commandBuffers);
 			}
 
-			void VulkanCommandPool::RecordCommandBuffer(const VkCommandBuffer a_commandBuffer, const uint32_t a_imageIndex, RHI::IRenderPass* a_renderPass, RHI::ISwapChain* a_swapChain, RHI::IGraphicPipeline* a_graphicPipeline)
+			void VulkanCommandPool::RecordCommandBuffer(const VkCommandBuffer a_commandBuffer, const uint32_t a_imageIndex, const VkRenderPass a_renderPass, const VulkanSwapchain* a_swapChain, const VkPipeline a_graphicPipeline)
 			{
-				const VkRenderPass t_renderPass = a_renderPass->CastVulkan()->GetRenderPass();
-				const VulkanSwapchain* t_swapChain = a_swapChain->CastVulkan();
-				const VkPipeline t_graphicPipeline = a_graphicPipeline->CastVulkan()->GetPipeline();
-				const VkExtent2D t_swapChainExtent = t_swapChain->GetExtent2D();
+				const VkExtent2D t_swapChainExtent = a_swapChain->GetExtent2D();
 
 				VkCommandBufferBeginInfo t_beginInfo{};
 				t_beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
@@ -79,8 +92,8 @@ namespace Engine
 
 				VkRenderPassBeginInfo t_renderPassInfo{};
 				t_renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-				t_renderPassInfo.renderPass = t_renderPass;
-				t_renderPassInfo.framebuffer = t_swapChain->GetFramebuffers()[a_imageIndex];
+				t_renderPassInfo.renderPass = a_renderPass;
+				t_renderPassInfo.framebuffer = a_swapChain->GetFramebuffers()[a_imageIndex];
 				t_renderPassInfo.renderArea.offset = { .x= 0, .y= 0};
 				t_renderPassInfo.renderArea.extent = t_swapChainExtent;
 
@@ -93,12 +106,12 @@ namespace Engine
 
 				vkCmdBeginRenderPass(a_commandBuffer, &t_renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 
-				vkCmdBindPipeline(a_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, t_graphicPipeline);
+				vkCmdBindPipeline(a_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, a_graphicPipeline);
 
 				VkViewport t_viewport;
 				t_viewport.x = 0.0f;
 				t_viewport.y = 0.0f;
-				t_viewport.width = static_cast<float>(t_swapChain->GetExtent2D().width);
+				t_viewport.width = static_cast<float>(a_swapChain->GetExtent2D().width);
 				t_viewport.height = static_cast<float>(t_swapChainExtent.height);
 				t_viewport.minDepth = 0.0f;
 				t_viewport.maxDepth = 1.0f;
@@ -116,7 +129,7 @@ namespace Engine
 				VK_CHECK(vkEndCommandBuffer(a_commandBuffer), "failed to end command buffer!");
 			}
 
-			VkCommandBuffer VulkanCommandPool::BeginSingleTimeCommands(const VkDevice a_device, VkCommandPool a_commandPool)
+			VkCommandBuffer VulkanCommandPool::BeginSingleTimeCommands(const VkDevice a_device, const VkCommandPool a_commandPool)
 			{
 				VkCommandBufferAllocateInfo t_allocInfo{};
 				t_allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
@@ -136,7 +149,7 @@ namespace Engine
 				return t_commandBuffer;
 			}
 
-			void VulkanCommandPool::EndSingleTimeCommands(VkCommandBuffer a_commandBuffer, VkCommandPool a_commandPool, VkDevice a_logicalDevice, VkQueue a_queue)
+			void VulkanCommandPool::EndSingleTimeCommands(const VkCommandBuffer a_commandBuffer, const VkCommandPool a_commandPool, const VkDevice a_logicalDevice, const VkQueue a_queue)
 			{
 				vkEndCommandBuffer(a_commandBuffer);
 
