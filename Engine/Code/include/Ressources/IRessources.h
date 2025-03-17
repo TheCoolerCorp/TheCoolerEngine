@@ -7,11 +7,11 @@ namespace Engine
 {
 	namespace Ressources
 	{
-		class ENGINE_API IRessource
+		class IRessource
 		{
 		public:
-			virtual void Create();
-			virtual void Destroy();
+			ENGINE_API virtual void Create();
+			ENGINE_API virtual void Destroy();
 		};
 	}
 }

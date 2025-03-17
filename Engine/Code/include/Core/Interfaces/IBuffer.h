@@ -38,13 +38,13 @@ namespace Engine
 				size_t mUboSize = 0;
 			};
 
-			class ENGINE_API IBuffer
+			class IBuffer
 			{
 			public:
-				virtual ~IBuffer() = default;
-				virtual void Create(BufferType a_type, BufferData a_data, IPhysicalDevice* a_physicalDevice, ILogicalDevice* a_logicalDevice, ICommandPool* a_commandPool) = 0;
-				virtual void Destroy(ILogicalDevice* a_logicalDevice) = 0;
-				virtual GraphicsAPI::VulkanBuffer* CastVulkan() { LOG_ERROR("Try to return wrong cast type : VulkanCommandPool!"); return nullptr; }
+				ENGINE_API virtual ~IBuffer() = default;
+				ENGINE_API virtual void Create(BufferType a_type, BufferData a_data, IPhysicalDevice* a_physicalDevice, ILogicalDevice* a_logicalDevice, ICommandPool* a_commandPool) = 0;
+				ENGINE_API virtual void Destroy(ILogicalDevice* a_logicalDevice) = 0;
+				ENGINE_API virtual GraphicsAPI::VulkanBuffer* CastVulkan() { LOG_ERROR("Try to return wrong cast type : VulkanCommandPool!"); return nullptr; }
 			};
 		}
 	}

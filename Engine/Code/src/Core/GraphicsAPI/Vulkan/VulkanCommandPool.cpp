@@ -17,21 +17,13 @@ namespace Engine
 	{
 		namespace GraphicsAPI
 		{
-			struct VulkanCommandPool::CommandBuffers
-			{
-				std::vector<std::vector<std::tuple<VkCommandBuffer, VkRenderPass, VkPipeline>>> mCommandBuffers{};
-			};
-
-			VulkanCommandPool::VulkanCommandPool() : mCommandBuffersStruct(new CommandBuffers){}
-
 			VulkanCommandPool::~VulkanCommandPool()
 			{
-				for (auto& t_commandBuffer : mCommandBuffersStruct->mCommandBuffers)
+				for (auto& t_commandBuffer : mCommandBuffers)
 				{
 					t_commandBuffer.clear();
 				}
-				mCommandBuffersStruct->mCommandBuffers.clear();
-				delete mCommandBuffersStruct;
+				mCommandBuffers.clear();
 			}
 
 			void VulkanCommandPool::Create(RHI::IPhysicalDevice* a_physicalDevice, RHI::ISurface* a_surface, RHI::ILogicalDevice* a_logicalDevice)
@@ -78,7 +70,7 @@ namespace Engine
 					t_commandBuffers[i] = { t_commandBuffer, t_renderPass, t_pipeline };
 				}
 
-				mCommandBuffersStruct->mCommandBuffers.push_back(t_commandBuffers);
+				mCommandBuffers.push_back(t_commandBuffers);
 			}
 
 			void VulkanCommandPool::RecordCommandBuffer(const VkCommandBuffer a_commandBuffer, const uint32_t a_imageIndex, const VkRenderPass a_renderPass, const VulkanSwapchain* a_swapChain, const VkPipeline a_graphicPipeline)

@@ -10,18 +10,18 @@ namespace Engine
 	{
 		namespace GraphicsAPI
 		{
-			class ENGINE_API VulkanInstance;
+			class VulkanInstance;
 		}
 		namespace RHI
 		{
-			class ENGINE_API IInstance
+			class IInstance
 			{
 			public:
-				virtual ~IInstance() = default;
-				virtual GraphicsAPI::VulkanInstance* CastVulkan() { LOG_ERROR("Try to return wrong cast type : VulkanPhysicalDevice!"); return nullptr; }
+				ENGINE_API virtual ~IInstance() = default;
+				ENGINE_API virtual GraphicsAPI::VulkanInstance* CastVulkan() { LOG_ERROR("Try to return wrong cast type : VulkanPhysicalDevice!"); return nullptr; }
 
-				virtual void Create() = 0;
-				virtual void Destroy() = 0;
+				ENGINE_API virtual void Create() = 0;
+				ENGINE_API virtual void Destroy() = 0;
 			};
 		}
 	}

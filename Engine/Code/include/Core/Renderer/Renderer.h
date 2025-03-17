@@ -23,15 +23,15 @@ namespace Engine
 			DX12 = 2
 		};
 
-		class ENGINE_API Renderer
+		class Renderer
 		{
 		public:
-			Renderer() = default;
-			~Renderer() = default;
+			ENGINE_API Renderer() = default;
+			ENGINE_API ~Renderer() = default;
 
-			void Init(RendererType a_type, Window::IWindow* a_window);
-			void Run();
-			void Destroy();
+			ENGINE_API void Init(RendererType a_type, Window::IWindow* a_window);
+			ENGINE_API void Run();
+			ENGINE_API void Destroy();
 
 		private:
 			RendererType m_type = RendererType::VULKAN;

@@ -12,7 +12,7 @@ namespace Engine
 	namespace Ressources
 	{
 
-		class ENGINE_API Texture
+		class Texture
 		{
 		public:
 			struct Data
@@ -23,11 +23,11 @@ namespace Engine
 				unsigned char* mImage;
 			};
 
-			Texture();
-			~Texture() { delete m_data; }
+			ENGINE_API Texture();
+			ENGINE_API ~Texture() { delete m_data; }
 
-			void Create(std::string a_path);
-			void Destroy();
+			ENGINE_API void Create(std::string a_path);
+			ENGINE_API void Destroy();
 			Data* m_data = nullptr;
 
 

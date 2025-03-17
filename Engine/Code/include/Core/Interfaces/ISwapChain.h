@@ -9,11 +9,11 @@ namespace Engine
 	{
 		namespace Window
 		{
-			class ENGINE_API IWindow;
+			class IWindow;
 		}
 		namespace GraphicsAPI
 		{
-			class ENGINE_API VulkanSwapchain;
+			class VulkanSwapchain;
 		}
 
 		namespace RHI
@@ -24,17 +24,17 @@ namespace Engine
 			class IRenderPass;
 			class ICommandPool;
 
-			class ENGINE_API ISwapChain
+			class ISwapChain
 			{
 			public:
-				virtual ~ISwapChain() = default;
+				ENGINE_API virtual ~ISwapChain() = default;
 
-				virtual GraphicsAPI::VulkanSwapchain* CastVulkan() { return nullptr; }
-				virtual int GetMaxFrame() = 0;
+				ENGINE_API virtual GraphicsAPI::VulkanSwapchain* CastVulkan() { return nullptr; }
+				ENGINE_API virtual int GetMaxFrame() = 0;
 
-				virtual void Create(ISurface* a_surface, Window::IWindow* a_window, RHI::IPhysicalDevice* a_physicalDevice, RHI::ILogicalDevice* a_logical_device) = 0;
-				virtual void CreateFramebuffers(RHI::ILogicalDevice* a_logicalDevice, RHI::IPhysicalDevice* a_physicalDevice, RHI::IRenderPass* a_renderPass, RHI::ICommandPool* a_commandPool) = 0;
-				virtual void Destroy(RHI::ILogicalDevice* a_logical_device) = 0;
+				ENGINE_API virtual void Create(ISurface* a_surface, Window::IWindow* a_window, RHI::IPhysicalDevice* a_physicalDevice, RHI::ILogicalDevice* a_logical_device) = 0;
+				ENGINE_API virtual void CreateFramebuffers(RHI::ILogicalDevice* a_logicalDevice, RHI::IPhysicalDevice* a_physicalDevice, RHI::IRenderPass* a_renderPass, RHI::ICommandPool* a_commandPool) = 0;
+				ENGINE_API virtual void Destroy(RHI::ILogicalDevice* a_logical_device) = 0;
 
 
 			};

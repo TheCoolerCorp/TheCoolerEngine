@@ -41,24 +41,27 @@ namespace Engine
 			void VulkanSwapchain::Create(RHI::ISurface* a_surface, Window::IWindow* a_window, RHI::IPhysicalDevice* a_physicalDevice, RHI::ILogicalDevice* a_logicalDevice)
 			{
 				uint32_t t_imageCount = 0;
-				const VulkanSurface::SurfaceInfo t_info = a_surface->CastVulkan()->GetSurfaceInfo();
-				if (mMaxFrame <= 0)
+				const VulkanSurface* t_surface = a_surface->CastVulkan();
+				const VkSurfaceCapabilitiesKHR t_surfaceCapabilities = t_surface->GetSurfaceCapabilities();
+				const std::vector<VkSurfaceFormatKHR> t_surfaceFormats = t_surface->GetSurfaceFormats();
+				const std::vector<VkPresentModeKHR> t_surfacePresentModes = t_surface->GetSurfacePresentModes();
+				if (m_maxFrame <= 0)
 				{
-					t_imageCount = t_info.mCapabilities.minImageCount + 1;
+					t_imageCount = t_surfaceCapabilities.minImageCount + 1;
 
-					if (t_info.mCapabilities.maxImageCount > 0 && t_imageCount > t_info.mCapabilities.maxImageCount) 
+					if (t_surfaceCapabilities.maxImageCount > 0 && t_imageCount > t_surfaceCapabilities.maxImageCount) 
 					{
-						t_imageCount = t_info.mCapabilities.maxImageCount;
+						t_imageCount = t_surfaceCapabilities.maxImageCount;
 					}
 				}
 				else
 				{
-					t_imageCount = mMaxFrame;
+					t_imageCount = m_maxFrame;
 				}
 
-				const VkSurfaceFormatKHR t_formats = ChooseSurfaceFormat(t_info.mFormats);
-				const VkPresentModeKHR t_presentMode = ChooseSurfacePresentMode(t_info.mPresentModes);
-				const VkExtent2D t_extent = ChooseSurfaceExtent(t_info.mCapabilities, a_window);
+				const VkSurfaceFormatKHR t_formats = ChooseSurfaceFormat(t_surfaceFormats);
+				const VkPresentModeKHR t_presentMode = ChooseSurfacePresentMode(t_surfacePresentModes);
+				const VkExtent2D t_extent = ChooseSurfaceExtent(t_surfaceCapabilities, a_window);
 
 
 				VkSwapchainCreateInfoKHR t_createInfo = {};
@@ -91,7 +94,7 @@ namespace Engine
 					t_createInfo.pQueueFamilyIndices = nullptr;
 				}
 
-				t_createInfo.preTransform = t_info.mCapabilities.currentTransform;
+				t_createInfo.preTransform = t_surfaceCapabilities.currentTransform;
 				t_createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
 				t_createInfo.presentMode = t_presentMode;
 				t_createInfo.clipped = VK_TRUE;
@@ -107,7 +110,7 @@ namespace Engine
 
 				m_swapChainImageFormat = t_formats.format;
 				m_swapChainExtent = t_extent;
-				mMaxFrame = t_imageCount;
+				m_maxFrame = t_imageCount;
 
 				// Create imagesViews;
 				for (int i = 0; i < m_vectorsStruct->mImages.size(); ++i)

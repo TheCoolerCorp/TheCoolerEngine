@@ -22,7 +22,7 @@ namespace Engine
 	namespace Ressources
 	{
 
-		class ENGINE_API Mesh
+		class Mesh
 		{
 		public:
 			struct Data
@@ -32,15 +32,15 @@ namespace Engine
 				int mSize = 0;
 			};
 
-			Mesh();
-			~Mesh() { delete m_data; }
+			ENGINE_API Mesh();
+			ENGINE_API ~Mesh() { delete m_data; }
 
-			void Create(std::string a_path);
-			void Destroy();
+			ENGINE_API void Create(std::string a_path);
+			ENGINE_API void Destroy();
 
-			Data* GetData() { return m_data; }
+			ENGINE_API Data* GetData() { return m_data; }
 
-			void ProcessMesh(const aiMesh* a_mesh);
+			ENGINE_API void ProcessMesh(const aiMesh* a_mesh);
 
 			Data* m_data = nullptr;
 		private:

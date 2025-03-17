@@ -38,12 +38,12 @@ namespace Engine
 					createInfo.enabledLayerCount = 0;
 				}
 
-				VK_CHECK(vkCreateInstance(&createInfo, nullptr, &m_Instance), "failed to create instance");
+				VK_CHECK(vkCreateInstance(&createInfo, nullptr, &m_instance), "failed to create instance");
 			}
 
 			void VulkanInstance::Destroy()
 			{
-				vkDestroyInstance(m_Instance, nullptr);
+				vkDestroyInstance(m_instance, nullptr);
 			}
 
 			std::vector<const char*> VulkanInstance::GetRequiredExtensions()

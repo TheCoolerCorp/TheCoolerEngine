@@ -10,7 +10,7 @@ namespace Engine
 	{
 		namespace GraphicsAPI
 		{
-			class ENGINE_API VulkanRenderPass;
+			class VulkanRenderPass;
 		}
 		namespace RHI
 		{
@@ -18,14 +18,14 @@ namespace Engine
 			class ILogicalDevice;
 			class IPhysicalDevice;
 
-			class ENGINE_API IRenderPass
+			class IRenderPass
 			{
 			public:
-				virtual ~IRenderPass() = default;
-				virtual GraphicsAPI::VulkanRenderPass* CastVulkan() { LOG_ERROR("Try to return wrong cast type : VulkanPhysicalDevice!"); return nullptr; }
+				ENGINE_API virtual ~IRenderPass() = default;
+				ENGINE_API virtual GraphicsAPI::VulkanRenderPass* CastVulkan() { LOG_ERROR("Try to return wrong cast type : VulkanPhysicalDevice!"); return nullptr; }
 
-				virtual void Create(ISwapChain* a_swapChain, IPhysicalDevice* a_physicalDevice, ILogicalDevice* a_logicalDevice) = 0;
-				virtual void Destroy(ILogicalDevice* a_logicalDevice) = 0;
+				ENGINE_API virtual void Create(ISwapChain* a_swapChain, IPhysicalDevice* a_physicalDevice, ILogicalDevice* a_logicalDevice) = 0;
+				ENGINE_API virtual void Destroy(ILogicalDevice* a_logicalDevice) = 0;
 			};
 		}
 	}

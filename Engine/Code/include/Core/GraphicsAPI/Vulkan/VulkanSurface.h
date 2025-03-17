@@ -12,27 +12,25 @@ namespace Engine
 	{
 		namespace GraphicsAPI
 		{
-			class ENGINE_API VulkanSurface : public RHI::ISurface
+			class VulkanSurface : public RHI::ISurface
 			{
 			public:
-				struct SurfaceInfo
-				{
-					VkSurfaceCapabilitiesKHR mCapabilities{};
-					std::vector<VkSurfaceFormatKHR> mFormats;
-					std::vector<VkPresentModeKHR> mPresentModes;
-				};
-				void Create(Window::IWindow* a_window, RHI::IInstance* a_instance) override;
-				void SetupInfo(RHI::IPhysicalDevice* a_physicalDevice) override;
-				void Destroy(RHI::IInstance* a_instance) override;
+				ENGINE_API void Create(Window::IWindow* a_window, RHI::IInstance* a_instance) override;
+				ENGINE_API void SetupInfo(RHI::IPhysicalDevice* a_physicalDevice) override;
+				ENGINE_API void Destroy(RHI::IInstance* a_instance) override;
 
-				VulkanSurface* CastVulkan() override { return this; }
+				ENGINE_API VulkanSurface* CastVulkan() override { return this; }
 
-				VkSurfaceKHR& GetVkSurfaceKHR() { return m_surface; }
-				SurfaceInfo GetSurfaceInfo() { return m_info; }
+				ENGINE_API VkSurfaceKHR& GetVkSurfaceKHR() { return m_surface; }
+				ENGINE_API VkSurfaceCapabilitiesKHR GetSurfaceCapabilities() const { return m_capabilities; }
+				ENGINE_API std::vector<VkSurfaceFormatKHR> GetSurfaceFormats() const { return m_formats; }
+				ENGINE_API std::vector<VkPresentModeKHR> GetSurfacePresentModes() const { return m_presentModes; }
 
 			private:
 				VkSurfaceKHR m_surface = VK_NULL_HANDLE;
-				SurfaceInfo m_info;
+				VkSurfaceCapabilitiesKHR m_capabilities{};
+				std::vector<VkSurfaceFormatKHR> m_formats;
+				std::vector<VkPresentModeKHR> m_presentModes;
 			};
 		}
 	}

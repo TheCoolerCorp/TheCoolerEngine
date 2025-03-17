@@ -14,10 +14,10 @@ namespace Engine
 			class VulkanLogicalDevice;
 			class VulkanSwapchain;
 
-			class ENGINE_API VulkanCommandPool : public RHI::ICommandPool
+			class VulkanCommandPool : public RHI::ICommandPool
 			{
 			public:
-				ENGINE_API VulkanCommandPool();
+				ENGINE_API VulkanCommandPool() = default;
 				ENGINE_API ~VulkanCommandPool() override;
 				ENGINE_API void Create(RHI::IPhysicalDevice* a_physicalDevice, RHI::ISurface* a_surface, RHI::ILogicalDevice* a_logicalDevice) override;
 				ENGINE_API VkCommandPool GetVkCommandPool() const { return m_commandPool; }
@@ -29,8 +29,7 @@ namespace Engine
 				ENGINE_API static VkCommandBuffer BeginSingleTimeCommands(VkDevice a_device, VkCommandPool a_commandPool);
 				ENGINE_API static void EndSingleTimeCommands(VkCommandBuffer a_commandBuffer, VkCommandPool a_commandPool, VkDevice a_logicalDevice, VkQueue a_queue);
 
-				struct CommandBuffers;
-				CommandBuffers* mCommandBuffersStruct = nullptr;
+				std::vector<std::vector<std::tuple<VkCommandBuffer, VkRenderPass, VkPipeline>>> mCommandBuffers{};
 			private:
 				VkCommandPool m_commandPool = VK_NULL_HANDLE;
 			};

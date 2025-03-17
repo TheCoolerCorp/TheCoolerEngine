@@ -12,16 +12,16 @@ namespace Engine
 {
 	namespace Core
 	{
-		class ENGINE_API Application
+		class Application
 		{
 		public:
-			Application() = default;
-			~Application() = default;
+			ENGINE_API Application() = default;
+			ENGINE_API ~Application() = default;
 
-			void Create(int a_width, int a_height);
-			void Run() const;
-			void Destroy() const;
-			Window::IWindow* GetWindow() const { return m_mainWindow; }
+			ENGINE_API void Create(int a_width, int a_height);
+			ENGINE_API void Run() const;
+			ENGINE_API void Destroy() const;
+			ENGINE_API Window::IWindow* GetWindow() const { return m_mainWindow; }
 
 		private:
 			Window::IWindow* m_mainWindow = nullptr;

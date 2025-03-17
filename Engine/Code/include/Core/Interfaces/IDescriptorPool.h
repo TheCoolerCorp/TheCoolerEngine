@@ -10,21 +10,21 @@ namespace Engine
 	{
 		namespace GraphicsAPI
 		{
-			class ENGINE_API VulkanDescriptorPool;
+			class VulkanDescriptorPool;
 		}
 
 		namespace RHI
 		{
 			class ILogicalDevice;
 
-			class ENGINE_API IDescriptorPool
+			class IDescriptorPool
 			{
 			public:
-				virtual ~IDescriptorPool() = default;
-				virtual GraphicsAPI::VulkanDescriptorPool* CastVulkan() { LOG_ERROR("Try to return wrong cast type : VulkanPhysicalDevice!"); return nullptr; }
+				ENGINE_API virtual ~IDescriptorPool() = default;
+				ENGINE_API virtual GraphicsAPI::VulkanDescriptorPool* CastVulkan() { LOG_ERROR("Try to return wrong cast type : VulkanPhysicalDevice!"); return nullptr; }
 
-				virtual void Create(ILogicalDevice* a_logicalDevice, int a_maxFrameInFlight) = 0;
-				virtual void Destroy(ILogicalDevice* a_logicalDevice) = 0;
+				ENGINE_API virtual void Create(ILogicalDevice* a_logicalDevice, int a_maxFrameInFlight) = 0;
+				ENGINE_API virtual void Destroy(ILogicalDevice* a_logicalDevice) = 0;
 			};
 		}
 	}

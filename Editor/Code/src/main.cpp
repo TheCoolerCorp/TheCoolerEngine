@@ -12,6 +12,7 @@
 #include "imgui.h"
 int main()
 {
+    LOG_INFO("Starting...");
     //const Engine::Math::vec3 t_vec = Engine::Math::vec3(0.f, 1.f, 2.f);
     //const Engine::Math::vec3 t_vec2 = Engine::Math::vec3(0.f, 3.f, 5.f);
     //Engine::Math::vec3 t_ve3 = Engine::Math::vec3::CrossProduct(t_vec, t_vec2);
