@@ -10,7 +10,7 @@ namespace Engine
 			return m_instance;
 		}
 
-		void ResourceManager::CreateResource(ResourceType a_type, std::string a_path, std::string& a_name)
+		void ResourceManager::CreateResource(ResourceType a_type, std::string a_path, std::string a_name)
 		{
 			if (a_type == ResourceType::MESH)
 			{
@@ -37,8 +37,9 @@ namespace Engine
 			{
 				delete it->second;
 				m_resources.erase(it);
+				return;
 			}
-			LOG_WARNING("[Resource Manager] Can't find this item : " + a_name);
+			LOG_WARNING("Can't find this item : " + a_name);
 			return;
 		}
 
@@ -49,7 +50,7 @@ namespace Engine
 			{
 				return it->second;
 			}
-			LOG_WARNING("[Resource Manager] Can't find this item : " + a_name);
+			LOG_WARNING("Can't find this item : " + a_name);
 			return nullptr;
 		}
 	}

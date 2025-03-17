@@ -49,10 +49,10 @@ namespace Engine
 
 			void VulkanCommandPool::CreateCommandBuffer(RHI::ILogicalDevice* a_logicalDevice, RHI::ISwapChain* a_swapChain, RHI::IRenderPass* a_renderPass, RHI::IGraphicPipeline* a_graphicPipeline)
 			{
-				std::vector<std::tuple<VkCommandBuffer, VkRenderPass, VkPipeline>> t_commandBuffers;
 				const uint32_t t_maxFrames = a_swapChain->CastVulkan()->GetMaxFrame();
 				VkRenderPass t_renderPass = a_renderPass->CastVulkan()->GetRenderPass();
 				VkPipeline t_pipeline = a_graphicPipeline->CastVulkan()->GetPipeline();
+				std::vector<std::tuple<VkCommandBuffer, VkRenderPass, VkPipeline>> t_commandBuffers = std::vector<std::tuple<VkCommandBuffer, VkRenderPass, VkPipeline>>(t_maxFrames);
 
 				for (uint32_t i = 0; i < t_maxFrames; ++i)
 				{

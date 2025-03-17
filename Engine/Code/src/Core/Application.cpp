@@ -1,5 +1,5 @@
 #include "Core/Application.h"
-
+#include "Ressources/ResourceManager.h"
 namespace Engine
 {
 	namespace Core
@@ -12,6 +12,11 @@ namespace Engine
 			m_renderer = new Renderer();
 			m_renderer->Init(RendererType::VULKAN, m_mainWindow);
 
+			Resource::ResourceManager& instance = Resource::ResourceManager::Get();
+			instance.CreateResource(Resource::ResourceType::MESH, "Assets/Meshes/viking_room.obj", "viking_room_mesh");
+			instance.CreateResource(Resource::ResourceType::TEXTURE, "Assets/Textures/viking_room.png", "viking_room_texture");
+			instance.DestroyResource("viking_room_mesh");
+			instance.DestroyResource("viking_room_texture");
 		}
 
 		void Application::Run() const
