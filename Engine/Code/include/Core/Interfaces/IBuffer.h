@@ -26,13 +26,16 @@ namespace Engine
 			{
 				NONE = 0,
 				VERTEX = 1,
-				INDEX = 2
+				INDEX = 2,
+				UBO = 3
 			};
 
 			struct BufferData
 			{
 				std::vector<Ressources::Vertex> mVertices{};
 				std::vector<unsigned int> mIndices{};
+				void* mUboData = nullptr;
+				size_t mUboSize = 0;
 			};
 
 			class ENGINE_API IBuffer

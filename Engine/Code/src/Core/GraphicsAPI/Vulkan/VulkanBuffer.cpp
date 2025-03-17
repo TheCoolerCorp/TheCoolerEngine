@@ -29,36 +29,60 @@ namespace Engine
 				{
 					t_bufferSize = sizeof(a_data.mIndices[0]) * static_cast<uint32_t>(a_data.mIndices.size());
 				}
-
-				VkBuffer t_stagingBuffer;
-				VkDeviceMemory t_stagingBufferMemory;
-				CreateBuffer(t_bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, t_stagingBuffer, t_stagingBufferMemory, t_device, t_physicalDevice);
-
-				void* t_data;
-				vkMapMemory(t_device, t_stagingBufferMemory, 0, t_bufferSize, 0, &t_data);
-				if (a_type == RHI::BufferType::VERTEX)
+				else if (a_type == RHI::BufferType::UBO)
 				{
-					memcpy(t_data, a_data.mVertices.data(), (size_t)t_bufferSize);
-				}
-				else if (a_type == RHI::BufferType::INDEX)
-				{
-					memcpy(t_data, a_data.mIndices.data(), (size_t)t_bufferSize);
-				}
-				vkUnmapMemory(t_device, t_stagingBufferMemory);
-
-				if (a_type == RHI::BufferType::VERTEX)
-				{
-					CreateBuffer(t_bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, m_buffer, m_bufferMemory, t_device, t_physicalDevice);
-				}
-				else if (a_type == RHI::BufferType::INDEX)
-				{
-					CreateBuffer(t_bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, m_buffer, m_bufferMemory, t_device, t_physicalDevice);
+					t_bufferSize = a_data.mUboSize;
 				}
 
-				CopyBuffer(a_commandPool->CastVulkan(), t_stagingBuffer, m_buffer, t_bufferSize, a_logicalDevice->CastVulkan());
+				if (a_type == RHI::BufferType::UBO)
+				{
+					ASSERT(a_data.mUboData != nullptr, "UBO data is null !");
 
-				vkDestroyBuffer(t_device, t_stagingBuffer, nullptr);
-				vkFreeMemory(t_device, t_stagingBufferMemory, nullptr);
+					CreateBuffer(t_bufferSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+					             VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, m_buffer,
+					             m_bufferMemory, t_device, t_physicalDevice);
+
+					void* t_data;
+					vkMapMemory(t_device, m_bufferMemory, 0, t_bufferSize, 0, &t_data);
+					memcpy(t_data, a_data.mUboData, t_bufferSize);
+					vkUnmapMemory(t_device, m_bufferMemory);
+				}
+				else
+				{
+					VkBuffer t_stagingBuffer;
+					VkDeviceMemory t_stagingBufferMemory;
+					CreateBuffer(t_bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, t_stagingBuffer, t_stagingBufferMemory, t_device, t_physicalDevice);
+
+					void* t_data;
+					vkMapMemory(t_device, t_stagingBufferMemory, 0, t_bufferSize, 0, &t_data);
+					if (a_type == RHI::BufferType::VERTEX)
+					{
+						memcpy(t_data, a_data.mVertices.data(), t_bufferSize);
+					}
+					else if (a_type == RHI::BufferType::INDEX)
+					{
+						memcpy(t_data, a_data.mIndices.data(), t_bufferSize);
+					}
+					vkUnmapMemory(t_device, t_stagingBufferMemory);
+
+					if (a_type == RHI::BufferType::VERTEX)
+					{
+						CreateBuffer(t_bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
+						             VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, m_buffer, m_bufferMemory, t_device,
+						             t_physicalDevice);
+					}
+					else if (a_type == RHI::BufferType::INDEX)
+					{
+						CreateBuffer(t_bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
+						             VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, m_buffer, m_bufferMemory, t_device,
+						             t_physicalDevice);
+					}
+
+					CopyBuffer(a_commandPool->CastVulkan(), t_stagingBuffer, m_buffer, t_bufferSize, a_logicalDevice->CastVulkan());
+
+					vkDestroyBuffer(t_device, t_stagingBuffer, nullptr);
+					vkFreeMemory(t_device, t_stagingBufferMemory, nullptr);
+				}
 			}
 
 			void VulkanBuffer::Destroy(RHI::ILogicalDevice* a_logicalDevice)

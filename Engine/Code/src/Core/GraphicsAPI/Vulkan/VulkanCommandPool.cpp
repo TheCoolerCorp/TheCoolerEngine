@@ -17,6 +17,18 @@ namespace Engine
 	{
 		namespace GraphicsAPI
 		{
+			struct VulkanCommandPool::CommandBuffers
+			{
+				std::vector<VkCommandBuffer> mCommandBuffers{};
+			};
+
+			VulkanCommandPool::VulkanCommandPool() : m_commandBuffersStruct(new CommandBuffers){}
+
+			VulkanCommandPool::~VulkanCommandPool()
+			{
+				delete m_commandBuffersStruct;
+			}
+
 			void VulkanCommandPool::Create(RHI::IPhysicalDevice* a_physicalDevice, RHI::ISurface* a_surface, RHI::ILogicalDevice* a_logicalDevice)
 			{
 				const QueueFamilyIndices t_queueFamilyIndices = QueueFamilyIndices::FindQueueFamilies(a_physicalDevice->CastVulkan()->GetVkPhysicalDevice(), a_surface->CastVulkan()->GetVkSurfaceKHR());
@@ -40,6 +52,7 @@ namespace Engine
 
 			void VulkanCommandPool::CreateCommandBuffer(RHI::ILogicalDevice* a_logicalDevice)
 			{
+				VkCommandBuffer t_commandBuffer = VK_NULL_HANDLE;
 				VkCommandBufferAllocateInfo t_allocInfo{};
 				t_allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
 				t_allocInfo.commandPool = m_commandPool;
@@ -48,10 +61,11 @@ namespace Engine
 
 				const VkDevice t_device = a_logicalDevice->CastVulkan()->GetVkDevice();
 
-				VK_CHECK(vkAllocateCommandBuffers(t_device, &t_allocInfo, &m_commandBuffer), "failed to allocate command buffers!");
+				VK_CHECK(vkAllocateCommandBuffers(t_device, &t_allocInfo, &t_commandBuffer), "failed to allocate command buffers!");
+				m_commandBuffersStruct->mCommandBuffers.push_back(t_commandBuffer);
 			}
 
-			void VulkanCommandPool::RecordCommandBuffer(const uint32_t a_imageIndex, RHI::IRenderPass* a_renderPass, RHI::ISwapChain* a_swapChain, RHI::IGraphicPipeline* a_graphicPipeline)
+			void VulkanCommandPool::RecordCommandBuffer(const VkCommandBuffer a_commandBuffer, const uint32_t a_imageIndex, RHI::IRenderPass* a_renderPass, RHI::ISwapChain* a_swapChain, RHI::IGraphicPipeline* a_graphicPipeline)
 			{
 				const VkRenderPass t_renderPass = a_renderPass->CastVulkan()->GetRenderPass();
 				const VulkanSwapchain* t_swapChain = a_swapChain->CastVulkan();
@@ -61,7 +75,7 @@ namespace Engine
 				VkCommandBufferBeginInfo t_beginInfo{};
 				t_beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 
-				VK_CHECK(vkBeginCommandBuffer(m_commandBuffer, &t_beginInfo), "failed to begin recording command buffer!");
+				VK_CHECK(vkBeginCommandBuffer(a_commandBuffer, &t_beginInfo), "failed to begin recording command buffer!");
 
 				VkRenderPassBeginInfo t_renderPassInfo{};
 				t_renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
@@ -77,9 +91,9 @@ namespace Engine
 				t_renderPassInfo.clearValueCount = static_cast<uint32_t>(t_clearValues.size());
 				t_renderPassInfo.pClearValues = t_clearValues.data();
 
-				vkCmdBeginRenderPass(m_commandBuffer, &t_renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+				vkCmdBeginRenderPass(a_commandBuffer, &t_renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 
-				vkCmdBindPipeline(m_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, t_graphicPipeline);
+				vkCmdBindPipeline(a_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, t_graphicPipeline);
 
 				VkViewport t_viewport;
 				t_viewport.x = 0.0f;
@@ -88,18 +102,18 @@ namespace Engine
 				t_viewport.height = static_cast<float>(t_swapChainExtent.height);
 				t_viewport.minDepth = 0.0f;
 				t_viewport.maxDepth = 1.0f;
-				vkCmdSetViewport(m_commandBuffer, 0, 1, &t_viewport);
+				vkCmdSetViewport(a_commandBuffer, 0, 1, &t_viewport);
 
 				VkRect2D t_scissor;
 				t_scissor.offset = { .x= 0, .y= 0};
 				t_scissor.extent = t_swapChainExtent;
-				vkCmdSetScissor(m_commandBuffer, 0, 1, &t_scissor);
+				vkCmdSetScissor(a_commandBuffer, 0, 1, &t_scissor);
 
-				vkCmdDraw(m_commandBuffer, 3, 1, 0, 0);
+				vkCmdDraw(a_commandBuffer, 3, 1, 0, 0);
 
-				vkCmdEndRenderPass(m_commandBuffer);
+				vkCmdEndRenderPass(a_commandBuffer);
 
-				VK_CHECK(vkEndCommandBuffer(m_commandBuffer), "failed to end command buffer!");
+				VK_CHECK(vkEndCommandBuffer(a_commandBuffer), "failed to end command buffer!");
 			}
 
 			VkCommandBuffer VulkanCommandPool::BeginSingleTimeCommands(const VkDevice a_device, VkCommandPool a_commandPool)
