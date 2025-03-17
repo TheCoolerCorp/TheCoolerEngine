@@ -60,6 +60,7 @@ namespace Engine
 
 				static VkImageView CreateImageView(VkImage a_image, VkFormat a_format, VkImageAspectFlags a_aspectFlags, VkDevice a_device);
 
+
 			};
 		}
 	}

@@ -1,0 +1,43 @@
+#ifndef RESOURCEMANAGER_H
+#define RESOURCEMANAGER_H
+
+#include "EngineExport.h"
+#include <map>
+#include <string>
+
+#include "IResources.h"
+
+namespace Engine
+{
+	namespace Resource
+	{
+		enum class ResourceType
+		{
+			UNDEFINED = 0,
+			MESH = 1,
+			TEXTURE = 2
+		};
+
+
+		class ResourceManager
+		{
+		public:
+			ENGINE_API ResourceManager& Get();
+
+			ENGINE_API void CreateResource(ResourceType a_type, std::string a_path, std::string a_name);
+			ENGINE_API void DestroyResource(std::string a_name);
+
+			ENGINE_API IResource* GetResource(std::string a_name);
+
+		private:
+			ResourceManager() = default;
+			~ResourceManager() = default;
+			ResourceManager(const ResourceManager&) = delete;
+			ResourceManager& operator=(const ResourceManager&) = delete;
+
+			std::map<std::string, IResource*> m_resources;
+		};
+	}
+}
+
+#endif 
