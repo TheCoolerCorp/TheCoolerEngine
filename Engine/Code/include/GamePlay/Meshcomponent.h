@@ -7,7 +7,7 @@ namespace Engine
 {
 	namespace GamePlay
 	{
-		class Component
+		class MeshComponent
 		{
 		public:
 

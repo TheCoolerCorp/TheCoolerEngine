@@ -4,7 +4,7 @@
 #include "EngineExport.h"
 #include  "Core/Logger/Logger.h"
 
-#include <map>
+#include <unordered_map>
 #include <string>
 
 #include "IResource.h"
@@ -35,12 +35,13 @@ namespace Engine
 
 		private:
 			ResourceManager() = default;
-			~ResourceManager() = default;
+			~ResourceManager();
 			ResourceManager(const ResourceManager&) = delete;
 			ResourceManager& operator=(const ResourceManager&) = delete;
 
-			std::map<std::string, IResource*> m_resources;
+			std::unordered_map<std::string, IResource*> m_resources;
 		};
+
 	}
 }
 

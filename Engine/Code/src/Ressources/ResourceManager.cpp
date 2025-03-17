@@ -10,6 +10,24 @@ namespace Engine
 			return m_instance;
 		}
 
+		ResourceManager::~ResourceManager()
+		{
+			if (m_resources.size() == 0)
+			{
+				return;
+			}
+
+			for (auto resource : m_resources)
+			{
+				if (resource.second)
+				{
+					delete resource.second;
+				}
+				m_resources.erase(resource.first);
+			}
+		}
+
+
 		void ResourceManager::CreateResource(ResourceType a_type, std::string a_path, std::string a_name)
 		{
 			if (a_type == ResourceType::MESH)
