@@ -156,6 +156,32 @@ namespace Engine
 				}
 			}
 
+			void VulkanSwapchain::CreateSyncObjects(RHI::ILogicalDevice* a_logicalDevice)
+			{
+				const VkDevice t_device = a_logicalDevice->CastVulkan()->GetVkDevice();
+
+				m_imageAvailableSemaphores.resize(m_maxFrame);
+				m_renderFinishedSemaphores.resize(m_maxFrame);
+				m_inFlightFences.resize(m_maxFrame);
+
+				VkSemaphoreCreateInfo t_semaphoreInfo{};
+				t_semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+
+				VkFenceCreateInfo t_fenceInfo{};
+				t_fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+				t_fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
+
+				for (size_t i = 0; i < m_maxFrame; i++) {
+					if (vkCreateSemaphore(t_device, &t_semaphoreInfo, nullptr, &m_imageAvailableSemaphores[i]) != VK_SUCCESS ||
+						vkCreateSemaphore(t_device, &t_semaphoreInfo, nullptr, &m_renderFinishedSemaphores[i]) != VK_SUCCESS ||
+						vkCreateFence(t_device, &t_fenceInfo, nullptr, &m_inFlightFences[i]) != VK_SUCCESS) {
+
+						throw std::runtime_error("failed to create synchronization objects for a frame!");
+					}
+				}
+
+			}
+
 			std::vector<VkFramebuffer> VulkanSwapchain::GetFramebuffers() const
 			{
 				return m_vectorsStruct->mFramebuffers;
@@ -163,17 +189,35 @@ namespace Engine
 
 			void VulkanSwapchain::Destroy(RHI::ILogicalDevice* a_logicalDevice)
 			{
-				for (size_t i = 0; i < m_vectorsStruct->mFramebuffers.size(); i++) {
-					vkDestroyFramebuffer(a_logicalDevice->CastVulkan()->GetVkDevice(), m_vectorsStruct->mFramebuffers[i], nullptr);
+				const VkDevice t_device = a_logicalDevice->CastVulkan()->GetVkDevice();
+
+				CleanupSwapChain(t_device);
+
+				for (size_t i = 0; i < m_maxFrame; i++) {
+					vkDestroySemaphore(t_device, m_renderFinishedSemaphores[i], nullptr);
+					vkDestroySemaphore(t_device, m_imageAvailableSemaphores[i], nullptr);
+					vkDestroyFence(t_device, m_inFlightFences[i], nullptr);
+				}
+				m_renderFinishedSemaphores.clear();
+				m_imageAvailableSemaphores.clear();
+				m_inFlightFences.clear();
+			}
+
+			void VulkanSwapchain::CleanupSwapChain(const VkDevice a_device) const
+			{
+				for (const auto& t_framebuffer : m_vectorsStruct->mFramebuffers)
+				{
+					vkDestroyFramebuffer(a_device, t_framebuffer, nullptr);
 				}
 
-				for (size_t i = 0; i < m_vectorsStruct->mImageViews.size(); i++) {
-					vkDestroyImageView(a_logicalDevice->CastVulkan()->GetVkDevice(), m_vectorsStruct->mImageViews[i], nullptr);
+				for (const auto& t_imageView : m_vectorsStruct->mImageViews)
+				{
+					vkDestroyImageView(a_device, t_imageView, nullptr);
 				}
-				vkDestroyImage(a_logicalDevice->CastVulkan()->GetVkDevice(), m_depthImage, nullptr);
-				vkDestroyImageView(a_logicalDevice->CastVulkan()->GetVkDevice(), m_depthImageView, nullptr);
-				vkFreeMemory(a_logicalDevice->CastVulkan()->GetVkDevice(), m_depthMemory, nullptr);
-				vkDestroySwapchainKHR(a_logicalDevice->CastVulkan()->GetVkDevice(), m_swapChain, nullptr);
+				vkDestroyImage(a_device, m_depthImage, nullptr);
+				vkDestroyImageView(a_device, m_depthImageView, nullptr);
+				vkFreeMemory(a_device, m_depthMemory, nullptr);
+				vkDestroySwapchainKHR(a_device, m_swapChain, nullptr);
 			}
 
 			VkSurfaceFormatKHR VulkanSwapchain::ChooseSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& a_availableFormats)
