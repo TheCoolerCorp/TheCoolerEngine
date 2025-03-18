@@ -1,5 +1,5 @@
 #include "Core/Application.h"
-#include "Ressources/ResourceManager.h"
+
 namespace Engine
 {
 	namespace Core
@@ -11,6 +11,9 @@ namespace Engine
 
 			m_renderer = new Renderer();
 			m_renderer->Init(RendererType::VULKAN, m_mainWindow);
+			//GamePlay::GameObject object;
+			//object.AddComponent<GamePlay::MeshComponent>("Assets/Meshes/viking_room.obj", "viking_room");
+			//object;
 		}
 
 		void Application::Run() const
