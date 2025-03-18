@@ -18,25 +18,8 @@ namespace Engine
 	{
 		namespace GraphicsAPI
 		{
-			struct VulkanSwapchain::Vectors
-			{
-				std::vector<VkImage> mImages = std::vector<VkImage>(0);
-				std::vector<VkImageView> mImageViews = std::vector<VkImageView>(0);
-
-				std::vector<VkFramebuffer> mFramebuffers = std::vector<VkFramebuffer>(0);
-
-				std::vector<VkSemaphore> mImageAvailableSemaphores;
-				std::vector<VkSemaphore> mRenderFinishedSemaphores;
-				std::vector<VkFence> mInFlightFences;
-			};
-
 			VulkanSwapchain::VulkanSwapchain() : m_swapChainImageFormat(), m_swapChainExtent(),
-			                                     m_vectorsStruct(new Vectors), m_imageIndex(0){}
-
-			VulkanSwapchain::~VulkanSwapchain()
-			{
-				delete m_vectorsStruct;
-			}
+			                                     m_imageIndex(0){}
 
 			void VulkanSwapchain::Create(RHI::ISurface* a_surface, Window::IWindow* a_window, RHI::IPhysicalDevice* a_physicalDevice, RHI::ILogicalDevice* a_logicalDevice)
 			{
@@ -104,18 +87,18 @@ namespace Engine
 				VK_CHECK(vkCreateSwapchainKHR(a_logicalDevice->CastVulkan()->GetVkDevice(), &t_createInfo, nullptr, &m_swapChain), "failed to create swap chain!");
 
 				vkGetSwapchainImagesKHR(a_logicalDevice->CastVulkan()->GetVkDevice(), m_swapChain, &t_imageCount, nullptr);
-				m_vectorsStruct->mImages.resize(t_imageCount);
-				m_vectorsStruct->mImageViews.resize(t_imageCount);
-				vkGetSwapchainImagesKHR(a_logicalDevice->CastVulkan()->GetVkDevice(), m_swapChain, &t_imageCount, m_vectorsStruct->mImages.data());
+				m_images.resize(t_imageCount);
+				m_imageViews.resize(t_imageCount);
+				vkGetSwapchainImagesKHR(a_logicalDevice->CastVulkan()->GetVkDevice(), m_swapChain, &t_imageCount, m_images.data());
 
 				m_swapChainImageFormat = t_formats.format;
 				m_swapChainExtent = t_extent;
 				m_maxFrame = t_imageCount;
 
 				// Create imagesViews;
-				for (int i = 0; i < m_vectorsStruct->mImages.size(); ++i)
+				for (int i = 0; i < m_images.size(); ++i)
 				{
-					VulkanImage::CreateImageView(m_vectorsStruct->mImages[i], &m_vectorsStruct->mImageViews[i], a_logicalDevice->CastVulkan()->GetVkDevice(), m_swapChainImageFormat, VK_IMAGE_ASPECT_COLOR_BIT);
+					VulkanImage::CreateImageView(m_images[i], &m_imageViews[i], a_logicalDevice->CastVulkan()->GetVkDevice(), m_swapChainImageFormat, VK_IMAGE_ASPECT_COLOR_BIT);
 
 
 					m_depthFormat = a_physicalDevice->CastVulkan()->FindSupportedFormat({ VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT },
@@ -134,13 +117,13 @@ namespace Engine
 				VulkanImage::CreateImageView(m_depthImage, &m_depthImageView, a_logicalDevice->CastVulkan()->GetVkDevice(), m_depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT);
 				VulkanImage::TransitionImageLayout(m_depthImage, a_logicalDevice->CastVulkan()->GetVkDevice(), a_logicalDevice->CastVulkan()->GetGraphicsQueue(), a_commandPool->CastVulkan()->GetVkCommandPool(), t_depthFormat, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
 
-				m_vectorsStruct->mFramebuffers.resize(m_vectorsStruct->mImageViews.size());
+				m_framebuffers.resize(m_imageViews.size());
 
-				for (size_t i = 0; i < m_vectorsStruct->mFramebuffers.size(); i++)
+				for (size_t i = 0; i < m_framebuffers.size(); i++)
 				{
 					std::vector<VkImageView> attachments;
 
-					attachments.push_back(m_vectorsStruct->mImageViews[i]);
+					attachments.push_back(m_imageViews[i]);
 					attachments.push_back(m_depthImageView);
 
 					VkFramebufferCreateInfo framebufferInfo{};
@@ -152,7 +135,7 @@ namespace Engine
 					framebufferInfo.height = m_swapChainExtent.height;
 					framebufferInfo.layers = 1;
 
-					VK_CHECK(vkCreateFramebuffer(a_logicalDevice->CastVulkan()->GetVkDevice(), &framebufferInfo, nullptr, &m_vectorsStruct->mFramebuffers[i]), "Failed to create framebuffers in swapchain");
+					VK_CHECK(vkCreateFramebuffer(a_logicalDevice->CastVulkan()->GetVkDevice(), &framebufferInfo, nullptr, &m_framebuffers[i]), "Failed to create framebuffers in swapchain");
 				}
 			}
 
@@ -172,19 +155,16 @@ namespace Engine
 				t_fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
 
 				for (size_t i = 0; i < m_maxFrame; i++) {
-					if (vkCreateSemaphore(t_device, &t_semaphoreInfo, nullptr, &m_imageAvailableSemaphores[i]) != VK_SUCCESS ||
-						vkCreateSemaphore(t_device, &t_semaphoreInfo, nullptr, &m_renderFinishedSemaphores[i]) != VK_SUCCESS ||
-						vkCreateFence(t_device, &t_fenceInfo, nullptr, &m_inFlightFences[i]) != VK_SUCCESS) {
-
-						throw std::runtime_error("failed to create synchronization objects for a frame!");
-					}
+					VK_CHECK(vkCreateSemaphore(t_device, &t_semaphoreInfo, nullptr, &m_imageAvailableSemaphores[i]), "failed to create synchronization objects for a frame!")
+					VK_CHECK(vkCreateSemaphore(t_device, &t_semaphoreInfo, nullptr, &m_renderFinishedSemaphores[i]), "failed to create synchronization objects for a frame!")
+					VK_CHECK(vkCreateFence(t_device, &t_fenceInfo, nullptr, &m_inFlightFences[i]), "failed to create synchronization objects for a frame!")
 				}
 
 			}
 
 			std::vector<VkFramebuffer> VulkanSwapchain::GetFramebuffers() const
 			{
-				return m_vectorsStruct->mFramebuffers;
+				return m_framebuffers;
 			}
 
 			void VulkanSwapchain::Destroy(RHI::ILogicalDevice* a_logicalDevice)
@@ -205,12 +185,12 @@ namespace Engine
 
 			void VulkanSwapchain::CleanupSwapChain(const VkDevice a_device) const
 			{
-				for (const auto& t_framebuffer : m_vectorsStruct->mFramebuffers)
+				for (const auto& t_framebuffer : m_framebuffers)
 				{
 					vkDestroyFramebuffer(a_device, t_framebuffer, nullptr);
 				}
 
-				for (const auto& t_imageView : m_vectorsStruct->mImageViews)
+				for (const auto& t_imageView : m_imageViews)
 				{
 					vkDestroyImageView(a_device, t_imageView, nullptr);
 				}
@@ -256,16 +236,16 @@ namespace Engine
 				int t_width, t_height = 0;
 				a_window->CastGLFW()->GetFramebufferSize(&t_width, &t_height);
 
-				VkExtent2D actualExtent = 
+				VkExtent2D t_currentExtent = 
 				{
 					static_cast<uint32_t>(t_width),
 					static_cast<uint32_t>(t_height)
 				};
 
-				actualExtent.width = std::clamp(actualExtent.width, a_availableCapabilities.minImageExtent.width, a_availableCapabilities.maxImageExtent.width);
-				actualExtent.height = std::clamp(actualExtent.height, a_availableCapabilities.minImageExtent.height, a_availableCapabilities.maxImageExtent.height);
+				t_currentExtent.width = std::clamp(t_currentExtent.width, a_availableCapabilities.minImageExtent.width, a_availableCapabilities.maxImageExtent.width);
+				t_currentExtent.height = std::clamp(t_currentExtent.height, a_availableCapabilities.minImageExtent.height, a_availableCapabilities.maxImageExtent.height);
 
-				return actualExtent;
+				return t_currentExtent;
 			}
 
 			VkImageView VulkanSwapchain::CreateImageView(const VkImage a_image, const VkFormat a_format, const VkImageAspectFlags a_aspectFlags, const VkDevice a_device)
