@@ -1,10 +1,9 @@
 #include "ImGuiLayer.h"
 
 
-void ImGuiLayer::Init()
+void ImGuiLayer::Init(IWindow* window, Renderer* renderer)
 {
-	//Vulkan setup idk
-	//or tell the RHI to do the setup we'll have to see
+	m_ImGuiRenderer->Init(window, renderer);
 }
 
 void ImGuiLayer::Update()
@@ -16,17 +15,20 @@ void ImGuiLayer::Update()
 
 void ImGuiLayer::NewFrame()
 {
-	//ImGui_ImplVulkan_NewFrame();
-	//ImGui_ImplGlfw_NewFrame();
+	m_ImGuiRenderer->NewFrame();
 	ImGui::NewFrame();
+}
+
+void ImGuiLayer::ImGuiDraw()
+{
+	ImGui::ShowDemoWindow();
 }
 
 void ImGuiLayer::Render()
 {
+	m_ImGuiRenderer->Render();
 	ImGui::Render();
-	//TODO
-	//Implement anything vulan-related
-	//ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData());
+	
 }
 
 void ImGuiLayer::Start(const char* name)

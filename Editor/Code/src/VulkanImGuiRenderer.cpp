@@ -7,6 +7,7 @@
 #include "backends/imgui_impl_vulkan.h"
 
 //Vulkan includes
+#include <vulkan/vulkan.h>
 #include "Core/Renderer/Renderer.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanUtils.h"
 #include "Core/Logger/Logger.h"
@@ -39,8 +40,8 @@ void VulkanImGuiRenderer::Init(IWindow* window, Renderer* renderer)
 	VkInstance g_Instance = renderer->GetApiInstance()->CastVulkan()->GetVkInstance();
 	VkPhysicalDevice g_PhysicalDevice = renderer->GetPhysicalDevice()->CastVulkan()->GetVkPhysicalDevice();
 	VkDevice g_Device = renderer->GetLogicalDevice()->CastVulkan()->GetVkDevice();
-	
-    QueueFamilyIndices indices = QueueFamilyIndices::FindQueueFamilies(g_PhysicalDevice, renderer->GetSurface()->CastVulkan()->GetVkSurfaceKHR());
+	VkSurfaceKHR g_Surface = renderer->GetSurface()->CastVulkan()->GetVkSurfaceKHR();
+    QueueFamilyIndices indices = QueueFamilyIndices::FindQueueFamilies(g_PhysicalDevice, g_Surface);
 	uint32_t g_QueueFamily = indices.GetGraphicsFamily().value();
 	
     VkQueue g_Queue = renderer->GetLogicalDevice()->CastVulkan()->GetGraphicsQueue();
@@ -55,6 +56,7 @@ void VulkanImGuiRenderer::Init(IWindow* window, Renderer* renderer)
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
 	// Setup Dear ImGui style
 	ImGui::StyleColorsDark();
@@ -83,9 +85,14 @@ void VulkanImGuiRenderer::Init(IWindow* window, Renderer* renderer)
 }
 
 void VulkanImGuiRenderer::NewFrame()
-{ 
+{
+	ImGui_ImplVulkan_NewFrame();
+	ImGui_ImplGlfw_NewFrame();
+	ImGui::NewFrame();
 }
 
 void VulkanImGuiRenderer::Render()
 {
+	ImGui::Render();
+	//ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), vkGetCurrentCommandBuffer());
 }

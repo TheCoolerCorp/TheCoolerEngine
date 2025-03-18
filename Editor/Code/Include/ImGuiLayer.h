@@ -17,11 +17,12 @@
 class ImGuiLayer
 {
 public:
-	static void Init();
+	static void Init(IWindow* window, Renderer* renderer);
 	static void Update();
 	static void Destroy();
 
 	static void NewFrame();
+	static void ImGuiDraw();
 	static void Render();
 
 	static void Start(const char* name);

@@ -30,6 +30,7 @@ private:
 	ImGuiID id;
 
 	//Window hierarchy info
+	MainWindow* mainWindow;
 	std::vector<std::shared_ptr<SubWindow>> subWindows;
 };
 
