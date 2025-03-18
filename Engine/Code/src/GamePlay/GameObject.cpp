@@ -7,7 +7,9 @@ namespace Engine
 {
 	namespace GamePlay
 	{
-		//template ENGINE_API void GameObject::AddComponent<MeshComponent>(std::string a_path, std::string a_name);
-		//template ENGINE_API void GameObject::AddComponent<TextureComponent>(const std::string&, const std::string&);
+		GameObject::GameObject(Math::vec3 a_position, Math::quat a_rotation, Math::vec3 a_scale)
+		{
+			m_transform = Math::Transform(a_position, a_rotation, a_scale);
+		}
 	}
 }
