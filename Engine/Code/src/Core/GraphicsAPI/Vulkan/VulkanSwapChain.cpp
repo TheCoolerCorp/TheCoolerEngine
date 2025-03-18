@@ -227,9 +227,7 @@ namespace Engine
 				t_submitInfo.signalSemaphoreCount = 1;
 				t_submitInfo.pSignalSemaphores = t_signalSemaphores;
 
-				if (vkQueueSubmit(t_logicalDevice->GetGraphicsQueue(), 1, &t_submitInfo, m_inFlightFences[m_currentFrame]) != VK_SUCCESS) {
-					throw std::runtime_error("failed to submit draw command buffer!");
-				}
+				VK_CHECK(vkQueueSubmit(t_logicalDevice->GetGraphicsQueue(), 1, &t_submitInfo, m_inFlightFences[m_currentFrame]), "failed to submit draw command buffer!");
 
 				VkPresentInfoKHR t_presentInfo{};
 				t_presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
