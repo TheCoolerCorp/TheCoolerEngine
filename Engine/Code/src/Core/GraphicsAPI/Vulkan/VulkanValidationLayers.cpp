@@ -16,17 +16,17 @@ namespace Engine
 				Setup(a_instance->CastVulkan()->GetVkInstance());
 			}
 
-			void VulkanValidationLayers::Setup(VkInstance a_instance)
+			void VulkanValidationLayers::Setup(const VkInstance a_instance)
 			{
 				if constexpr (!RHI::ENABLEVALIDATIONLAYERS)
 				{
 					return;
 				}
 
-				VkDebugUtilsMessengerCreateInfoEXT createInfo;
-				PopulateDebugMessengerCreateInfo(createInfo);
+				VkDebugUtilsMessengerCreateInfoEXT t_createInfo;
+				PopulateDebugMessengerCreateInfo(t_createInfo);
 
-				VK_CHECK(CreateDebugUtilsMessengerEXT(a_instance, &createInfo, nullptr, &m_debugMessenger), "failed to set up debug messenger!")
+				VK_CHECK(CreateDebugUtilsMessengerEXT(a_instance, &t_createInfo, nullptr, &m_debugMessenger), "failed to set up debug messenger!")
 
 				Check();
 			}
@@ -92,7 +92,7 @@ namespace Engine
 				return VK_FALSE;
 			}
 
-			VkResult VulkanValidationLayers::CreateDebugUtilsMessengerEXT(VkInstance a_instance, const VkDebugUtilsMessengerCreateInfoEXT* a_pCreateInfo, const VkAllocationCallbacks* a_pAllocator, VkDebugUtilsMessengerEXT* a_pDebugMessenger)
+			VkResult VulkanValidationLayers::CreateDebugUtilsMessengerEXT(const VkInstance a_instance, const VkDebugUtilsMessengerCreateInfoEXT* a_pCreateInfo, const VkAllocationCallbacks* a_pAllocator, VkDebugUtilsMessengerEXT* a_pDebugMessenger)
 			{
 				const auto t_func = reinterpret_cast<PFN_vkCreateDebugUtilsMessengerEXT>(
 					vkGetInstanceProcAddr(a_instance, "vkCreateDebugUtilsMessengerEXT"));
@@ -104,7 +104,7 @@ namespace Engine
 				return VK_ERROR_EXTENSION_NOT_PRESENT;
 			}
 
-			void VulkanValidationLayers::DestroyDebugUtilsMessengerEXT(VkInstance a_instance, VkDebugUtilsMessengerEXT a_debugMessenger, const VkAllocationCallbacks* a_pAllocator)
+			void VulkanValidationLayers::DestroyDebugUtilsMessengerEXT(const VkInstance a_instance, const VkDebugUtilsMessengerEXT a_debugMessenger, const VkAllocationCallbacks* a_pAllocator)
 			{
 				const auto t_func = reinterpret_cast<PFN_vkDestroyDebugUtilsMessengerEXT>(
 					vkGetInstanceProcAddr(a_instance, "vkDestroyDebugUtilsMessengerEXT"));

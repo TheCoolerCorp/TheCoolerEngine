@@ -14,6 +14,11 @@ namespace Engine
 	{
 		namespace GraphicsAPI
 		{
+			class VulkanCommandPool;
+			class VulkanPhysicalDevice;
+			class VulkanSurface;
+			class VulkanLogicalDevice;
+
 			class VulkanSwapchain : public RHI::ISwapChain
 			{
 			public:
@@ -35,6 +40,8 @@ namespace Engine
 
 
 				ENGINE_API int GetMaxFrame() override { return static_cast<uint32_t>(m_maxFrame); }
+
+				ENGINE_API void DrawFrame(Window::IWindow* a_window, RHI::ILogicalDevice* a_logicalDevice, RHI::ICommandPool* a_commandPool, RHI::ISurface* a_surface, RHI::IPhysicalDevice* a_physicalDevice, RHI::IRenderPass* a_renderPass) override;
 
 			private:
 				VkSwapchainKHR m_swapChain = VK_NULL_HANDLE;
@@ -68,6 +75,8 @@ namespace Engine
 				ENGINE_API static VkExtent2D ChooseSurfaceExtent(const VkSurfaceCapabilitiesKHR& a_availableCapabilities, Window::IWindow* a_window);
 
 				ENGINE_API static VkImageView CreateImageView(VkImage a_image, VkFormat a_format, VkImageAspectFlags a_aspectFlags, VkDevice a_device);
+
+				void RecreateSwapChain(Window::IWindow* a_window, RHI::ILogicalDevice* a_logicalDevice, RHI::ISurface* a_surface, RHI::IPhysicalDevice* a_physicalDevice, RHI::IRenderPass* a_renderPass, RHI::ICommandPool* a_commandPool);
 
 			};
 		}

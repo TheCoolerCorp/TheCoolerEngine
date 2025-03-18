@@ -18,7 +18,7 @@ namespace Engine
 			while (!m_mainWindow->ShouldClose())
 			{
 				m_mainWindow->PollEvents();
-				m_renderer->Run();
+				m_renderer->Run(m_mainWindow);
 			}
 			m_renderer->WaitIdle();
 		}

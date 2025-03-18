@@ -30,16 +30,19 @@ namespace Engine
 				ENGINE_API void GetFramebufferSize(int* a_width, int* a_height) override;
 				ENGINE_API void CreateWindowSurface(RHI::IInstance* a_instance, RHI::ISurface* a_surface) override;
 
-				ENGINE_API const char** GetRequiredInstanceExtensions(uint32_t* count) override;
+				ENGINE_API const char** GetRequiredInstanceExtensions(uint32_t* a_count) override;
 
 				ENGINE_API bool GetResized() override { return m_resized; }
+				ENGINE_API void SetResized(const bool a_resized) override { m_resized = a_resized; }
+
+				ENGINE_API void ResizeFramebuffer() override;
 			private:
 				GLFWwindow* m_window = nullptr;
 				int m_width = 800;
 				int m_height = 600;
 				bool m_resized = false;
 
-				ENGINE_API static void ResizeFramebuffer(GLFWwindow* a_window, int a_width, int a_height);
+				ENGINE_API static void FramebufferResizeCallback(GLFWwindow* a_window, int a_width, int a_height);
 			};
 		}
 	}

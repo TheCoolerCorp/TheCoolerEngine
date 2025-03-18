@@ -11,6 +11,8 @@
 #include "Core/GraphicsAPI/Vulkan/VulkanRenderPass.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanImage.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanCommandPool.h"
+#include "Core/GraphicsAPI/Vulkan/VulkanGraphicPipeline.h"
+#include "Core/Interfaces/IGraphicPipeline.h"
 
 namespace Engine
 {
@@ -108,14 +110,24 @@ namespace Engine
 
 			}
 
-			void VulkanSwapchain::CreateFramebuffers(RHI::ILogicalDevice* a_logicalDevice, RHI::IPhysicalDevice* a_physicalDevice ,RHI::IRenderPass* a_renderPass, RHI::ICommandPool* a_commandPool)
+			void VulkanSwapchain::CreateFramebuffers(RHI::ILogicalDevice* a_logicalDevice, RHI::IPhysicalDevice* a_physicalDevice, RHI::IRenderPass* a_renderPass, RHI::ICommandPool* a_commandPool)
 			{
 				VkFormat t_depthFormat = a_physicalDevice->CastVulkan()->FindSupportedFormat({ VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT },
 					VK_IMAGE_TILING_OPTIMAL,
 					VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
-				VulkanImage::CreateImage(&m_depthImage, &m_depthMemory, a_logicalDevice->CastVulkan()->GetVkDevice(), a_physicalDevice->CastVulkan()->GetVkPhysicalDevice(), m_swapChainExtent.width, m_swapChainExtent.height, m_depthFormat, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
-				VulkanImage::CreateImageView(m_depthImage, &m_depthImageView, a_logicalDevice->CastVulkan()->GetVkDevice(), m_depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT);
-				VulkanImage::TransitionImageLayout(m_depthImage, a_logicalDevice->CastVulkan()->GetVkDevice(), a_logicalDevice->CastVulkan()->GetGraphicsQueue(), a_commandPool->CastVulkan()->GetVkCommandPool(), t_depthFormat, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
+				VulkanImage::CreateImage(&m_depthImage, &m_depthMemory, a_logicalDevice->CastVulkan()->GetVkDevice(),
+				                         a_physicalDevice->CastVulkan()->GetVkPhysicalDevice(), m_swapChainExtent.width,
+				                         m_swapChainExtent.height, m_depthFormat, VK_IMAGE_TILING_OPTIMAL,
+				                         VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
+				                         VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+				VulkanImage::CreateImageView(m_depthImage, &m_depthImageView,
+				                             a_logicalDevice->CastVulkan()->GetVkDevice(), m_depthFormat,
+				                             VK_IMAGE_ASPECT_DEPTH_BIT);
+				VulkanImage::TransitionImageLayout(m_depthImage, a_logicalDevice->CastVulkan()->GetVkDevice(),
+				                                   a_logicalDevice->CastVulkan()->GetGraphicsQueue(),
+				                                   a_commandPool->CastVulkan()->GetVkCommandPool(), t_depthFormat,
+				                                   VK_IMAGE_LAYOUT_UNDEFINED,
+				                                   VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
 
 				m_framebuffers.resize(m_imageViews.size());
 
@@ -165,6 +177,84 @@ namespace Engine
 			std::vector<VkFramebuffer> VulkanSwapchain::GetFramebuffers() const
 			{
 				return m_framebuffers;
+			}
+
+			void VulkanSwapchain::DrawFrame(Window::IWindow* a_window, RHI::ILogicalDevice* a_logicalDevice, RHI::ICommandPool* a_commandPool, RHI::ISurface* a_surface, RHI::IPhysicalDevice* a_physicalDevice, RHI::IRenderPass* a_renderPass)
+			{
+				VulkanCommandPool* t_commandPool = a_commandPool->CastVulkan();
+				const VulkanLogicalDevice* t_logicalDevice = a_logicalDevice->CastVulkan();
+				const VkDevice t_device = t_logicalDevice->GetVkDevice();
+
+				vkWaitForFences(t_device, 1, &m_inFlightFences[m_currentFrame], VK_TRUE, UINT64_MAX);
+
+				uint32_t t_imageIndex;
+				VkResult t_result = vkAcquireNextImageKHR(t_device, m_swapChain, UINT64_MAX, m_imageAvailableSemaphores[m_currentFrame], VK_NULL_HANDLE, &t_imageIndex);
+
+				if (t_result == VK_ERROR_OUT_OF_DATE_KHR) {
+					RecreateSwapChain(a_window, a_logicalDevice, a_surface, a_physicalDevice, a_renderPass, a_commandPool);
+					return;
+				}
+				if (t_result != VK_SUCCESS && t_result != VK_SUBOPTIMAL_KHR) {
+					throw std::runtime_error("failed to acquire swap chain image!");
+				}
+
+				vkResetFences(t_device, 1, &m_inFlightFences[m_currentFrame]);
+
+				std::vector<VkCommandBuffer> t_commandBuffers;
+				for (int i = 0; i < static_cast<int>(t_commandPool->mCommandBuffers.size()); ++i) 
+				{
+					const VkCommandBuffer t_commandBuffer = std::get<VkCommandBuffer>(t_commandPool->mCommandBuffers[i][m_currentFrame]);
+					const VkRenderPass t_renderPass = std::get<VkRenderPass>(t_commandPool->mCommandBuffers[i][m_currentFrame]);
+					const VkPipeline t_pipeline = std::get<VkPipeline>(t_commandPool->mCommandBuffers[i][m_currentFrame]);
+					t_commandBuffers.push_back(t_commandBuffer);
+					vkResetCommandBuffer(t_commandBuffer, 0);
+					VulkanCommandPool::RecordCommandBuffer(t_commandBuffer, t_imageIndex, t_renderPass, this, t_pipeline);
+				}
+
+				VkSubmitInfo t_submitInfo{};
+				t_submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+
+				const VkSemaphore t_waitSemaphores[] = { m_imageAvailableSemaphores[m_currentFrame] };
+				constexpr VkPipelineStageFlags t_waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
+				t_submitInfo.waitSemaphoreCount = 1;
+				t_submitInfo.pWaitSemaphores = t_waitSemaphores;
+				t_submitInfo.pWaitDstStageMask = t_waitStages;
+
+				t_submitInfo.commandBufferCount = static_cast<uint32_t>(t_commandPool->mCommandBuffers.size());
+				t_submitInfo.pCommandBuffers = t_commandBuffers.data();
+
+				const VkSemaphore t_signalSemaphores[] = { m_renderFinishedSemaphores[m_currentFrame] };
+				t_submitInfo.signalSemaphoreCount = 1;
+				t_submitInfo.pSignalSemaphores = t_signalSemaphores;
+
+				if (vkQueueSubmit(t_logicalDevice->GetGraphicsQueue(), 1, &t_submitInfo, m_inFlightFences[m_currentFrame]) != VK_SUCCESS) {
+					throw std::runtime_error("failed to submit draw command buffer!");
+				}
+
+				VkPresentInfoKHR t_presentInfo{};
+				t_presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+
+				t_presentInfo.waitSemaphoreCount = 1;
+				t_presentInfo.pWaitSemaphores = t_signalSemaphores;
+
+				const VkSwapchainKHR t_swapChains[] = { m_swapChain };
+				t_presentInfo.swapchainCount = 1;
+				t_presentInfo.pSwapchains = t_swapChains;
+
+				t_presentInfo.pImageIndices = &t_imageIndex;
+
+				t_result = vkQueuePresentKHR(t_logicalDevice->GetPresentQueue(), &t_presentInfo);
+
+				if (t_result == VK_ERROR_OUT_OF_DATE_KHR || t_result == VK_SUBOPTIMAL_KHR || a_window->GetResized()) {
+					a_window->SetResized(false);
+					RecreateSwapChain(a_window, a_logicalDevice, a_surface, a_physicalDevice, a_renderPass, a_commandPool);
+				}
+				else if (t_result != VK_SUCCESS) {
+					throw std::runtime_error("failed to present swap chain image!");
+				}
+
+				m_currentFrame = (m_currentFrame + 1) % m_maxFrame;
+				t_commandBuffers.clear();
 			}
 
 			void VulkanSwapchain::Destroy(RHI::ILogicalDevice* a_logicalDevice)
@@ -267,6 +357,22 @@ namespace Engine
 				VK_CHECK(vkCreateImageView(a_device, &t_viewInfo, nullptr, &t_imageView), "failed to create texture image view!")
 
 				return t_imageView;
+			}
+
+			void VulkanSwapchain::RecreateSwapChain(Window::IWindow* a_window, RHI::ILogicalDevice* a_logicalDevice,
+			                                        RHI::ISurface* a_surface, RHI::IPhysicalDevice* a_physicalDevice,
+			                                        RHI::IRenderPass* a_renderPass, RHI::ICommandPool* a_commandPool)
+			{
+				const VkDevice t_device = a_logicalDevice->CastVulkan()->GetVkDevice();
+
+				a_window->ResizeFramebuffer();
+
+				vkDeviceWaitIdle(t_device);
+
+				CleanupSwapChain(t_device);
+
+				Create(a_surface, a_window, a_physicalDevice, a_logicalDevice);
+				CreateFramebuffers(a_logicalDevice, a_physicalDevice, a_renderPass, a_commandPool);
 			}
 		}
 	}

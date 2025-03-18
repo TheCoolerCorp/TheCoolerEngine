@@ -35,9 +35,12 @@ namespace Engine
 				ENGINE_API virtual void GetFramebufferSize(int* a_width, int* a_height) = 0;
 				ENGINE_API virtual void CreateWindowSurface(RHI::IInstance* a_instance, RHI::ISurface* a_surface) = 0;
 
-				ENGINE_API virtual const char** GetRequiredInstanceExtensions(uint32_t* count) { (void)count; return nullptr; }
+				ENGINE_API virtual const char** GetRequiredInstanceExtensions(uint32_t* a_count) { (void)a_count; return nullptr; }
 
 				ENGINE_API virtual bool GetResized() { return false; }
+				ENGINE_API virtual void SetResized(bool a_resized) = 0;
+
+				ENGINE_API virtual void ResizeFramebuffer() = 0;
 			};
 		}
 	}
