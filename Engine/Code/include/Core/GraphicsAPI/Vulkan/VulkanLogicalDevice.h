@@ -15,6 +15,7 @@ namespace Engine
 			public:
 				ENGINE_API ~VulkanLogicalDevice() override = default;
 				ENGINE_API void Create(RHI::IPhysicalDevice* a_physicalDevice, RHI::ISurface* a_surface) override;
+				ENGINE_API void WaitIdle() override;
 				ENGINE_API void Destroy() override;
 				ENGINE_API VulkanLogicalDevice* CastVulkan() override { return this; }
 				ENGINE_API [[nodiscard]] VkDevice GetVkDevice() const { return m_device; }

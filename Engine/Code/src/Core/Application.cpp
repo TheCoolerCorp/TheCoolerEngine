@@ -20,6 +20,7 @@ namespace Engine
 				m_mainWindow->PollEvents();
 				m_renderer->Run();
 			}
+			m_renderer->WaitIdle();
 		}
 
 		void Application::Destroy() const
