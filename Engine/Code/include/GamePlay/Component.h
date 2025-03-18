@@ -3,6 +3,8 @@
 
 #include "EngineExport.h"
 
+#include <string>
+
 namespace Engine
 {
 	namespace GamePlay
@@ -10,11 +12,8 @@ namespace Engine
 		class Component
 		{
 		public:
-
-
-
-		private:
-
+			ENGINE_API virtual void Create(std::string a_path) = 0;
+			ENGINE_API virtual void Destroy() = 0;
 		};
 	}
 }

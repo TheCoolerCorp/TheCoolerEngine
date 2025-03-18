@@ -29,6 +29,7 @@ namespace Engine
 			ENGINE_API static ResourceManager& Get();
 
 			ENGINE_API void CreateResource(ResourceType a_type, std::string a_path, std::string a_name);
+			ENGINE_API IResource* CreateResourceReference(ResourceType a_type, std::string a_path, std::string a_name);
 			ENGINE_API void DestroyResource(std::string a_name);
 
 			ENGINE_API IResource* GetResource(std::string a_name);

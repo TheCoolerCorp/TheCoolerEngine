@@ -48,6 +48,29 @@ namespace Engine
 			}
 		}
 
+		IResource* ResourceManager::CreateResourceReference(ResourceType a_type, std::string a_path, std::string a_name)
+		{
+			if (a_type == ResourceType::MESH)
+			{
+				Mesh* t_mesh = new Mesh();
+				t_mesh->Create(a_path);
+				m_resources[a_name] = t_mesh;
+				return t_mesh;
+			}
+			else if (a_type == ResourceType::TEXTURE)
+			{
+				Texture* t_texture = new Texture();
+				t_texture->Create(a_path);
+				m_resources[a_name] = t_texture;
+				return t_texture;
+			}
+			else
+			{
+				LOG_ERROR("Type of resource not implemented !");
+				return nullptr;
+			}
+		}
+
 		void ResourceManager::DestroyResource(std::string a_name)
 		{
 			auto it = m_resources.find(a_name);
