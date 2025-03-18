@@ -8,6 +8,7 @@
 
 #include "Core/Logger/Logger.h"
 #include "Component.h"
+#include "Math/Transform.h"
 
 namespace Engine
 {
@@ -18,7 +19,10 @@ namespace Engine
 		public:
 			GameObject() = default;
 			~GameObject() = default;
-			
+
+
+
+
 			template<typename T>
 			void AddComponent(std::string a_path, std::string a_name)
 			{
@@ -26,6 +30,7 @@ namespace Engine
 				if (!std::is_base_of<Component, T>::value)
 				{
 					LOG_ERROR("This is not a resource");
+					return;
 				}
 				T* component = new T();
 
