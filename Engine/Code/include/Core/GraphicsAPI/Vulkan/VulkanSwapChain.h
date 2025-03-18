@@ -18,7 +18,6 @@ namespace Engine
 			{
 			public:
 				ENGINE_API VulkanSwapchain();
-				ENGINE_API ~VulkanSwapchain() override;
 
 				ENGINE_API void Create(RHI::ISurface* a_surface, Window::IWindow* a_window, RHI::IPhysicalDevice* a_physicalDevice, RHI::ILogicalDevice* a_logicalDevice) override;
 				ENGINE_API void Destroy(RHI::ILogicalDevice* a_logicalDevice) override;
@@ -43,8 +42,10 @@ namespace Engine
 				VkFormat m_swapChainImageFormat = VK_FORMAT_UNDEFINED;
 				VkExtent2D m_swapChainExtent;
 
-				struct Vectors;
-				Vectors* m_vectorsStruct;
+				std::vector<VkImage> m_images = std::vector<VkImage>(0);
+				std::vector<VkImageView> m_imageViews = std::vector<VkImageView>(0);
+
+				std::vector<VkFramebuffer> m_framebuffers = std::vector<VkFramebuffer>(0);
 
 				uint32_t m_currentFrame = 0;
 
@@ -61,7 +62,6 @@ namespace Engine
 				std::vector<VkSemaphore> m_imageAvailableSemaphores;
 				std::vector<VkSemaphore> m_renderFinishedSemaphores;
 				std::vector<VkFence> m_inFlightFences;
-
 
 				ENGINE_API static VkSurfaceFormatKHR ChooseSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& a_availableFormats);
 				ENGINE_API static VkPresentModeKHR ChooseSurfacePresentMode(const std::vector<VkPresentModeKHR>& a_availablePresentModes);

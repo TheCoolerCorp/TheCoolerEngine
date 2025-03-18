@@ -84,6 +84,11 @@ namespace Engine
                 vkGetDeviceQueue(m_device, t_indices.GetPresentFamily().value(), 0, &m_presentQueue);
 			}
 
+			void VulkanLogicalDevice::WaitIdle()
+			{
+                vkDeviceWaitIdle(m_device);
+			}
+
 			void VulkanLogicalDevice::Destroy()
 			{
 				vkDestroyDevice(m_device, nullptr);

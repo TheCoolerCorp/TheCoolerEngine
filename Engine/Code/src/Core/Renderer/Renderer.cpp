@@ -57,6 +57,11 @@ namespace Engine
 
 		}
 
+		void Renderer::WaitIdle() const
+		{
+			m_logicalDevice->WaitIdle();
+		}
+
 		void Renderer::Destroy()
 		{
 			m_descriptorPool->Destroy(m_logicalDevice);

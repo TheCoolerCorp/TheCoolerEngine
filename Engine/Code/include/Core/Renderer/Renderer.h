@@ -31,6 +31,7 @@ namespace Engine
 
 			ENGINE_API void Init(RendererType a_type, Window::IWindow* a_window);
 			ENGINE_API void Run();
+			ENGINE_API void WaitIdle() const;
 			ENGINE_API void Destroy();
 
 		private:
