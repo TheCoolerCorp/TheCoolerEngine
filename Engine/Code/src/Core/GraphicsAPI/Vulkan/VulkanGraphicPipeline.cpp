@@ -14,8 +14,8 @@ namespace Engine
 				void VulkanGraphicPipeline::Create(RHI::ILogicalDevice* a_logicalDevice, RHI::IRenderPass* a_renderPass)
 				{
 					// Shader creation
-					VkShaderModule t_vertexShader = CreateShader("Shaders/vert.spv", a_logicalDevice->CastVulkan()->GetVkDevice());
-					VkShaderModule t_fragmentShader = CreateShader("Shaders/frag.spv", a_logicalDevice->CastVulkan()->GetVkDevice());
+					VkShaderModule t_vertexShader = CreateShader("Assets/Shaders/vert.spv", a_logicalDevice->CastVulkan()->GetVkDevice());
+					VkShaderModule t_fragmentShader = CreateShader("Assets/Shaders/frag.spv", a_logicalDevice->CastVulkan()->GetVkDevice());
 
 					VkPipelineShaderStageCreateInfo vertShaderStageInfo{};
 					vertShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;

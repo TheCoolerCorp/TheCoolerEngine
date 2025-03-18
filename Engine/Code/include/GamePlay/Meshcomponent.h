@@ -19,6 +19,7 @@ namespace Engine
 
 		private:
 			Resource::Mesh* m_mesh = nullptr;
+			
 		};
 	}
 }

@@ -14,10 +14,7 @@ namespace Engine
 
 			m_renderer = new Renderer();
 			m_renderer->Init(RendererType::VULKAN, m_mainWindow);
-			GamePlay::GameObject object;
-			object.AddComponent<GamePlay::MeshComponent>("Assets/Meshes/viking_room.obj", "viking_room_texture");
-			object.AddComponent<GamePlay::TextureComponent>("Assets/Textures/viking_room.png", "viking_room_mesh");
-			object;
+			GamePlay::GameObject obj;
 		}
 
 		void Application::Run() const
