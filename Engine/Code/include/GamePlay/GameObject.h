@@ -5,6 +5,8 @@
 
 #include <vector>
 #include <string>
+
+#include "Core/Logger/Logger.h"
 #include "Component.h"
 
 namespace Engine
@@ -21,7 +23,10 @@ namespace Engine
 			void AddComponent(std::string a_path, std::string a_name)
 			{
 				// Add security for non Component type
-
+				if (!std::is_base_of<Component, T>::value)
+				{
+					LOG_ERROR("This is not a resource");
+				}
 				T* component = new T();
 
 				component->Create(a_path);
