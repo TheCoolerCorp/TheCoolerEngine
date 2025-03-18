@@ -2,6 +2,8 @@
 #define LOGGER_H
 
 #include <filesystem>
+#include <fstream>
+#include <mutex>
 
 #include "LogLevel.h"
 #include "LogColor.h"
@@ -20,25 +22,23 @@ namespace Engine
 	{
 		namespace Debugging
 		{
-			class ENGINE_API Logger
+			class Logger
 			{
 			public:
-				static Logger& Get();
+				ENGINE_API static Logger& Get();
 
 				template <typename T>
-				void Log(const T& a_message, LogLevel a_level, const std::string& a_color, const char* a_file, int a_line) const;
+				void Log(const T& a_message, LogLevel a_level, const std::string& a_color, const char* a_file, int a_line);
 
 			private:
-				struct MutexStruct;
-				MutexStruct* m_mutexStruct;
-				struct LogFileStruct;
-				LogFileStruct* m_logFileStruct;
+				std::mutex m_logMutex;
+				std::ofstream m_logFile;
 				Logger();
 				~Logger();
 				Logger(const Logger&) = delete;
 				Logger& operator=(const Logger&) = delete;
-				static void PrintConsoleLog(const std::string& a_message, const std::string& a_logLevel, const std::string& a_color, const char* a_file, int a_line, const std::tm& a_localTime);
-				void PrintFileLog(const std::string& a_message, const std::string& a_logLevel, const char* a_file, int a_line, const std::tm& a_localTime) const;
+				ENGINE_API static void PrintConsoleLog(const std::string& a_message, const std::string& a_logLevel, const std::string& a_color, const char* a_file, int a_line, const std::tm& a_localTime);
+				ENGINE_API void PrintFileLog(const std::string& a_message, const std::string& a_logLevel, const char* a_file, int a_line, const std::tm& a_localTime);
 			};
 
 		}

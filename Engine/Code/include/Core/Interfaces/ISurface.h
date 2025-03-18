@@ -23,14 +23,14 @@ namespace Engine
 			class IInstance;
 			class IPhysicalDevice;
 
-			class ENGINE_API ISurface
+			class ISurface
 			{
 			public:
-				virtual ~ISurface() = default;
-				virtual void Create(Window::IWindow* window, IInstance* instance) = 0;
-				virtual void SetupInfo(IPhysicalDevice* a_physicalDevice) {};
-				virtual void Destroy(IInstance* instance) = 0;
-				virtual GraphicsAPI::VulkanSurface* CastVulkan() { LOG_ERROR("Try to return wrong cast type : VulkanSurface!"); return nullptr; }
+				ENGINE_API virtual ~ISurface() = default;
+				ENGINE_API virtual void Create(Window::IWindow* window, IInstance* instance) = 0;
+				ENGINE_API virtual void SetupInfo(IPhysicalDevice* a_physicalDevice) {};
+				ENGINE_API virtual void Destroy(IInstance* instance) = 0;
+				ENGINE_API virtual GraphicsAPI::VulkanSurface* CastVulkan() { LOG_ERROR("Try to return wrong cast type : VulkanSurface!"); return nullptr; }
 
 			};
 		}

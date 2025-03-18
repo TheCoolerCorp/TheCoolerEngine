@@ -2,12 +2,9 @@
 
 namespace Engine
 {
-	namespace Ressources
+	namespace Resource
 	{
-        Mesh::Mesh() : m_data(new Data) {}
-
-
-		void Mesh::Create(std::string& a_path)
+		void Mesh::Create(std::string a_path)
 		{
             Assimp::Importer importer{};
             const aiScene* scene = importer.ReadFile(a_path, aiProcess_Triangulate | aiProcess_FlipUVs);
@@ -27,7 +24,8 @@ namespace Engine
 		}
 		void Mesh::Destroy()
 		{
-			
+            m_vertices.clear();
+            m_indexes.clear();
 		}
 
         void Mesh::ProcessMesh(const aiMesh* mesh)
@@ -67,7 +65,7 @@ namespace Engine
                     vertex.mUv = Math::vec2(0.0f, 0.0f);
                 }
 
-                m_data->mVertices.push_back(vertex);
+                m_vertices.push_back(vertex);
             }
 
             for (unsigned int i = 0; i < mesh->mNumFaces; ++i)
@@ -76,7 +74,7 @@ namespace Engine
 
                 for (unsigned int j = 0; j < face.mNumIndices; ++j)
                 {
-                    m_data->mIndexs.push_back(face.mIndices[j]);
+                    m_indexes.push_back(face.mIndices[j]);
                 }
             }
         }

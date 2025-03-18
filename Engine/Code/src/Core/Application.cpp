@@ -1,5 +1,8 @@
 #include "Core/Application.h"
 
+#include "GamePlay/GameObject.h"
+#include "GamePlay/TextureComponent.h"
+#include "GamePlay/Meshcomponent.h"
 namespace Engine
 {
 	namespace Core
@@ -11,7 +14,10 @@ namespace Engine
 
 			m_renderer = new Renderer();
 			m_renderer->Init(RendererType::VULKAN, m_mainWindow);
-
+			GamePlay::GameObject object;
+			object.AddComponent<GamePlay::MeshComponent>("Assets/Meshes/viking_room.obj", "viking_room_texture");
+			object.AddComponent<GamePlay::TextureComponent>("Assets/Textures/viking_room.png", "viking_room_mesh");
+			object;
 		}
 
 		void Application::Run() const
@@ -19,7 +25,9 @@ namespace Engine
 			while (!m_mainWindow->ShouldClose())
 			{
 				m_mainWindow->PollEvents();
+				m_renderer->Run(m_mainWindow);
 			}
+			m_renderer->WaitIdle();
 		}
 
 		void Application::Destroy() const

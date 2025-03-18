@@ -21,53 +21,53 @@ namespace Engine
 	{
 		namespace RHI
 		{
-			class ENGINE_API ApiInterface
+			class ApiInterface
 			{
 			public:
-				virtual ~ApiInterface() = default;
+				ENGINE_API virtual ~ApiInterface() = default;
 
-				virtual Window::IWindow* InstantiateWindow() = 0;
-				virtual void DestroyWindow(Window::IWindow* a_window) { delete a_window; }
+				ENGINE_API virtual Window::IWindow* InstantiateWindow() = 0;
+				ENGINE_API virtual void DestroyWindow(Window::IWindow* a_window) { delete a_window; }
 
 
-				virtual IInstance* InstantiateInstance() = 0;
-				virtual void DestroyInstance(IInstance* a_instance) { delete a_instance; }
+				ENGINE_API virtual IInstance* InstantiateInstance() = 0;
+				ENGINE_API virtual void DestroyInstance(IInstance* a_instance) { delete a_instance; }
 
 				
-				virtual IValidationLayers* InstantiateValidationLayers() = 0;
-				virtual void DestroyValidationLayers(IValidationLayers* a_validationLayers) { delete a_validationLayers; }
+				ENGINE_API virtual IValidationLayers* InstantiateValidationLayers() = 0;
+				ENGINE_API virtual void DestroyValidationLayers(IValidationLayers* a_validationLayers) { delete a_validationLayers; }
 
 
-				virtual ISurface* InstantiateSurface() = 0;
-				virtual void DestroySurface(ISurface* a_surface) { delete a_surface; }
+				ENGINE_API virtual ISurface* InstantiateSurface() = 0;
+				ENGINE_API virtual void DestroySurface(ISurface* a_surface) { delete a_surface; }
 
 
-				virtual IPhysicalDevice* InstantiatePhysicalDevice() = 0;
-				virtual void DestroyPhysicalDevice(IPhysicalDevice* a_physicalDevice) { delete a_physicalDevice; }
+				ENGINE_API virtual IPhysicalDevice* InstantiatePhysicalDevice() = 0;
+				ENGINE_API virtual void DestroyPhysicalDevice(IPhysicalDevice* a_physicalDevice) { delete a_physicalDevice; }
 
 
-				virtual ILogicalDevice* InstantiateLogicalDevice() = 0;
-				virtual void DestroyLogicalDevice(ILogicalDevice* a_logicalDevice) { delete a_logicalDevice; }
+				ENGINE_API virtual ILogicalDevice* InstantiateLogicalDevice() = 0;
+				ENGINE_API virtual void DestroyLogicalDevice(ILogicalDevice* a_logicalDevice) { delete a_logicalDevice; }
 
 
-				virtual ISwapChain* InstantiateSwapChain() = 0;
-				virtual void DestroySwapChain(ISwapChain* a_swapChain) { delete a_swapChain; }
+				ENGINE_API virtual ISwapChain* InstantiateSwapChain() = 0;
+				ENGINE_API virtual void DestroySwapChain(ISwapChain* a_swapChain) { delete a_swapChain; }
 
 
-				virtual IRenderPass* InstantiateRenderPass() = 0;
-				virtual void DestroyRenderPass(IRenderPass* a_renderPass) { delete a_renderPass; }
+				ENGINE_API virtual IRenderPass* InstantiateRenderPass() = 0;
+				ENGINE_API virtual void DestroyRenderPass(IRenderPass* a_renderPass) { delete a_renderPass; }
 
 
-				virtual IGraphicPipeline* InstantiateGraphicPipeline() = 0;
-				virtual void DestroyGraphicPipeline(IGraphicPipeline* a_graphicPipeline) { delete a_graphicPipeline; }
+				ENGINE_API virtual IGraphicPipeline* InstantiateGraphicPipeline() = 0;
+				ENGINE_API virtual void DestroyGraphicPipeline(IGraphicPipeline* a_graphicPipeline) { delete a_graphicPipeline; }
 
 
-				virtual ICommandPool* InstantiateCommandPool() = 0;
-				virtual void DestroyCommandPool(ICommandPool* a_commandPool) { delete a_commandPool; }
+				ENGINE_API virtual ICommandPool* InstantiateCommandPool() = 0;
+				ENGINE_API virtual void DestroyCommandPool(ICommandPool* a_commandPool) { delete a_commandPool; }
 
 
-				virtual IDescriptorPool* InstantiateDescriptorPool() = 0;
-				virtual void DestroyDescriptorPool(IDescriptorPool* a_descriptorPool) { delete a_descriptorPool; }
+				ENGINE_API virtual IDescriptorPool* InstantiateDescriptorPool() = 0;
+				ENGINE_API virtual void DestroyDescriptorPool(IDescriptorPool* a_descriptorPool) { delete a_descriptorPool; }
 			};
 		}
 	}

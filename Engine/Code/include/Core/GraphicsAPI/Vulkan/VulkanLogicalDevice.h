@@ -10,16 +10,17 @@ namespace Engine
 	{
 		namespace GraphicsAPI
 		{
-			class ENGINE_API VulkanLogicalDevice : public RHI::ILogicalDevice
+			class VulkanLogicalDevice : public RHI::ILogicalDevice
 			{
 			public:
-				~VulkanLogicalDevice() override = default;
-				void Create(RHI::IPhysicalDevice* a_physicalDevice, RHI::ISurface* a_surface) override;
-				void Destroy() override;
-				VulkanLogicalDevice* CastVulkan() override { return this; }
-				[[nodiscard]] VkDevice GetVkDevice() const { return m_device; }
-				VkQueue GetGraphicsQueue() const { return m_graphicsQueue; }
-				VkQueue GetPresentQueue() const { return m_presentQueue; }
+				ENGINE_API ~VulkanLogicalDevice() override = default;
+				ENGINE_API void Create(RHI::IPhysicalDevice* a_physicalDevice, RHI::ISurface* a_surface) override;
+				ENGINE_API void WaitIdle() override;
+				ENGINE_API void Destroy() override;
+				ENGINE_API VulkanLogicalDevice* CastVulkan() override { return this; }
+				ENGINE_API [[nodiscard]] VkDevice GetVkDevice() const { return m_device; }
+				ENGINE_API VkQueue GetGraphicsQueue() const { return m_graphicsQueue; }
+				ENGINE_API VkQueue GetPresentQueue() const { return m_presentQueue; }
 
 			private:
 				VkDevice m_device = VK_NULL_HANDLE;

@@ -23,32 +23,32 @@ namespace Engine
 	{
 		namespace GraphicsAPI
 		{
-			class ENGINE_API VulkanInterface : public RHI::ApiInterface
+			class VulkanInterface : public RHI::ApiInterface
 			{
 			public:
-				~VulkanInterface() override = default;
+				ENGINE_API ~VulkanInterface() override = default;
 
-				Window::IWindow* InstantiateWindow() override { return new Window::GLwindow; }
+				ENGINE_API Window::IWindow* InstantiateWindow() override { return new Window::GLwindow; }
 
-				RHI::IInstance* InstantiateInstance() override { return new VulkanInstance; }
+				ENGINE_API RHI::IInstance* InstantiateInstance() override { return new VulkanInstance; }
 
-				RHI::IValidationLayers* InstantiateValidationLayers() override { return new VulkanValidationLayers; }
+				ENGINE_API RHI::IValidationLayers* InstantiateValidationLayers() override { return new VulkanValidationLayers; }
 
-				RHI::ISurface* InstantiateSurface() override { return new VulkanSurface; }
+				ENGINE_API RHI::ISurface* InstantiateSurface() override { return new VulkanSurface; }
 
-				RHI::IPhysicalDevice* InstantiatePhysicalDevice() override { return new VulkanPhysicalDevice; }
+				ENGINE_API RHI::IPhysicalDevice* InstantiatePhysicalDevice() override { return new VulkanPhysicalDevice; }
 
-				RHI::ILogicalDevice* InstantiateLogicalDevice() override { return new VulkanLogicalDevice; }
+				ENGINE_API RHI::ILogicalDevice* InstantiateLogicalDevice() override { return new VulkanLogicalDevice; }
 
-				RHI::ISwapChain* InstantiateSwapChain() override { return new VulkanSwapchain; }
+				ENGINE_API RHI::ISwapChain* InstantiateSwapChain() override { return new VulkanSwapchain; }
 
-				RHI::IRenderPass* InstantiateRenderPass() override { return new VulkanRenderPass; }
+				ENGINE_API RHI::IRenderPass* InstantiateRenderPass() override { return new VulkanRenderPass; }
 
-				RHI::IGraphicPipeline* InstantiateGraphicPipeline() override { return new VulkanGraphicPipeline; }
+				ENGINE_API RHI::IGraphicPipeline* InstantiateGraphicPipeline() override { return new VulkanGraphicPipeline; }
 
-				RHI::ICommandPool* InstantiateCommandPool() override { return new VulkanCommandPool; }
+				ENGINE_API RHI::ICommandPool* InstantiateCommandPool() override { return new VulkanCommandPool; }
 
-				RHI::IDescriptorPool* InstantiateDescriptorPool() override { return new VulkanDescriptorPool; }
+				ENGINE_API RHI::IDescriptorPool* InstantiateDescriptorPool() override { return new VulkanDescriptorPool; }
 
 			};
 		}

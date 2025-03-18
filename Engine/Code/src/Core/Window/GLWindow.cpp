@@ -10,7 +10,7 @@ namespace Engine
 	{
 		namespace Window
 		{
-			void GLwindow::Create(int a_width, int a_height)
+			void GLwindow::Create(const int a_width, const int a_height)
 			{
 				m_width = a_width;
 				m_height = a_height;
@@ -22,7 +22,7 @@ namespace Engine
 				m_window = glfwCreateWindow(m_width, m_height, "TheCoolerEngine", nullptr, nullptr);
 				glfwSetWindowUserPointer(m_window, this);
 
-				glfwSetFramebufferSizeCallback(m_window, ResizeFramebuffer);
+				glfwSetFramebufferSizeCallback(m_window, FramebufferResizeCallback);
 			}
 
 			void GLwindow::Destroy()
@@ -48,20 +48,31 @@ namespace Engine
 				return shouldClose;
 			}
 
-			void GLwindow::ResizeFramebuffer(GLFWwindow* a_window, int a_width, int a_height)
+			void GLwindow::FramebufferResizeCallback(GLFWwindow* a_window, const int a_width, const int a_height)
 			{
-				auto app = reinterpret_cast<GLwindow*>(glfwGetWindowUserPointer(a_window));
+				const auto t_app = reinterpret_cast<GLwindow*>(glfwGetWindowUserPointer(a_window));
 
-				app->m_resized = true;
-				app->m_width = a_width;
-				app->m_height = a_height;
+				t_app->m_resized = true;
+				t_app->m_width = a_width;
+				t_app->m_height = a_height;
 
-				glfwSetWindowSize(app->m_window, app->m_width, app->m_height);
+				glfwSetWindowSize(t_app->m_window, t_app->m_width, t_app->m_height);
 			}
 
-			const char** GLwindow::GetRequiredInstanceExtensions(uint32_t* count)
+			const char** GLwindow::GetRequiredInstanceExtensions(uint32_t* a_count)
 			{
-				return glfwGetRequiredInstanceExtensions(count);
+				return glfwGetRequiredInstanceExtensions(a_count);
+			}
+
+			void GLwindow::ResizeFramebuffer()
+			{
+				int t_width = 0, t_height = 0;
+				glfwGetFramebufferSize(m_window, &t_width, &t_height);
+				while (t_width == 0 || t_height == 0) 
+				{
+					glfwGetFramebufferSize(m_window, &t_width, &t_height);
+					glfwWaitEvents();
+				}
 			}
 
 			void GLwindow::GetFramebufferSize(int* a_width, int* a_height)

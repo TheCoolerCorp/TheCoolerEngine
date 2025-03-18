@@ -8,8 +8,9 @@
 #include <vector>
 #include <memory>
 #include <string>
+#include <unordered_map>
 
-
+class MainWindow;
 
 class SubWindow
 {

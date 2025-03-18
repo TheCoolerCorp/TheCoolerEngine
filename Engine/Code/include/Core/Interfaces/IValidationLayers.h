@@ -10,7 +10,7 @@ namespace Engine
 	{
 		namespace GraphicsAPI
 		{
-			class ENGINE_API VulkanValidationLayers;
+			class VulkanValidationLayers;
 		}
 
 		namespace RHI
@@ -23,13 +23,13 @@ namespace Engine
 
 			class IInstance;
 
-			class ENGINE_API IValidationLayers
+			class IValidationLayers
 			{
 			public:
-				virtual ~IValidationLayers() = default;
-				virtual void Create(IInstance* instance) = 0;
-				virtual void Destroy(IInstance* instance) = 0;
-				virtual GraphicsAPI::VulkanValidationLayers* CastVulkan() { LOG_ERROR("Try to return wrong cast type : VulkanValidationLayers!"); return nullptr; }
+				ENGINE_API virtual ~IValidationLayers() = default;
+				ENGINE_API 	virtual void Create(IInstance* instance) = 0;
+				ENGINE_API virtual void Destroy(IInstance* instance) = 0;
+				ENGINE_API virtual GraphicsAPI::VulkanValidationLayers* CastVulkan() { LOG_ERROR("Try to return wrong cast type : VulkanValidationLayers!"); return nullptr; }
 			};
 		}
 	}

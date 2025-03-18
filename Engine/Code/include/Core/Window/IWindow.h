@@ -18,26 +18,29 @@ namespace Engine
 
 		namespace Window
 		{
-			class ENGINE_API GLwindow;
+			class GLwindow;
 
-			class ENGINE_API IWindow
+			class IWindow
 			{
 			public:
-				virtual ~IWindow() = default;
-				virtual GLwindow* CastGLFW() { return nullptr; }
+				ENGINE_API virtual ~IWindow() = default;
+				ENGINE_API virtual GLwindow* CastGLFW() { return nullptr; }
 
-				virtual void Create(int a_width, int a_height) = 0;
-				virtual void Destroy() = 0;
+				ENGINE_API virtual void Create(int a_width, int a_height) = 0;
+				ENGINE_API virtual void Destroy() = 0;
 
-				virtual void PollEvents() = 0;
-				virtual void WaitEvents() = 0;
-				virtual bool ShouldClose() = 0;
-				virtual void GetFramebufferSize(int* a_width, int* a_height) = 0;
-				virtual void CreateWindowSurface(RHI::IInstance* a_instance, RHI::ISurface* a_surface) = 0;
+				ENGINE_API virtual void PollEvents() = 0;
+				ENGINE_API virtual void WaitEvents() = 0;
+				ENGINE_API virtual bool ShouldClose() = 0;
+				ENGINE_API virtual void GetFramebufferSize(int* a_width, int* a_height) = 0;
+				ENGINE_API virtual void CreateWindowSurface(RHI::IInstance* a_instance, RHI::ISurface* a_surface) = 0;
 
-				virtual const char** GetRequiredInstanceExtensions(uint32_t* count) { (void)count; return nullptr; }
+				ENGINE_API virtual const char** GetRequiredInstanceExtensions(uint32_t* a_count) { (void)a_count; return nullptr; }
 
-				virtual bool GetResized() { return false; }
+				ENGINE_API virtual bool GetResized() { return false; }
+				ENGINE_API virtual void SetResized(bool a_resized) = 0;
+
+				ENGINE_API virtual void ResizeFramebuffer() = 0;
 			};
 		}
 	}

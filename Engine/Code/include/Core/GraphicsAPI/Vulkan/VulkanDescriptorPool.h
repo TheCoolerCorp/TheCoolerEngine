@@ -12,14 +12,14 @@ namespace Engine
 	{
 		namespace GraphicsAPI
 		{
-			class ENGINE_API VulkanDescriptorPool : public RHI::IDescriptorPool
+			class VulkanDescriptorPool : public RHI::IDescriptorPool
 			{
 			public:
-				~VulkanDescriptorPool() override = default;
-				GraphicsAPI::VulkanDescriptorPool* CastVulkan() override { return this; }
+				ENGINE_API ~VulkanDescriptorPool() override = default;
+				ENGINE_API VulkanDescriptorPool* CastVulkan() override { return this; }
 
-				void Create(RHI::ILogicalDevice* a_logicalDevice, int a_maxFrameInFlight) override;
-				void Destroy(RHI::ILogicalDevice* a_logicalDevice) override;
+				ENGINE_API void Create(RHI::ILogicalDevice* a_logicalDevice, int a_maxFrameInFlight) override;
+				ENGINE_API void Destroy(RHI::ILogicalDevice* a_logicalDevice) override;
 
 				VkDescriptorPool GetDescriptorPool() const { return m_pool; }
 			private:

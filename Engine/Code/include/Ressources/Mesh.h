@@ -16,35 +16,22 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-
+#include "IResource.h"
 namespace Engine
 {
-	namespace Ressources
+	namespace Resource
 	{
-
-		class ENGINE_API Mesh
+		class Mesh : public IResource
 		{
 		public:
-			struct Data
-			{
-				std::vector<Vertex> mVertices = std::vector<Vertex>();
-				std::vector<unsigned int> mIndexs = std::vector<unsigned int>();
-				int mSize = 0;
-			};
-
-			Mesh();
-			~Mesh() { delete m_data; }
-
-			void Create(std::string& a_path);
-			void Destroy();
-
-			Data* GetData() { return m_data; }
+			ENGINE_API void Create(std::string a_path) override;
+			ENGINE_API void Destroy() override;
 
 		private:
+			std::vector<Vertex> m_vertices;
+			std::vector<int> m_indexes;
+
 			void ProcessMesh(const aiMesh* a_mesh);
-
-			Data* m_data = nullptr;
-
 		};
 	}
 }

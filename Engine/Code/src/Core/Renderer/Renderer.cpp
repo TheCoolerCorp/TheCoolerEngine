@@ -13,7 +13,6 @@ namespace Engine
 			}
 			m_interface = new GraphicsAPI::VulkanInterface();
 
-
 			m_apiInstance = m_interface->InstantiateInstance();
 			m_apiInstance->Create();
 
@@ -44,14 +43,23 @@ namespace Engine
 			m_commandPool->Create(m_physicalDevice, m_surface, m_logicalDevice);
 			m_swapChain->CreateFramebuffers(m_logicalDevice, m_physicalDevice, m_renderPass, m_commandPool);
 
+
 			m_descriptorPool = m_interface->InstantiateDescriptorPool();
 			m_descriptorPool->Create(m_logicalDevice, static_cast<int>(m_swapChain->GetMaxFrame()));
 
+			m_commandPool->CreateCommandBuffer(m_logicalDevice, m_swapChain, m_renderPass, m_graphicPipeline);
+
+			m_swapChain->CreateSyncObjects(m_logicalDevice);
 		}
 
-		void Renderer::Run()
+		void Renderer::Run(Window::IWindow* a_window)
 		{
+			m_swapChain->DrawFrame(a_window, m_logicalDevice, m_commandPool, m_surface, m_physicalDevice, m_renderPass);
+		}
 
+		void Renderer::WaitIdle() const
+		{
+			m_logicalDevice->WaitIdle();
 		}
 
 		void Renderer::Destroy()

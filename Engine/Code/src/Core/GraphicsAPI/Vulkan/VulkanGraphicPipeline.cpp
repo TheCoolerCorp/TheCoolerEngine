@@ -35,8 +35,8 @@ namespace Engine
 					VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
 					vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
 					// VERTEX CURRENTLY NOT IMPLEMENTED
-					auto bindingDescription = Ressources::VulkanVertexSpec::getBindingDescription();
-					auto attributeDescriptions = Ressources::VulkanVertexSpec::getAttributeDescriptions();
+					auto bindingDescription = Resource::VulkanVertexSpec::getBindingDescription();
+					auto attributeDescriptions = Resource::VulkanVertexSpec::getAttributeDescriptions();
 					vertexInputInfo.vertexBindingDescriptionCount = 1;
 					vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());
 					vertexInputInfo.pVertexBindingDescriptions = &bindingDescription;

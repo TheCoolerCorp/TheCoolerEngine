@@ -14,16 +14,16 @@ namespace Engine
 	{
 		namespace GraphicsAPI
 		{
-			class ENGINE_API VulkanGraphicPipeline : public RHI::IGraphicPipeline
+			class VulkanGraphicPipeline : public RHI::IGraphicPipeline
 			{
 			public:
-				~VulkanGraphicPipeline() override = default;
-				GraphicsAPI::VulkanGraphicPipeline* CastVulkan() override{ return this; }
+				ENGINE_API ~VulkanGraphicPipeline() override = default;
+				ENGINE_API VulkanGraphicPipeline* CastVulkan() override{ return this; }
 
-				void Create(RHI::ILogicalDevice* a_logicalDevice, RHI::IRenderPass* a_renderPass) override;
-				void Destroy(RHI::ILogicalDevice* a_logicalDevice) override;
+				ENGINE_API void Create(RHI::ILogicalDevice* a_logicalDevice, RHI::IRenderPass* a_renderPass) override;
+				ENGINE_API void Destroy(RHI::ILogicalDevice* a_logicalDevice) override;
 
-				VkPipeline GetPipeline() const { return m_pipeline; }
+				ENGINE_API VkPipeline GetPipeline() const { return m_pipeline; }
 
 			private:
 				VkShaderModule CreateShader(const std::string& a_path, VkDevice a_device);

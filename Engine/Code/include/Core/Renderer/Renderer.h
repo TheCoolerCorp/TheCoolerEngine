@@ -9,6 +9,8 @@
 *
 *
 */
+#include "Ressources/Texture.h"
+#include "Ressources/Mesh.h"
 
 namespace Engine
 {
@@ -21,15 +23,16 @@ namespace Engine
 			DX12 = 2
 		};
 
-		class ENGINE_API Renderer
+		class Renderer
 		{
 		public:
-			Renderer() = default;
-			~Renderer() = default;
+			ENGINE_API Renderer() = default;
+			ENGINE_API ~Renderer() = default;
 
-			void Init(RendererType a_type, Window::IWindow* a_window);
-			void Run();
-			void Destroy();
+			ENGINE_API void Init(RendererType a_type, Window::IWindow* a_window);
+			ENGINE_API void Run(Window::IWindow* a_window);
+			ENGINE_API void WaitIdle() const;
+			ENGINE_API void Destroy();
 
 			RHI::ApiInterface* GetApiInterface() const { return m_interface; }
 

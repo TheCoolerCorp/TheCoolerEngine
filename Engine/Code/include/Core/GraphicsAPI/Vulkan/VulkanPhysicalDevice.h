@@ -11,20 +11,20 @@ namespace Engine
 	{
 		namespace GraphicsAPI
 		{
-			class ENGINE_API VulkanPhysicalDevice : public RHI::IPhysicalDevice
+			class VulkanPhysicalDevice : public RHI::IPhysicalDevice
 			{
 			public:
-				void Create(RHI::IInstance* a_instance, RHI::ISurface* a_surface) override;
-				void Destroy() override {}
-				VulkanPhysicalDevice* CastVulkan() override { return this; }
-				VkPhysicalDevice GetVkPhysicalDevice() const { return m_physicalDevice; }
+				ENGINE_API void Create(RHI::IInstance* a_instance, RHI::ISurface* a_surface) override;
+				ENGINE_API void Destroy() override {}
+				ENGINE_API VulkanPhysicalDevice* CastVulkan() override { return this; }
+				ENGINE_API VkPhysicalDevice GetVkPhysicalDevice() const { return m_physicalDevice; }
 
-				VkFormat FindSupportedFormat(const std::vector<VkFormat>& a_candidates, VkImageTiling a_tiling, VkFormatFeatureFlags a_features) const;
+				ENGINE_API VkFormat FindSupportedFormat(const std::vector<VkFormat>& a_candidates, VkImageTiling a_tiling, VkFormatFeatureFlags a_features) const;
 
 			private:
 				void PickPhysicalDevice(VkInstance a_instance, VkSurfaceKHR a_surface);
-				static bool IsPhysicalDeviceSuitable(VkPhysicalDevice a_physicalDevice, VkSurfaceKHR a_surface);
-				static uint32_t RatePhysicalDevice(VkPhysicalDevice a_physicalDevice, VkSurfaceKHR a_surface);
+				ENGINE_API static bool IsPhysicalDeviceSuitable(VkPhysicalDevice a_physicalDevice, VkSurfaceKHR a_surface);
+				ENGINE_API static uint32_t RatePhysicalDevice(VkPhysicalDevice a_physicalDevice, VkSurfaceKHR a_surface);
 
 				VkPhysicalDevice m_physicalDevice = VK_NULL_HANDLE;
 			};

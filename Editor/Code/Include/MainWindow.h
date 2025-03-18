@@ -17,7 +17,8 @@ public:
 		static_assert(std::is_base_of<SubWindow, T>::value, "MainWindow:CreateWindow : T must be a SubWindow!");
 		auto subWindow = std::make_shared<T>();
 		subWindow->Init();
-		m_SubWindows.push_back(subWindow);
+		name = FindValidKey(name);
+		m_SubWindowsMap[name] = subWindow;
 		return subWindow.get();
 	}
 private:

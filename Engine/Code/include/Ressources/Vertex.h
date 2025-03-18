@@ -9,7 +9,7 @@
 
 namespace Engine
 {
-	namespace Ressources
+	namespace Resource
 	{
 		class VulkanVertexSpec
 		{

@@ -16,21 +16,21 @@ namespace Engine
 	{
 		namespace GraphicsAPI
 		{
-			class ENGINE_API VulkanInstance : public RHI::IInstance
+			class VulkanInstance : public RHI::IInstance
 			{
 			public:
-				~VulkanInstance() override = default;
-				VulkanInstance* CastVulkan() override { return this; }
+				ENGINE_API ~VulkanInstance() override = default;
+				ENGINE_API VulkanInstance* CastVulkan() override { return this; }
 
-				void Create() override;
-				void Destroy() override;
+				ENGINE_API void Create() override;
+				ENGINE_API void Destroy() override;
 
-				VkInstance GetVkInstance() { return m_Instance; }
+				ENGINE_API VkInstance GetVkInstance() { return m_instance; }
 
 			private:
-				static std::vector<const char*> GetRequiredExtensions();
+				ENGINE_API static std::vector<const char*> GetRequiredExtensions();
 
-				VkInstance m_Instance = VK_NULL_HANDLE;
+				VkInstance m_instance = VK_NULL_HANDLE;
 			};
 		}
 	}

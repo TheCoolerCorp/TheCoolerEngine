@@ -22,15 +22,14 @@ namespace Engine
 			class ISwapChain;
 			class IGraphicPipeline;
 
-			class ENGINE_API ICommandPool
+			class ICommandPool
 			{
 			public:
-				virtual ~ICommandPool() = default;
-				virtual void Create(IPhysicalDevice* a_physicalDevice, ISurface* a_surface, ILogicalDevice* a_logicalDevice) = 0;
-				virtual void Destroy(ILogicalDevice* a_logicalDevice) = 0;
-				virtual void CreateCommandBuffer(ILogicalDevice* a_logicalDevice) = 0;
-				virtual void RecordCommandBuffer(uint32_t a_imageIndex, IRenderPass* a_renderPass, ISwapChain* a_swapChain, IGraphicPipeline* a_graphicPipeline) = 0;
-				virtual GraphicsAPI::VulkanCommandPool* CastVulkan() { LOG_ERROR("Try to return wrong cast type : VulkanCommandPool!"); return nullptr; }
+				ENGINE_API virtual ~ICommandPool() = default;
+				ENGINE_API virtual void Create(IPhysicalDevice* a_physicalDevice, ISurface* a_surface, ILogicalDevice* a_logicalDevice) = 0;
+				ENGINE_API virtual void Destroy(ILogicalDevice* a_logicalDevice) = 0;
+				ENGINE_API virtual void CreateCommandBuffer(ILogicalDevice* a_logicalDevice, ISwapChain* a_swapChain, IRenderPass* a_renderPass, IGraphicPipeline* a_graphicPipeline) = 0;
+				ENGINE_API virtual GraphicsAPI::VulkanCommandPool* CastVulkan() { LOG_ERROR("Try to return wrong cast type : VulkanCommandPool!"); return nullptr; }
 			};
 		}
 	}
