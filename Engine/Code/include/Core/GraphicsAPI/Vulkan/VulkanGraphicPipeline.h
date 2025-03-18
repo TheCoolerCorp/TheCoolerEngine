@@ -24,6 +24,8 @@ namespace Engine
 				ENGINE_API void Destroy(RHI::ILogicalDevice* a_logicalDevice) override;
 
 				ENGINE_API VkPipeline GetPipeline() const { return m_pipeline; }
+				ENGINE_API VkPipelineLayout GetLayout() const { return m_layout; }
+				ENGINE_API VkDescriptorSetLayout GetDescriptorSetLayout() const { return m_descriptor; }
 
 			private:
 				VkShaderModule CreateShader(const std::string& a_path, VkDevice a_device);

@@ -27,12 +27,11 @@ namespace Engine
 			{
 				static_assert(std::is_base_of<Component, T>::value, "Type is not a component");
 
-
 				if (GetComponent<T>())
 				{
-					//LOG_ERROR("")
+					LOG_ERROR("Already as this type of component");
+					return;
 				}
-
 
 				std::shared_ptr<T> component = std::make_shared<T>();
 

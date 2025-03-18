@@ -4,11 +4,15 @@
 #include "EngineExport.h"
 
 #include "Core/Logger/Logger.h"
-
 namespace Engine
 {
 	namespace Core
 	{
+		namespace GamePlay
+		{
+			class GameObject;
+		}
+
 		namespace GraphicsAPI
 		{
 			class VulkanObjectDescriptor;
@@ -27,7 +31,7 @@ namespace Engine
 				ENGINE_API virtual ~IObjectDescriptor() = default;
 				ENGINE_API virtual GraphicsAPI::VulkanObjectDescriptor* CastVulkan() { LOG_ERROR("Try to return wrong cast type : VulkanPhysicalDevice!"); return nullptr; }
 
-				ENGINE_API virtual void Create(ILogicalDevice* device, IGraphicPipeline* descriptorSetLayout, IDescriptorPool* descriptorPool, std::vector<IBuffer*> uniformBuffers, IImage* texture) = 0;
+				ENGINE_API virtual void Create(ILogicalDevice* a_logicalDevice, IGraphicPipeline* a_pipeline, IDescriptorPool* a_descriptorPool, GamePlay::GameObject* a_gameObject, int a_size) = 0;
 				ENGINE_API virtual void Destroy(ILogicalDevice* a_logicalDevice) = 0;
 			};
 		}
