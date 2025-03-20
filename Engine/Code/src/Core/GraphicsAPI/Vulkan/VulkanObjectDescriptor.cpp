@@ -28,6 +28,7 @@ namespace Engine
 				allocInfo.pSetLayouts = layouts.data();
 
 				m_descriptorSets.resize(a_size);
+				m_uniforms.resize(a_size);
 				VK_CHECK(vkAllocateDescriptorSets(t_logicalDevice, &allocInfo, m_descriptorSets.data()), "Can't allocate descriptor sets");
 
                 for (size_t i = 0; i < a_size; i++)

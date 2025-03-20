@@ -63,7 +63,7 @@ namespace Engine
 
 				std::shared_ptr<T> component = std::make_shared<T>();
 
-				//component->Create(a_path, a_interface, a_info.a_graphicPipeline);
+				component->Create(a_path, a_interface, a_info.a_physicalDevice, a_info.a_logicalDevice, a_info.a_commandPool);
 
 				m_components.emplace_back(component);
 			}
@@ -81,7 +81,6 @@ namespace Engine
 					{
 						return castedComponent;
 					}
-					return nullptr;
 				}
 				return nullptr;
 			}
