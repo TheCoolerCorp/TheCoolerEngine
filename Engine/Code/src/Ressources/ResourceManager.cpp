@@ -39,7 +39,7 @@ namespace Engine
 			else if (a_type == ResourceType::TEXTURE)
 			{
 				Texture* t_texture = new Texture();
-				t_texture->Create(a_path, a_interface);
+				t_texture->Create(a_path, a_interface, a_physicalDevice, a_logicalDevice, a_commandPool);
 				m_resources[a_name] = t_texture;
 			}
 			else
@@ -60,7 +60,7 @@ namespace Engine
 			else if (a_type == ResourceType::TEXTURE)
 			{
 				Texture* t_texture = new Texture();
-				t_texture->Create(a_path, a_interface);
+				t_texture->Create(a_path, a_interface, a_physicalDevice, a_logicalDevice, a_commandPool);
 				m_resources[a_name] = t_texture;
 				return t_texture;
 			}
