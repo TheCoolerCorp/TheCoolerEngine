@@ -34,7 +34,6 @@ namespace Engine
 					// Vertex setup
 					VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
 					vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
-					// VERTEX CURRENTLY NOT IMPLEMENTED
 					auto bindingDescription = Resource::VulkanVertexSpec::getBindingDescription();
 					auto attributeDescriptions = Resource::VulkanVertexSpec::getAttributeDescriptions();
 					vertexInputInfo.vertexBindingDescriptionCount = 1;
@@ -153,7 +152,7 @@ namespace Engine
 					pipelineInfo.pDynamicState = &dynamicState;
 					pipelineInfo.layout = m_layout;
 					pipelineInfo.renderPass = a_renderPass->CastVulkan()->GetRenderPass();
-					pipelineInfo.subpass = 0;
+					pipelineInfo.subpass = 1;
 					pipelineInfo.basePipelineHandle = VK_NULL_HANDLE; // Optional
 					pipelineInfo.basePipelineIndex = -1; // Optional
 					pipelineInfo.pDepthStencilState = &depthStencil;

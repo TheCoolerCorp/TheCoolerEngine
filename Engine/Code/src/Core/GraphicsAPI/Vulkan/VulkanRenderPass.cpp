@@ -62,14 +62,15 @@ namespace Engine
                 t_colorSubpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
                 t_colorSubpass.colorAttachmentCount = 1;
                 t_colorSubpass.pColorAttachments = &t_colorAttachmentRef;
+                t_colorSubpass.pDepthStencilAttachment = &depthAttachmentRef;
 
                 VkSubpassDependency t_depthSubpassDependency{};
                 t_depthSubpassDependency.srcSubpass = VK_SUBPASS_EXTERNAL;
-                t_depthSubpassDependency.dstSubpass = 0; 
-                t_depthSubpassDependency.srcStageMask = VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT;
-                t_depthSubpassDependency.dstStageMask = VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT | VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-                t_depthSubpassDependency.srcAccessMask = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
-                t_depthSubpassDependency.dstAccessMask = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+                t_depthSubpassDependency.dstSubpass = 0;
+                t_depthSubpassDependency.srcStageMask = VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
+                t_depthSubpassDependency.dstStageMask = VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT;
+                t_depthSubpassDependency.srcAccessMask = 0;
+                t_depthSubpassDependency.dstAccessMask = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
 
                 VkSubpassDependency t_colorSubpassDependency{};
                 t_colorSubpassDependency.srcSubpass = 0;
