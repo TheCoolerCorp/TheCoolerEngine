@@ -27,7 +27,7 @@ namespace Engine
 			int size;
 		};
 
-		struct GameObjectData
+		struct ENGINE_API GameObjectData
 		{
 			Core::RHI::IBuffer* mVertexBuffer = nullptr;
 			Core::RHI::IBuffer* mIndexBuffer = nullptr;

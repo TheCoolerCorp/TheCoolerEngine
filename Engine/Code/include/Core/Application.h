@@ -1,6 +1,8 @@
 #ifndef APPLICATION_H
 #define APPLICATION_H
 
+#include <vector>
+
 #include "EngineExport.h"
 
 #include "Core/GraphicsAPI/Vulkan/VulkanInterface.h"
