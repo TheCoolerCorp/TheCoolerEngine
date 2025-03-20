@@ -12,7 +12,9 @@
 //Custom includes
 #include "MainWindow.h"
 #include "SubWindow.h"
-#include "VulkanImGuiRenderer.h"
+#include "Core/Renderer/Renderer.h"
+#include "Core/Window/IWindow.h"
+#include "RHIImGuiRenderer.h"
 
 class ImGuiLayer
 {

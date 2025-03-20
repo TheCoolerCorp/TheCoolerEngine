@@ -3,7 +3,7 @@
 #---------------------------------------#
 #				SOURCES					#
 #---------------------------------------#
-file(GLOB_RECURSE ENGINE_SOURCES "Code/*.cpp")
+file(GLOB_RECURSE ENGINE_SOURCES "Code/src/*.cpp")
 
 #---------------------------------------#
 #			BUILD MODE					#
