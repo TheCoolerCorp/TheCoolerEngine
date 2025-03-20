@@ -53,9 +53,9 @@ namespace Engine
 			m_swapChain->CreateSyncObjects(m_logicalDevice);
 		}
 
-		void Renderer::Run(Window::IWindow* a_window, const GamePlay::GameObjectData* a_gameObjectDatas) const
+		void Renderer::Run(Window::IWindow* a_window, std::vector<GamePlay::GameObjectData> a_objectsData) const
 		{
-			m_swapChain->DrawFrame(a_window, m_logicalDevice, m_commandPool, m_surface, m_physicalDevice, m_renderPass, a_gameObjectDatas);
+			m_swapChain->DrawFrame(a_window, m_logicalDevice, m_commandPool, m_surface, m_physicalDevice, m_renderPass, a_objectsData);
 		}
 
 		void Renderer::WaitIdle() const

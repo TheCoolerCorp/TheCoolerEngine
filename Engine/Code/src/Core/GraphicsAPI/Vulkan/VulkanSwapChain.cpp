@@ -180,7 +180,7 @@ namespace Engine
 				return m_framebuffers;
 			}
 
-			void VulkanSwapchain::DrawFrame(Window::IWindow* a_window, RHI::ILogicalDevice* a_logicalDevice, RHI::ICommandPool* a_commandPool, RHI::ISurface* a_surface, RHI::IPhysicalDevice* a_physicalDevice, RHI::IRenderPass* a_renderPass, const GamePlay::GameObjectData* a_gameObjectDatas)
+			void VulkanSwapchain::DrawFrame(Window::IWindow* a_window, RHI::ILogicalDevice* a_logicalDevice, RHI::ICommandPool* a_commandPool, RHI::ISurface* a_surface, RHI::IPhysicalDevice* a_physicalDevice, RHI::IRenderPass* a_renderPass, std::vector<GamePlay::GameObjectData> a_objectsData)
 			{
 				VulkanCommandPool* t_commandPool = a_commandPool->CastVulkan();
 				const VulkanLogicalDevice* t_logicalDevice = a_logicalDevice->CastVulkan();
@@ -209,7 +209,7 @@ namespace Engine
 					const VulkanGraphicPipeline* t_pipeline = std::get<VulkanGraphicPipeline*>(t_commandPool->mCommandBuffers[i][m_currentFrame]);
 					t_commandBuffers.push_back(t_commandBuffer);
 					vkResetCommandBuffer(t_commandBuffer, 0);
-					VulkanCommandPool::RecordCommandBuffer(t_commandBuffer, t_imageIndex, t_renderPass, this, t_pipeline, a_gameObjectDatas);
+					VulkanCommandPool::RecordCommandBuffer(t_commandBuffer, t_imageIndex, t_renderPass, this, t_pipeline, a_objectsData);
 				}
 
 				VkSubmitInfo t_submitInfo{};

@@ -7,14 +7,10 @@
 
 #include "Core/Window/GLWindow.h"
 #include "Core/Renderer/Renderer.h"
+#include "GamePlay/GameObject.h"
 
 namespace Engine
 {
-	namespace GamePlay
-	{
-		struct GameObjectData;
-	}
-
 	namespace Core
 	{
 		class Application

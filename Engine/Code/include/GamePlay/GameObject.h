@@ -51,7 +51,7 @@ namespace Engine
 			
 
 			template<typename T>
-			void AddComponent(std::string a_path)
+			void AddComponent(std::string a_path, GameObjectinfo a_info, Core::RHI::ApiInterface* a_interface)
 			{
 				static_assert(std::is_base_of<Component, T>::value, "Type is not a component");
 
@@ -63,7 +63,7 @@ namespace Engine
 
 				std::shared_ptr<T> component = std::make_shared<T>();
 
-				component->Create(a_path);
+				//component->Create(a_path, a_interface, a_info.a_graphicPipeline);
 
 				m_components.emplace_back(component);
 			}

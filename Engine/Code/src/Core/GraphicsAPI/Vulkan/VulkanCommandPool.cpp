@@ -77,7 +77,7 @@ namespace Engine
 				mCommandBuffers.push_back(t_commandBuffers);
 			}
 
-			void VulkanCommandPool::RecordCommandBuffer(const VkCommandBuffer a_commandBuffer, const uint32_t a_imageIndex, const VkRenderPass a_renderPass, VulkanSwapchain* a_swapChain, const VulkanGraphicPipeline* a_graphicPipeline, const GamePlay::GameObjectData a_gameObjectDatas[])
+			void VulkanCommandPool::RecordCommandBuffer(const VkCommandBuffer a_commandBuffer, const uint32_t a_imageIndex, const VkRenderPass a_renderPass, VulkanSwapchain* a_swapChain, const VulkanGraphicPipeline* a_graphicPipeline, std::vector<GamePlay::GameObjectData> a_objectsData)
 			{
 				const VkExtent2D t_swapChainExtent = a_swapChain->GetExtent2D();
 				const VkPipeline t_pipeline = a_graphicPipeline->GetPipeline();
@@ -120,11 +120,11 @@ namespace Engine
 				t_scissor.extent = t_swapChainExtent;
 				vkCmdSetScissor(a_commandBuffer, 0, 1, &t_scissor);
 
-				int t_dataSize = sizeof(a_gameObjectDatas) / sizeof(a_gameObjectDatas[0]);
+				//int t_dataSize = sizeof(a_gameObjectDatas) / sizeof(a_gameObjectDatas[0]);
 
-				for (int i = 0; i < t_dataSize; ++i)
+				for (int i = 0; i < a_objectsData.size(); ++i)
 				{
-					GamePlay::GameObjectData t_gameObjectData = a_gameObjectDatas[i];
+					GamePlay::GameObjectData t_gameObjectData = a_objectsData[i];
 					VkBuffer t_vertexBuffer = t_gameObjectData.mVertexBuffer->CastVulkan()->GetBuffer();
 					constexpr VkDeviceSize t_offsets[] = { 0 };
 					vkCmdBindVertexBuffers(a_commandBuffer, 0, 1, &t_vertexBuffer, t_offsets);

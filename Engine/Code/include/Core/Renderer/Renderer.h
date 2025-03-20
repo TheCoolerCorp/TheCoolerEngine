@@ -35,10 +35,17 @@ namespace Engine
 			ENGINE_API ~Renderer() = default;
 
 			ENGINE_API void Init(RendererType a_type, Window::IWindow* a_window);
-			ENGINE_API void Run(Window::IWindow* a_window, const GamePlay::GameObjectData* a_gameObjectDatas) const;
+			ENGINE_API void Run(Window::IWindow* a_window, std::vector<GamePlay::GameObjectData> a_objectsData) const;
 			ENGINE_API void WaitIdle() const;
 			ENGINE_API void Destroy();
 
+
+			RHI::ApiInterface* GetInterface() { return m_interface; }
+			RHI::ILogicalDevice* GetLogicalDevice() { return m_logicalDevice; }
+			RHI::IPhysicalDevice* GetPhysicalDevice() { return m_physicalDevice; }
+			RHI::IGraphicPipeline* GetPipeline() { return m_graphicPipeline; }
+			RHI::IDescriptorPool* GetDescriptorPool() { return m_descriptorPool; }
+			RHI::ICommandPool* GetCommandPool() { return m_commandPool; }
 		private:
 			RendererType m_type = RendererType::VULKAN;
 

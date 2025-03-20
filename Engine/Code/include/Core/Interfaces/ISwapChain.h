@@ -3,6 +3,8 @@
 
 #include "EngineExport.h"
 
+#include <vector>
+
 namespace Engine
 {
 	namespace GamePlay
@@ -43,7 +45,7 @@ namespace Engine
 				ENGINE_API virtual void CreateSyncObjects(ILogicalDevice* a_logicalDevice) {}
 				ENGINE_API virtual void Destroy(RHI::ILogicalDevice* a_logicalDevice) = 0;
 
-				ENGINE_API virtual void DrawFrame(Window::IWindow* a_window, RHI::ILogicalDevice* a_logicalDevice, RHI::ICommandPool* a_commandPool, RHI::ISurface* a_surface, RHI::IPhysicalDevice* a_physicalDevice, RHI::IRenderPass* a_renderPass, const GamePlay::GameObjectData* a_gameObjectDatas) = 0;
+				ENGINE_API virtual void DrawFrame(Window::IWindow* a_window, RHI::ILogicalDevice* a_logicalDevice, RHI::ICommandPool* a_commandPool, RHI::ISurface* a_surface, RHI::IPhysicalDevice* a_physicalDevice, RHI::IRenderPass* a_renderPass, std::vector<GamePlay::GameObjectData> a_objectsDatas) = 0;
 
 			};
 		}
