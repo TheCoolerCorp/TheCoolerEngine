@@ -14,7 +14,7 @@ namespace Engine
 	{
 		namespace GraphicsAPI
 		{
-			ENGINE_API void VulkanObjectDescriptor::Create(RHI::ILogicalDevice* a_logicalDevice, RHI::IPhysicalDevice* a_physicalDevice, RHI::IGraphicPipeline* a_pipeline, RHI::IDescriptorPool* a_descriptorPool, RHI::ICommandPool* a_commandPool, GamePlay::GameObject* a_gameObject, int a_size)
+			void VulkanObjectDescriptor::Create(RHI::ILogicalDevice* a_logicalDevice, RHI::IPhysicalDevice* a_physicalDevice, RHI::IGraphicPipeline* a_pipeline, RHI::IDescriptorPool* a_descriptorPool, RHI::ICommandPool* a_commandPool, GamePlay::GameObject* a_gameObject, int a_size)
 			{
 				VkDevice t_logicalDevice = a_logicalDevice->CastVulkan()->GetVkDevice();
 				VkDescriptorSetLayout t_descriptorSetLayout = a_pipeline->CastVulkan()->GetDescriptorSetLayout();
@@ -60,21 +60,34 @@ namespace Engine
                     descriptorWrites[0].descriptorCount = 1;
                     descriptorWrites[0].pBufferInfo = &bufferInfo;
 
-                    descriptorWrites[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-                    descriptorWrites[1].dstSet = m_descriptorSets[i];
-                    descriptorWrites[1].dstBinding = 1;
-                    descriptorWrites[1].dstArrayElement = 0;
-                    descriptorWrites[1].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-                    descriptorWrites[1].descriptorCount = 1;
-                    descriptorWrites[1].pImageInfo = &imageInfo;
+					descriptorWrites[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+					descriptorWrites[1].dstSet = m_descriptorSets[i];
+					descriptorWrites[1].dstBinding = 1;
+					descriptorWrites[1].dstArrayElement = 0;
+					descriptorWrites[1].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+					descriptorWrites[1].descriptorCount = 1;
+					descriptorWrites[1].pImageInfo = &imageInfo;
 
                     vkUpdateDescriptorSets(t_logicalDevice, static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
                 }
 			}
 
-			ENGINE_API void VulkanObjectDescriptor::Destroy(RHI::ILogicalDevice* a_logicalDevice)
+			void  VulkanObjectDescriptor::Update(uint32_t a_frameIndex, RHI::ILogicalDevice* a_logicalDevice, void* a_uploadData)
 			{
+                void* data;
+                vkMapMemory(a_logicalDevice->CastVulkan()->GetVkDevice(), m_uniforms[a_frameIndex]->GetMemory(), 0, sizeof(VulkanBuffer), 0, &data);
+                memcpy(data, a_uploadData, sizeof(a_uploadData));
+				vkUnmapMemory(a_logicalDevice->CastVulkan()->GetVkDevice(), m_uniforms[a_frameIndex]->GetMemory());
+				
+			}
 
+			void VulkanObjectDescriptor::Destroy(RHI::ILogicalDevice* a_logicalDevice)
+			{
+				for (int i = 0; i < m_uniforms.size(); ++i)
+				{
+					m_uniforms[i]->Destroy(a_logicalDevice);
+				}
+				m_descriptorSets.clear();
 			}
 		}
 	}

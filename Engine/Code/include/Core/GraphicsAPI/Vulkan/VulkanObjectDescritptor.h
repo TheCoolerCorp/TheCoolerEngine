@@ -22,6 +22,7 @@ namespace Engine
 
 				ENGINE_API void Create(RHI::ILogicalDevice* a_logicalDevice, RHI::IPhysicalDevice* a_physicalDevice, RHI::IGraphicPipeline* a_pipeline, RHI::IDescriptorPool* a_descriptorPool, RHI::ICommandPool* a_commandPool, GamePlay::GameObject* a_gameObject, int a_size) override;
 				ENGINE_API void Destroy(RHI::ILogicalDevice* a_logicalDevice) override;
+				ENGINE_API void Update(uint32_t a_frameIndex, RHI::ILogicalDevice* a_logicalDevice, void* a_uploadData) override;
 
 			private:
 				std::vector<VulkanBuffer*> m_uniforms;

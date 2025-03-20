@@ -114,6 +114,7 @@ namespace Engine
 				t_scissor.extent = t_swapChainExtent;
 				vkCmdSetScissor(a_commandBuffer, 0, 1, &t_scissor);
 
+
 				vkCmdDraw(a_commandBuffer, 3, 1, 0, 0);
 
 				vkCmdEndRenderPass(a_commandBuffer);
