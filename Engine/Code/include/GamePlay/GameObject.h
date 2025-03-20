@@ -113,7 +113,7 @@ namespace Engine
 			std::vector<std::shared_ptr<Component>> m_components;
 			Math::Transform m_transform;
 
-			Core::RHI::IObjectDescriptor* m_descriptor;
+			Core::RHI::IObjectDescriptor* m_descriptor{};
 		};
 
 		

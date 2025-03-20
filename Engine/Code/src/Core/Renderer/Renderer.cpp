@@ -1,5 +1,6 @@
 #include "Core/Renderer/Renderer.h"
 #include "Core/Logger/Logger.h"
+#include "GamePlay/GameObject.h"
 
 namespace Engine
 {
@@ -54,7 +55,7 @@ namespace Engine
 
 		void Renderer::Run(Window::IWindow* a_window, const GamePlay::GameObjectData* a_gameObjectDatas) const
 		{
-			m_swapChain->DrawFrame(a_window, m_logicalDevice, m_commandPool, m_surface, m_physicalDevice, m_renderPass);
+			m_swapChain->DrawFrame(a_window, m_logicalDevice, m_commandPool, m_surface, m_physicalDevice, m_renderPass, a_gameObjectDatas);
 		}
 
 		void Renderer::WaitIdle() const
