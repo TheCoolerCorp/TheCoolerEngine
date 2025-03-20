@@ -4,8 +4,7 @@
 #include "EngineExport.h"
 #include <string>
 
-#include "Core/GraphicsAPI/Vulkan/VulkanLogicalDevice.h"
-#include "Core/GraphicsAPI/Vulkan/VulkanCommandPool.h"
+#include "Core/GraphicsAPI/Vulkan/VulkanInterface.h"
 
 #include "Math/vec2.h"
 #include "Math/vec3.h"
@@ -19,19 +18,33 @@
 #include "IResource.h"
 namespace Engine
 {
+	namespace Core
+	{
+		namespace RHI
+		{
+			class IBuffer;
+		}
+	}
+
 	namespace Resource
 	{
 		class Mesh : public IResource
 		{
 		public:
-			ENGINE_API void Create(std::string a_path) override;
-			ENGINE_API void Destroy() override;
+			ENGINE_API void Create(std::string a_path, Core::RHI::ApiInterface* a_interface, Core::RHI::IPhysicalDevice* a_physicalDevice, Core::RHI::ILogicalDevice* a_logicalDevice, Core::RHI::ICommandPool* a_commandPool) override;
+			ENGINE_API void Destroy(Core::RHI::ILogicalDevice* a_logicalDevice) override;
+
+			ENGINE_API Core::RHI::IBuffer* GetVertexBuffer() const { return m_vertexBuffer; }
+			ENGINE_API Core::RHI::IBuffer* GetIndexBuffer() const { return m_indexBuffer; }
 
 		private:
 			std::vector<Vertex> m_vertices;
 			std::vector<int> m_indexes;
 
 			void ProcessMesh(const aiMesh* a_mesh);
+
+			Core::RHI::IBuffer* m_vertexBuffer = nullptr;
+			Core::RHI::IBuffer* m_indexBuffer = nullptr;
 		};
 	}
 }

@@ -2,6 +2,7 @@
 #define VULKANINTERFACE_H
 
 #include "EngineExport.h"
+#include "VulkanBuffer.h"
 
 #include "Core/Interfaces/ApiInterface.h"
 
@@ -16,6 +17,7 @@
 #include  "Core/GraphicsAPI/Vulkan/VulkanGraphicPipeline.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanCommandPool.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanDescriptorPool.h"
+#include "Core/GraphicsAPI/Vulkan/VulkanImage.h"
 
 namespace Engine
 {
@@ -50,6 +52,9 @@ namespace Engine
 
 				ENGINE_API RHI::IDescriptorPool* InstantiateDescriptorPool() override { return new VulkanDescriptorPool; }
 
+				ENGINE_API RHI::IBuffer* InstantiateBuffer() override { return new VulkanBuffer; }
+
+				RHI::IImage* InstantiateImage() override { return new VulkanImage; }
 			};
 		}
 	}
