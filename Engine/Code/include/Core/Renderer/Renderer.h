@@ -1,6 +1,8 @@
 #ifndef RENDERER_H
 #define RENDERER_H
 
+#include <vector>
+
 #include "EngineExport.h"
 
 #include "Core/GraphicsAPI/Vulkan/VulkanInterface.h"
@@ -35,7 +37,7 @@ namespace Engine
 			ENGINE_API ~Renderer() = default;
 
 			ENGINE_API void Init(RendererType a_type, Window::IWindow* a_window);
-			ENGINE_API void Run(Window::IWindow* a_window, const GamePlay::GameObjectData* a_gameObjectDatas) const;
+			ENGINE_API void Run(Window::IWindow* a_window, std::vector<GamePlay::GameObjectData> a_gameObjectDatas) const;
 			ENGINE_API void WaitIdle() const;
 			ENGINE_API void Destroy();
 

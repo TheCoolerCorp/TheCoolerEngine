@@ -77,7 +77,10 @@ namespace Engine
 				mCommandBuffers.push_back(t_commandBuffers);
 			}
 
-			void VulkanCommandPool::RecordCommandBuffer(const VkCommandBuffer a_commandBuffer, const uint32_t a_imageIndex, const VkRenderPass a_renderPass, VulkanSwapchain* a_swapChain, const VulkanGraphicPipeline* a_graphicPipeline, const GamePlay::GameObjectData a_gameObjectDatas[])
+			void VulkanCommandPool::RecordCommandBuffer(const VkCommandBuffer a_commandBuffer,
+				const uint32_t a_imageIndex, const VkRenderPass a_renderPass, VulkanSwapchain* a_swapChain,
+				const VulkanGraphicPipeline* a_graphicPipeline,
+				std::vector<GamePlay::GameObjectData> a_gameObjectDatas)
 			{
 				const VkExtent2D t_swapChainExtent = a_swapChain->GetExtent2D();
 				const VkPipeline t_pipeline = a_graphicPipeline->GetPipeline();
@@ -92,12 +95,12 @@ namespace Engine
 				t_renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
 				t_renderPassInfo.renderPass = a_renderPass;
 				t_renderPassInfo.framebuffer = a_swapChain->GetFramebuffers()[a_imageIndex];
-				t_renderPassInfo.renderArea.offset = { .x= 0, .y= 0};
+				t_renderPassInfo.renderArea.offset = { .x = 0, .y = 0 };
 				t_renderPassInfo.renderArea.extent = t_swapChainExtent;
 
 				std::array<VkClearValue, 2> t_clearValues{};
 				t_clearValues[0].color = { {0.467f, 0.71f, 1.f, 0.996f} };
-				t_clearValues[1].depthStencil = { .depth= 1.0f, .stencil= 0};
+				t_clearValues[1].depthStencil = { .depth = 1.0f, .stencil = 0 };
 
 				t_renderPassInfo.clearValueCount = static_cast<uint32_t>(t_clearValues.size());
 				t_renderPassInfo.pClearValues = t_clearValues.data();
@@ -116,15 +119,12 @@ namespace Engine
 				vkCmdSetViewport(a_commandBuffer, 0, 1, &t_viewport);
 
 				VkRect2D t_scissor;
-				t_scissor.offset = { .x= 0, .y= 0};
+				t_scissor.offset = { .x = 0, .y = 0 };
 				t_scissor.extent = t_swapChainExtent;
 				vkCmdSetScissor(a_commandBuffer, 0, 1, &t_scissor);
 
-				int t_dataSize = sizeof(a_gameObjectDatas) / sizeof(a_gameObjectDatas[0]);
-
-				for (int i = 0; i < t_dataSize; ++i)
+				for (GamePlay::GameObjectData t_gameObjectData : a_gameObjectDatas)
 				{
-					GamePlay::GameObjectData t_gameObjectData = a_gameObjectDatas[i];
 					VkBuffer t_vertexBuffer = t_gameObjectData.mVertexBuffer->CastVulkan()->GetBuffer();
 					constexpr VkDeviceSize t_offsets[] = { 0 };
 					vkCmdBindVertexBuffers(a_commandBuffer, 0, 1, &t_vertexBuffer, t_offsets);
@@ -132,8 +132,8 @@ namespace Engine
 					vkCmdBindIndexBuffer(a_commandBuffer, t_gameObjectData.mIndexBuffer->CastVulkan()->GetBuffer(), 0, VK_INDEX_TYPE_UINT16);
 
 					vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, t_layout, 1, 1,
-					                        &t_gameObjectData.mDescriptor->CastVulkan()->GetDescriptorSets()[a_swapChain
-						                        ->GetMaxFrame()], 0, nullptr);
+						&t_gameObjectData.mDescriptor->CastVulkan()->GetDescriptorSets()[a_swapChain
+						->GetMaxFrame()], 0, nullptr);
 
 					vkCmdDrawIndexed(a_commandBuffer, t_gameObjectData.mNbIndices, 1, 0, 0, 0);
 				}

@@ -180,7 +180,7 @@ namespace Engine
 				return m_framebuffers;
 			}
 
-			void VulkanSwapchain::DrawFrame(Window::IWindow* a_window, RHI::ILogicalDevice* a_logicalDevice, RHI::ICommandPool* a_commandPool, RHI::ISurface* a_surface, RHI::IPhysicalDevice* a_physicalDevice, RHI::IRenderPass* a_renderPass, const GamePlay::GameObjectData* a_gameObjectDatas)
+			void VulkanSwapchain::DrawFrame(Window::IWindow* a_window, RHI::ILogicalDevice* a_logicalDevice, RHI::ICommandPool* a_commandPool, RHI::ISurface* a_surface, RHI::IPhysicalDevice* a_physicalDevice, RHI::IRenderPass* a_renderPass, std::vector<GamePlay::GameObjectData> a_gameObjectDatas)
 			{
 				VulkanCommandPool* t_commandPool = a_commandPool->CastVulkan();
 				const VulkanLogicalDevice* t_logicalDevice = a_logicalDevice->CastVulkan();

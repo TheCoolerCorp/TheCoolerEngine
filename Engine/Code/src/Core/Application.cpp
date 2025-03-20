@@ -23,7 +23,7 @@ namespace Engine
 			while (!m_mainWindow->ShouldClose())
 			{
 				m_mainWindow->PollEvents();
-				m_renderer->Run(m_mainWindow, m_gameObjectDatas.data());
+				m_renderer->Run(m_mainWindow, m_gameObjectDatas);
 			}
 			m_renderer->WaitIdle();
 		}
