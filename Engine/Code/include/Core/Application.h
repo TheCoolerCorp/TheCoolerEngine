@@ -10,6 +10,11 @@
 
 namespace Engine
 {
+	namespace GamePlay
+	{
+		struct GameObjectData;
+	}
+
 	namespace Core
 	{
 		class Application
@@ -26,6 +31,7 @@ namespace Engine
 		private:
 			Window::IWindow* m_mainWindow = nullptr;
 			Renderer* m_renderer = nullptr;
+			std::vector<GamePlay::GameObjectData> m_gameObjectDatas{};
 		};
 	}
 }

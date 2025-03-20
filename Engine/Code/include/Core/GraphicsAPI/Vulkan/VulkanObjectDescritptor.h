@@ -24,6 +24,8 @@ namespace Engine
 				ENGINE_API void Destroy(RHI::ILogicalDevice* a_logicalDevice) override;
 				ENGINE_API void Update(uint32_t a_frameIndex, RHI::ILogicalDevice* a_logicalDevice, void* a_uploadData) override;
 
+				ENGINE_API const VkDescriptorSet* GetDescriptorSets() const { return m_descriptorSets.data(); }
+
 			private:
 				std::vector<VulkanBuffer*> m_uniforms;
 				std::vector<VkDescriptorSet> m_descriptorSets;

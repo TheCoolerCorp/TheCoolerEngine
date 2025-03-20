@@ -6,10 +6,14 @@
 #include "Core/GraphicsAPI/Vulkan/VulkanSurface.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanLogicalDevice.h"
 #include "Core/GraphicsAPI/Vulkan/QueueFamilies.h"
+#include "Core/GraphicsAPI/Vulkan/VulkanBuffer.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanGraphicPipeline.h"
+#include "Core/GraphicsAPI/Vulkan/VulkanObjectDescritptor.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanRenderPass.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanSwapChain.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanUtils.h"
+
+#include "GamePlay/GameObject.h"
 
 namespace Engine
 {
@@ -51,8 +55,8 @@ namespace Engine
 			{
 				const uint32_t t_maxFrames = a_swapChain->CastVulkan()->GetMaxFrame();
 				VkRenderPass t_renderPass = a_renderPass->CastVulkan()->GetRenderPass();
-				VkPipeline t_pipeline = a_graphicPipeline->CastVulkan()->GetPipeline();
-				std::vector<std::tuple<VkCommandBuffer, VkRenderPass, VkPipeline>> t_commandBuffers = std::vector<std::tuple<VkCommandBuffer, VkRenderPass, VkPipeline>>(t_maxFrames);
+				VulkanGraphicPipeline* t_pipeline = a_graphicPipeline->CastVulkan();
+				std::vector<std::tuple<VkCommandBuffer, VkRenderPass, VulkanGraphicPipeline*>> t_commandBuffers = std::vector<std::tuple<VkCommandBuffer, VkRenderPass, VulkanGraphicPipeline*>>(t_maxFrames);
 
 				for (uint32_t i = 0; i < t_maxFrames; ++i)
 				{
@@ -73,9 +77,11 @@ namespace Engine
 				mCommandBuffers.push_back(t_commandBuffers);
 			}
 
-			void VulkanCommandPool::RecordCommandBuffer(const VkCommandBuffer a_commandBuffer, const uint32_t a_imageIndex, const VkRenderPass a_renderPass, const VulkanSwapchain* a_swapChain, const VkPipeline a_graphicPipeline)
+			void VulkanCommandPool::RecordCommandBuffer(const VkCommandBuffer a_commandBuffer, const uint32_t a_imageIndex, const VkRenderPass a_renderPass, VulkanSwapchain* a_swapChain, const VulkanGraphicPipeline* a_graphicPipeline, GamePlay::GameObjectData* a_gameObjectDatas)
 			{
 				const VkExtent2D t_swapChainExtent = a_swapChain->GetExtent2D();
+				const VkPipeline t_pipeline = a_graphicPipeline->GetPipeline();
+				const VkPipelineLayout t_layout = a_graphicPipeline->GetLayout();
 
 				VkCommandBufferBeginInfo t_beginInfo{};
 				t_beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
@@ -98,7 +104,7 @@ namespace Engine
 
 				vkCmdBeginRenderPass(a_commandBuffer, &t_renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 
-				vkCmdBindPipeline(a_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, a_graphicPipeline);
+				vkCmdBindPipeline(a_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, t_pipeline);
 
 				VkViewport t_viewport;
 				t_viewport.x = 0.0f;
@@ -114,8 +120,20 @@ namespace Engine
 				t_scissor.extent = t_swapChainExtent;
 				vkCmdSetScissor(a_commandBuffer, 0, 1, &t_scissor);
 
+				for (const GamePlay::GameObjectData t_gameObjectData : a_gameObjectDatas)
+				{
+					VkBuffer t_vertexBuffer = t_gameObjectData.mVertexBuffer->CastVulkan()->GetBuffer();
+					constexpr VkDeviceSize t_offsets[] = { 0 };
+					vkCmdBindVertexBuffers(a_commandBuffer, 0, 1, &t_vertexBuffer, t_offsets);
 
-				vkCmdDraw(a_commandBuffer, 3, 1, 0, 0);
+					vkCmdBindIndexBuffer(a_commandBuffer, t_gameObjectData.mIndexBuffer->CastVulkan()->GetBuffer(), 0, VK_INDEX_TYPE_UINT16);
+
+					vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, t_layout, 1, 1,
+					                        &t_gameObjectData.mDescriptor->CastVulkan()->GetDescriptorSets()[a_swapChain
+						                        ->GetMaxFrame()], 0, nullptr);
+
+					vkCmdDrawIndexed(a_commandBuffer, t_gameObjectData.mNbIndices, 1, 0, 0, 0);
+				}
 
 				vkCmdEndRenderPass(a_commandBuffer);
 

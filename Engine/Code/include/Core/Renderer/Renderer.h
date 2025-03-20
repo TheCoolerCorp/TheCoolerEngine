@@ -14,6 +14,11 @@
 
 namespace Engine
 {
+	namespace GamePlay
+	{
+		struct GameObjectData;
+	}
+
 	namespace Core
 	{
 		enum class RendererType
@@ -30,7 +35,7 @@ namespace Engine
 			ENGINE_API ~Renderer() = default;
 
 			ENGINE_API void Init(RendererType a_type, Window::IWindow* a_window);
-			ENGINE_API void Run(Window::IWindow* a_window);
+			ENGINE_API void Run(Window::IWindow* a_window, const GamePlay::GameObjectData* a_gameObjectDatas) const;
 			ENGINE_API void WaitIdle() const;
 			ENGINE_API void Destroy();
 

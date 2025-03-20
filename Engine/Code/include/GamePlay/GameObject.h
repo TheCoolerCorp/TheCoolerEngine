@@ -27,6 +27,15 @@ namespace Engine
 			int size;
 		};
 
+		struct GameObjectData
+		{
+			Core::RHI::IBuffer* mVertexBuffer = nullptr;
+			Core::RHI::IBuffer* mIndexBuffer = nullptr;
+			Core::RHI::IImage* mImage = nullptr;
+			Core::RHI::IObjectDescriptor* mDescriptor = nullptr;
+			uint32_t mNbIndices = 0;
+		};
+
 
 		class GameObject
 		{
@@ -37,6 +46,8 @@ namespace Engine
 			GameObject(Math::vec3 a_position, Math::quat a_rotation, Math::vec3 a_scale);
 
 			void Create(Core::RHI::ApiInterface* a_interface, GameObjectinfo a_info);
+
+			GameObjectData SubmitData();
 			
 
 			template<typename T>

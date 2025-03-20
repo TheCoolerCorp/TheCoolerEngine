@@ -17,5 +17,16 @@ namespace Engine
 			m_descriptor = a_interface->InstantiateObjectDescriptor();
 			m_descriptor->Create(a_info.a_logicalDevice, a_info.a_physicalDevice, a_info.a_graphicPipeline, a_info.a_descriptorPool, a_info.a_commandPool, this, a_info.size);
 		}
+
+		GameObjectData GameObject::SubmitData()
+		{
+			return {
+				.mVertexBuffer= GetComponent<MeshComponent>()->GetMesh()->GetVertexBuffer(),
+				.mIndexBuffer= GetComponent<MeshComponent>()->GetMesh()->GetIndexBuffer(),
+				.mImage= GetComponent<TextureComponent>()->GetTexture()->GetImage(),
+				.mDescriptor= m_descriptor, 
+				.mNbIndices= GetComponent<MeshComponent>()->GetMesh()->GetNbIndices()
+			};
+		}
 	}
 }

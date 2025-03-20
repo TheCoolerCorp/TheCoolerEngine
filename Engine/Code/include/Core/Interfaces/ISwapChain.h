@@ -5,6 +5,11 @@
 
 namespace Engine
 {
+	namespace GamePlay
+	{
+		struct GameObjectData;
+	}
+
 	namespace Core
 	{
 		namespace Window
@@ -38,7 +43,7 @@ namespace Engine
 				ENGINE_API virtual void CreateSyncObjects(ILogicalDevice* a_logicalDevice) {}
 				ENGINE_API virtual void Destroy(RHI::ILogicalDevice* a_logicalDevice) = 0;
 
-				ENGINE_API virtual void DrawFrame(Window::IWindow* a_window, RHI::ILogicalDevice* a_logicalDevice, RHI::ICommandPool* a_commandPool, RHI::ISurface* a_surface, RHI::IPhysicalDevice* a_physicalDevice, RHI::IRenderPass* a_renderPass) = 0;
+				ENGINE_API virtual void DrawFrame(Window::IWindow* a_window, RHI::ILogicalDevice* a_logicalDevice, RHI::ICommandPool* a_commandPool, RHI::ISurface* a_surface, RHI::IPhysicalDevice* a_physicalDevice, RHI::IRenderPass* a_renderPass, GamePlay::GameObjectData* a_gameObjectDatas) = 0;
 
 			};
 		}
