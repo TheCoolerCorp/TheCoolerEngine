@@ -7,13 +7,27 @@
 #include <string>
 
 #include "Core/Logger/Logger.h"
-#include "Component.h"
+
 #include "Math/Transform.h"
+#include "Component.h"
+#include "Core/Interfaces/IObjectDescriptor.h"
+#include "Core/Interfaces/ApiInterface.h"
 
 namespace Engine
 {
 	namespace GamePlay
 	{
+		struct GameObjectinfo
+		{
+			Core::RHI::ILogicalDevice* a_logicalDevice;
+			Core::RHI::IPhysicalDevice* a_physicalDevice;
+			Core::RHI::IGraphicPipeline* a_graphicPipeline;
+			Core::RHI::IDescriptorPool* a_descriptorPool;
+			Core::RHI::ICommandPool* a_commandPool;
+			int size;
+		};
+
+
 		class GameObject
 		{
 		public:
@@ -22,17 +36,19 @@ namespace Engine
 
 			GameObject(Math::vec3 a_position, Math::quat a_rotation, Math::vec3 a_scale);
 
+			void Create(Core::RHI::ApiInterface* a_interface, GameObjectinfo a_info);
+			
+
 			template<typename T>
 			void AddComponent(std::string a_path)
 			{
 				static_assert(std::is_base_of<Component, T>::value, "Type is not a component");
 
-
 				if (GetComponent<T>())
 				{
-					//LOG_ERROR("")
+					LOG_ERROR("Already as this type of component");
+					return;
 				}
-
 
 				std::shared_ptr<T> component = std::make_shared<T>();
 
@@ -82,12 +98,14 @@ namespace Engine
 				}
 			}
 
-			std::vector<std::shared_ptr<Component>> GetComponent() { return m_components; }
+			std::vector<std::shared_ptr<Component>> GetComponents() { return m_components; }
 			Math::Transform GetTransform() { return m_transform; }
 
 		private:
 			std::vector<std::shared_ptr<Component>> m_components;
 			Math::Transform m_transform;
+
+			Core::RHI::IObjectDescriptor* m_descriptor;
 		};
 
 		
