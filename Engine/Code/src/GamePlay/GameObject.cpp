@@ -18,6 +18,12 @@ namespace Engine
 			m_descriptor->Create(a_info.a_logicalDevice, a_info.a_physicalDevice, a_info.a_graphicPipeline, a_info.a_descriptorPool, a_info.a_commandPool, this, a_info.size);
 		}
 
+		void GameObject::Update(uint32_t a_frameIndex, Engine::Core::RHI::ILogicalDevice* a_logicalDevice)
+		{
+			m_transform.UpdateMatrix();
+			m_descriptor->Update(a_frameIndex, a_logicalDevice, m_transform.GetModel().mElements.data());
+		}
+
 		GameObjectData GameObject::SubmitData()
 		{
 			return {

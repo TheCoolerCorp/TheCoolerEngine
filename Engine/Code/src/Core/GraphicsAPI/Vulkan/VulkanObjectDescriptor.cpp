@@ -39,13 +39,13 @@ namespace Engine
 
                     RHI::BufferData t_uniformData;
                     t_uniformData.mUboData = t_mat.mElements.data();
-                    t_uniformData.mUboSize = t_mat.mElements.size();
+                    t_uniformData.mUboSize = 16 * sizeof(float);
                     m_uniforms[i]->Create(RHI::BufferType::UBO, t_uniformData, a_physicalDevice, a_logicalDevice, a_commandPool);
 
                     VkDescriptorBufferInfo bufferInfo{};
                     bufferInfo.buffer = m_uniforms[i]->GetBuffer();
                     bufferInfo.offset = 0;
-                    bufferInfo.range = sizeof(m_uniforms[i]->GetBuffer());
+                    bufferInfo.range = 16 * sizeof(float);
 
                 	VkDescriptorImageInfo imageInfo{};
                     imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;

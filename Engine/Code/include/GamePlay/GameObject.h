@@ -15,6 +15,14 @@
 
 namespace Engine
 {
+	namespace Core
+	{
+		namespace RHI
+		{
+			class ILogicalDevice;
+		}
+	}
+
 	namespace GamePlay
 	{
 		struct GameObjectinfo
@@ -46,6 +54,7 @@ namespace Engine
 			GameObject(Math::vec3 a_position, Math::quat a_rotation, Math::vec3 a_scale);
 
 			void Create(Core::RHI::ApiInterface* a_interface, GameObjectinfo a_info);
+			void Update(uint32_t a_frameIndex, Engine::Core::RHI::ILogicalDevice* a_logicalDevice);
 
 			GameObjectData SubmitData();
 			
