@@ -45,12 +45,12 @@ namespace Engine
                     VkDescriptorBufferInfo bufferInfo{};
                     bufferInfo.buffer = m_uniforms[i]->GetBuffer();
                     bufferInfo.offset = 0;
-                    bufferInfo.range = sizeof(VulkanBuffer);
+                    bufferInfo.range = sizeof(m_uniforms[i]->GetBuffer());
 
                 	VkDescriptorImageInfo imageInfo{};
                     imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
                     imageInfo.imageView = a_gameObject->GetComponent<GamePlay::TextureComponent>()->GetTexture()->GetImage()->CastVulkan()->GetView();
-					imageInfo.sampler;
+					imageInfo.sampler = a_gameObject->GetComponent<GamePlay::TextureComponent>()->GetTexture()->GetImage()->CastVulkan()->GetSampler();
 
                     std::array<VkWriteDescriptorSet, 2> descriptorWrites{};
 

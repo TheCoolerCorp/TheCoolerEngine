@@ -152,7 +152,7 @@ namespace Engine
 					pipelineInfo.pDynamicState = &dynamicState;
 					pipelineInfo.layout = m_layout;
 					pipelineInfo.renderPass = a_renderPass->CastVulkan()->GetRenderPass();
-					pipelineInfo.subpass = 1;
+					pipelineInfo.subpass = 0;
 					pipelineInfo.basePipelineHandle = VK_NULL_HANDLE; // Optional
 					pipelineInfo.basePipelineIndex = -1; // Optional
 					pipelineInfo.pDepthStencilState = &depthStencil;

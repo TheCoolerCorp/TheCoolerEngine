@@ -131,9 +131,7 @@ namespace Engine
 
 					vkCmdBindIndexBuffer(a_commandBuffer, t_gameObjectData.mIndexBuffer->CastVulkan()->GetBuffer(), 0, VK_INDEX_TYPE_UINT16);
 
-					vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, t_layout, 1, 1,
-					                        &t_gameObjectData.mDescriptor->CastVulkan()->GetDescriptorSets()[a_swapChain
-						                        ->GetMaxFrame()], 0, nullptr);
+					vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, t_layout, 0, 1, &t_gameObjectData.mDescriptor->CastVulkan()->GetDescriptorSets()[a_imageIndex], 0, nullptr);
 
 					vkCmdDrawIndexed(a_commandBuffer, t_gameObjectData.mNbIndices, 1, 0, 0, 0);
 				}
