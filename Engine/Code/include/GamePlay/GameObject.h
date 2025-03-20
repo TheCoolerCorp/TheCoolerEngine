@@ -62,20 +62,17 @@ namespace Engine
 			{
 				static_assert(std::is_base_of<Component, T>::value, "Type is not a component");
 
-				for (auto it = m_components.begin(); it != m_components.end();)
+				for (const auto& component : m_components)
 				{
-					std::shared_ptr<T> component = dynamic_cast<std::shared_ptr<T>()>(it);
-					std::shared_ptr<T> wantedComponent = std::make_shared<T>();
-					if (component == wantedComponent)
+					std::shared_ptr<T> castedComponent = std::dynamic_pointer_cast<T>(component);
+
+					if (castedComponent)
 					{
-						return component;
-					}
-					else
-					{
-						++it;
+						return castedComponent;
 					}
 					return nullptr;
 				}
+				return nullptr;
 			}
 
 			template<typename T>

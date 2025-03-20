@@ -6,6 +6,7 @@
 #include "Core/GraphicsAPI/Vulkan/VulkanDescriptorPool.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanCommandPool.h"
 #include "GamePlay/GameObject.h"
+#include "GamePlay/TextureComponent.h"
 
 namespace Engine
 {
@@ -45,10 +46,9 @@ namespace Engine
                     bufferInfo.offset = 0;
                     bufferInfo.range = sizeof(VulkanBuffer);
 
-                	//VkDescriptorImageInfo imageInfo{};
-                    //imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-                    //imageInfo.imageView = vkTexture->imageView;
-                    //imageInfo.sampler = vkSampler->textureSampler;
+                	VkDescriptorImageInfo imageInfo{};
+                    imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+                    imageInfo.imageView = a_gameObject->GetComponent<GamePlay::TextureComponent>()->GetTexture()->GetImage()->CastVulkan()->GetView();
 
                     std::array<VkWriteDescriptorSet, 2> descriptorWrites{};
 
@@ -60,13 +60,13 @@ namespace Engine
                     descriptorWrites[0].descriptorCount = 1;
                     descriptorWrites[0].pBufferInfo = &bufferInfo;
 
-                    /*descriptorWrites[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-                    descriptorWrites[1].dstSet = descriptorSets[i];
+                    descriptorWrites[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+                    descriptorWrites[1].dstSet = m_descriptorSets[i];
                     descriptorWrites[1].dstBinding = 1;
                     descriptorWrites[1].dstArrayElement = 0;
                     descriptorWrites[1].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
                     descriptorWrites[1].descriptorCount = 1;
-                    descriptorWrites[1].pImageInfo = &imageInfo;*/
+                    descriptorWrites[1].pImageInfo = &imageInfo;
 
                     vkUpdateDescriptorSets(t_logicalDevice, static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
                 }
