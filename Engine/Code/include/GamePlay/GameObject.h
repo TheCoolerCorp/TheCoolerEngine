@@ -55,7 +55,7 @@ namespace Engine
 
 			void Create(Core::RHI::ApiInterface* a_interface, GameObjectinfo a_info);
 			void Update(uint32_t a_frameIndex, Engine::Core::RHI::ILogicalDevice* a_logicalDevice);
-
+			void Destroy(Core::RHI::ApiInterface* a_interface, Core::RHI::ILogicalDevice* a_logicalDevice);
 			GameObjectData SubmitData();
 			
 

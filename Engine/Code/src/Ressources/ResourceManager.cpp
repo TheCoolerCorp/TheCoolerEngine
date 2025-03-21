@@ -17,14 +17,15 @@ namespace Engine
 				return;
 			}
 
-			for (auto resource : m_resources)
+			// NEED CHANGE HERE
+			/*for (auto resource : m_resources)
 			{
 				if (resource.second)
 				{
 					delete resource.second;
 				}
 				m_resources.erase(resource.first);
-			}
+			}*/
 		}
 
 

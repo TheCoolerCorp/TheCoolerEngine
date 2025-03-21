@@ -89,6 +89,7 @@ namespace Engine
 				{
 					m_uniforms[i]->Destroy(a_logicalDevice);
 				}
+				m_uniforms.clear();
 				m_descriptorSets.clear();
 			}
 		}

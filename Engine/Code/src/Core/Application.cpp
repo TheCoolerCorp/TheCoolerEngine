@@ -44,9 +44,10 @@ namespace Engine
 		{
 			m_gameObjectDatas.clear();
 
-			for (const GamePlay::GameObject* t_gameObject : m_gameObjects)
+			for (int i = 0; i < m_gameObjects.size(); ++i)
 			{
-				delete t_gameObject;
+				m_gameObjects[i]->Destroy(m_renderer->GetInterface(), m_renderer->GetLogicalDevice());
+				delete m_gameObjects[i];
 			}
 			m_gameObjects.clear();
 
