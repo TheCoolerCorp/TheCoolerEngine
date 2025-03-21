@@ -7,6 +7,7 @@
 #include "Core/GraphicsAPI/Vulkan/VulkanCommandPool.h"
 #include "GamePlay/GameObject.h"
 #include "GamePlay/TextureComponent.h"
+#include "Core/GraphicsAPI/Vulkan/VulkanBuffer.h"
 
 namespace Engine
 {
@@ -30,10 +31,6 @@ namespace Engine
 				m_descriptorSets.resize(a_size);
 				m_uniforms.resize(a_size);
 
-				std::cout << "Logical Device: " << t_logicalDevice << std::endl;
-				std::cout << "Descriptor Set Layout: " << t_descriptorSetLayout << std::endl;
-				std::cout << "Descriptor Pool: " << t_descriptorPool << std::endl;
-				std::cout << "Descriptor Set Count: " << a_size << std::endl;
 				VK_CHECK(vkAllocateDescriptorSets(t_logicalDevice, &allocInfo, m_descriptorSets.data()), "Can't allocate descriptor sets");
 
                 for (size_t i = 0; i < a_size; i++)
@@ -79,13 +76,12 @@ namespace Engine
                 }
 			}
 
-			void  VulkanObjectDescriptor::Update(uint32_t a_frameIndex, RHI::ILogicalDevice* a_logicalDevice, void* a_uploadData)
+			void  VulkanObjectDescriptor::Update(const uint32_t a_frameIndex, RHI::ILogicalDevice* a_logicalDevice, void* a_uploadData)
 			{
-                void* data;
-                vkMapMemory(a_logicalDevice->CastVulkan()->GetVkDevice(), m_uniforms[a_frameIndex]->GetMemory(), 0, sizeof(VulkanBuffer), 0, &data);
-                memcpy(data, a_uploadData, sizeof(a_uploadData));
+                void* t_data;
+                vkMapMemory(a_logicalDevice->CastVulkan()->GetVkDevice(), m_uniforms[a_frameIndex]->GetMemory(), 0, sizeof(VulkanBuffer), 0, &t_data);
+                memcpy(t_data, a_uploadData, sizeof(a_uploadData));
 				vkUnmapMemory(a_logicalDevice->CastVulkan()->GetVkDevice(), m_uniforms[a_frameIndex]->GetMemory());
-				
 			}
 
 			void VulkanObjectDescriptor::Destroy(RHI::ILogicalDevice* a_logicalDevice)

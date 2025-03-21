@@ -68,7 +68,7 @@ namespace Engine
                 {
                     vertex.mUv = Math::vec2(
                         mesh->mTextureCoords[0][i].x,
-                        mesh->mTextureCoords[0][i].y
+                        1.f - mesh->mTextureCoords[0][i].y
                     );
                 }
 
