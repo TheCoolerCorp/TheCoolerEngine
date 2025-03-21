@@ -1,8 +1,9 @@
-#include "Core/Application.h"
+#include "Application.h"
 
 #include "GamePlay/GameObject.h"
 #include "GamePlay/TextureComponent.h"
 #include "GamePlay/Meshcomponent.h"
+
 namespace Engine
 {
 	namespace Core
@@ -20,6 +21,8 @@ namespace Engine
 			t_obj->Create(m_renderer->GetInterface(), { m_renderer->GetLogicalDevice(), m_renderer->GetPhysicalDevice(), m_renderer->GetPipeline(), m_renderer->GetDescriptorPool(), m_renderer->GetCommandPool(), 3 });
 			m_gameObjectDatas.push_back(t_obj->SubmitData());
 			m_gameObjects.push_back(t_obj);
+
+			m_imGuiLayer = std::make_unique<ImGuiLayer>();
 		}
 
 		void Application::Run()
@@ -33,6 +36,7 @@ namespace Engine
 					m_gameObjectDatas.push_back(t_gameObject->SubmitData());
 				}
 				m_mainWindow->PollEvents();
+
 				m_renderer->Run(m_mainWindow, m_gameObjectDatas);
 			}
 			m_renderer->WaitIdle();

@@ -94,5 +94,11 @@ void VulkanImGuiRenderer::NewFrame()
 void VulkanImGuiRenderer::Render()
 {
 	ImGui::Render();
+	m_drawData = ImGui::GetDrawData();
 	//ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), vkGetCurrentCommandBuffer());
+}
+
+ImDrawData* VulkanImGuiRenderer::GetDrawData()
+{
+	return m_drawData;
 }

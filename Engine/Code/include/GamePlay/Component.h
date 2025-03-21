@@ -29,7 +29,7 @@ namespace Engine
 			ENGINE_API virtual void Destroy(Core::RHI::ILogicalDevice* a_logicalDevice) = 0;
 
 		protected:
-			virtual void ComputeName(std::string a_path);
+			ENGINE_API virtual void ComputeName(std::string a_path);
 
 			std::string m_name;
 		};

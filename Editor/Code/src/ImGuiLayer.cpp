@@ -1,11 +1,14 @@
 #include "ImGuiLayer.h"
 
-std::unique_ptr<RHIImGuiRenderer> ImGuiLayer::m_ImGuiRenderer;
-std::unique_ptr<MainWindow> ImGuiLayer::m_MainWindow;
-std::vector<std::shared_ptr<SubWindow>> ImGuiLayer::m_SubWindows;
+//ImGui includes
+#include "imgui.h"
+#include "backends/imgui_impl_glfw.h"
+#include "backends/imgui_impl_vulkan.h"
+#include <VulkanImGuiRenderer.h>
 
 void ImGuiLayer::Init(IWindow* window, Renderer* renderer)
 {
+	m_ImGuiRenderer = new VulkanImGuiRenderer();
 	m_ImGuiRenderer->Init(window, renderer);
 }
 
@@ -46,4 +49,9 @@ void ImGuiLayer::Start(const char* name)
 void ImGuiLayer::End()
 {
 	ImGui::End();
+}
+
+ImDrawData* ImGuiLayer::GetDrawData()
+{
+	return m_ImGuiRenderer->GetDrawData();
 }

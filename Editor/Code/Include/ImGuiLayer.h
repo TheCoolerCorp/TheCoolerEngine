@@ -27,11 +27,14 @@ public:
 	static void ImGuiDraw();
 	static void Render();
 
+	static ImDrawData* GetDrawData();
+
 	static void Start(const char* name);
 	static void End();
 
+
 private:
-	static std::unique_ptr<RHIImGuiRenderer> m_ImGuiRenderer;
+	static RHIImGuiRenderer* m_ImGuiRenderer;
 
 	static std::unique_ptr<MainWindow> m_MainWindow;
 	static std::vector<std::shared_ptr<SubWindow>> m_SubWindows;

@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "EngineExport.h"
+#include "ImGuiLayer.h"
 
 #include "Core/GraphicsAPI/Vulkan/VulkanInterface.h"
 
@@ -18,16 +19,17 @@ namespace Engine
 		class Application
 		{
 		public:
-			ENGINE_API Application() = default;
-			ENGINE_API ~Application() = default;
+			Application() = default;
+			~Application() = default;
 
-			ENGINE_API void Create(int a_width, int a_height);
-			ENGINE_API void Run();
-			ENGINE_API void Destroy();
-			ENGINE_API Window::IWindow* GetWindow() const { return m_mainWindow; }
+			void Create(int a_width, int a_height);
+			void Run();
+			void Destroy();
+			Window::IWindow* GetWindow() const { return m_mainWindow; }
 
 		private:
 			Window::IWindow* m_mainWindow = nullptr;
+			std::unique_ptr<ImGuiLayer> m_imGuiLayer;
 			Renderer* m_renderer = nullptr;
 			std::vector<GamePlay::GameObjectData> m_gameObjectDatas;
 			std::vector<GamePlay::GameObject*> m_gameObjects;

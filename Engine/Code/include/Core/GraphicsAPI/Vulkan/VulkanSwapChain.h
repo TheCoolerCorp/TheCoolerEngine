@@ -1,6 +1,8 @@
 #ifndef IVULKANSWAPCHAIN_H
 #define IVULKANSWAPCHAIN_H
 
+#include <functional>
+
 #include "Core/Interfaces/ISwapChain.h"
 #include  "Core/Interfaces/IRenderPass.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanUtils.h"
@@ -22,6 +24,8 @@ namespace Engine
 			class VulkanSwapchain : public RHI::ISwapChain
 			{
 			public:
+				using renderCallBack = std::function<void(VkCommandBuffer)>;
+
 				ENGINE_API VulkanSwapchain();
 
 				ENGINE_API void Create(RHI::ISurface* a_surface, Window::IWindow* a_window, RHI::IPhysicalDevice* a_physicalDevice, RHI::ILogicalDevice* a_logicalDevice) override;
@@ -45,11 +49,18 @@ namespace Engine
 
 				ENGINE_API void DrawFrame(Window::IWindow* a_window, RHI::ILogicalDevice* a_logicalDevice, RHI::ICommandPool* a_commandPool, RHI::ISurface* a_surface, RHI::IPhysicalDevice* a_physicalDevice, RHI::IRenderPass* a_renderPass, std::vector<GamePlay::GameObjectData> a_objectsData) override;
 
+				ENGINE_API void AddRenderCallBack(renderCallBack callback)
+				{
+					m_renderCallbacks.push_back(callback);
+				}
+
 			private:
+				std::vector<renderCallBack> m_renderCallbacks;
+
 				VkSwapchainKHR m_swapChain = VK_NULL_HANDLE;
 
 				VkFormat m_swapChainImageFormat = VK_FORMAT_UNDEFINED;
-				VkExtent2D m_swapChainExtent;
+				VkExtent2D	m_swapChainExtent;
 
 				std::vector<VkImage> m_images = std::vector<VkImage>(0);
 				std::vector<VkImageView> m_imageViews = std::vector<VkImageView>(0);

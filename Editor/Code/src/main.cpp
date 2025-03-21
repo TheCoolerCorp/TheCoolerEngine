@@ -1,6 +1,6 @@
 #include <iostream>
 #include "Math/vec3.h"
-#include "Core/Application.h"
+#include "Application.h"
 #include "Core/Logger/Logger.h"
 #include "Core/Assertion/Assertion.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanInstance.h"

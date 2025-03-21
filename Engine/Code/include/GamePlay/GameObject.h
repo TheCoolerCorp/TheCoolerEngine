@@ -48,15 +48,15 @@ namespace Engine
 		class GameObject
 		{
 		public:
-			GameObject() = default;
-			~GameObject() = default;
+			ENGINE_API GameObject() = default;
+			ENGINE_API ~GameObject() = default;
 
-			GameObject(Math::vec3 a_position, Math::quat a_rotation, Math::vec3 a_scale);
+			ENGINE_API GameObject(Math::vec3 a_position, Math::quat a_rotation, Math::vec3 a_scale);
 
-			void Create(Core::RHI::ApiInterface* a_interface, GameObjectinfo a_info);
-			void Update(uint32_t a_frameIndex, Engine::Core::RHI::ILogicalDevice* a_logicalDevice);
+			ENGINE_API void Create(Core::RHI::ApiInterface* a_interface, GameObjectinfo a_info);
+			ENGINE_API void Update(uint32_t a_frameIndex, Engine::Core::RHI::ILogicalDevice* a_logicalDevice);
 
-			GameObjectData SubmitData();
+			ENGINE_API GameObjectData SubmitData();
 			
 
 			template<typename T>

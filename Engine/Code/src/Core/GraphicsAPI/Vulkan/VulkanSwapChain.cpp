@@ -207,6 +207,7 @@ namespace Engine
 					const VkCommandBuffer t_commandBuffer = std::get<VkCommandBuffer>(t_commandPool->mCommandBuffers[i][m_currentFrame]);
 					const VkRenderPass t_renderPass = std::get<VkRenderPass>(t_commandPool->mCommandBuffers[i][m_currentFrame]);
 					const VulkanGraphicPipeline* t_pipeline = std::get<VulkanGraphicPipeline*>(t_commandPool->mCommandBuffers[i][m_currentFrame]);
+					
 					t_commandBuffers.push_back(t_commandBuffer);
 					vkResetCommandBuffer(t_commandBuffer, 0);
 					VulkanCommandPool::RecordCommandBuffer(t_commandBuffer, t_imageIndex, t_renderPass, this, t_pipeline, a_objectsData);
