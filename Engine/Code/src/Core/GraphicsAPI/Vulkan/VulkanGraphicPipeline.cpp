@@ -106,38 +106,55 @@ namespace Engine
 					dynamicState.dynamicStateCount = static_cast<uint32_t>(dynamicStates.size());
 					dynamicState.pDynamicStates = dynamicStates.data();
 
-					VkDescriptorSetLayoutBinding uboLayoutBinding{};
-					uboLayoutBinding.binding = 0;
-					uboLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-					uboLayoutBinding.descriptorCount = 1;
-					uboLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
-					uboLayoutBinding.pImmutableSamplers = nullptr; // optional
+					VkDescriptorSetLayoutBinding camUBOLayoutBinding{};
+					camUBOLayoutBinding.binding = 0;
+					camUBOLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+					camUBOLayoutBinding.descriptorCount = 1;
+					camUBOLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+					camUBOLayoutBinding.pImmutableSamplers = nullptr;
+
+					VkDescriptorSetLayoutCreateInfo camUBOLayoutInfo{};
+					camUBOLayoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+					camUBOLayoutInfo.bindingCount = 1;
+					camUBOLayoutInfo.pBindings = &camUBOLayoutBinding;
+
+					VK_CHECK(vkCreateDescriptorSetLayout(a_logicalDevice->CastVulkan()->GetVkDevice(), &camUBOLayoutInfo, nullptr, &m_cameraDescriptor),
+						"Failed to create Camera UBO descriptor set layout");
+
+					VkDescriptorSetLayoutBinding objUBOLayoutBinding{};
+					objUBOLayoutBinding.binding = 0;
+					objUBOLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+					objUBOLayoutBinding.descriptorCount = 1;
+					objUBOLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+					objUBOLayoutBinding.pImmutableSamplers = nullptr;
 
 					VkDescriptorSetLayoutBinding samplerLayoutBinding{};
 					samplerLayoutBinding.binding = 1;
-					samplerLayoutBinding.descriptorCount = 1;
 					samplerLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-					samplerLayoutBinding.pImmutableSamplers = nullptr;
+					samplerLayoutBinding.descriptorCount = 1;
 					samplerLayoutBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+					samplerLayoutBinding.pImmutableSamplers = nullptr;
 
-					std::array<VkDescriptorSetLayoutBinding, 2> bindings = { uboLayoutBinding, samplerLayoutBinding };
+					std::array<VkDescriptorSetLayoutBinding, 2> objBindings = { objUBOLayoutBinding, samplerLayoutBinding };
 
-					VkDescriptorSetLayoutCreateInfo layoutInfo{};
-					layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-					layoutInfo.bindingCount = static_cast<uint32_t>(bindings.size());
-					layoutInfo.pBindings = bindings.data();
+					VkDescriptorSetLayoutCreateInfo objUBOLayoutInfo{};
+					objUBOLayoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+					objUBOLayoutInfo.bindingCount = static_cast<uint32_t>(objBindings.size());
+					objUBOLayoutInfo.pBindings = objBindings.data();
 
-					VK_CHECK(vkCreateDescriptorSetLayout(a_logicalDevice->CastVulkan()->GetVkDevice(), &layoutInfo, nullptr, &m_descriptor), "Failed to reate descriptor set layout");
+					VK_CHECK(vkCreateDescriptorSetLayout(a_logicalDevice->CastVulkan()->GetVkDevice(), &objUBOLayoutInfo, nullptr, &m_objectDescriptor),
+						"Failed to create Object UBO + Sampler descriptor set layout");
+
+					std::array<VkDescriptorSetLayout, 2> descriptorSetLayouts = { m_cameraDescriptor, m_objectDescriptor };
 
 					VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
 					pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
-					pipelineLayoutInfo.setLayoutCount = 1;
-					pipelineLayoutInfo.pSetLayouts = &m_descriptor;
+					pipelineLayoutInfo.setLayoutCount = static_cast<uint32_t>(descriptorSetLayouts.size());
+					pipelineLayoutInfo.pSetLayouts = descriptorSetLayouts.data();
 
-					VK_CHECK(vkCreatePipelineLayout(a_logicalDevice->CastVulkan()->GetVkDevice(), &pipelineLayoutInfo, nullptr, &m_layout), "Failed to create pipeline layout");
+					VK_CHECK(vkCreatePipelineLayout(a_logicalDevice->CastVulkan()->GetVkDevice(), &pipelineLayoutInfo, nullptr, &m_layout),
+						"Failed to create pipeline layout");
 
-
-					// Pipeline creation
 					VkGraphicsPipelineCreateInfo pipelineInfo{};
 					pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
 					pipelineInfo.stageCount = 2;
@@ -147,17 +164,17 @@ namespace Engine
 					pipelineInfo.pViewportState = &viewportState;
 					pipelineInfo.pRasterizationState = &rasterizer;
 					pipelineInfo.pMultisampleState = &multisampling;
-					pipelineInfo.pDepthStencilState = nullptr; // Optional
 					pipelineInfo.pColorBlendState = &colorBlending;
 					pipelineInfo.pDynamicState = &dynamicState;
 					pipelineInfo.layout = m_layout;
 					pipelineInfo.renderPass = a_renderPass->CastVulkan()->GetRenderPass();
 					pipelineInfo.subpass = 0;
-					pipelineInfo.basePipelineHandle = VK_NULL_HANDLE; // Optional
-					pipelineInfo.basePipelineIndex = -1; // Optional
+					pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
+					pipelineInfo.basePipelineIndex = -1;
 					pipelineInfo.pDepthStencilState = &depthStencil;
 
-					VK_CHECK(vkCreateGraphicsPipelines(a_logicalDevice->CastVulkan()->GetVkDevice(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_pipeline), "Failed to create graphic pipeline");
+					VK_CHECK(vkCreateGraphicsPipelines(a_logicalDevice->CastVulkan()->GetVkDevice(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_pipeline),
+						"Failed to create graphic pipeline");
 
 
 					// Destroy shader, already load don't need to store them
@@ -167,7 +184,8 @@ namespace Engine
 
 				void VulkanGraphicPipeline::Destroy(RHI::ILogicalDevice* a_logicalDevice)
 				{
-					vkDestroyDescriptorSetLayout(a_logicalDevice->CastVulkan()->GetVkDevice(), m_descriptor, nullptr);
+					vkDestroyDescriptorSetLayout(a_logicalDevice->CastVulkan()->GetVkDevice(), m_objectDescriptor, nullptr);
+					vkDestroyDescriptorSetLayout(a_logicalDevice->CastVulkan()->GetVkDevice(), m_cameraDescriptor, nullptr);
 					vkDestroyPipeline(a_logicalDevice->CastVulkan()->GetVkDevice(), m_pipeline, nullptr);
 					vkDestroyPipelineLayout(a_logicalDevice->CastVulkan()->GetVkDevice(), m_layout, nullptr);
 				}

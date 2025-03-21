@@ -17,7 +17,7 @@ namespace Engine
 			void VulkanObjectDescriptor::Create(RHI::ILogicalDevice* a_logicalDevice, RHI::IPhysicalDevice* a_physicalDevice, RHI::IGraphicPipeline* a_pipeline, RHI::IDescriptorPool* a_descriptorPool, RHI::ICommandPool* a_commandPool, GamePlay::GameObject* a_gameObject, int a_size)
 			{
 				VkDevice t_logicalDevice = a_logicalDevice->CastVulkan()->GetVkDevice();
-				VkDescriptorSetLayout t_descriptorSetLayout = a_pipeline->CastVulkan()->GetDescriptorSetLayout();
+				VkDescriptorSetLayout t_descriptorSetLayout = a_pipeline->CastVulkan()->GetObjectDescriptorSetLayout();
 				VkDescriptorPool t_descriptorPool = a_descriptorPool->CastVulkan()->GetPool();
 
 				std::vector<VkDescriptorSetLayout> layouts(a_size, t_descriptorSetLayout);
@@ -29,6 +29,11 @@ namespace Engine
 
 				m_descriptorSets.resize(a_size);
 				m_uniforms.resize(a_size);
+
+				std::cout << "Logical Device: " << t_logicalDevice << std::endl;
+				std::cout << "Descriptor Set Layout: " << t_descriptorSetLayout << std::endl;
+				std::cout << "Descriptor Pool: " << t_descriptorPool << std::endl;
+				std::cout << "Descriptor Set Count: " << a_size << std::endl;
 				VK_CHECK(vkAllocateDescriptorSets(t_logicalDevice, &allocInfo, m_descriptorSets.data()), "Can't allocate descriptor sets");
 
                 for (size_t i = 0; i < a_size; i++)
