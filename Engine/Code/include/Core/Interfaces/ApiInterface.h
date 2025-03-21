@@ -2,6 +2,7 @@
 #define APIINTERFACE_H
 
 #include "EngineExport.h"
+#include "IImage.h"
 
 #include "Core/Window/IWindow.h"
 #include "Core/Interfaces/IInstance.h"
@@ -14,6 +15,8 @@
 #include "Core/Interfaces/IGraphicPipeline.h"
 #include "Core/Interfaces/ICommandPool.h"
 #include "Core/Interfaces/IDescriptorPool.h"
+#include "Core/Interfaces/IObjectDescriptor.h"
+#include "Core/Interfaces/IBuffer.h"
 
 namespace Engine
 {
@@ -68,6 +71,15 @@ namespace Engine
 
 				ENGINE_API virtual IDescriptorPool* InstantiateDescriptorPool() = 0;
 				ENGINE_API virtual void DestroyDescriptorPool(IDescriptorPool* a_descriptorPool) { delete a_descriptorPool; }
+
+				ENGINE_API virtual IObjectDescriptor* InstantiateObjectDescriptor() = 0;
+				ENGINE_API virtual void DestroyObjectDescriptor(IObjectDescriptor* a_objectDescriptor) { delete a_objectDescriptor; }
+				
+				ENGINE_API virtual IBuffer* InstantiateBuffer() = 0;
+				ENGINE_API virtual void DestroyBuffer(IBuffer* a_buffer) { delete a_buffer; }
+
+				ENGINE_API virtual IImage* InstantiateImage() = 0;
+				ENGINE_API virtual void DestroyImage(IImage* a_image) { delete a_image; }
 			};
 		}
 	}

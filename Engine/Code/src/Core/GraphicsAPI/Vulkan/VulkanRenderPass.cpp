@@ -44,43 +44,32 @@ namespace Engine
                 t_depthAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
                 t_depthAttachment.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 
-                VkAttachmentReference depthAttachmentRef{};
-                depthAttachmentRef.attachment = 1;
-                depthAttachmentRef.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+                VkAttachmentReference t_depthAttachmentRef{};
+                t_depthAttachmentRef.attachment = 1;
+                t_depthAttachmentRef.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
 
 
                 t_descriptors.push_back(t_colorAttachment);
                 t_descriptors.push_back(t_depthAttachment);
 
                 // Subpasses 
-                VkSubpassDescription t_depthSubpass{};
-                t_depthSubpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
-                t_depthSubpass.colorAttachmentCount = 0;
-                t_depthSubpass.pDepthStencilAttachment = &depthAttachmentRef;
+                VkSubpassDescription t_subpass{};
+                t_subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
+                t_subpass.colorAttachmentCount = 1;
+                t_subpass.pColorAttachments = &t_colorAttachmentRef;
+                t_subpass.pDepthStencilAttachment = &t_depthAttachmentRef;
 
-                VkSubpassDescription t_colorSubpass{};
-                t_colorSubpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
-                t_colorSubpass.colorAttachmentCount = 1;
-                t_colorSubpass.pColorAttachments = &t_colorAttachmentRef;
+                VkSubpassDependency t_dependency{};
+                t_dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
+                t_dependency.dstSubpass = 0;
+                t_dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
+                t_dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
+                t_dependency.srcAccessMask = 0;
+                t_dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
+                t_dependency.dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT;
 
-                VkSubpassDependency t_depthSubpassDependency{};
-                t_depthSubpassDependency.srcSubpass = VK_SUBPASS_EXTERNAL;
-                t_depthSubpassDependency.dstSubpass = 0; 
-                t_depthSubpassDependency.srcStageMask = VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT;
-                t_depthSubpassDependency.dstStageMask = VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT | VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-                t_depthSubpassDependency.srcAccessMask = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
-                t_depthSubpassDependency.dstAccessMask = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
-
-                VkSubpassDependency t_colorSubpassDependency{};
-                t_colorSubpassDependency.srcSubpass = 0;
-                t_colorSubpassDependency.dstSubpass = 1;
-                t_colorSubpassDependency.srcStageMask = VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT;
-                t_colorSubpassDependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-                t_colorSubpassDependency.srcAccessMask = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
-                t_colorSubpassDependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
-
-                std::vector<VkSubpassDescription> t_subpasses = { t_depthSubpass, t_colorSubpass };
-                std::vector<VkSubpassDependency> t_dependencies = { t_depthSubpassDependency, t_colorSubpassDependency };
+                std::vector<VkSubpassDescription> t_subpasses = { t_subpass };                
+                std::vector<VkSubpassDependency> t_dependencies = { t_dependency, };
 
                 // Render pass creation
                 VkRenderPassCreateInfo t_renderPassInfo{};

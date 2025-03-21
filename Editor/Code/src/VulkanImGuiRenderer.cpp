@@ -46,7 +46,7 @@ void VulkanImGuiRenderer::Init(IWindow* window, Renderer* renderer)
 	
     VkQueue g_Queue = renderer->GetLogicalDevice()->CastVulkan()->GetGraphicsQueue();
 	VkPipelineCache g_PipelineCache = VK_NULL_HANDLE;
-	VkDescriptorPool g_DescriptorPool = renderer->GetDescriptorPool()->CastVulkan()->GetDescriptorPool();
+	VkDescriptorPool g_DescriptorPool = renderer->GetDescriptorPool()->CastVulkan()->GetPool();
 	VkRenderPass g_RenderPass = renderer->GetRenderPass()->CastVulkan()->GetRenderPass();
 	uint32_t g_MinImageCount = renderer->GetSwapChain()->CastVulkan()->GetMaxFrame();
 	uint32_t g_ImageCount = g_MinImageCount;

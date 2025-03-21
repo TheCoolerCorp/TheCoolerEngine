@@ -33,7 +33,7 @@ namespace Engine
 			struct BufferData
 			{
 				std::vector<Resource::Vertex> mVertices{};
-				std::vector<unsigned int> mIndices{};
+				std::vector<int> mIndices{};
 				void* mUboData = nullptr;
 				size_t mUboSize = 0;
 			};

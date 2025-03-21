@@ -14,6 +14,11 @@
 
 namespace Engine
 {
+	namespace GamePlay
+	{
+		struct GameObjectData;
+	}
+
 	namespace Core
 	{
 		enum class RendererType
@@ -30,25 +35,21 @@ namespace Engine
 			ENGINE_API ~Renderer() = default;
 
 			ENGINE_API void Init(RendererType a_type, Window::IWindow* a_window);
-			ENGINE_API void Run(Window::IWindow* a_window);
+			ENGINE_API void Run(Window::IWindow* a_window, std::vector<GamePlay::GameObjectData> a_objectsData) const;
 			ENGINE_API void WaitIdle() const;
 			ENGINE_API void Destroy();
 
-			RHI::ApiInterface* GetApiInterface() const { return m_interface; }
-
+			RHI::ApiInterface* GetInterface() { return m_interface; }
 			RHI::IInstance* GetApiInstance() const { return m_apiInstance; }
 			RHI::IValidationLayers* GetValidationLayers() const { return m_valiationLayers; }
-
-			RHI::IPhysicalDevice* GetPhysicalDevice() const { return m_physicalDevice; }
-			RHI::ILogicalDevice* GetLogicalDevice() const { return m_logicalDevice; }
-
+			RHI::IPhysicalDevice* GetPhysicalDevice() { return m_physicalDevice; }
+			RHI::ILogicalDevice* GetLogicalDevice() { return m_logicalDevice; }
 			RHI::ISurface* GetSurface() const { return m_surface; }
-
-			RHI::ISwapChain* GetSwapChain() const { return m_swapChain; }
+			RHI::IGraphicPipeline* GetPipeline() { return m_graphicPipeline; }
+			RHI::IDescriptorPool* GetDescriptorPool() { return m_descriptorPool; }
+			RHI::ICommandPool* GetCommandPool() { return m_commandPool; }
+			RHI::ISwapChain* GetSwapChain() { return m_swapChain; }
 			RHI::IRenderPass* GetRenderPass() const { return m_renderPass; }
-			RHI::IGraphicPipeline* GetGraphicPipeline() const { return m_graphicPipeline; }
-			RHI::ICommandPool* GetCommandPool() const { return m_commandPool; }
-			RHI::IDescriptorPool* GetDescriptorPool() const { return m_descriptorPool; }
 		private:
 			RendererType m_type = RendererType::VULKAN;
 

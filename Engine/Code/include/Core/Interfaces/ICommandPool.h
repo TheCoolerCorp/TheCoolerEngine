@@ -1,6 +1,8 @@
 #ifndef ICOMMANDPOOL_H
 #define ICOMMANDPOOL_H
 
+#include <vector>
+
 #include "EngineExport.h"
 #include "Core/Logger/Logger.h"
 

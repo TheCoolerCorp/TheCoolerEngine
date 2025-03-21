@@ -13,6 +13,14 @@
 
 namespace Engine
 {
+	namespace Core
+	{
+		namespace RHI
+		{
+			class ApiInterface;
+		}
+	}
+
 	namespace Resource
 	{
 		enum class ResourceType
@@ -28,9 +36,9 @@ namespace Engine
 		public:
 			ENGINE_API static ResourceManager& Get();
 
-			ENGINE_API void CreateResource(ResourceType a_type, std::string a_path, std::string a_name);
-			ENGINE_API IResource* CreateResourceReference(ResourceType a_type, std::string a_path, std::string a_name);
-			ENGINE_API void DestroyResource(std::string a_name);
+			ENGINE_API void CreateResource(ResourceType a_type, std::string a_path, std::string a_name, Core::RHI::ApiInterface* a_interface, Core::RHI::IPhysicalDevice* a_physicalDevice, Core::RHI::ILogicalDevice* a_logicalDevice, Core::RHI::ICommandPool* a_commandPool);
+			ENGINE_API IResource* CreateResourceReference(ResourceType a_type, std::string a_path, std::string a_name, Core::RHI::ApiInterface* a_interface, Core::RHI::IPhysicalDevice* a_physicalDevice, Core::RHI::ILogicalDevice* a_logicalDevice, Core::RHI::ICommandPool* a_commandPool);
+			ENGINE_API void DestroyResource(std::string a_name, Core::RHI::ILogicalDevice* a_logicalDevice);
 
 			ENGINE_API IResource* GetResource(std::string a_name);
 

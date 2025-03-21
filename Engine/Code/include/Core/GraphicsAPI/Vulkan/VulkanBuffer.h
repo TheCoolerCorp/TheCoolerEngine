@@ -25,6 +25,7 @@ namespace Engine
 				ENGINE_API static void CopyBuffer(const VulkanCommandPool* a_commandPool, VkBuffer a_srcBuffer, VkBuffer a_dstBuffer, VkDeviceSize a_size, const VulkanLogicalDevice* a_logicalDevice);
 
 				ENGINE_API VkBuffer GetBuffer() const { return m_buffer; }
+				ENGINE_API VkDeviceMemory GetMemory() const { return m_bufferMemory; }
 
 			private:
 				ENGINE_API static uint32_t FindMemoryType(uint32_t a_typeFilter, VkMemoryPropertyFlags a_properties, VkPhysicalDevice a_physicalDevice);

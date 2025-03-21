@@ -21,7 +21,8 @@ namespace Engine
 				ENGINE_API void Create(RHI::ILogicalDevice* a_logicalDevice, int a_maxFrameInFlight) override;
 				ENGINE_API void Destroy(RHI::ILogicalDevice* a_logicalDevice) override;
 
-				VkDescriptorPool GetDescriptorPool() const { return m_pool; }
+				ENGINE_API VkDescriptorPool GetPool() { return m_pool; }
+
 			private:
 				int m_maxFrame = 0;
 				VkDescriptorPool m_pool = VK_NULL_HANDLE;

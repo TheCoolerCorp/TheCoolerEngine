@@ -33,3 +33,14 @@ endif()
 if(ENGINE_UNIT_TESTS)
     add_subdirectory(Tests)
 endif()
+
+#---------------------------------------#
+#           COPY ASSETS FOLDER          #
+#---------------------------------------#
+add_custom_command(
+        TARGET Engine
+        POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_SOURCE_DIR}/Assets
+        $<TARGET_FILE_DIR:Engine>/Assets
+)

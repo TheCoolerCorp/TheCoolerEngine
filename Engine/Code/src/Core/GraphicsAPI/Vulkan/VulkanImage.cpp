@@ -30,7 +30,8 @@ namespace Engine
 					memcpy(t_data, a_data.data, static_cast<size_t>(t_imageSize));
 					vkUnmapMemory(t_logicalDevice, t_stagingBufferMemory);
 
-					CreateImage(&m_image, &m_memory, t_logicalDevice, t_physicalDevice, a_data.mWidth, a_data.mHeight, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_DST_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+					CreateSampler(&m_sampler, t_logicalDevice, t_physicalDevice);
+					CreateImage(&m_image, &m_memory, t_logicalDevice, t_physicalDevice, a_data.mWidth, a_data.mHeight, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
 					TransitionImageLayout(m_image, t_logicalDevice, a_logicalDevice->CastVulkan()->GetGraphicsQueue(), t_commandPool, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
 					CopyBufferToImage(t_logicalDevice, a_logicalDevice->CastVulkan()->GetGraphicsQueue(), t_commandPool, t_stagingBuffer, m_image, a_data.mWidth, a_data.mHeight);
 					TransitionImageLayout(m_image, t_logicalDevice, a_logicalDevice->CastVulkan()->GetGraphicsQueue(), t_commandPool, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
@@ -113,7 +114,28 @@ namespace Engine
 
 				vkBindImageMemory(a_logicalDevice, *a_image, *a_memory, 0);
 			}
+			void VulkanImage::CreateSampler(VkSampler* a_sampler, VkDevice a_logicalDevice, VkPhysicalDevice a_physicalDevice)
+			{
+				VkPhysicalDeviceProperties properties{};
+				vkGetPhysicalDeviceProperties(a_physicalDevice, &properties);
 
+				VkSamplerCreateInfo samplerInfo{};
+				samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
+				samplerInfo.magFilter = VK_FILTER_LINEAR;
+				samplerInfo.minFilter = VK_FILTER_LINEAR;
+				samplerInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+				samplerInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+				samplerInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+				samplerInfo.anisotropyEnable = VK_FALSE;
+				samplerInfo.maxAnisotropy = properties.limits.maxSamplerAnisotropy;
+				samplerInfo.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK;
+				samplerInfo.unnormalizedCoordinates = VK_FALSE;
+				samplerInfo.compareEnable = VK_FALSE;
+				samplerInfo.compareOp = VK_COMPARE_OP_ALWAYS;
+				samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
+
+				VK_CHECK(vkCreateSampler(a_logicalDevice, &samplerInfo, nullptr, a_sampler), "Can't Create texture sampler");
+			}
 			void VulkanImage::CreateImageView(const VkImage a_image, VkImageView* a_view, const VkDevice a_logicalDevice, const VkFormat a_format, const VkImageAspectFlags a_aspectFlags)
 			{
 				VkImageViewCreateInfo t_viewInfo{};

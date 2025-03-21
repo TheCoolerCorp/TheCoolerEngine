@@ -28,9 +28,11 @@ namespace Engine
 				ENGINE_API VkImage GetImage() { return m_image; }
 				ENGINE_API VkImageView GetView() { return m_view; }
 				ENGINE_API VkDeviceMemory GetMemory() { return m_memory; }
-
+				ENGINE_API VkSampler GetSampler() { return m_sampler; }
 		
 				ENGINE_API static void CreateImage(VkImage* a_image, VkDeviceMemory* a_memory, VkDevice a_logicalDevice, VkPhysicalDevice a_physicalDevice, uint32_t a_width, uint32_t a_height, VkFormat a_format, VkImageTiling a_tiling, VkImageUsageFlags a_usage, VkMemoryPropertyFlags a_properties);
+				// FINISH LATER
+				ENGINE_API static void CreateSampler(VkSampler* a_sampler, VkDevice a_logicalDevice, VkPhysicalDevice a_physicalDevice);
 				ENGINE_API static void CreateImageView(VkImage a_image, VkImageView* a_view, VkDevice a_logicalDevice, VkFormat a_format, VkImageAspectFlags a_aspectFlags);
 				ENGINE_API static void TransitionImageLayout(VkImage a_image, VkDevice a_logicalDevice, VkQueue a_queue, VkCommandPool a_commandPool, VkFormat a_format, VkImageLayout a_oldLayout, VkImageLayout a_newLayout);
 				ENGINE_API static void CopyBufferToImage(VkDevice a_logicalDevice, VkQueue a_queue, VkCommandPool a_commandPool, VkBuffer a_buffer, VkImage a_image, uint32_t a_width, uint32_t a_height);
@@ -41,6 +43,7 @@ namespace Engine
 				VkImage m_image = VK_NULL_HANDLE;
 				VkImageView m_view = VK_NULL_HANDLE;
 				VkDeviceMemory m_memory = VK_NULL_HANDLE;
+				VkSampler m_sampler = VK_NULL_HANDLE;
 			};
 		}
 	}

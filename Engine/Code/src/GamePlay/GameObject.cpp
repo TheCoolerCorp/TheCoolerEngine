@@ -7,7 +7,32 @@ namespace Engine
 {
 	namespace GamePlay
 	{
-		//template ENGINE_API void GameObject::AddComponent<MeshComponent>(std::string a_path, std::string a_name);
-		//template ENGINE_API void GameObject::AddComponent<TextureComponent>(const std::string&, const std::string&);
+		GameObject::GameObject(Math::vec3 a_position, Math::quat a_rotation, Math::vec3 a_scale)
+		{
+			m_transform = Math::Transform(a_position, a_rotation, a_scale);
+		}
+
+		void GameObject::Create(Core::RHI::ApiInterface* a_interface, GameObjectinfo a_info)
+		{
+			m_descriptor = a_interface->InstantiateObjectDescriptor();
+			m_descriptor->Create(a_info.a_logicalDevice, a_info.a_physicalDevice, a_info.a_graphicPipeline, a_info.a_descriptorPool, a_info.a_commandPool, this, a_info.size);
+		}
+
+		void GameObject::Update(uint32_t a_frameIndex, Engine::Core::RHI::ILogicalDevice* a_logicalDevice)
+		{
+			m_transform.UpdateMatrix();
+			m_descriptor->Update(a_frameIndex, a_logicalDevice, m_transform.GetModel().mElements.data());
+		}
+
+		GameObjectData GameObject::SubmitData()
+		{
+			return {
+				.mVertexBuffer= GetComponent<MeshComponent>()->GetMesh()->GetVertexBuffer(),
+				.mIndexBuffer= GetComponent<MeshComponent>()->GetMesh()->GetIndexBuffer(),
+				.mImage= GetComponent<TextureComponent>()->GetTexture()->GetImage(),
+				.mDescriptor= m_descriptor, 
+				.mNbIndices= GetComponent<MeshComponent>()->GetMesh()->GetNbIndices()
+			};
+		}
 	}
 }
