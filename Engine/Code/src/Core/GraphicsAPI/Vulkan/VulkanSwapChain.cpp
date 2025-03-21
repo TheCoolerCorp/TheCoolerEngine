@@ -305,14 +305,14 @@ namespace Engine
 
 			VkPresentModeKHR VulkanSwapchain::ChooseSurfacePresentMode(const std::vector<VkPresentModeKHR>& a_availablePresentModes)
 			{
-				for (const auto& availablePresentMode : a_availablePresentModes)
+				return VK_PRESENT_MODE_FIFO_KHR;
+				for (const auto& t_availablePresentMode : a_availablePresentModes)
 				{
-					if (availablePresentMode == VK_PRESENT_MODE_MAILBOX_KHR) 
+					if (t_availablePresentMode == VK_PRESENT_MODE_MAILBOX_KHR) 
 					{
-						return availablePresentMode;
+						return t_availablePresentMode;
 					}
 				}
-				return VK_PRESENT_MODE_FIFO_KHR;
 			}
 
 
