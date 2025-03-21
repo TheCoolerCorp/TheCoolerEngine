@@ -23,11 +23,11 @@ namespace Engine
 
 				if (a_type == RHI::BufferType::VERTEX)
 				{
-					t_bufferSize = sizeof(a_data.mVertices[0]) * static_cast<uint32_t>(a_data.mVertices.size());
+					t_bufferSize = sizeof(Resource::Vertex) * static_cast<uint32_t>(a_data.mVertices.size());
 				}
 				else if (a_type == RHI::BufferType::INDEX)
 				{
-					t_bufferSize = sizeof(a_data.mIndices[0]) * static_cast<uint32_t>(a_data.mIndices.size());
+					t_bufferSize = sizeof(int) * static_cast<uint32_t>(a_data.mIndices.size());
 				}
 				else if (a_type == RHI::BufferType::UBO)
 				{
