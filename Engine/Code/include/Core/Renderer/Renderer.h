@@ -17,6 +17,7 @@ namespace Engine
 	namespace GamePlay
 	{
 		struct GameObjectData;
+		class Camera;
 	}
 
 	namespace Core
@@ -35,7 +36,7 @@ namespace Engine
 			ENGINE_API ~Renderer() = default;
 
 			ENGINE_API void Init(RendererType a_type, Window::IWindow* a_window);
-			ENGINE_API void Run(Window::IWindow* a_window, std::vector<GamePlay::GameObjectData> a_objectsData) const;
+			ENGINE_API void Run(Window::IWindow* a_window, std::vector<GamePlay::GameObjectData> a_objectsData, GamePlay::Camera* camera) const;
 			ENGINE_API void WaitIdle() const;
 			ENGINE_API void Destroy();
 

@@ -18,7 +18,7 @@ layout(location = 1) out vec2 fragTexCoord;
 
 
 void main() {
-    gl_Position = objubo.model * vec4(inPosition,  1.0);
+    gl_Position = camubo.vp * objubo.model * vec4(inPosition,  1.0);
     fragTexCoord = inTexCoord;
     normal = inNormal;
 }

@@ -39,16 +39,17 @@ void Engine::Core::GraphicsAPI::VulkanCameraDescriptor::Create(RHI::ILogicalDevi
         t_bufferInfo.offset = 0;
         t_bufferInfo.range = 16 * sizeof(float);
 
-        VkWriteDescriptorSet t_descriptorWrite;
-        t_descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-        t_descriptorWrite.dstSet = m_descriptorSets[i];
-        t_descriptorWrite.dstBinding = 0;
-        t_descriptorWrite.dstArrayElement = 0;
-        t_descriptorWrite.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-        t_descriptorWrite.descriptorCount = 1;
-        t_descriptorWrite.pBufferInfo = &t_bufferInfo;
+        std::array<VkWriteDescriptorSet, 1> t_descriptorWrites{};
 
-        vkUpdateDescriptorSets(t_logicalDevice, 1, &t_descriptorWrite, 0, nullptr);
+        t_descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+        t_descriptorWrites[0].dstSet = m_descriptorSets[i];
+        t_descriptorWrites[0].dstBinding = 0;
+        t_descriptorWrites[0].dstArrayElement = 0;
+        t_descriptorWrites[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+        t_descriptorWrites[0].descriptorCount = 1;
+        t_descriptorWrites[0].pBufferInfo = &t_bufferInfo;
+
+        vkUpdateDescriptorSets(t_logicalDevice, 1, t_descriptorWrites.data(), 0, nullptr);
     }
 }
 

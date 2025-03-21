@@ -23,7 +23,7 @@ namespace Engine
                 poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
                 poolInfo.poolSizeCount = static_cast<uint32_t>(poolSizes.size());
                 poolInfo.pPoolSizes = poolSizes.data();
-                poolInfo.maxSets = static_cast<uint32_t>(m_maxFrame);
+                poolInfo.maxSets = 2u * static_cast<uint32_t>(m_maxFrame);
 
 				VK_CHECK(vkCreateDescriptorPool(a_logicalDevice->CastVulkan()->GetVkDevice(), &poolInfo, nullptr, &m_pool), "failed to create descriptorPool");
 			}

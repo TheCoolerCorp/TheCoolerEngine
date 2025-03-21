@@ -16,6 +16,7 @@
 #include "Core/Interfaces/ICommandPool.h"
 #include "Core/Interfaces/IDescriptorPool.h"
 #include "Core/Interfaces/IObjectDescriptor.h"
+#include "Core/Interfaces/ICameraDescriptor.h"
 #include "Core/Interfaces/IBuffer.h"
 
 namespace Engine
@@ -74,6 +75,9 @@ namespace Engine
 
 				ENGINE_API virtual IObjectDescriptor* InstantiateObjectDescriptor() = 0;
 				ENGINE_API virtual void DestroyObjectDescriptor(IObjectDescriptor* a_objectDescriptor) { delete a_objectDescriptor; }
+
+				ENGINE_API virtual ICameraDescriptor* InstantiateCameraDescriptor() = 0;
+				ENGINE_API virtual void DestroyCameraDescriptor(ICameraDescriptor* a_cameraDescriptor) { delete a_cameraDescriptor; }
 				
 				ENGINE_API virtual IBuffer* InstantiateBuffer() = 0;
 				ENGINE_API virtual void DestroyBuffer(IBuffer* a_buffer) { delete a_buffer; }

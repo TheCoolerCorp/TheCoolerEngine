@@ -16,10 +16,12 @@ namespace Engine
 			class VulkanCameraDescriptor : public RHI::ICameraDescriptor
 			{
 			public:
-				VulkanCameraDescriptor* CastVulkan() override { return this; }
-				void Create(RHI::ILogicalDevice* a_logicalDevice, RHI::IPhysicalDevice* a_physicalDevice, RHI::IGraphicPipeline* a_pipeline, RHI::IDescriptorPool* a_descriptorPool, RHI::ICommandPool* a_commandPool, Math::mat4 a_vp, int a_size) override;
-				void Destroy(RHI::ILogicalDevice* a_logicalDevice) override;
-				void Update(uint32_t a_frameIndex, RHI::ILogicalDevice* a_logicalDevice, void* a_uploadData) override;
+				ENGINE_API VulkanCameraDescriptor* CastVulkan() override { return this; }
+				ENGINE_API void Create(RHI::ILogicalDevice* a_logicalDevice, RHI::IPhysicalDevice* a_physicalDevice, RHI::IGraphicPipeline* a_pipeline, RHI::IDescriptorPool* a_descriptorPool, RHI::ICommandPool* a_commandPool, Math::mat4 a_vp, int a_size) override;
+				ENGINE_API void Destroy(RHI::ILogicalDevice* a_logicalDevice) override;
+				ENGINE_API void Update(uint32_t a_frameIndex, RHI::ILogicalDevice* a_logicalDevice, void* a_uploadData) override;
+
+				ENGINE_API std::vector<VkDescriptorSet> GetDescriptorSets() const { return m_descriptorSets; }
 
 			private:
 				std::vector<VulkanBuffer*> m_uniforms;

@@ -27,12 +27,12 @@ namespace Engine
 	{
 		struct GameObjectinfo
 		{
-			Core::RHI::ILogicalDevice* a_logicalDevice;
-			Core::RHI::IPhysicalDevice* a_physicalDevice;
-			Core::RHI::IGraphicPipeline* a_graphicPipeline;
-			Core::RHI::IDescriptorPool* a_descriptorPool;
-			Core::RHI::ICommandPool* a_commandPool;
-			int size;
+			Core::RHI::ILogicalDevice* mLogicalDevice;
+			Core::RHI::IPhysicalDevice* mPhysicalDevice;
+			Core::RHI::IGraphicPipeline* mGraphicPipeline;
+			Core::RHI::IDescriptorPool* mDescriptorPool;
+			Core::RHI::ICommandPool* mCommandPool;
+			int mSize;
 		};
 
 		struct ENGINE_API GameObjectData
@@ -72,7 +72,7 @@ namespace Engine
 
 				std::shared_ptr<T> component = std::make_shared<T>();
 
-				component->Create(a_path, a_interface, a_info.a_physicalDevice, a_info.a_logicalDevice, a_info.a_commandPool);
+				component->Create(a_path, a_interface, a_info.mPhysicalDevice, a_info.mLogicalDevice, a_info.mCommandPool);
 
 				m_components.emplace_back(component);
 			}

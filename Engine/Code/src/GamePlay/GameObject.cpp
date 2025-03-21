@@ -15,7 +15,7 @@ namespace Engine
 		void GameObject::Create(Core::RHI::ApiInterface* a_interface, GameObjectinfo a_info)
 		{
 			m_descriptor = a_interface->InstantiateObjectDescriptor();
-			m_descriptor->Create(a_info.a_logicalDevice, a_info.a_physicalDevice, a_info.a_graphicPipeline, a_info.a_descriptorPool, a_info.a_commandPool, this, a_info.size);
+			m_descriptor->Create(a_info.mLogicalDevice, a_info.mPhysicalDevice, a_info.mGraphicPipeline, a_info.mDescriptorPool, a_info.mCommandPool, this, a_info.mSize);
 		}
 
 		void GameObject::Update(uint32_t a_frameIndex, Engine::Core::RHI::ILogicalDevice* a_logicalDevice)
