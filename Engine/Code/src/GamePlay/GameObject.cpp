@@ -23,6 +23,15 @@ namespace Engine
 			m_transform.UpdateMatrix();
 			m_descriptor->Update(a_frameIndex, a_logicalDevice, m_transform.GetModel().mElements.data());
 		}
+		void GameObject::Destroy(Core::RHI::ApiInterface* a_interface, Core::RHI::ILogicalDevice* a_logicalDevice)
+		{
+			m_descriptor->Destroy(a_logicalDevice);
+			for (auto& component : m_components)
+			{
+				component->Destroy(a_logicalDevice);
+			}
+			m_components.clear();
+		}
 
 		GameObjectData GameObject::SubmitData()
 		{

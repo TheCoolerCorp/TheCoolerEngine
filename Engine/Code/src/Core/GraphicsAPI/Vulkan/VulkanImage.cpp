@@ -68,6 +68,7 @@ namespace Engine
 				vkDestroyImageView(t_device, m_view, nullptr);
 				vkDestroyImage(t_device, m_image, nullptr);
 				vkFreeMemory(t_device, m_memory, nullptr);
+				vkDestroySampler(t_device, m_sampler, nullptr);
 			}
 
 			void VulkanImage::CreateImage(VkImage* a_image, VkDeviceMemory* a_memory, const VkDevice a_logicalDevice,
