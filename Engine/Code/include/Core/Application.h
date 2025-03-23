@@ -8,6 +8,7 @@
 #include "Core/GraphicsAPI/Vulkan/VulkanInterface.h"
 
 #include "Core/Window/GLWindow.h"
+#include "Core/Window/GLInputHandler.h"
 #include "Core/Renderer/Renderer.h"
 #include "GamePlay/GameObject.h"
 
@@ -28,6 +29,7 @@ namespace Engine
 
 		private:
 			Window::IWindow* m_mainWindow = nullptr;
+			Window::IInputHandler* m_inputHandler = nullptr;
 			Renderer* m_renderer = nullptr;
 			std::vector<GamePlay::GameObjectData> m_gameObjectDatas;
 			std::vector<GamePlay::GameObject*> m_gameObjects;

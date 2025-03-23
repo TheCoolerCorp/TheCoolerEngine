@@ -4,7 +4,8 @@
 #include "EngineExport.h"
 
 #include "IWindow.h"
-
+#include "InputAction.h"
+#include "Math/vec2.h"
 namespace Engine
 {
 	namespace Core
@@ -20,20 +21,16 @@ namespace Engine
 
 				ENGINE_API virtual GLInputHandler* CastGLFW() { LOG_ERROR("Can't Cast!");return nullptr; }
 
-				ENGINE_API virtual bool IsKeyDown(int a_key) = 0;
-				ENGINE_API virtual bool IsKeyPressed(int a_key) = 0;
-				ENGINE_API virtual bool IsKeyReleased(int a_key) = 0;
+				ENGINE_API virtual void Create(IWindow* a_window) = 0;
+				ENGINE_API virtual void Destroy() = 0;
 
-				ENGINE_API virtual bool IsMouseButtonDown(int a_key) = 0;
-				ENGINE_API virtual bool IsMouseButtonPressed(int a_key) = 0;
-				ENGINE_API virtual bool IsMouseButtonReleased(int a_key) = 0;
+				ENGINE_API virtual bool IsKeyDown(Key a_key) = 0;
+				ENGINE_API virtual bool IsKeyPressed(Key a_key) = 0;
+				ENGINE_API virtual bool IsKeyReleased(Key a_key) = 0;
 
-				//ENGINE_API virtual bool IsMouseButtonReleased(int a_key) { LOG_ERROR("Can't Cast! Default return value set to false!"); return false; }
-				//ENGINE_API virtual bool IsMouseButtonReleased(int a_key) { LOG_ERROR("Can't Cast! Default return value set to false!"); return false; }
-
-			protected:
-				static std::vector<int> currentKeyStatus;
-				static std::vector<int> currentMouseButtonStatus;
+				ENGINE_API virtual bool IsMouseButtonDown(MouseButton a_mouseButton) = 0;
+				ENGINE_API virtual bool IsMouseButtonPressed(MouseButton a_mouseButton) = 0;
+				ENGINE_API virtual bool IsMouseButtonReleased(MouseButton a_mouseButton) = 0;
 			};
 		}
 	}

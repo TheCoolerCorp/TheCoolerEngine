@@ -4,33 +4,42 @@
 #include "EngineExport.h"
 
 #include "IInputHandler.h"
+#include "GLWindow.h"
+namespace Engine
+{
+	namespace Core
+	{
+		namespace Window
+		{
+			class GLInputHandler : public IInputHandler
+			{
+			public:
+				ENGINE_API ~GLInputHandler() override = default;
 
-//namespace Engine
-//{
-//	namespace Core
-//	{
-//		namespace Window
-//		{
-//			class GLInputHandler : public IInputHandler
-//			{
-//			public:
-//				ENGINE_API ~GLInputHandler() override = default;
-//
-//				ENGINE_API GLInputHandler* CastGLFW() override {return this; }
-//
-//				ENGINE_API static void KeyCallBack(IWindow* a_window, int a_key, int a_scancode, int a_action, int a_mods) override;
-//				ENGINE_API static void MouseCallBack(IWindow* a_window, int button, int a_action, int a_mods) override;
-//
-//				ENGINE_API static bool IsKeyDown(int a_key) override;
-//				ENGINE_API static bool IsKeyPressed(int a_key) override;
-//				ENGINE_API static bool IsKeyReleased(int a_key) override;
-//
-//				ENGINE_API static bool IsMouseButtonDown(int a_key) override;
-//				ENGINE_API static bool IsMouseButtonPressed(int a_key) override;
-//				ENGINE_API static bool IsMouseButtonReleased(int a_key) override;
-//			};
-//		}
-//	}
-//}
+				ENGINE_API GLInputHandler* CastGLFW() override {return this; }
+
+				ENGINE_API void Create(IWindow* a_window) override;
+				ENGINE_API void Destroy() override;
+
+				ENGINE_API bool IsKeyDown(Key a_key) override;
+				ENGINE_API bool IsKeyPressed(Key a_key) override;
+				ENGINE_API bool IsKeyReleased(Key a_key) override;
+
+				ENGINE_API bool IsMouseButtonDown(MouseButton a_mouseButton) override;
+				ENGINE_API bool IsMouseButtonPressed(MouseButton a_mouseButton) override;
+				ENGINE_API bool IsMouseButtonReleased(MouseButton a_mouseButton) override;
+
+
+			private:
+				static std::vector<int> m_currentKeyStatus;
+				static std::vector<int> m_currentMouseButtonStatus;
+
+				static void KeyCallBack(GLFWwindow* window, int key, int scancode, int action, int mods);
+				static void MouseCallBack(GLFWwindow* window, int button, int action, int mods);
+
+			};
+		}
+	}
+}
 
 #endif

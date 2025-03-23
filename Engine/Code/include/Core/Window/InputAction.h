@@ -9,7 +9,7 @@ namespace Engine
     {
         namespace Window
         {
-            ENGINE_API enum class MouseButton
+        	enum class MouseButton
             {
                 MOUSE_BUTTON_1 = 0,
                 MOUSE_BUTTON_2 = 1,
@@ -25,7 +25,7 @@ namespace Engine
                 MOUSE_BUTTON_MIDDLE = MOUSE_BUTTON_3
             };
 
-            ENGINE_API enum class Key
+            enum class Key
             {
                 KEY_SPACE = 32,
                 KEY_APOSTROPHE = 39,
