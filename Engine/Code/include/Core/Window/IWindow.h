@@ -5,6 +5,7 @@
 
 #include "EngineExport.h"
 
+#include "Core/Logger/Logger.h"
 
 namespace Engine
 {
@@ -24,7 +25,7 @@ namespace Engine
 			{
 			public:
 				ENGINE_API virtual ~IWindow() = default;
-				ENGINE_API virtual GLwindow* CastGLFW() { return nullptr; }
+				ENGINE_API virtual GLwindow* CastGLFW() { LOG_ERROR("Can't cast"); return nullptr; }
 
 				ENGINE_API virtual void Create(int a_width, int a_height) = 0;
 				ENGINE_API virtual void Destroy() = 0;

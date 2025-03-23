@@ -13,6 +13,8 @@ namespace Engine
 		{
 			m_mainWindow = new Window::GLwindow();
 			m_mainWindow->Create(a_width, a_height);
+			m_inputHandler = new Window::GLInputHandler();
+			m_inputHandler->Create(m_mainWindow);
 
 			m_renderer = new Renderer();
 			m_renderer->Init(RendererType::VULKAN, m_mainWindow);
@@ -63,6 +65,9 @@ namespace Engine
 
 			m_renderer->Destroy();
 			delete m_renderer;
+
+			m_inputHandler->Destroy();
+			delete m_inputHandler;
 
 			m_mainWindow->Destroy();
 			delete m_mainWindow;
