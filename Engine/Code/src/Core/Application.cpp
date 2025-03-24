@@ -21,7 +21,7 @@ namespace Engine
 
 			m_camera = new GamePlay::Camera(Math::vec3(0.f, 1.f, 0.f), Math::vec3(0.f, 0.f, 0.f),
 			                                Math::vec3(0.f, 0.f, 5.f), Math::ToRadians(70.f),
-			                                static_cast<float>(a_width) / static_cast<float>(a_height), 0.1f, 100.f, 10.f);
+			                                static_cast<float>(a_width) / static_cast<float>(a_height), 0.1f, 100.f, 10.f, 5.f);
 			m_camera->Create(m_renderer->GetInterface(), { m_renderer->GetLogicalDevice(), m_renderer->GetPhysicalDevice(), m_renderer->GetPipeline(), m_renderer->GetCommandPool() });
 
 			GamePlay::GameObject* t_obj = new GamePlay::GameObject(Math::vec3(0.f, 0.f, 0.f), Math::quat(Math::vec3(Math::ToRadians(90.f), Math::ToRadians(270.f), 0.f)), Math::vec3(1.f, 1.f, 1.f));
