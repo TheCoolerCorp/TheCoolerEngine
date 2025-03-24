@@ -51,8 +51,8 @@ namespace Engine
 
                 	VkDescriptorImageInfo t_imageInfo{};
                     t_imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-                    t_imageInfo.imageView = a_gameObject->GetComponent<GamePlay::TextureComponent>()->GetTexture()->GetImage()->CastVulkan()->GetView();
-					t_imageInfo.sampler = a_gameObject->GetComponent<GamePlay::TextureComponent>()->GetTexture()->GetImage()->CastVulkan()->GetSampler();
+					t_imageInfo.imageView = 0;/*a_gameObject->GetComponent<GamePlay::TextureComponent>()->GetTexture()->GetImage()->CastVulkan()->GetView();*/
+					t_imageInfo.sampler = 0;/*a_gameObject->GetComponent<GamePlay::TextureComponent>()->GetTexture()->GetImage()->CastVulkan()->GetSampler();*/
 
                     std::array<VkWriteDescriptorSet, 2> t_descriptorWrites{};
 

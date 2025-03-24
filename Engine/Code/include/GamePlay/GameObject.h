@@ -17,6 +17,8 @@
 #include "Core/Interfaces/IObjectDescriptor.h"
 #include "Core/Interfaces/ApiInterface.h"
 
+#include "ServiceLocator.h"
+
 namespace Engine
 {
 	namespace Core
@@ -55,17 +57,17 @@ namespace Engine
 			GameObject() = default;
 			~GameObject() = default;
 
-			GameObject(Math::vec3 a_position, Math::quat a_rotation, Math::vec3 a_scale);
+			/*GameObject(Math::vec3 a_position, Math::quat a_rotation, Math::vec3 a_scale);
 
 			void Create(Core::RHI::ApiInterface* a_interface, GameObjectinfo a_info);
 			void Update(uint32_t a_frameIndex, Engine::Core::RHI::ILogicalDevice* a_logicalDevice);
 			void Destroy(Core::RHI::ApiInterface* a_interface, Core::RHI::ILogicalDevice* a_logicalDevice);
-			GameObjectData SubmitData();
+			GameObjectData SubmitData();*/
 
 
 
-			template<typename Type, typename Args>
-			void AddComponent(ComponentsPool& a_componentsPool, Resource::ResourceManager& a_resourceManager, Args&&... args)
+			template<typename Type, typename... Args>
+			void AddComponent(Args&&... args)
 			{
 				/* Check if not already in c
 				 * CreateComp
@@ -75,15 +77,15 @@ namespace Engine
 
 				static_assert(std::is_base_of<Component, Type>::value);
 
-				if (HasComponent<Type>(a_componentsPool))
+				if (HasComponent<Type>())
 				{
 					std::string warning_error = "GameObject :" + std::to_string(m_id) + "already have this type of component" + std::to_string(typeid(Type));
 					LOG_WARNING(warning_error);
 					return;
 				}
 
-				//std::shared_ptr<T> component = std::make_shared<T>();
-
+				std::shared_ptr<Type> t_component = std::make_shared<Type>();
+				t_component->Create(args);
 				//component->Create(a_path, a_interface, a_info.mPhysicalDevice, a_info.mLogicalDevice, a_info.mCommandPool);
 
 				//m_components.emplace_back(component);
@@ -106,11 +108,13 @@ namespace Engine
 			}
 
 			template<typename Type>
-			bool HasComponent(ComponentsPool& a_componentsPool)
+			bool HasComponent()
 			{
-				/*static_assert(std::is_base_of<Component, T>::value, "Type is not a component");
+				static_assert(std::is_base_of<Component, Type>::value);
 
-				for (auto it = m_components.begin(); it != m_components.end();)
+
+
+				/*for (auto it = m_components.begin(); it != m_components.end();)
 				{
 					std::shared_ptr<T> component = dynamic_cast<std::shared_ptr<T>()>(it);
 					if (component)

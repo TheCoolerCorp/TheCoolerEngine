@@ -13,11 +13,15 @@ namespace Engine
 		class ServiceLocator
 		{
 		public:
-			
+			static void ProvideResourceManager(Resource::ResourceManager* a_resourceManager);
+			static void ProvideComponentsPool(ComponentsPool* a_componentsPool);
+
+			static Resource::ResourceManager* GetResourceManager();
+			static ComponentsPool* GetComponentsPool();
 
 		private:
-			static Resources::ResourceManager* m_resourceManager = nullptr;
-			static ComponentsPool* m_componentsPool = nullptr;
+			static Resource::ResourceManager* m_resourceManager;
+			static ComponentsPool* m_componentsPool;
 		};
 	}
 }

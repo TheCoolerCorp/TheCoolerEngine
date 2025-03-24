@@ -7,7 +7,7 @@ namespace Engine
 {
 	namespace GamePlay
 	{
-		GameObject::GameObject(Math::vec3 a_position, Math::quat a_rotation, Math::vec3 a_scale)
+		/*GameObject::GameObject(Math::vec3 a_position, Math::quat a_rotation, Math::vec3 a_scale)
 		{
 			m_transform = Math::Transform(a_position, a_rotation, a_scale);
 		}
@@ -42,6 +42,6 @@ namespace Engine
 				.mDescriptor= m_descriptor, 
 				.mNbIndices= GetComponent<MeshComponent>()->GetMesh()->GetNbIndices()
 			};
-		}
+		}*/
 	}
 }

@@ -24,19 +24,19 @@ namespace Engine
 			                                static_cast<float>(a_width) / static_cast<float>(a_height), 0.1f, 100.f);
 			m_camera->Create(m_renderer->GetInterface(), { m_renderer->GetLogicalDevice(), m_renderer->GetPhysicalDevice(), m_renderer->GetPipeline(), m_renderer->GetDescriptorPool(), m_renderer->GetCommandPool(), m_renderer->GetSwapChain()->GetMaxFrame() });
 
-			GamePlay::GameObject* t_obj = new GamePlay::GameObject(Math::vec3(0.f, 0.f, 0.f), Math::quat(Math::vec3(Math::ToRadians(90.f), Math::ToRadians(90.f), 0.f)), Math::vec3(1.f, 1.f, 1.f));
+			/*GamePlay::GameObject* t_obj = new GamePlay::GameObject(Math::vec3(0.f, 0.f, 0.f), Math::quat(Math::vec3(Math::ToRadians(90.f), Math::ToRadians(90.f), 0.f)), Math::vec3(1.f, 1.f, 1.f));
 			t_obj->AddComponent<GamePlay::MeshComponent>("Assets/Meshes/viking_room.obj", { m_renderer->GetLogicalDevice(), m_renderer->GetPhysicalDevice(), m_renderer->GetPipeline(), m_renderer->GetDescriptorPool(), m_renderer->GetCommandPool(), 3 }, m_renderer->GetInterface());
 			t_obj->AddComponent<GamePlay::TextureComponent>("Assets/Textures/viking_room.png", { m_renderer->GetLogicalDevice(), m_renderer->GetPhysicalDevice(), m_renderer->GetPipeline(), m_renderer->GetDescriptorPool(), m_renderer->GetCommandPool(), 3 }, m_renderer->GetInterface());
 			t_obj->Create(m_renderer->GetInterface(), { m_renderer->GetLogicalDevice(), m_renderer->GetPhysicalDevice(), m_renderer->GetPipeline(), m_renderer->GetDescriptorPool(), m_renderer->GetCommandPool(), 3 });
 			m_gameObjectDatas.push_back(t_obj->SubmitData());
-			m_gameObjects.push_back(t_obj);
+			m_gameObjects.push_back(t_obj);*/
 		}
 
 		void Application::Run()
 		{
 			while (!m_mainWindow->ShouldClose())
 			{
-				m_gameObjectDatas.clear();
+				/*m_gameObjectDatas.clear();
 				for (GamePlay::GameObject* t_gameObject : m_gameObjects)
 				{
 					m_camera->Update(m_renderer->GetSwapChain()->GetCurrentFrame(), m_renderer->GetLogicalDevice());
@@ -44,21 +44,21 @@ namespace Engine
 					m_gameObjectDatas.push_back(t_gameObject->SubmitData());
 				}
 				m_mainWindow->PollEvents();
-				m_renderer->Run(m_mainWindow, m_gameObjectDatas, m_camera);
+				m_renderer->Run(m_mainWindow, m_gameObjectDatas, m_camera);*/
 			}
 			m_renderer->WaitIdle();
 		}
 
 		void Application::Destroy()
 		{
-			m_gameObjectDatas.clear();
+			/*m_gameObjectDatas.clear();
 
 			for (int i = 0; i < m_gameObjects.size(); ++i)
 			{
 				m_gameObjects[i]->Destroy(m_renderer->GetInterface(), m_renderer->GetLogicalDevice());
 				delete m_gameObjects[i];
 			}
-			m_gameObjects.clear();
+			m_gameObjects.clear();*/
 
 			m_camera->Destroy(m_renderer->GetLogicalDevice());
 			delete m_camera;
