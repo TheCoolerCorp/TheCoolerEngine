@@ -2,15 +2,9 @@
 
 //ImGui includes
 #include "imgui.h"
-#include "backends/imgui_impl_glfw.h"
-#include "backends/imgui_impl_vulkan.h"
 
 #include <Core/Renderer/Renderer.h>
-#include <Core/Window/GLWindow.h>
 #include <Core/Window/IWindow.h>
-
-using namespace Engine::Core;
-using namespace Engine::Core::Window;
 
 class RHIImGuiRenderer
 {
@@ -18,10 +12,10 @@ public:
 	RHIImGuiRenderer() = default;
 	virtual ~RHIImGuiRenderer() = default;
 
-	virtual void Init(IWindow* window, Renderer* renderer);
+	virtual void Init(Engine::Core::Window::IWindow* window, Engine::Core::Renderer* renderer) = 0;
 
-	virtual void NewFrame();
-	virtual void Render();
+	virtual void NewFrame() = 0;
+	virtual void Render() = 0;
 	virtual ImDrawData* GetDrawData() = 0;
 };
 

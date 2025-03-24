@@ -4,6 +4,8 @@
 #include "GamePlay/TextureComponent.h"
 #include "GamePlay/Meshcomponent.h"
 
+using namespace Editor::Core;
+
 namespace Engine
 {
 	namespace Core
@@ -22,7 +24,9 @@ namespace Engine
 			m_gameObjectDatas.push_back(t_obj->SubmitData());
 			m_gameObjects.push_back(t_obj);
 
-			m_imGuiLayer = std::make_unique<ImGuiLayer>();
+			m_layers.push_back(new ImGuiLayer());
+
+			InitLayers();
 		}
 
 		void Application::Run()
@@ -36,7 +40,7 @@ namespace Engine
 					m_gameObjectDatas.push_back(t_gameObject->SubmitData());
 				}
 				m_mainWindow->PollEvents();
-
+				UpdateLayers();
 				m_renderer->Run(m_mainWindow, m_gameObjectDatas);
 			}
 			m_renderer->WaitIdle();
@@ -57,6 +61,32 @@ namespace Engine
 
 			m_mainWindow->Destroy();
 			delete m_mainWindow;
+
+			DestroyLayers();
+		}
+
+		void Application::InitLayers()
+		{
+			for (Layer* layer : m_layers)
+			{
+				layer->Init(m_mainWindow, m_renderer);
+			}
+		}
+
+		void Application::UpdateLayers()
+		{
+			for (Layer* layer : m_layers)
+			{
+				layer->Update();
+			}
+		}
+
+		void Application::DestroyLayers()
+		{
+			for (Layer* layer : m_layers)
+			{
+				layer->Destroy();
+			}
 		}
 	}
 }

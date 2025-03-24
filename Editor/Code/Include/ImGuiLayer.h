@@ -15,13 +15,16 @@
 #include "Core/Renderer/Renderer.h"
 #include "Core/Window/IWindow.h"
 #include "RHIImGuiRenderer.h"
-
-class ImGuiLayer
+#include "Layer.h"
+class ImGuiLayer : public Editor::Core::Layer
 {
 public:
-	static void Init(IWindow* window, Renderer* renderer);
-	static void Update();
-	static void Destroy();
+	ImGuiLayer() = default;
+	~ImGuiLayer() override;
+
+	void Init(Engine::Core::Window::IWindow* window, Engine::Core::Renderer* renderer) override;
+	void Update() override;
+	void Destroy() override;
 
 	static void NewFrame();
 	static void ImGuiDraw();
@@ -34,8 +37,8 @@ public:
 
 
 private:
-	static RHIImGuiRenderer* m_ImGuiRenderer;
+	static RHIImGuiRenderer* m_imGuiRenderer;
 
-	static std::unique_ptr<MainWindow> m_MainWindow;
-	static std::vector<std::shared_ptr<SubWindow>> m_SubWindows;
+	std::unique_ptr<MainWindow> m_mainWindow;
+	std::vector<std::shared_ptr<SubWindow>> m_subWindows;
 };

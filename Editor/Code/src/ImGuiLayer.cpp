@@ -6,39 +6,51 @@
 #include "backends/imgui_impl_vulkan.h"
 #include <VulkanImGuiRenderer.h>
 
-void ImGuiLayer::Init(IWindow* window, Renderer* renderer)
+RHIImGuiRenderer* ImGuiLayer::m_imGuiRenderer;
+
+ImGuiLayer::~ImGuiLayer()
 {
-	m_ImGuiRenderer = new VulkanImGuiRenderer();
-	m_ImGuiRenderer->Init(window, renderer);
+	Destroy();
+}
+
+void ImGuiLayer::Init(Engine::Core::Window::IWindow* window, Engine::Core::Renderer* renderer)
+{
+	//we only have vulkan so its hardcoded for now
+	m_imGuiRenderer = new VulkanImGuiRenderer;
+	m_imGuiRenderer->Init(window, renderer);
 }
 
 void ImGuiLayer::Update()
 {
 	NewFrame();
-	//render stuff here idk
+	ImGuiDraw();
 	Render();
 }
 
 void ImGuiLayer::Destroy()
 {
+	//delete m_imGuiRenderer;
+	//for(auto& subWindow : m_subWindows)
+	//{
+	//	delete subWindow;
+	//}
+	//delete m_mainWindow;
 }
 
 void ImGuiLayer::NewFrame()
 {
-	m_ImGuiRenderer->NewFrame();
+	m_imGuiRenderer->NewFrame();
 	ImGui::NewFrame();
 }
 
 void ImGuiLayer::ImGuiDraw()
-{
+{ 
 	ImGui::ShowDemoWindow();
 }
 
 void ImGuiLayer::Render()
 {
-	m_ImGuiRenderer->Render();
-	ImGui::Render();
-	
+	m_imGuiRenderer->Render();
 }
 
 void ImGuiLayer::Start(const char* name)
@@ -53,5 +65,5 @@ void ImGuiLayer::End()
 
 ImDrawData* ImGuiLayer::GetDrawData()
 {
-	return m_ImGuiRenderer->GetDrawData();
+	return m_imGuiRenderer->GetDrawData();
 }

@@ -22,6 +22,8 @@
 #include <GLFW/glfw3.h>
 
 using namespace Engine::Core::GraphicsAPI;
+using namespace Engine::Core::Window;
+using namespace Engine::Core;
 
 static void check_vk_result(VkResult err)
 {
@@ -29,7 +31,7 @@ static void check_vk_result(VkResult err)
         return;
     
     if (err < 0)
-        LOG_CRITICAL("[Vulkan] Error: Error during ImGUI initialisation \n");
+        LOG_CRITICAL("[Vulkan] Error: Error during ImGUI initialisation " + std::to_string(err) + '\n');
 }
 
 void VulkanImGuiRenderer::Init(IWindow* window, Renderer* renderer)
@@ -43,14 +45,16 @@ void VulkanImGuiRenderer::Init(IWindow* window, Renderer* renderer)
 	VkSurfaceKHR g_Surface = renderer->GetSurface()->CastVulkan()->GetVkSurfaceKHR();
     QueueFamilyIndices indices = QueueFamilyIndices::FindQueueFamilies(g_PhysicalDevice, g_Surface);
 	uint32_t g_QueueFamily = indices.GetGraphicsFamily().value();
-	
     VkQueue g_Queue = renderer->GetLogicalDevice()->CastVulkan()->GetGraphicsQueue();
 	VkPipelineCache g_PipelineCache = VK_NULL_HANDLE;
-	VkDescriptorPool g_DescriptorPool = renderer->GetDescriptorPool()->CastVulkan()->GetPool();
 	VkRenderPass g_RenderPass = renderer->GetRenderPass()->CastVulkan()->GetRenderPass();
-	uint32_t g_MinImageCount = renderer->GetSwapChain()->CastVulkan()->GetMaxFrame();
+	VulkanSwapchain* swapChain = renderer->GetSwapChain()->CastVulkan();
+    swapChain->AddRenderCallBack(RenderDrawData);
+	uint32_t g_MinImageCount = swapChain->GetMaxFrame();
 	uint32_t g_ImageCount = g_MinImageCount;
 	VkAllocationCallbacks* g_Allocator = nullptr;
+
+    CreateDescriptorPool(g_Device);
 
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -71,7 +75,7 @@ void VulkanImGuiRenderer::Init(IWindow* window, Renderer* renderer)
     init_info.QueueFamily = g_QueueFamily;
     init_info.Queue = g_Queue;
     init_info.PipelineCache = g_PipelineCache;
-    init_info.DescriptorPool = g_DescriptorPool;
+    init_info.DescriptorPool = m_pool;
     init_info.RenderPass = g_RenderPass;
     init_info.Subpass = 0;
     init_info.MinImageCount = g_MinImageCount;
@@ -91,11 +95,33 @@ void VulkanImGuiRenderer::NewFrame()
 	ImGui::NewFrame();
 }
 
+void VulkanImGuiRenderer::RenderDrawData(VkCommandBuffer commandBuffer)
+{
+	ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), commandBuffer);
+}
+
 void VulkanImGuiRenderer::Render()
 {
 	ImGui::Render();
-	m_drawData = ImGui::GetDrawData();
-	//ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), vkGetCurrentCommandBuffer());
+}
+
+void VulkanImGuiRenderer::CreateDescriptorPool(VkDevice device)
+{
+
+        VkDescriptorPoolSize pool_sizes[] =
+        {
+            { VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, IMGUI_IMPL_VULKAN_MINIMUM_IMAGE_SAMPLER_POOL_SIZE },
+        };
+        VkDescriptorPoolCreateInfo pool_info = {};
+        pool_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+        pool_info.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
+        pool_info.maxSets = 0;
+        for (VkDescriptorPoolSize& pool_size : pool_sizes)
+            pool_info.maxSets += pool_size.descriptorCount;
+        pool_info.poolSizeCount = (uint32_t)IM_ARRAYSIZE(pool_sizes);
+        pool_info.pPoolSizes = pool_sizes;
+        VkResult err = vkCreateDescriptorPool(device, &pool_info, nullptr, &m_pool);
+        check_vk_result(err);
 }
 
 ImDrawData* VulkanImGuiRenderer::GetDrawData()
