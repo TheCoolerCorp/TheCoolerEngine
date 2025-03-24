@@ -57,6 +57,6 @@ void Engine::Core::GraphicsAPI::VulkanCameraDescriptor::Update(RHI::ILogicalDevi
 {
     void* t_data;
     vkMapMemory(a_logicalDevice->CastVulkan()->GetVkDevice(), m_uniform->GetMemory(), 0, sizeof(VulkanBuffer), 0, &t_data);
-    memcpy(t_data, a_uploadData, sizeof(a_uploadData));
+    memcpy(t_data, a_uploadData, 16 * sizeof(float));
     vkUnmapMemory(a_logicalDevice->CastVulkan()->GetVkDevice(), m_uniform->GetMemory());
 }
