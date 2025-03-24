@@ -35,6 +35,9 @@ namespace Engine
 			std::vector<GamePlay::GameObjectData> m_gameObjectDatas;
 			std::vector<GamePlay::GameObject*> m_gameObjects;
 			GamePlay::Camera* m_camera = nullptr;
+
+			std::chrono::high_resolution_clock::time_point m_lastTime = std::chrono::high_resolution_clock::now();
+			float m_deltaTime = 0.0f;
 		};
 	}
 }

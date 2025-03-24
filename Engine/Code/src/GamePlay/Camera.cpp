@@ -11,8 +11,8 @@ namespace Engine
 		               float a_near, float a_far, float a_speed) : m_up(a_up), m_center(a_center), m_eye(a_eye), m_fovY(a_fovY),
 		                                            m_aspect(a_aspect), m_near(a_near), m_far(a_far), m_speed(a_speed)
 		{
-			Math::mat4 t_proj = Math::mat4::Perspective(m_fovY, m_aspect, m_near, m_far);
-			Math::mat4 t_view = Math::mat4::View(m_up, m_center, m_eye);
+			const Math::mat4 t_proj = Math::mat4::Perspective(m_fovY, m_aspect, m_near, m_far);
+			const Math::mat4 t_view = Math::mat4::View(m_up, m_center, m_eye);
 			m_vp = t_proj * t_view;
 			m_vp.Transpose();
 		}
@@ -25,14 +25,14 @@ namespace Engine
 			m_descriptor->Create(a_info.mLogicalDevice, a_info.mPhysicalDevice, a_info.mGraphicPipeline, m_descriptorPool, a_info.mCommandPool, m_vp);
 		}
 
-		void Camera::Update(Core::RHI::ILogicalDevice* a_logicalDevice, Core::Window::IInputHandler* a_inputHandler)
+		void Camera::Update(Core::RHI::ILogicalDevice* a_logicalDevice, Core::Window::IInputHandler* a_inputHandler, const float a_deltaTime)
 		{
-			ComputeInputs(a_inputHandler);
+			ComputeInputs(a_inputHandler, a_deltaTime);
 
 			if (m_needToUpdate)
 			{
-				Math::mat4 t_proj = Math::mat4::Perspective(m_fovY, m_aspect, m_near, m_far);
-				Math::mat4 t_view = Math::mat4::View(m_up, m_center, m_eye);
+				const Math::mat4 t_proj = Math::mat4::Perspective(m_fovY, m_aspect, m_near, m_far);
+				const Math::mat4 t_view = Math::mat4::View(m_up, m_center, m_eye);
 				m_vp = t_proj * t_view;
 				m_vp.Transpose();
 				m_needToUpdate = false;
@@ -49,10 +49,9 @@ namespace Engine
 			delete m_descriptorPool;
 		}
 
-		void Camera::ComputeInputs(Core::Window::IInputHandler* a_inputHandler)
+		void Camera::ComputeInputs(Core::Window::IInputHandler* a_inputHandler, const float a_deltaTime)
 		{
-			float t_deltaTime = 0.01667f;
-			float t_deltaSpeed = m_speed * t_deltaTime;
+			const float t_deltaSpeed = m_speed * a_deltaTime;
 
 			if (a_inputHandler->IsKeyDown(Core::Window::Key::KEY_W))
 			{
