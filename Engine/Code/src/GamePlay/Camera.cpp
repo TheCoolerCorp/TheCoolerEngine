@@ -25,9 +25,9 @@ namespace Engine
 			m_descriptor->Create(a_info.mLogicalDevice, a_info.mPhysicalDevice, a_info.mGraphicPipeline, m_descriptorPool, a_info.mCommandPool, m_vp);
 		}
 
-		void Camera::Update(Core::RHI::ILogicalDevice* a_logicalDevice, Core::Window::IInputHandler* a_inputHandler, const float a_deltaTime)
+		void Camera::Update(Core::RHI::ILogicalDevice* a_logicalDevice, Core::Window::IInputHandler* a_inputHandler, Core::Window::IWindow* a_window, const float a_deltaTime)
 		{
-			ComputeInputs(a_inputHandler, a_deltaTime);
+			ComputeInputs(a_inputHandler, a_window, a_deltaTime);
 
 			if (m_needToUpdate)
 			{
@@ -49,7 +49,7 @@ namespace Engine
 			delete m_descriptorPool;
 		}
 
-		void Camera::ComputeInputs(Core::Window::IInputHandler* a_inputHandler, const float a_deltaTime)
+		void Camera::ComputeInputs(Core::Window::IInputHandler* a_inputHandler, Core::Window::IWindow* a_window, const float a_deltaTime)
 		{
 			const float t_deltaSpeed = m_speed * a_deltaTime;
 
@@ -76,6 +76,16 @@ namespace Engine
 				m_center.x -= t_deltaSpeed;
 				m_eye.x -= t_deltaSpeed;
 				m_needToUpdate = true;
+			}
+
+			if (a_inputHandler->IsMouseButtonDown(Core::Window::MouseButton::MOUSE_BUTTON_RIGHT))
+			{
+				a_window->CaptureCursor();
+				m_needToUpdate = true;
+			}
+			else if (a_inputHandler->IsMouseButtonReleased(Core::Window::MouseButton::MOUSE_BUTTON_RIGHT))
+			{
+				a_window->CaptureCursor(false);
 			}
 		}
 	}

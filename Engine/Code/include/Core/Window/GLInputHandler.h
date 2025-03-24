@@ -29,13 +29,17 @@ namespace Engine
 				ENGINE_API bool IsMouseButtonPressed(MouseButton a_mouseButton) override;
 				ENGINE_API bool IsMouseButtonReleased(MouseButton a_mouseButton) override;
 
+				ENGINE_API Math::vec2 GetCursorPosition() override;
+
 
 			private:
 				static std::vector<int> m_currentKeyStatus;
 				static std::vector<int> m_currentMouseButtonStatus;
+				static Math::vec2 m_cursorPosition;
 
 				static void KeyCallBack(GLFWwindow* window, int key, int scancode, int action, int mods);
 				static void MouseCallBack(GLFWwindow* window, int button, int action, int mods);
+				static void CursorPositionCallback(GLFWwindow* a_window, double a_xpos, double a_ypos);
 
 			};
 		}

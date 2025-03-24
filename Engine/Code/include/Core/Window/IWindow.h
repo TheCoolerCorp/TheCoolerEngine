@@ -42,6 +42,8 @@ namespace Engine
 				ENGINE_API virtual void SetResized(bool a_resized) = 0;
 
 				ENGINE_API virtual void ResizeFramebuffer() = 0;
+
+				ENGINE_API virtual void CaptureCursor(bool a_capture = true) = 0;
 			};
 		}
 	}
