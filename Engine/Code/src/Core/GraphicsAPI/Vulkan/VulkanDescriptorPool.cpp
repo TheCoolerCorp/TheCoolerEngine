@@ -10,22 +10,22 @@ namespace Engine
 	{
 		namespace GraphicsAPI
 		{
-			void VulkanDescriptorPool::Create(RHI::ILogicalDevice* a_logicalDevice, int a_maxFrameInFlight)
+			void VulkanDescriptorPool::Create(RHI::ILogicalDevice* a_logicalDevice, const int a_maxFrameInFlight)
 			{
                 m_maxFrame = a_maxFrameInFlight;
-                std::array<VkDescriptorPoolSize, 2> poolSizes{};
-                poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-                poolSizes[0].descriptorCount = static_cast<uint32_t>(m_maxFrame);
-                poolSizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-                poolSizes[1].descriptorCount = static_cast<uint32_t>(m_maxFrame);
+                std::array<VkDescriptorPoolSize, 2> t_poolSizes{};
+                t_poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+                t_poolSizes[0].descriptorCount = static_cast<uint32_t>(m_maxFrame);
+                t_poolSizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+                t_poolSizes[1].descriptorCount = static_cast<uint32_t>(m_maxFrame);
 
-                VkDescriptorPoolCreateInfo poolInfo{};
-                poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-                poolInfo.poolSizeCount = static_cast<uint32_t>(poolSizes.size());
-                poolInfo.pPoolSizes = poolSizes.data();
-                poolInfo.maxSets = 2u * static_cast<uint32_t>(m_maxFrame);
+                VkDescriptorPoolCreateInfo t_poolInfo{};
+                t_poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+                t_poolInfo.poolSizeCount = static_cast<uint32_t>(t_poolSizes.size());
+                t_poolInfo.pPoolSizes = t_poolSizes.data();
+                t_poolInfo.maxSets = static_cast<uint32_t>(m_maxFrame);
 
-				VK_CHECK(vkCreateDescriptorPool(a_logicalDevice->CastVulkan()->GetVkDevice(), &poolInfo, nullptr, &m_pool), "failed to create descriptorPool");
+				VK_CHECK(vkCreateDescriptorPool(a_logicalDevice->CastVulkan()->GetVkDevice(), &t_poolInfo, nullptr, &m_pool), "failed to create descriptorPool");
 			}
 			void VulkanDescriptorPool::Destroy(RHI::ILogicalDevice* a_logicalDevice)
 			{

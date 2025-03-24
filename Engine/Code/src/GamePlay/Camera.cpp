@@ -16,21 +16,25 @@ namespace Engine
 			m_vp.Transpose();
 		}
 
-		void Camera::Create(Core::RHI::ApiInterface* a_interface, CameraObjectinfo a_info)
+		void Camera::Create(Core::RHI::ApiInterface* a_interface, const CameraObjectinfo& a_info)
 		{
+			m_descriptorPool = a_interface->InstantiateDescriptorPool();
+			m_descriptorPool->Create(a_info.mLogicalDevice, 1);
 			m_descriptor = a_interface->InstantiateCameraDescriptor();
-			m_descriptor->Create(a_info.mLogicalDevice, a_info.mPhysicalDevice, a_info.mGraphicPipeline, a_info.mDescriptorPool, a_info.mCommandPool, m_vp, a_info.mSize);
+			m_descriptor->Create(a_info.mLogicalDevice, a_info.mPhysicalDevice, a_info.mGraphicPipeline, m_descriptorPool, a_info.mCommandPool, m_vp);
 		}
 
-		void Camera::Update(const uint32_t a_frameIndex, Core::RHI::ILogicalDevice* a_logicalDevice)
+		void Camera::Update(Core::RHI::ILogicalDevice* a_logicalDevice)
 		{
-			m_descriptor->Update(a_frameIndex, a_logicalDevice, m_vp.mElements.data());
+			m_descriptor->Update(a_logicalDevice, m_vp.mElements.data());
 		}
 
 		void Camera::Destroy(Core::RHI::ILogicalDevice* a_logicalDevice)
 		{
 			m_descriptor->Destroy(a_logicalDevice);
 			delete m_descriptor;
+			m_descriptorPool->Destroy(a_logicalDevice);
+			delete m_descriptorPool;
 		}
 	}
 }
