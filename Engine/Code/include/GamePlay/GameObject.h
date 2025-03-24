@@ -21,45 +21,17 @@
 
 namespace Engine
 {
-	namespace Core
-	{
-		namespace RHI
-		{
-			class ILogicalDevice;
-		}
-	}
-
 	namespace GamePlay
 	{
-		struct GameObjectinfo
-		{
-			Core::RHI::ILogicalDevice* mLogicalDevice;
-			Core::RHI::IPhysicalDevice* mPhysicalDevice;
-			Core::RHI::IGraphicPipeline* mGraphicPipeline;
-			Core::RHI::IDescriptorPool* mDescriptorPool;
-			Core::RHI::ICommandPool* mCommandPool;
-			int mSize;
-		};
-
-		struct ENGINE_API GameObjectData
-		{
-			Core::RHI::IBuffer* mVertexBuffer = nullptr;
-			Core::RHI::IBuffer* mIndexBuffer = nullptr;
-			Core::RHI::IImage* mImage = nullptr;
-			Core::RHI::IObjectDescriptor* mDescriptor = nullptr;
-			uint32_t mNbIndices = 0;
-		};
-
-
 		class GameObject
 		{
 		public:
 			GameObject() = default;
 			~GameObject() = default;
 
-			/*GameObject(Math::vec3 a_position, Math::quat a_rotation, Math::vec3 a_scale);
+			GameObject(Math::vec3 a_position, Math::vec3 a_rotation, Math::vec3 a_scale);
 
-			void Create(Core::RHI::ApiInterface* a_interface, GameObjectinfo a_info);
+			/*void Create(Core::RHI::ApiInterface* a_interface, GameObjectinfo a_info);
 			void Update(uint32_t a_frameIndex, Engine::Core::RHI::ILogicalDevice* a_logicalDevice);
 			void Destroy(Core::RHI::ApiInterface* a_interface, Core::RHI::ILogicalDevice* a_logicalDevice);
 			GameObjectData SubmitData();*/
@@ -129,13 +101,8 @@ namespace Engine
 				}*/
 			}
 
-			std::vector<std::shared_ptr<Component>> GetComponents() { return m_components; }
-			Math::Transform GetTransform() { return m_transform; }
 
 		private:
-			std::vector<std::shared_ptr<Component>> m_components;
-			Math::Transform m_transform;
-
 			Core::RHI::IObjectDescriptor* m_descriptor{};
 
 			int m_id;

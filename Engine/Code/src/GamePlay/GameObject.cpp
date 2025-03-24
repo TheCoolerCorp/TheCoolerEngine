@@ -7,12 +7,12 @@ namespace Engine
 {
 	namespace GamePlay
 	{
-		/*GameObject::GameObject(Math::vec3 a_position, Math::quat a_rotation, Math::vec3 a_scale)
+		GameObject::GameObject(Math::vec3 a_position, Math::vec3 a_rotation, Math::vec3 a_scale)
 		{
-			m_transform = Math::Transform(a_position, a_rotation, a_scale);
+			AddComponent<TransformComponent>(a_position, a_rotation, a_scale);
 		}
 
-		void GameObject::Create(Core::RHI::ApiInterface* a_interface, GameObjectinfo a_info)
+		/*void GameObject::Create(Core::RHI::ApiInterface* a_interface, GameObjectinfo a_info)
 		{
 			m_descriptor = a_interface->InstantiateObjectDescriptor();
 			m_descriptor->Create(a_info.mLogicalDevice, a_info.mPhysicalDevice, a_info.mGraphicPipeline, a_info.mDescriptorPool, a_info.mCommandPool, this, a_info.mSize);
