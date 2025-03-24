@@ -22,18 +22,25 @@ namespace Engine
 			void UpdateMatrix();
 
 			void Translate(vec3 a_translate) { m_pos += a_translate; m_needUpdate = true; }
+
 			void Rotate(quat a_rotation) { m_rot *= a_rotation; m_needUpdate = true; }
 			void Rotate(vec3 a_rotation) { m_rot *= quat(a_rotation); m_needUpdate = true; }
-			void Sccale(vec3 a_scale) { m_scale *= a_scale; m_needUpdate = true; }
+
+			void Scale(vec3 a_scale) { m_scale *= a_scale; m_needUpdate = true; }
 
 			vec3 GetPosition() { return m_pos; }
+
 			quat GetRotation() { return m_rot; }
+
 			vec3 GetScale() { return m_scale; }
+
 			mat4 GetModel() { return m_model; }
 
 			void SetPosition(vec3 a_pos) { m_pos = a_pos; m_needUpdate = true; }
+
 			void SetRotation(quat a_rot) { m_rot = a_rot; m_needUpdate = true; }
 			void SetRotation(vec3 a_rot) { m_rot = quat(a_rot); m_needUpdate = true; }
+
 			void SetScale(vec3 a_scale) { m_scale = a_scale; m_needUpdate = true; }
 
 		private:

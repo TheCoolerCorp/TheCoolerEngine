@@ -9,7 +9,7 @@ namespace Engine
 {
     namespace Resource
     {
-        void Texture::Create(std::string a_path, Core::RHI::ApiInterface* a_interface, Core::RHI::IPhysicalDevice* a_physicalDevice, Core::RHI::ILogicalDevice* a_logicalDevice, Core::RHI::ICommandPool* a_commandPool)
+        void Texture::Create(std::string a_path)
         {
             int texWidth, texHeight, texChannels;
             stbi_uc* pixels = stbi_load(a_path.c_str(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
@@ -23,24 +23,46 @@ namespace Engine
             m_height = texHeight;
             m_data = pixels;
 
+            m_path = a_path;
+        }
+
+        void Texture::Destroy()
+        {
+            delete m_data;
+        }
+
+        void Texture::Load(Core::RHI::ApiInterface* a_interface, Core::RHI::IPhysicalDevice* a_physicalDevice, Core::RHI::ILogicalDevice* a_logicalDevice, Core::RHI::ICommandPool* a_commandPool)
+        {
+            if (m_isLoaded)
+            {
+                return;
+            }
+
             m_image = a_interface->InstantiateImage();
 
             const Core::RHI::ImageData t_imageData = {
-                .mWidth= m_width,
-                .mHeight= m_height,
-                .data= m_data
+                .mWidth = m_width,
+                .mHeight = m_height,
+                .data = m_data
             };
 
             m_image->Create(Core::RHI::ImageType::TEXTURE, t_imageData, a_physicalDevice, a_logicalDevice, a_commandPool);
+
+            m_isLoaded = true;
         }
 
-        void Texture::Destroy(Core::RHI::ILogicalDevice* a_logicalDevice)
+        void Texture::Unload(Core::RHI::ILogicalDevice* a_logicalDevice)
         {
-            delete m_data;
+            if (!m_isLoaded)
+            {
+                return;
+            }
+
             m_image->Destroy(a_logicalDevice);
             delete m_image;
-        }
 
+            m_isLoaded = false;
+        }
 
     }
 }

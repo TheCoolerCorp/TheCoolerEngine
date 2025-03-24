@@ -10,6 +10,10 @@
 
 #include "Math/Transform.h"
 #include "Component.h"
+#include "Ressources/ResourceManager.h"
+#include "ComponentsPool.h"
+
+
 #include "Core/Interfaces/IObjectDescriptor.h"
 #include "Core/Interfaces/ApiInterface.h"
 
@@ -57,47 +61,54 @@ namespace Engine
 			void Update(uint32_t a_frameIndex, Engine::Core::RHI::ILogicalDevice* a_logicalDevice);
 			void Destroy(Core::RHI::ApiInterface* a_interface, Core::RHI::ILogicalDevice* a_logicalDevice);
 			GameObjectData SubmitData();
-			
 
-			template<typename T>
-			void AddComponent(std::string a_path, GameObjectinfo a_info, Core::RHI::ApiInterface* a_interface)
+
+
+			template<typename Type, typename Args>
+			void AddComponent(ComponentsPool& a_componentsPool, Resource::ResourceManager& a_resourceManager, Args&&... args)
 			{
-				static_assert(std::is_base_of<Component, T>::value, "Type is not a component");
+				/* Check if not already in c
+				 * CreateComp
+				 * CreateResource if needed (maybe already in resource)
+				 * Add to componentsPool
+				 */
 
-				if (GetComponent<T>())
+				static_assert(std::is_base_of<Component, Type>::value);
+
+				if (HasComponent<Type>(a_componentsPool))
 				{
-					LOG_ERROR("Already as this type of component");
+					std::string warning_error = "GameObject :" + std::to_string(m_id) + "already have this type of component" + std::to_string(typeid(Type));
+					LOG_WARNING(warning_error);
 					return;
 				}
 
-				std::shared_ptr<T> component = std::make_shared<T>();
+				//std::shared_ptr<T> component = std::make_shared<T>();
 
-				component->Create(a_path, a_interface, a_info.mPhysicalDevice, a_info.mLogicalDevice, a_info.mCommandPool);
+				//component->Create(a_path, a_interface, a_info.mPhysicalDevice, a_info.mLogicalDevice, a_info.mCommandPool);
 
-				m_components.emplace_back(component);
+				//m_components.emplace_back(component);
 			}
 
-			template<typename T>
-			std::shared_ptr<T> GetComponent()
+			template<typename Type>
+			std::shared_ptr<Type> GetComponent(ComponentsPool& a_componentsPool)
 			{
-				static_assert(std::is_base_of<Component, T>::value, "Type is not a component");
+				static_assert(std::is_base_of<Component, Type>::value);
+				//for (const auto& component : m_components)
+				//{
+				//	std::shared_ptr<T> castedComponent = std::dynamic_pointer_cast<T>(component);
 
-				for (const auto& component : m_components)
-				{
-					std::shared_ptr<T> castedComponent = std::dynamic_pointer_cast<T>(component);
-
-					if (castedComponent)
-					{
-						return castedComponent;
-					}
-				}
-				return nullptr;
+				//	if (castedComponent)
+				//	{
+				//		return castedComponent;
+				//	}
+				//}
+				//return nullptr;
 			}
 
-			template<typename T>
-			void RemoveComponent()
+			template<typename Type>
+			bool HasComponent(ComponentsPool& a_componentsPool)
 			{
-				static_assert(std::is_base_of<Component, T>::value, "Type is not a component");
+				/*static_assert(std::is_base_of<Component, T>::value, "Type is not a component");
 
 				for (auto it = m_components.begin(); it != m_components.end();)
 				{
@@ -111,7 +122,7 @@ namespace Engine
 					{
 						++it;
 					}
-				}
+				}*/
 			}
 
 			std::vector<std::shared_ptr<Component>> GetComponents() { return m_components; }
@@ -122,6 +133,8 @@ namespace Engine
 			Math::Transform m_transform;
 
 			Core::RHI::IObjectDescriptor* m_descriptor{};
+
+			int m_id;
 		};
 
 		

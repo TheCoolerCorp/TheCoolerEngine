@@ -4,7 +4,7 @@ namespace Engine
 {
 	namespace Resource
 	{
-		void Mesh::Create(std::string a_path, Core::RHI::ApiInterface* a_interface, Core::RHI::IPhysicalDevice* a_physicalDevice, Core::RHI::ILogicalDevice* a_logicalDevice, Core::RHI::ICommandPool* a_commandPool)
+		void Mesh::Create(std::string a_path)
 		{
             Assimp::Importer t_importer{};
             const aiScene* t_scene = t_importer.ReadFile(a_path, aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_PreTransformVertices);
@@ -20,6 +20,24 @@ namespace Engine
                 const aiMesh* t_mesh = t_scene->mMeshes[i];
                 ProcessMesh(t_mesh);
             }
+
+            m_path = a_path;
+		}
+
+		void Mesh::Destroy()
+		{
+            m_vertices.clear();
+            m_indexes.clear();
+		}
+
+
+        void Mesh::Load(Core::RHI::ApiInterface* a_interface, Core::RHI::IPhysicalDevice* a_physicalDevice, Core::RHI::ILogicalDevice* a_logicalDevice, Core::RHI::ICommandPool* a_commandPool)
+		{
+            if (m_isLoaded)
+            {
+            	return;
+            }
+
             m_vertexBuffer = a_interface->InstantiateBuffer();
             m_indexBuffer = a_interface->InstantiateBuffer();
 
@@ -29,15 +47,23 @@ namespace Engine
 
             m_vertexBuffer->Create(Core::RHI::BufferType::VERTEX, t_bufferData, a_physicalDevice, a_logicalDevice, a_commandPool);
             m_indexBuffer->Create(Core::RHI::BufferType::INDEX, t_bufferData, a_physicalDevice, a_logicalDevice, a_commandPool);
+
+            m_isLoaded = true;
 		}
-		void Mesh::Destroy(Core::RHI::ILogicalDevice* a_logicalDevice)
+
+        void Mesh::Unload(Core::RHI::ILogicalDevice* a_logicalDevice)
 		{
-            m_vertices.clear();
-            m_indexes.clear();
+            if (!m_isLoaded)
+            {
+                return;
+            }
+
             m_vertexBuffer->Destroy(a_logicalDevice);
             m_indexBuffer->Destroy(a_logicalDevice);
             delete m_vertexBuffer;
             delete m_indexBuffer;
+
+            m_isLoaded = false;
 		}
 
         void Mesh::ProcessMesh(const aiMesh* mesh)

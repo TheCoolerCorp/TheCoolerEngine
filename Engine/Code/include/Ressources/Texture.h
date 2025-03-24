@@ -24,8 +24,11 @@ namespace Engine
 		class Texture : public IResource
 		{
 		public:
-			ENGINE_API void Create(std::string a_path, Core::RHI::ApiInterface* a_interface, Core::RHI::IPhysicalDevice* a_physicalDevice, Core::RHI::ILogicalDevice* a_logicalDevice, Core::RHI::ICommandPool* a_commandPool) override;
-			ENGINE_API void Destroy(Core::RHI::ILogicalDevice* a_logicalDevice) override;
+			ENGINE_API void Create(std::string a_path);
+			ENGINE_API void Destroy();
+
+			ENGINE_API void Load(Core::RHI::ApiInterface* a_interface, Core::RHI::IPhysicalDevice* a_physicalDevice, Core::RHI::ILogicalDevice* a_logicalDevice, Core::RHI::ICommandPool* a_commandPool);
+			ENGINE_API void Unload(Core::RHI::ILogicalDevice* a_logicalDevice);
 
 			ENGINE_API int GetWidth() const { return m_width; }
 			ENGINE_API int GetHeight() const { return m_height; }
@@ -34,6 +37,9 @@ namespace Engine
 			ENGINE_API Core::RHI::IImage* GetImage() const { return m_image; }
 
 		private:
+			std::string m_path;
+			bool m_isLoaded = false;
+
 			int m_width = 0;
 			int m_height = 0;
 			unsigned char* m_data = nullptr;
