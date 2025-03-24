@@ -30,7 +30,6 @@ namespace Engine
 			Core::RHI::ILogicalDevice* mLogicalDevice;
 			Core::RHI::IPhysicalDevice* mPhysicalDevice;
 			Core::RHI::IGraphicPipeline* mGraphicPipeline;
-			Core::RHI::IDescriptorPool* mDescriptorPool;
 			Core::RHI::ICommandPool* mCommandPool;
 			int mSize;
 		};
@@ -122,6 +121,7 @@ namespace Engine
 			Math::Transform m_transform;
 
 			Core::RHI::IObjectDescriptor* m_descriptor{};
+			Core::RHI::IDescriptorPool* m_descriptorPool{};
 		};
 
 		

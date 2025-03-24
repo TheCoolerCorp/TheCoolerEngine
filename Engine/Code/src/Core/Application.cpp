@@ -25,9 +25,9 @@ namespace Engine
 			m_camera->Create(m_renderer->GetInterface(), { m_renderer->GetLogicalDevice(), m_renderer->GetPhysicalDevice(), m_renderer->GetPipeline(), m_renderer->GetCommandPool() });
 
 			GamePlay::GameObject* t_obj = new GamePlay::GameObject(Math::vec3(0.f, 0.f, 0.f), Math::quat(Math::vec3(Math::ToRadians(90.f), Math::ToRadians(90.f), 0.f)), Math::vec3(1.f, 1.f, 1.f));
-			t_obj->AddComponent<GamePlay::MeshComponent>("Assets/Meshes/viking_room.obj", { m_renderer->GetLogicalDevice(), m_renderer->GetPhysicalDevice(), m_renderer->GetPipeline(), m_renderer->GetDescriptorPool(), m_renderer->GetCommandPool(), 3 }, m_renderer->GetInterface());
-			t_obj->AddComponent<GamePlay::TextureComponent>("Assets/Textures/viking_room.png", { m_renderer->GetLogicalDevice(), m_renderer->GetPhysicalDevice(), m_renderer->GetPipeline(), m_renderer->GetDescriptorPool(), m_renderer->GetCommandPool(), 3 }, m_renderer->GetInterface());
-			t_obj->Create(m_renderer->GetInterface(), { m_renderer->GetLogicalDevice(), m_renderer->GetPhysicalDevice(), m_renderer->GetPipeline(), m_renderer->GetDescriptorPool(), m_renderer->GetCommandPool(), 3 });
+			t_obj->AddComponent<GamePlay::MeshComponent>("Assets/Meshes/viking_room.obj", { m_renderer->GetLogicalDevice(), m_renderer->GetPhysicalDevice(), m_renderer->GetPipeline(), m_renderer->GetCommandPool(), 3 }, m_renderer->GetInterface());
+			t_obj->AddComponent<GamePlay::TextureComponent>("Assets/Textures/viking_room.png", { m_renderer->GetLogicalDevice(), m_renderer->GetPhysicalDevice(), m_renderer->GetPipeline(), m_renderer->GetCommandPool(), 3 }, m_renderer->GetInterface());
+			t_obj->Create(m_renderer->GetInterface(), { m_renderer->GetLogicalDevice(), m_renderer->GetPhysicalDevice(), m_renderer->GetPipeline(), m_renderer->GetCommandPool(), 3 });
 			m_gameObjectDatas.push_back(t_obj->SubmitData());
 			m_gameObjects.push_back(t_obj);
 		}
