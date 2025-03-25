@@ -12,6 +12,7 @@
 #include "Core/Renderer/Renderer.h"
 #include "GamePlay/GameObject.h"
 #include "GamePlay/Camera.h"
+#include "GamePlay/Scene.h"
 
 namespace Engine
 {
@@ -32,10 +33,12 @@ namespace Engine
 			Window::IWindow* m_mainWindow = nullptr;
 			Window::IInputHandler* m_inputHandler = nullptr;
 			Renderer* m_renderer = nullptr;
-			std::vector<GamePlay::GameObjectData> m_gameObjectDatas;
+			/*std::vector<GamePlay::GameObjectData> m_gameObjectDatas;*/
 			std::vector<GamePlay::GameObject*> m_gameObjects;
 			GamePlay::Camera* m_camera = nullptr;
 
+			GamePlay::Scene* m_currentScene;
+			std::vector<GamePlay::Scene*> m_scenes;
 			std::chrono::high_resolution_clock::time_point m_lastTime = std::chrono::high_resolution_clock::now();
 			float m_deltaTime = 0.0f;
 		};

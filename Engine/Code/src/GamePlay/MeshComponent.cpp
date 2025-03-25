@@ -11,12 +11,12 @@ namespace Engine
 			m_mesh = ServiceLocator::GetResourceManager()->CreateResource<Resource::Mesh>(a_path);
 		}
 
-		/*void MeshComponent::Destroy(Core::RHI::ILogicalDevice* a_logicalDevice)
+		void MeshComponent::Destroy()
 		{
-			if (m_mesh)
+			/*if (m_mesh)
 			{
 				Resource::ResourceManager::Get().DestroyResource(m_name, a_logicalDevice);
-			}
-		}*/
+			}*/
+		}
 	}
 }

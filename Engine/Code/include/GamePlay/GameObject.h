@@ -44,17 +44,18 @@ namespace Engine
 			void AddComponent(Args&&... args)
 			{
 				static_assert(std::is_base_of<Component, Type>::value);
-				static_assert(std::is_member_function_pointer<Type>::Create);
+				//static_assert(std::is_member_function_pointer<decltype(&Type::Create)>::value);
 
 				if (HasComponent<Type>())
 				{
+					// TODO : rework Debug message later
 					//std::string warning_error = "GameObject :" + std::to_string(m_id) + "already have this type of component" + std::to_string(typeid(Type));
 					LOG_WARNING("Error");
 					return;
 				}
 
 				std::shared_ptr<Type> t_component = std::make_shared<Type>();
-				t_component->Create(args);
+				t_component->Create(std::forward<Args>(args)...);
 				//component->Create(a_path, a_interface, a_info.mPhysicalDevice, a_info.mLogicalDevice, a_info.mCommandPool);
 
 				//m_components.emplace_back(component);
@@ -96,6 +97,7 @@ namespace Engine
 						++it;
 					}
 				}*/
+				return true;
 			}
 
 

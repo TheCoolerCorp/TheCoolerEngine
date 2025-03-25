@@ -18,7 +18,7 @@ namespace Engine
 			~MeshComponent() override = default;
 
 			ENGINE_API void Create(std::string a_path);
-			//void Destroy();
+			ENGINE_API void Destroy();
 
 		private:
 			std::shared_ptr<Resource::Mesh> m_mesh;

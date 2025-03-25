@@ -23,12 +23,12 @@ namespace Engine
 			std::shared_ptr<Type> CreateResource(Args&&... args)
 			{
 				static_assert(std::is_base_of<IResource, Type>::value);
-				static_assert(std::is_member_function_pointer_v<decltype(&Type::Create)>);
+				//static_assert(std::is_member_function_pointer_v<decltype(&Type::Create)>);
 
 				std::shared_ptr<Type> t_resource = std::make_shared<Type>();
 				t_resource->Create(std::forward<Args>(args)...);
 
-				for (const auto& [id, resource] : m_resources)
+				for (auto& [id, resource] : m_resources)
 				{
 					if (resource == t_resource)
 					{
@@ -45,6 +45,8 @@ namespace Engine
 				return t_resource;
 
 			}
+
+			
 			//ENGINE_API IResource* CreateResourceReference(ResourceType a_type, std::string a_path, std::string a_name, Core::RHI::ApiInterface* a_interface, Core::RHI::IPhysicalDevice* a_physicalDevice, Core::RHI::ILogicalDevice* a_logicalDevice, Core::RHI::ICommandPool* a_commandPool);
 			//ENGINE_API void DestroyResource(std::string a_name, Core::RHI::ILogicalDevice* a_logicalDevice);
 

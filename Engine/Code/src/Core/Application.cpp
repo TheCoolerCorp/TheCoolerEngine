@@ -36,6 +36,7 @@ namespace Engine
 		{
 			while (!m_mainWindow->ShouldClose())
 			{
+				
 				/*m_gameObjectDatas.clear();
 				auto t_now = std::chrono::high_resolution_clock::now();
 				m_deltaTime = std::chrono::duration<float>(t_now - m_lastTime).count();

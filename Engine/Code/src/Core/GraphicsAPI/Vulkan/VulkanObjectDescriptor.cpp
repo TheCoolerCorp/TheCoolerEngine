@@ -37,26 +37,26 @@ namespace Engine
                 {
                     m_uniforms[i] = new VulkanBuffer;
 
-                    Math::mat4 t_mat = a_gameObject->GetTransform().GetModel();
+                    //Math::mat4 t_mat = a_gameObject->GetTransform().GetModel();
 
-                    RHI::BufferData t_uniformData;
-                    t_uniformData.mUboData = t_mat.mElements.data();
-                    t_uniformData.mUboSize = 16 * sizeof(float);
-                    m_uniforms[i]->Create(RHI::BufferType::UBO, t_uniformData, a_physicalDevice, a_logicalDevice, a_commandPool);
+     //               RHI::BufferData t_uniformData;
+     //               t_uniformData.mUboData = t_mat.mElements.data();
+     //               t_uniformData.mUboSize = 16 * sizeof(float);
+     //               m_uniforms[i]->Create(RHI::BufferType::UBO, t_uniformData, a_physicalDevice, a_logicalDevice, a_commandPool);
 
-                    VkDescriptorBufferInfo t_bufferInfo{};
-                    t_bufferInfo.buffer = m_uniforms[i]->GetBuffer();
-                    t_bufferInfo.offset = 0;
-                    t_bufferInfo.range = 16 * sizeof(float);
+     //               VkDescriptorBufferInfo t_bufferInfo{};
+     //               t_bufferInfo.buffer = m_uniforms[i]->GetBuffer();
+     //               t_bufferInfo.offset = 0;
+     //               t_bufferInfo.range = 16 * sizeof(float);
 
-                	VkDescriptorImageInfo t_imageInfo{};
-                    t_imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-					t_imageInfo.imageView = 0;/*a_gameObject->GetComponent<GamePlay::TextureComponent>()->GetTexture()->GetImage()->CastVulkan()->GetView();*/
-					t_imageInfo.sampler = 0;/*a_gameObject->GetComponent<GamePlay::TextureComponent>()->GetTexture()->GetImage()->CastVulkan()->GetSampler();*/
+     //           	VkDescriptorImageInfo t_imageInfo{};
+     //               t_imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+					//t_imageInfo.imageView = 0;/*a_gameObject->GetComponent<GamePlay::TextureComponent>()->GetTexture()->GetImage()->CastVulkan()->GetView();*/
+					//t_imageInfo.sampler = 0;/*a_gameObject->GetComponent<GamePlay::TextureComponent>()->GetTexture()->GetImage()->CastVulkan()->GetSampler();*/
 
                     std::array<VkWriteDescriptorSet, 2> t_descriptorWrites{};
 
-                    t_descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+                   /* t_descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
                     t_descriptorWrites[0].dstSet = m_descriptorSets[i];
                     t_descriptorWrites[0].dstBinding = 0;
                     t_descriptorWrites[0].dstArrayElement = 0;
@@ -70,7 +70,7 @@ namespace Engine
 					t_descriptorWrites[1].dstArrayElement = 0;
 					t_descriptorWrites[1].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
 					t_descriptorWrites[1].descriptorCount = 1;
-					t_descriptorWrites[1].pImageInfo = &t_imageInfo;
+					t_descriptorWrites[1].pImageInfo = &t_imageInfo;*/
 
                     vkUpdateDescriptorSets(t_logicalDevice, static_cast<uint32_t>(t_descriptorWrites.size()), t_descriptorWrites.data(), 0, nullptr);
                 }
