@@ -127,7 +127,7 @@ namespace Engine
 
 				for (int i = 0; i < a_objectsData.size(); ++i)
 				{
-					GamePlay::GameObjectData t_gameObjectData = a_objectsData[i];
+					/*GamePlay::GameObjectData t_gameObjectData = a_objectsData[i];
 					VkBuffer t_vertexBuffer = t_gameObjectData.mVertexBuffer->CastVulkan()->GetBuffer();
 					constexpr VkDeviceSize t_offsets[] = { 0 };
 					vkCmdBindVertexBuffers(a_commandBuffer, 0, 1, &t_vertexBuffer, t_offsets);
@@ -136,7 +136,7 @@ namespace Engine
 
 					vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, t_layout, 1, 1, &t_gameObjectData.mDescriptor->CastVulkan()->GetDescriptorSets()[a_imageIndex], 0, nullptr);
 
-					vkCmdDrawIndexed(a_commandBuffer, t_gameObjectData.mNbIndices, 1, 0, 0, 0);
+					vkCmdDrawIndexed(a_commandBuffer, t_gameObjectData.mNbIndices, 1, 0, 0, 0);*/
 				}
 
 				vkCmdEndRenderPass(a_commandBuffer);

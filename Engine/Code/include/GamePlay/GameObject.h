@@ -41,18 +41,13 @@ namespace Engine
 			template<typename Type, typename... Args>
 			void AddComponent(Args&&... args)
 			{
-				/* Check if not already in c
-				 * CreateComp
-				 * CreateResource if needed (maybe already in resource)
-				 * Add to componentsPool
-				 */
-
 				static_assert(std::is_base_of<Component, Type>::value);
+				static_assert(std::is_member_function_pointer<Type>::Create);
 
 				if (HasComponent<Type>())
 				{
-					std::string warning_error = "GameObject :" + std::to_string(m_id) + "already have this type of component" + std::to_string(typeid(Type));
-					LOG_WARNING(warning_error);
+					//std::string warning_error = "GameObject :" + std::to_string(m_id) + "already have this type of component" + std::to_string(typeid(Type));
+					LOG_WARNING("Error");
 					return;
 				}
 

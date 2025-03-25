@@ -20,10 +20,12 @@ namespace Engine
 			ENGINE_API void Init();
 			ENGINE_API void Destroy();
 
+			
+
 		private:
 			std::unordered_map<int, TransformComponent*> m_transformComponents;
 			std::unordered_map<int, MeshComponent*> m_meshesComponents;
-
+			std::vector<int> m_registerId;
 		};
 	}
 }

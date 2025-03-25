@@ -2,7 +2,7 @@
 
 #include "GamePlay/Meshcomponent.h"
 #include  "GamePlay/TextureComponent.h"
-
+#include "Core/Utils.h"
 namespace Engine
 {
 	namespace GamePlay
@@ -10,6 +10,7 @@ namespace Engine
 		GameObject::GameObject(Math::vec3 a_position, Math::vec3 a_rotation, Math::vec3 a_scale)
 		{
 			AddComponent<TransformComponent>(a_position, a_rotation, a_scale);
+			m_id = Utils::GenerateRandomInt(0, INT16_MAX);
 		}
 
 		/*void GameObject::Create(Core::RHI::ApiInterface* a_interface, GameObjectinfo a_info)
