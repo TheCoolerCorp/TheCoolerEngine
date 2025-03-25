@@ -36,6 +36,7 @@ namespace Engine
 		{
 			while (!m_mainWindow->ShouldClose())
 			{
+				
 				/*m_gameObjectDatas.clear();
 				for (GamePlay::GameObject* t_gameObject : m_gameObjects)
 				{
