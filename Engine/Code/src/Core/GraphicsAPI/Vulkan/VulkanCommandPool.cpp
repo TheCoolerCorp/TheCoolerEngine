@@ -13,6 +13,7 @@
 #include "Core/GraphicsAPI/Vulkan/VulkanRenderPass.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanSwapChain.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanUtils.h"
+#include "Core/Renderer/Renderer.h"
 
 #include "GamePlay/GameObject.h"
 #include "GamePlay/Camera.h"
@@ -90,6 +91,7 @@ namespace Engine
 
 				VK_CHECK(vkBeginCommandBuffer(a_commandBuffer, &t_beginInfo), "failed to begin recording command buffer!");
 
+
 				VkRenderPassBeginInfo t_renderPassInfo{};
 				t_renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
 				t_renderPassInfo.renderPass = a_renderPass;
@@ -138,6 +140,8 @@ namespace Engine
 
 					vkCmdDrawIndexed(a_commandBuffer, t_gameObjectData.mNbIndices, 1, 0, 0, 0);
 				}
+
+				Renderer::RunRenderCallbacks(a_commandBuffer);
 
 				vkCmdEndRenderPass(a_commandBuffer);
 

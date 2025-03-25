@@ -297,7 +297,7 @@ namespace Engine
 				ASSERT(!a_availableFormats.empty(), "No available formats !");
 				for (const auto& t_availableFormat : a_availableFormats)
 				{
-					if (t_availableFormat.format == VK_FORMAT_B8G8R8A8_SRGB && t_availableFormat.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR) 
+					if (t_availableFormat.format == VK_FORMAT_B8G8R8A8_UNORM && t_availableFormat.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR)
 					{
 						return t_availableFormat;
 					}

@@ -24,7 +24,7 @@ namespace Engine
 			class VulkanSwapchain : public RHI::ISwapChain
 			{
 			public:
-				using renderCallBack = std::function<void(VkCommandBuffer)>;
+				
 
 				ENGINE_API VulkanSwapchain();
 
@@ -49,13 +49,10 @@ namespace Engine
 
 				ENGINE_API void DrawFrame(Window::IWindow* a_window, RHI::ILogicalDevice* a_logicalDevice, RHI::ICommandPool* a_commandPool, RHI::ISurface* a_surface, RHI::IPhysicalDevice* a_physicalDevice, RHI::IRenderPass* a_renderPass, std::vector<GamePlay::GameObjectData> a_objectsData, GamePlay::Camera* camera) override;
 
-				ENGINE_API void AddRenderCallBack(renderCallBack callback)
-				{
-					m_renderCallbacks.push_back(callback);
-				}
+				
 
 			private:
-				std::vector<renderCallBack> m_renderCallbacks;
+				
 
 				VkSwapchainKHR m_swapChain = VK_NULL_HANDLE;
 

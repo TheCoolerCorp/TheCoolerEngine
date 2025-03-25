@@ -6,6 +6,8 @@ namespace Engine
 {
 	namespace Core
 	{
+		std::vector<std::function<void(VkCommandBuffer)>> Renderer::m_renderCallbacks;
+
 		void Renderer::Init(RendererType a_type, Window::IWindow* a_window)
 		{
 			if (a_type != RendererType::VULKAN)

@@ -49,7 +49,7 @@ void VulkanImGuiRenderer::Init(IWindow* window, Renderer* renderer)
 	VkPipelineCache g_PipelineCache = VK_NULL_HANDLE;
 	VkRenderPass g_RenderPass = renderer->GetRenderPass()->CastVulkan()->GetRenderPass();
 	VulkanSwapchain* swapChain = renderer->GetSwapChain()->CastVulkan();
-    swapChain->AddRenderCallBack(RenderDrawData);
+    Renderer::AddRenderCallBack(RenderDrawData);
 	uint32_t g_MinImageCount = swapChain->GetMaxFrame();
 	uint32_t g_ImageCount = g_MinImageCount;
 	VkAllocationCallbacks* g_Allocator = nullptr;

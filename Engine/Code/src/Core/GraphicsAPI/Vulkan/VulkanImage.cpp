@@ -39,7 +39,7 @@ namespace Engine
 					vkDestroyBuffer(t_logicalDevice, t_stagingBuffer, nullptr);
 					vkFreeMemory(t_logicalDevice, t_stagingBufferMemory, nullptr);
 
-					CreateImageView(m_image, &m_view, t_logicalDevice, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT);
+					CreateImageView(m_image, &m_view, t_logicalDevice, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_ASPECT_COLOR_BIT);
 
 				}
 				else if (a_type == RHI::ImageType::DEPTH)
