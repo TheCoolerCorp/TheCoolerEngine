@@ -4,7 +4,7 @@
 #include "EngineExport.h"
 
 #include "Ressources/ResourceManager.h"
-#include "GamePlay/ComponentsPool.h"
+#include "GamePlay/Components/ComponentsPool.h"
 
 namespace Engine
 {

@@ -1,4 +1,4 @@
-#include  "GamePlay/Meshcomponent.h"
+#include  "GamePlay/Components/Meshcomponent.h"
 
 #include "GamePlay/ServiceLocator.h"
 

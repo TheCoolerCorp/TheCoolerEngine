@@ -1,4 +1,4 @@
-#include  "GamePlay/TextureComponent.h"
+#include  "GamePlay/Components/TextureComponent.h"
 
 namespace Engine
 {

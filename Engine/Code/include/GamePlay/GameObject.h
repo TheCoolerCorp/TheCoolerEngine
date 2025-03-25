@@ -11,9 +11,9 @@
 #include "Core/Logger/Logger.h"
 
 #include "Math/Transform.h"
-#include "Component.h"
+#include "GamePlay/Components/Component.h"
 #include "Ressources/ResourceManager.h"
-#include "ComponentsPool.h"
+#include "Components/ComponentsPool.h"
 
 
 #include "Core/Interfaces/IObjectDescriptor.h"

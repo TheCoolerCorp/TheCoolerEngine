@@ -1,8 +1,8 @@
 #include "Core/Application.h"
 
 #include "GamePlay/GameObject.h"
-#include "GamePlay/TextureComponent.h"
-#include "GamePlay/Meshcomponent.h"
+#include "GamePlay/Components/TextureComponent.h"
+#include "GamePlay/Components/Meshcomponent.h"
 #include "Math/TheCoolerMath.h"
 
 namespace Engine

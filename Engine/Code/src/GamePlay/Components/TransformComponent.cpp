@@ -1,4 +1,4 @@
-#include  "GamePlay/TransformComponent.h"
+#include  "GamePlay/Components/TransformComponent.h"
 
 namespace Engine
 {

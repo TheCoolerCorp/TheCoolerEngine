@@ -4,8 +4,8 @@
 #include "EngineExport.h"
 
 #include "Core/Logger/Logger.h"
-#include "GamePlay/TransformComponent.h"
-#include "GamePlay/Meshcomponent.h"
+#include "GamePlay/Components/TransformComponent.h"
+#include "GamePlay/Components/Meshcomponent.h"
 
 #include <unordered_map>
 
