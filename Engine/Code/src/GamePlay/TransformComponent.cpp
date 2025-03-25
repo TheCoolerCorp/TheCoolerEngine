@@ -4,6 +4,11 @@ namespace Engine
 {
 	namespace GamePlay
 	{
+		void TransformComponent::Create()
+		{
+			m_transform = new Math::Transform(Math::vec3(0.f), Math::vec3(0.f), Math::vec3(1.f));
+		}
+
 		void TransformComponent::Create(Math::vec3 a_pos, Math::quat a_rot, Math::vec3 a_scale)
 		{
 			m_transform = new Math::Transform(a_pos, a_rot, a_scale);

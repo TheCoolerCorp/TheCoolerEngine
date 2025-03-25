@@ -6,17 +6,21 @@ namespace Engine
 {
 	namespace GamePlay
 	{
-		void MeshComponent::Create(std::shared_ptr<Resource::Mesh> a_mesh)
+		void MeshComponent::Create()
 		{
-			m_mesh = a_mesh;
+			// Do nothing for now.
 		}
 
 		void MeshComponent::Destroy()
 		{
-			/*if (m_mesh)
-			{
-				Resource::ResourceManager::Get().DestroyResource(m_name, a_logicalDevice);
-			}*/
+			// Just set mesh to nullptr, resource manager handle the resource.
+			m_mesh = nullptr;
+		}
+
+		void MeshComponent::SetMesh(Resource::Mesh* a_mesh)
+		{
+			// Set the mesh to use.
+			m_mesh = a_mesh;
 		}
 	}
 }

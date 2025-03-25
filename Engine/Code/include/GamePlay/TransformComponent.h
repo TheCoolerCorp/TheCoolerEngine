@@ -15,6 +15,7 @@ namespace Engine
 		public:
 			~TransformComponent() override = default;
 
+			ENGINE_API void Create();
 			ENGINE_API void Create(Math::vec3 a_pos, Math::quat a_rot, Math::vec3 a_scale);
 			ENGINE_API void Create(Math::vec3 a_pos, Math::vec3 a_rot, Math::vec3 a_scale);
 

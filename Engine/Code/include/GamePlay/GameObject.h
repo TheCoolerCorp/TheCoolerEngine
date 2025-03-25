@@ -39,64 +39,74 @@ namespace Engine
 			GameObjectData SubmitData();*/
 
 
-
-			template<typename Type, typename... Args>
-			void AddComponent(Args&&... args)
-			{
-				static_assert(std::is_base_of<Component, Type>::value);
-				//static_assert(std::is_member_function_pointer<decltype(&Type::Create)>::value);
-
-				if (HasComponent<Type>())
-				{
-					// TODO : rework Debug message later
-					//std::string warning_error = "GameObject :" + std::to_string(m_id) + "already have this type of component" + std::to_string(typeid(Type));
-					LOG_WARNING("Error");
-					return;
-				}
-
-				std::shared_ptr<Type> t_component = std::make_shared<Type>();
-				t_component->Create(std::forward<Args>(args)...);
-				ServiceLocator::GetComponentsPool()->RegisterComponent(t_component, m_id);
-			}
-
 			template<typename Type>
-			std::shared_ptr<Type> GetComponent(ComponentsPool& a_componentsPool)
+			void AddComponent()
 			{
+				// Check if Type is a derived component a
 				static_assert(std::is_base_of<Component, Type>::value);
-				//for (const auto& component : m_components)
-				//{
-				//	std::shared_ptr<T> castedComponent = std::dynamic_pointer_cast<T>(component);
+				static_assert(!std::is_class<Component, Type>::value);
 
-				//	if (castedComponent)
-				//	{
-				//		return castedComponent;
-				//	}
-				//}
-				//return nullptr;
+				Type* t_component = new Type();
+
+				ServiceLocator::GetComponentsPool()->RegisterComponents(t_component, m_id);
 			}
+			//template<typename Type, typename... Args>
+			//void AddComponent(Args&&... args)
+			//{
+			//	static_assert(std::is_base_of<Component, Type>::value);
+			//	//static_assert(std::is_member_function_pointer<decltype(&Type::Create)>::value);
 
-			template<typename Type>
-			bool HasComponent()
-			{
-				static_assert(std::is_base_of<Component, Type>::value);
+			//	if (HasComponent<Type>())
+			//	{
+			//		// TODO : rework Debug message later
+			//		//std::string warning_error = "GameObject :" + std::to_string(m_id) + "already have this type of component" + std::to_string(typeid(Type));
+			//		LOG_WARNING("Error");
+			//		return;
+			//	}
+
+			//	std::shared_ptr<Type> t_component = std::make_shared<Type>();
+			//	t_component->Create(std::forward<Args>(args)...);
+			//	ServiceLocator::GetComponentsPool()->RegisterComponent(t_component, m_id);
+			//}
+
+			//template<typename Type>
+			//std::shared_ptr<Type> GetComponent(ComponentsPool& a_componentsPool)
+			//{
+			//	static_assert(std::is_base_of<Component, Type>::value);
+			//	//for (const auto& component : m_components)
+			//	//{
+			//	//	std::shared_ptr<T> castedComponent = std::dynamic_pointer_cast<T>(component);
+
+			//	//	if (castedComponent)
+			//	//	{
+			//	//		return castedComponent;
+			//	//	}
+			//	//}
+			//	//return nullptr;
+			//}
+
+			//template<typename Type>
+			//bool HasComponent()
+			//{
+			//	static_assert(std::is_base_of<Component, Type>::value);
 
 
 
-				/*for (auto it = m_components.begin(); it != m_components.end();)
-				{
-					std::shared_ptr<T> component = dynamic_cast<std::shared_ptr<T>()>(it);
-					if (component)
-					{
-						component->Destroy();
-						it = m_components.erase(it);
-					}
-					else
-					{
-						++it;
-					}
-				}*/
-				return true;
-			}
+			//	/*for (auto it = m_components.begin(); it != m_components.end();)
+			//	{
+			//		std::shared_ptr<T> component = dynamic_cast<std::shared_ptr<T>()>(it);
+			//		if (component)
+			//		{
+			//			component->Destroy();
+			//			it = m_components.erase(it);
+			//		}
+			//		else
+			//		{
+			//			++it;
+			//		}
+			//	}*/
+			//	return true;
+			//}
 
 
 		private:
