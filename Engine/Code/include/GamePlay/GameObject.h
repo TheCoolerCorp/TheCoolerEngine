@@ -49,6 +49,7 @@ namespace Engine
 
 				Type* t_component = new Type();
 
+				// Add this component to the pool.
 				ServiceLocator::GetComponentsPool()->RegisterComponent(t_component, m_id);
 			}
 
@@ -59,8 +60,8 @@ namespace Engine
 				static_assert(std::is_base_of<Component, Type>::value);
 				static_assert(!std::is_same<Component, Type>::value);
 
-				ServiceLocator::GetComponentsPool()->RegisterComponent(t_component, m_id);
-
+				//return ServiceLocator::GetComponentsPool()->GetComponent<Type>(m_id);
+				return nullptr;
 			}
 
 			template<typename Type>
@@ -72,7 +73,7 @@ namespace Engine
 
 				Type* t_component = new Type();
 
-				ServiceLocator::GetComponentsPool()->RegisterComponents(t_component, m_id);
+				//ServiceLocator::GetComponentsPool()->RegisterComponents(t_component, m_id);
 			}
 			//template<typename Type, typename... Args>
 			//void AddComponent(Args&&... args)

@@ -13,6 +13,7 @@ namespace Engine
 		class TransformComponent : public Component
 		{
 		public:
+			TransformComponent() = default;
 			~TransformComponent() override = default;
 
 			ENGINE_API void Create();
