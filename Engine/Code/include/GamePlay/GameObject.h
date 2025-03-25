@@ -1,6 +1,8 @@
 #ifndef GAMEOBJECT_H
 #define GAMEOBJECT_H
 
+#include <bitset>
+
 #include "EngineExport.h"
 
 #include <vector>
@@ -99,6 +101,8 @@ namespace Engine
 
 		private:
 			Core::RHI::IObjectDescriptor* m_descriptor{};
+
+			static std::bitset<INT32_MAX> m_idBitset;
 
 			int m_id;
 		};
