@@ -213,10 +213,7 @@ namespace Engine
 					VulkanCommandPool::RecordCommandBuffer(t_commandBuffer, t_imageIndex, t_renderPass, this, t_pipeline, a_objectsData);
 				}
 
-				for (auto& callback : m_renderCallbacks)
-				{
-					callback(t_commandBuffers[0]);
-				}
+				
 
 				VkSubmitInfo t_submitInfo{};
 				t_submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;

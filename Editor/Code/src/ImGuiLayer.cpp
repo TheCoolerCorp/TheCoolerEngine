@@ -40,7 +40,6 @@ void ImGuiLayer::Destroy()
 void ImGuiLayer::NewFrame()
 {
 	m_imGuiRenderer->NewFrame();
-	ImGui::NewFrame();
 }
 
 void ImGuiLayer::ImGuiDraw()
