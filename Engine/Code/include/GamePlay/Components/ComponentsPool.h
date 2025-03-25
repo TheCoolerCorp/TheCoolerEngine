@@ -32,11 +32,12 @@ namespace Engine
 				static_assert(std::is_base_of<Component, Type>::value);
 				static_assert(!std::is_same<Component, Type>::value);
 
-				if (typeid(*a_component) == typeid(TransformComponent))
+				// Add the component to the right place holder.
+				if (std::is_same<Type, TransformComponent>::value/* && typeid(*a_component) == typeid(TransformComponent)*/)
 				{
 					m_transformComponents.emplace(a_id, dynamic_cast<TransformComponent*>(a_component));
 				}
-				else if (typeid(*a_component) == typeid(MeshComponent))
+				else if (std::is_same<Type, TransformComponent>::value/* && typeid(*a_component) == typeid(MeshComponent)*/)
 				{
 					m_meshesComponents.emplace(a_id, dynamic_cast<MeshComponent*>(a_component));
 				}
@@ -53,25 +54,31 @@ namespace Engine
 				static_assert(std::is_base_of<Component, Type>::value);
 				static_assert(!std::is_same<Component, Type>::value);
 
-				// Find the right place holder and then return the component.
-				if (typeid(*Type) == typeid(TransformComponent))
+				// Find the component in the right place holder.
+				if (std::is_same<Type, TransformComponent>::value)
 				{
-					if (m_transformComponents.find(a_id))
+					auto it = m_transformComponents.find(a_id);
+
+					if (it != m_transformComponents.end()) 
 					{
-						return m_transformComponents.at(a_id);
+						return dynamic_cast<Type*>(it->second);
 					}
 				}
-				else if (typeid(*Type) == typeid(MeshComponent))
+				else if (std::is_same<Type, MeshComponent>::value)
 				{
-					if (m_meshesComponents.find(a_id))
+					auto it = m_meshesComponents.find(a_id);
+
+					if (it != m_meshesComponents.end()) 
 					{
-						return m_meshesComponents.at(a_id);
+						return dynamic_cast<Type*>(it->second);
 					}
 				}
 				else
 				{
-					LOG_ERROR("This type of component");
+					LOG_ERROR("Unsupported component type requested");
 				}
+
+				return nullptr;
 			}
 
 			template<typename Type>
@@ -82,7 +89,7 @@ namespace Engine
 				static_assert(!std::is_same<Component, Type>::value);
 
 				// Find the right place holder and then Destroy the component and delete the pointer.
-				if (typeid(*Type) == typeid(TransformComponent))
+				if (std::is_same<Type, TransformComponent>::value)
 				{
 					if (m_transformComponents.find(a_id))
 					{
@@ -90,7 +97,7 @@ namespace Engine
 						delete m_transformComponents.at(a_id);
 					}
 				}
-				else if (typeid(*Type) == typeid(MeshComponent))
+				else if (std::is_same<Type, TransformComponent>::value)
 				{
 					if (m_meshesComponents.find(a_id))
 					{
