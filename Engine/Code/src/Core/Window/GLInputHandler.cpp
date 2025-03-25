@@ -8,7 +8,7 @@ namespace Engine
 		{
 			std::vector<int>GLInputHandler::m_currentKeyStatus(400, 0);
 			std::vector<int>GLInputHandler::m_currentMouseButtonStatus(50, 0);
-
+			Math::vec2 GLInputHandler::m_cursorPosition = Math::vec2();
 
 			void GLInputHandler::Create(IWindow* a_window)
 			{
@@ -16,6 +16,7 @@ namespace Engine
 
 				glfwSetKeyCallback(t_window, KeyCallBack);
 				glfwSetMouseButtonCallback(t_window, MouseCallBack);
+				glfwSetCursorPosCallback(t_window, CursorPositionCallback);
 			}
 
 			void GLInputHandler::Destroy()
@@ -58,6 +59,11 @@ namespace Engine
 				return (m_currentMouseButtonStatus[static_cast<int>(a_mouseButton)] == GLFW_RELEASE);
 			}
 
+			Math::vec2 GLInputHandler::GetCursorPosition()
+			{
+				return m_cursorPosition;
+			}
+
 			void GLInputHandler::KeyCallBack(GLFWwindow* window, int key, int scancode, int action, int mods)
 			{
 				m_currentKeyStatus[key] = action;
@@ -66,6 +72,12 @@ namespace Engine
 			void GLInputHandler::MouseCallBack(GLFWwindow* window, int button, int action, int mods)
 			{
 				m_currentMouseButtonStatus[button] = action;
+			}
+
+			void GLInputHandler::CursorPositionCallback(GLFWwindow* a_window, double a_xpos, double a_ypos)
+			{
+				m_cursorPosition.x = static_cast<float>(a_xpos);
+				m_cursorPosition.y = static_cast<float>(a_ypos);
 			}
 		}
 	}

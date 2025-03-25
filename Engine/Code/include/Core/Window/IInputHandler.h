@@ -6,6 +6,7 @@
 #include "IWindow.h"
 #include "InputAction.h"
 #include "Math/vec2.h"
+
 namespace Engine
 {
 	namespace Core
@@ -31,6 +32,8 @@ namespace Engine
 				ENGINE_API virtual bool IsMouseButtonDown(MouseButton a_mouseButton) = 0;
 				ENGINE_API virtual bool IsMouseButtonPressed(MouseButton a_mouseButton) = 0;
 				ENGINE_API virtual bool IsMouseButtonReleased(MouseButton a_mouseButton) = 0;
+
+				ENGINE_API virtual Math::vec2 GetCursorPosition() = 0;
 			};
 		}
 	}

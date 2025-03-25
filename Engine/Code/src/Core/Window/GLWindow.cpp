@@ -75,6 +75,20 @@ namespace Engine
 				}
 			}
 
+			void GLwindow::CaptureCursor(const bool a_capture)
+			{
+				int t_value = 0;
+				if (a_capture)
+				{
+					t_value = GLFW_CURSOR_DISABLED;
+				}
+				else
+				{
+					t_value = GLFW_CURSOR_NORMAL;
+				}
+				glfwSetInputMode(m_window, GLFW_CURSOR, t_value);
+			}
+
 			void GLwindow::GetFramebufferSize(int* a_width, int* a_height)
 			{
 				a_width = &m_width;

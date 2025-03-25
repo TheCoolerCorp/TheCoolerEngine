@@ -24,8 +24,10 @@ namespace Engine
 
 		/*void GameObject::Create(Core::RHI::ApiInterface* a_interface, GameObjectinfo a_info)
 		{
+			m_descriptorPool = a_interface->InstantiateDescriptorPool();
+			m_descriptorPool->Create(a_info.mLogicalDevice, a_info.mSize);
 			m_descriptor = a_interface->InstantiateObjectDescriptor();
-			m_descriptor->Create(a_info.mLogicalDevice, a_info.mPhysicalDevice, a_info.mGraphicPipeline, a_info.mDescriptorPool, a_info.mCommandPool, this, a_info.mSize);
+			m_descriptor->Create(a_info.mLogicalDevice, a_info.mPhysicalDevice, a_info.mGraphicPipeline, m_descriptorPool, a_info.mCommandPool, this, a_info.mSize);
 		}
 
 		void GameObject::Update(uint32_t a_frameIndex, Engine::Core::RHI::ILogicalDevice* a_logicalDevice)
@@ -36,9 +38,12 @@ namespace Engine
 		void GameObject::Destroy(Core::RHI::ApiInterface* a_interface, Core::RHI::ILogicalDevice* a_logicalDevice)
 		{
 			m_descriptor->Destroy(a_logicalDevice);
-			for (auto& component : m_components)
+			m_descriptorPool->Destroy(a_logicalDevice);
+			a_interface->DestroyObjectDescriptor(m_descriptor);
+			a_interface->DestroyDescriptorPool(m_descriptorPool);
+			for (const auto& t_component : m_components)
 			{
-				component->Destroy(a_logicalDevice);
+				t_component->Destroy(a_logicalDevice);
 			}
 			m_components.clear();
 		}

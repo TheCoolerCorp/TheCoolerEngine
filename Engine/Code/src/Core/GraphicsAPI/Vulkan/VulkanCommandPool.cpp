@@ -122,7 +122,7 @@ namespace Engine
 				t_scissor.extent = t_swapChainExtent;
 				vkCmdSetScissor(a_commandBuffer, 0, 1, &t_scissor);
 
-				VkDescriptorSet t_cameraDescriptorSet = camera->GetDescriptor()->CastVulkan()->GetDescriptorSets()[a_imageIndex];
+				VkDescriptorSet t_cameraDescriptorSet = camera->GetDescriptor()->CastVulkan()->GetDescriptorSet();
 				vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, t_layout, 0, 1, &t_cameraDescriptorSet, 0, nullptr);
 
 				for (int i = 0; i < a_objectsData.size(); ++i)

@@ -17,15 +17,15 @@ namespace Engine
 			{
 			public:
 				ENGINE_API VulkanCameraDescriptor* CastVulkan() override { return this; }
-				ENGINE_API void Create(RHI::ILogicalDevice* a_logicalDevice, RHI::IPhysicalDevice* a_physicalDevice, RHI::IGraphicPipeline* a_pipeline, RHI::ICommandPool* a_commandPool, Math::mat4 a_vp, int a_size) override;
+				ENGINE_API void Create(RHI::ILogicalDevice* a_logicalDevice, RHI::IPhysicalDevice* a_physicalDevice, RHI::IGraphicPipeline* a_pipeline, RHI::IDescriptorPool* a_descriptorPool, RHI::ICommandPool* a_commandPool, Math::mat4 a_vp) override;
 				ENGINE_API void Destroy(RHI::ILogicalDevice* a_logicalDevice) override;
-				ENGINE_API void Update(uint32_t a_frameIndex, RHI::ILogicalDevice* a_logicalDevice, void* a_uploadData) override;
+				ENGINE_API void Update(RHI::ILogicalDevice* a_logicalDevice, void* a_uploadData) override;
 
-				ENGINE_API std::vector<VkDescriptorSet> GetDescriptorSets() const { return m_descriptorSets; }
+				ENGINE_API VkDescriptorSet GetDescriptorSet() const { return m_descriptorSet; }
 
 			private:
-				std::vector<VulkanBuffer*> m_uniforms;
-				std::vector<VkDescriptorSet> m_descriptorSets;
+				VulkanBuffer* m_uniform{};
+				VkDescriptorSet m_descriptorSet{};
 			};
 		}
 	}

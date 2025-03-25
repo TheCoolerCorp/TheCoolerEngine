@@ -37,9 +37,14 @@ namespace Engine
 			while (!m_mainWindow->ShouldClose())
 			{
 				/*m_gameObjectDatas.clear();
+				auto t_now = std::chrono::high_resolution_clock::now();
+				m_deltaTime = std::chrono::duration<float>(t_now - m_lastTime).count();
+				m_lastTime = t_now;
+
+				m_gameObjectDatas.clear();
 				for (GamePlay::GameObject* t_gameObject : m_gameObjects)
 				{
-					m_camera->Update(m_renderer->GetSwapChain()->GetCurrentFrame(), m_renderer->GetLogicalDevice());
+					m_camera->Update(m_renderer->GetLogicalDevice(), m_inputHandler, m_mainWindow, m_deltaTime);
 					t_gameObject->Update(m_renderer->GetSwapChain()->GetCurrentFrame(), m_renderer->GetLogicalDevice());
 					m_gameObjectDatas.push_back(t_gameObject->SubmitData());
 				}

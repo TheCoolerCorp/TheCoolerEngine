@@ -101,6 +101,7 @@ namespace Engine
 
 		private:
 			Core::RHI::IObjectDescriptor* m_descriptor{};
+			Core::RHI::IDescriptorPool* m_descriptorPool{};
 
 			static std::bitset<INT32_MAX> m_idBitset;
 
