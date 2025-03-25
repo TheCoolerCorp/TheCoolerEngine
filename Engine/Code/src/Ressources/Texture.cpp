@@ -4,6 +4,7 @@
 #include "stb_image.h"
 
 #include "Core/GraphicsAPI/Vulkan/VulkanLogicalDevice.h"
+#include "Core/Renderer/Renderer.h"
 
 namespace Engine
 {
@@ -31,14 +32,19 @@ namespace Engine
             delete m_data;
         }
 
-        void Texture::Load(Core::RHI::ApiInterface* a_interface, Core::RHI::IPhysicalDevice* a_physicalDevice, Core::RHI::ILogicalDevice* a_logicalDevice, Core::RHI::ICommandPool* a_commandPool)
+        void Texture::Load(Core::Renderer* a_renderer)
         {
             if (m_isLoaded)
             {
                 return;
             }
 
-            m_image = a_interface->InstantiateImage();
+            Core::RHI::ApiInterface* t_interface = a_renderer->GetInterface();
+            Core::RHI::IPhysicalDevice* t_physicalDevice = a_renderer->GetPhysicalDevice();
+            Core::RHI::ILogicalDevice* t_logicalDevice = a_renderer->GetLogicalDevice();
+            Core::RHI::ICommandPool* t_commandPool = a_renderer->GetCommandPool();
+
+            m_image = t_interface->InstantiateImage();
 
             const Core::RHI::ImageData t_imageData = {
                 .mWidth = m_width,
@@ -46,19 +52,21 @@ namespace Engine
                 .data = m_data
             };
 
-            m_image->Create(Core::RHI::ImageType::TEXTURE, t_imageData, a_physicalDevice, a_logicalDevice, a_commandPool);
+            m_image->Create(Core::RHI::ImageType::TEXTURE, t_imageData, t_physicalDevice, t_logicalDevice, t_commandPool);
 
             m_isLoaded = true;
         }
 
-        void Texture::Unload(Core::RHI::ILogicalDevice* a_logicalDevice)
+        void Texture::Unload(Core::Renderer* a_renderer)
         {
             if (!m_isLoaded)
             {
                 return;
             }
 
-            m_image->Destroy(a_logicalDevice);
+            Core::RHI::ILogicalDevice* t_logicalDevice = a_renderer->GetLogicalDevice();
+
+            m_image->Destroy(t_logicalDevice);
             delete m_image;
 
             m_isLoaded = false;

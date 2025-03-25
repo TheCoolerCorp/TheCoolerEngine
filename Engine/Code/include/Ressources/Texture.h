@@ -17,6 +17,8 @@ namespace Engine
 		{
 			class IImage;
 		}
+
+		class Renderer;
 	}
 
 	namespace Resource
@@ -27,8 +29,8 @@ namespace Engine
 			ENGINE_API void Create(std::string a_path);
 			ENGINE_API void Destroy();
 
-			ENGINE_API void Load(Core::RHI::ApiInterface* a_interface, Core::RHI::IPhysicalDevice* a_physicalDevice, Core::RHI::ILogicalDevice* a_logicalDevice, Core::RHI::ICommandPool* a_commandPool);
-			ENGINE_API void Unload(Core::RHI::ILogicalDevice* a_logicalDevice);
+			ENGINE_API void Load(Core::Renderer* a_renderer);
+			ENGINE_API void Unload(Core::Renderer* a_renderer);
 
 			ENGINE_API int GetWidth() const { return m_width; }
 			ENGINE_API int GetHeight() const { return m_height; }

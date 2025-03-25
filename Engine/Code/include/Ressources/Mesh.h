@@ -24,6 +24,8 @@ namespace Engine
 		{
 			class IBuffer;
 		}
+
+		class Renderer;
 	}
 
 	namespace Resource
@@ -36,8 +38,8 @@ namespace Engine
 			ENGINE_API void Create(std::string a_path);
 			ENGINE_API void Destroy();
 
-			ENGINE_API void Load(Core::RHI::ApiInterface* a_interface, Core::RHI::IPhysicalDevice* a_physicalDevice, Core::RHI::ILogicalDevice* a_logicalDevice, Core::RHI::ICommandPool* a_commandPool);
-			ENGINE_API void Unload(Core::RHI::ILogicalDevice* a_logicalDevice);
+			ENGINE_API void Load(Core::Renderer* a_renderer);
+			ENGINE_API void Unload(Core::Renderer* a_renderer);
 
 			ENGINE_API Core::RHI::IBuffer* GetVertexBuffer() const { return m_vertexBuffer; }
 			ENGINE_API Core::RHI::IBuffer* GetIndexBuffer() const { return m_indexBuffer; }
