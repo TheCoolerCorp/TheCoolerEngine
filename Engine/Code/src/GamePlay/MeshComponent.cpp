@@ -6,9 +6,9 @@ namespace Engine
 {
 	namespace GamePlay
 	{
-		void MeshComponent::Create(std::string a_path)
+		void MeshComponent::Create(std::shared_ptr<Resource::Mesh> a_mesh)
 		{
-			m_mesh = ServiceLocator::GetResourceManager()->CreateResource<Resource::Mesh>(a_path);
+			m_mesh = a_mesh;
 		}
 
 		void MeshComponent::Destroy()

@@ -56,7 +56,7 @@ namespace Engine
 
 				std::shared_ptr<Type> t_component = std::make_shared<Type>();
 				t_component->Create(std::forward<Args>(args)...);
-				
+				ServiceLocator::GetComponentsPool()->RegisterComponent(t_component, m_id);
 			}
 
 			template<typename Type>
