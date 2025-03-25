@@ -45,7 +45,6 @@ namespace Engine
 			RHI::ILogicalDevice* GetLogicalDevice() { return m_logicalDevice; }
 			RHI::IPhysicalDevice* GetPhysicalDevice() { return m_physicalDevice; }
 			RHI::IGraphicPipeline* GetPipeline() { return m_graphicPipeline; }
-			RHI::IDescriptorPool* GetDescriptorPool() { return m_descriptorPool; }
 			RHI::ICommandPool* GetCommandPool() { return m_commandPool; }
 			RHI::ISwapChain* GetSwapChain() { return m_swapChain; }
 		private:
@@ -65,7 +64,6 @@ namespace Engine
 			RHI::IRenderPass* m_renderPass = nullptr;
 			RHI::IGraphicPipeline* m_graphicPipeline = nullptr;
 			RHI::ICommandPool* m_commandPool = nullptr;
-			RHI::IDescriptorPool* m_descriptorPool = nullptr;
 			
 		};
 	}

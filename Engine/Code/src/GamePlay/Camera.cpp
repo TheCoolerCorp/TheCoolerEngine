@@ -1,6 +1,7 @@
 #include "GamePlay/Camera.h"
 
 #include "Core/Interfaces/ApiInterface.h"
+#include "Core/Renderer/Renderer.h"
 
 namespace Engine
 {
@@ -16,20 +17,20 @@ namespace Engine
 			m_vp.Transpose();
 		}
 
-		void Camera::Create(Core::RHI::ApiInterface* a_interface, CameraObjectinfo a_info)
+		void Camera::Create(Core::Renderer* a_renderer)
 		{
-			m_descriptor = a_interface->InstantiateCameraDescriptor();
-			m_descriptor->Create(a_info.mLogicalDevice, a_info.mPhysicalDevice, a_info.mGraphicPipeline, a_info.mDescriptorPool, a_info.mCommandPool, m_vp, a_info.mSize);
+			m_descriptor = a_renderer->GetInterface()->InstantiateCameraDescriptor();
+			m_descriptor->Create(a_renderer->GetLogicalDevice(), a_renderer->GetPhysicalDevice(), a_renderer->GetPipeline(), a_renderer->GetCommandPool(), m_vp, 1);
 		}
 
-		void Camera::Update(const uint32_t a_frameIndex, Core::RHI::ILogicalDevice* a_logicalDevice)
+		void Camera::Update(const uint32_t a_frameIndex, Core::Renderer* a_renderer)
 		{
-			m_descriptor->Update(a_frameIndex, a_logicalDevice, m_vp.mElements.data());
+			m_descriptor->Update(a_frameIndex, a_renderer->GetLogicalDevice(), m_vp.mElements.data());
 		}
 
-		void Camera::Destroy(Core::RHI::ILogicalDevice* a_logicalDevice)
+		void Camera::Destroy(Core::Renderer* a_renderer)
 		{
-			m_descriptor->Destroy(a_logicalDevice);
+			m_descriptor->Destroy(a_renderer->GetLogicalDevice());
 			delete m_descriptor;
 		}
 	}
