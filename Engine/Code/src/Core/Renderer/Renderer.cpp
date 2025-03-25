@@ -45,9 +45,6 @@ namespace Engine
 			m_swapChain->CreateFramebuffers(m_logicalDevice, m_physicalDevice, m_renderPass, m_commandPool);
 
 
-			m_descriptorPool = m_interface->InstantiateDescriptorPool();
-			m_descriptorPool->Create(m_logicalDevice, static_cast<int>(m_swapChain->GetMaxFrame()));
-
 			m_commandPool->CreateCommandBuffer(m_logicalDevice, m_swapChain, m_renderPass, m_graphicPipeline);
 
 			m_swapChain->CreateSyncObjects(m_logicalDevice);
@@ -65,8 +62,6 @@ namespace Engine
 
 		void Renderer::Destroy()
 		{
-			m_descriptorPool->Destroy(m_logicalDevice);
-			m_interface->DestroyDescriptorPool(m_descriptorPool);
 
 			m_commandPool->Destroy(m_logicalDevice);
 			m_interface->DestroyCommandPool(m_commandPool);

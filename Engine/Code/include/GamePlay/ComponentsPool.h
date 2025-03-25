@@ -9,6 +9,7 @@
 
 #include <unordered_map>
 
+
 namespace Engine
 {
 	namespace GamePlay
@@ -23,6 +24,44 @@ namespace Engine
 
 			ENGINE_API void RegisterTransform(int a_id, TransformComponent* a_transformComponent);
 			ENGINE_API void RegisterMesh(int a_id, MeshComponent* a_meshComponent);
+
+			template<typename Type>
+			void RegisterComponent(Type* a_component, int a_id)
+			{
+				const char* t_componentType = typeid(a_component).name();
+
+				if (typeid(TransformComponent*).name() == t_componentType)
+				{
+					m_transformComponents.emplace(a_id, a_component);
+				}
+				else if (typeid(MeshComponent*).name() == t_componentType)
+				{
+					m_meshesComponents.emplace(a_id, a_component);
+				}
+				else
+				{
+					LOG_ERROR("This type of component");
+				}
+			}
+
+			template<typename Type>
+			void RemoveComponent(Type* a_component, int a_id)
+			{
+				const char* t_componentType = typeid(a_component).name();
+
+				if (typeid(TransformComponent*).name() == t_componentType)
+				{
+					m_transformComponents.at(a_id) = nullptr;
+				}
+				else if (typeid(MeshComponent*).name() == t_componentType)
+				{
+					m_meshesComponents.at(a_id) = nullptr;
+				}
+				else
+				{
+					LOG_ERROR("This type of component");
+				}
+			}
 
 		private:
 			std::unordered_map<int, TransformComponent*> m_transformComponents;

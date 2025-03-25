@@ -56,9 +56,7 @@ namespace Engine
 
 				std::shared_ptr<Type> t_component = std::make_shared<Type>();
 				t_component->Create(std::forward<Args>(args)...);
-				//component->Create(a_path, a_interface, a_info.mPhysicalDevice, a_info.mLogicalDevice, a_info.mCommandPool);
-
-				//m_components.emplace_back(component);
+				
 			}
 
 			template<typename Type>
