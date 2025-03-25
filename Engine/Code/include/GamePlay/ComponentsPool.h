@@ -45,16 +45,45 @@ namespace Engine
 			}
 
 			template<typename Type>
-			void RemoveComponent(Type* a_component, int a_id)
+			Type* GetComponent(int a_id)
 			{
-				const char* t_componentType = typeid(a_component).name();
+				const char* t_componentType = typeid(Type*).name();
 
 				if (typeid(TransformComponent*).name() == t_componentType)
 				{
+					if (m_transformComponents.find(a_id))
+					{
+						return m_transformComponents.at(a_id);
+					}
+					return nullptr;
+				}
+				else if (typeid(MeshComponent*).name() == t_componentType)
+				{
+					if (m_meshesComponents.find(a_id))
+					{
+						return m_meshesComponents.at(a_id);
+					}
+					return nullptr;
+				}
+				else
+				{
+					LOG_ERROR("This type of component");
+				}
+			}
+
+			template<typename Type>
+			void RemoveComponent(int a_id)
+			{	
+				const char* t_componentType = typeid(Type).name();
+
+				if (typeid(TransformComponent*).name() == t_componentType)
+				{
+					m_transformComponents.at(a_id)->Destroy();
 					m_transformComponents.at(a_id) = nullptr;
 				}
 				else if (typeid(MeshComponent*).name() == t_componentType)
 				{
+					m_meshesComponents.at(a_id)->Destroy();
 					m_meshesComponents.at(a_id) = nullptr;
 				}
 				else

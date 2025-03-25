@@ -28,10 +28,11 @@ namespace Engine
 		class GameObject
 		{
 		public:
-			GameObject() = default;
+			GameObject();
+			GameObject(Math::vec3 a_position, Math::vec3 a_rotation, Math::vec3 a_scale);
+
 			~GameObject() = default;
 
-			GameObject(Math::vec3 a_position, Math::vec3 a_rotation, Math::vec3 a_scale);
 
 			/*void Create(Core::RHI::ApiInterface* a_interface, GameObjectinfo a_info);
 			void Update(uint32_t a_frameIndex, Engine::Core::RHI::ILogicalDevice* a_logicalDevice);
@@ -42,9 +43,32 @@ namespace Engine
 			template<typename Type>
 			void AddComponent()
 			{
-				// Check if Type is a derived component a
+				// Check if Type is a derived component a not base class.
 				static_assert(std::is_base_of<Component, Type>::value);
-				static_assert(!std::is_class<Component, Type>::value);
+				static_assert(!std::is_same<Component, Type>::value);
+
+				Type* t_component = new Type();
+
+				ServiceLocator::GetComponentsPool()->RegisterComponent(t_component, m_id);
+			}
+
+			template<typename Type>
+			Type* GetComponent()
+			{
+				// Check if Type is a derived component a not base class.
+				static_assert(std::is_base_of<Component, Type>::value);
+				static_assert(!std::is_same<Component, Type>::value);
+
+				ServiceLocator::GetComponentsPool()->RegisterComponent(t_component, m_id);
+
+			}
+
+			template<typename Type>
+			void RemoveComponent()
+			{
+				// Check if Type is a derived component and not base class.
+				static_assert(std::is_base_of<Component, Type>::value);
+				static_assert(!std::is_same<Component, Type>::value);
 
 				Type* t_component = new Type();
 
@@ -115,7 +139,7 @@ namespace Engine
 
 			static std::bitset<INT32_MAX> m_idBitset;
 
-			int m_id;
+			int m_id = 0;
 		};
 
 		

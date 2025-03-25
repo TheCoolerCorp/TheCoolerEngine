@@ -11,15 +11,30 @@ namespace Engine
 
 		GameObject::GameObject(Math::vec3 a_position, Math::vec3 a_rotation, Math::vec3 a_scale)
 		{
-			//AddComponent<TransformComponent>(a_position, a_rotation, a_scale);
-			
-			/*m_id = Utils::GenerateRandomInt(0, INT32_MAX);
+			AddComponent<TransformComponent>();
+			GetComponent<TransformComponent>()->Create(a_position, a_rotation, a_scale);
+
+			m_id = Utils::GenerateRandomInt(0, INT32_MAX);
 
 			while (m_idBitset[m_id])
 			{
 				m_id = Utils::GenerateRandomInt(0, INT32_MAX);
 			}
-			m_idBitset.set(m_id);*/
+			m_idBitset.set(m_id);
+		}
+
+		GameObject::GameObject()
+		{
+			AddComponent<TransformComponent>();
+			GetComponent<TransformComponent>()->Create();
+
+			m_id = Utils::GenerateRandomInt(0, INT32_MAX);
+
+			while (m_idBitset[m_id])
+			{
+				m_id = Utils::GenerateRandomInt(0, INT32_MAX);
+			}
+			m_idBitset.set(m_id);
 		}
 
 		/*void GameObject::Create(Core::RHI::ApiInterface* a_interface, GameObjectinfo a_info)
