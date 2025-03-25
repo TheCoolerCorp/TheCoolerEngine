@@ -43,20 +43,21 @@ namespace Engine
 			template<typename Type>
 			void AddComponent()
 			{
-				// Check if Type is a derived component a not base class.
+				// Check if Type is a derived component and not the base class.
 				static_assert(std::is_base_of<Component, Type>::value);
 				static_assert(!std::is_same<Component, Type>::value);
 
 				Type* t_component = new Type();
-
+				//t_component->Create():
+				
 				// Add this component to the pool.
-				ServiceLocator::GetComponentsPool()->RegisterComponent(t_component, m_id);
+				ServiceLocator::GetComponentsPool()->RegisterComponent<Type>(t_component, m_id);
 			}
 
 			template<typename Type>
 			Type* GetComponent()
 			{
-				// Check if Type is a derived component a not base class.
+				// Check if Type is a derived component and not the base class.
 				static_assert(std::is_base_of<Component, Type>::value);
 				static_assert(!std::is_same<Component, Type>::value);
 
@@ -71,9 +72,8 @@ namespace Engine
 				static_assert(std::is_base_of<Component, Type>::value);
 				static_assert(!std::is_same<Component, Type>::value);
 
-				Type* t_component = new Type();
-
-				//ServiceLocator::GetComponentsPool()->RegisterComponents(t_component, m_id);
+				//Type* t_component = new Type();
+				//ServiceLocator::GetComponentsPool()->RegisterComponents<Type>(t_component, m_id);
 			}
 			//template<typename Type, typename... Args>
 			//void AddComponent(Args&&... args)

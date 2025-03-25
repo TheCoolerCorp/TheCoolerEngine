@@ -19,6 +19,9 @@ namespace Engine
 			~MeshComponent() override = default;
 
 			ENGINE_API void Create();
+
+			ENGINE_API void Update();
+
 			ENGINE_API void Destroy();
 
 			ENGINE_API void SetMesh(Resource::Mesh* a_mesh);

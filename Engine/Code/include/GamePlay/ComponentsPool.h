@@ -28,15 +28,17 @@ namespace Engine
 			template<typename Type>
 			void RegisterComponent(Type* a_component, int a_id)
 			{
-				const char* t_componentType = typeid(a_component).name();
+				// Check if Type is a derived component and not the base class.
+				static_assert(std::is_base_of<Component, Type>::value);
+				static_assert(!std::is_same<Component, Type>::value);
 
-				if (typeid(TransformComponent*).name() == t_componentType)
+				if (typeid(*a_component) == typeid(TransformComponent))
 				{
-					m_transformComponents.emplace(a_id, a_component);
+					m_transformComponents.emplace(a_id, dynamic_cast<TransformComponent*>(a_component));
 				}
-				else if (typeid(MeshComponent*).name() == t_componentType)
+				else if (typeid(*a_component) == typeid(MeshComponent))
 				{
-					m_meshesComponents.emplace(a_id, a_component);
+					m_meshesComponents.emplace(a_id, dynamic_cast<MeshComponent*>(a_component));
 				}
 				else
 				{
@@ -47,23 +49,24 @@ namespace Engine
 			template<typename Type>
 			Type* GetComponent(int a_id)
 			{
-				const char* t_componentType = typeid(Type*).name();
+				// Check if Type is a derived component and not the base class.
+				static_assert(std::is_base_of<Component, Type>::value);
+				static_assert(!std::is_same<Component, Type>::value);
 
-				if (typeid(TransformComponent*).name() == t_componentType)
+				// Find the right place holder and then return the component.
+				if (typeid(*Type) == typeid(TransformComponent))
 				{
 					if (m_transformComponents.find(a_id))
 					{
 						return m_transformComponents.at(a_id);
 					}
-					return nullptr;
 				}
-				else if (typeid(MeshComponent*).name() == t_componentType)
+				else if (typeid(*Type) == typeid(MeshComponent))
 				{
 					if (m_meshesComponents.find(a_id))
 					{
 						return m_meshesComponents.at(a_id);
 					}
-					return nullptr;
 				}
 				else
 				{
@@ -74,17 +77,26 @@ namespace Engine
 			template<typename Type>
 			void RemoveComponent(int a_id)
 			{	
-				const char* t_componentType = typeid(Type).name();
+				// Check if Type is a derived component and not the base class.
+				static_assert(std::is_base_of<Component, Type>::value);
+				static_assert(!std::is_same<Component, Type>::value);
 
-				if (typeid(TransformComponent*).name() == t_componentType)
+				// Find the right place holder and then Destroy the component and delete the pointer.
+				if (typeid(*Type) == typeid(TransformComponent))
 				{
-					m_transformComponents.at(a_id)->Destroy();
-					m_transformComponents.at(a_id) = nullptr;
+					if (m_transformComponents.find(a_id))
+					{
+						m_transformComponents.at(a_id)->Destroy();
+						delete m_transformComponents.at(a_id);
+					}
 				}
-				else if (typeid(MeshComponent*).name() == t_componentType)
+				else if (typeid(*Type) == typeid(MeshComponent))
 				{
-					m_meshesComponents.at(a_id)->Destroy();
-					m_meshesComponents.at(a_id) = nullptr;
+					if (m_meshesComponents.find(a_id))
+					{
+						m_meshesComponents.at(a_id)->Destroy();
+						delete m_transformComponents.at(a_id);
+					}
 				}
 				else
 				{
