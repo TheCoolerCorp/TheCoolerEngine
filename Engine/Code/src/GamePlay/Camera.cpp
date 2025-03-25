@@ -4,6 +4,7 @@
 #include "Core/Window/IInputHandler.h"
 #include "Math/TheCoolerMath.h"
 #include "Core/Renderer/Renderer.h"
+#include "Core/Interfaces/IDescriptorPool.h"
 
 namespace Engine
 {
@@ -24,20 +25,33 @@ namespace Engine
 
 		void Camera::Create(Core::Renderer* a_renderer)
 		{
+			m_descriptorPool = a_renderer->GetInterface()->InstantiateDescriptorPool();
+			m_descriptorPool->Create(a_renderer->GetLogicalDevice(), 1);
 			m_descriptor = a_renderer->GetInterface()->InstantiateCameraDescriptor();
-			m_descriptor->Create(a_renderer->GetLogicalDevice(), a_renderer->GetPhysicalDevice(), a_renderer->GetPipeline(), a_renderer->GetCommandPool(), m_vp, 1);
+			m_descriptor->Create(a_renderer->GetLogicalDevice(), a_renderer->GetPhysicalDevice(), a_renderer->GetPipeline(), m_descriptorPool, a_renderer->GetCommandPool(), m_vp);
 		}
 
-		void Camera::Update(const uint32_t a_frameIndex, Core::Renderer* a_renderer)
+		void Camera::Update(Core::Renderer* a_renderer, Core::Window::IInputHandler* a_inputHandler, Core::Window::IWindow* a_window, const float a_deltaTime)
 		{
-			m_descriptor->Update(a_frameIndex, a_renderer->GetLogicalDevice(), m_vp.mElements.data());
+			ComputeInputs(a_inputHandler, a_window, a_deltaTime);
+
+			if (m_needToUpdate)
+			{
+				const Math::mat4 t_proj = Math::mat4::Perspective(m_fovY, m_aspect, m_near, m_far);
+				const Math::mat4 t_view = Math::mat4::View(m_up, m_center, m_eye);
+				m_vp = t_proj * t_view;
+				m_vp.Transpose();
+				m_needToUpdate = false;
+			}
+
+			m_descriptor->Update(a_renderer->GetLogicalDevice(), m_vp.mElements.data());
 		}
 
 		void Camera::Destroy(Core::Renderer* a_renderer)
 		{
 			m_descriptor->Destroy(a_renderer->GetLogicalDevice());
 			delete m_descriptor;
-			m_descriptorPool->Destroy(a_logicalDevice);
+			m_descriptorPool->Destroy(a_renderer->GetLogicalDevice());
 			delete m_descriptorPool;
 		}
 

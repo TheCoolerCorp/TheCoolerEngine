@@ -19,6 +19,7 @@ namespace Engine
 		namespace RHI
 		{
 			class ICameraDescriptor;
+			class IDescriptorPool;
 		}
 
 		class Renderer;
@@ -33,7 +34,7 @@ namespace Engine
 			~Camera() = default;
 
 			ENGINE_API void Create(Core::Renderer* a_renderer);
-			ENGINE_API void Update(const uint32_t a_frameIndex, Core::Renderer* a_renderer);
+			ENGINE_API void Update(Core::Renderer* a_renderer, Core::Window::IInputHandler* a_inputHandler, Core::Window::IWindow* a_window, const float a_deltaTime);
 			ENGINE_API void Destroy(Core::Renderer* a_renderer);
 
 			ENGINE_API Core::RHI::ICameraDescriptor* GetDescriptor() const { return m_descriptor; }

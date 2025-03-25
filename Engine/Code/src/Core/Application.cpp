@@ -21,7 +21,7 @@ namespace Engine
 
 			m_camera = new GamePlay::Camera(Math::vec3(0.f, 1.f, 0.f), Math::vec3(0.f, 0.f, 0.f),
 			                                Math::vec3(0.f, 1.f, -3.f), Math::ToRadians(70.f),
-			                                static_cast<float>(a_width) / static_cast<float>(a_height), 0.1f, 100.f);
+			                                static_cast<float>(a_width) / static_cast<float>(a_height), 0.1f, 100.f, 10.f, 2.f);
 			m_camera->Create(m_renderer);
 
 			/*GamePlay::GameObject* t_obj = new GamePlay::GameObject(Math::vec3(0.f, 0.f, 0.f), Math::quat(Math::vec3(Math::ToRadians(90.f), Math::ToRadians(90.f), 0.f)), Math::vec3(1.f, 1.f, 1.f));
@@ -44,8 +44,8 @@ namespace Engine
 				m_gameObjectDatas.clear();
 				for (GamePlay::GameObject* t_gameObject : m_gameObjects)
 				{
-					m_camera->Update(m_renderer->GetLogicalDevice(), m_inputHandler, m_mainWindow, m_deltaTime);
-					t_gameObject->Update(m_renderer->GetSwapChain()->GetCurrentFrame(), m_renderer->GetLogicalDevice());
+					m_camera->Update(m_renderer, m_inputHandler, m_mainWindow, m_deltaTime);
+					t_gameObject->Update(m_renderer->GetLogicalDevice());
 					m_gameObjectDatas.push_back(t_gameObject->SubmitData());
 				}
 				m_mainWindow->PollEvents();
@@ -65,7 +65,7 @@ namespace Engine
 			}
 			m_gameObjects.clear();*/
 
-			m_camera->Destroy(m_renderer->GetLogicalDevice());
+			m_camera->Destroy(m_renderer);
 			delete m_camera;
 
 			m_renderer->Destroy();
