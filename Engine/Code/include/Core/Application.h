@@ -10,9 +10,9 @@
 #include "Core/Window/GLWindow.h"
 #include "Core/Window/GLInputHandler.h"
 #include "Core/Renderer/Renderer.h"
-#include "GamePlay/GameObject.h"
-#include "GamePlay/Camera.h"
-#include "GamePlay/Scene.h"
+#include "GamePlay/Others/GameObject.h"
+#include "GamePlay/Others/Camera.h"
+#include "GamePlay/Others/Scene.h"
 
 namespace Engine
 {

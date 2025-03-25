@@ -14,8 +14,8 @@
 #include "Core/GraphicsAPI/Vulkan/VulkanSwapChain.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanUtils.h"
 
-#include "GamePlay/GameObject.h"
-#include "GamePlay/Camera.h"
+#include "GamePlay/Others/GameObject.h"
+#include "GamePlay/Others/Camera.h"
 
 namespace Engine
 {

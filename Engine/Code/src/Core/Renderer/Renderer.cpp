@@ -1,6 +1,6 @@
 #include "Core/Renderer/Renderer.h"
 #include "Core/Logger/Logger.h"
-#include "GamePlay/GameObject.h"
+#include "GamePlay/Others/GameObject.h"
 
 namespace Engine
 {

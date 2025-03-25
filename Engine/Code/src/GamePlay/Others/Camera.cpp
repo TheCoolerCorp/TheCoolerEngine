@@ -1,4 +1,4 @@
-#include "GamePlay/Camera.h"
+#include "GamePlay/Others/Camera.h"
 
 #include "Core/Interfaces/ApiInterface.h"
 #include "Core/Window/IInputHandler.h"

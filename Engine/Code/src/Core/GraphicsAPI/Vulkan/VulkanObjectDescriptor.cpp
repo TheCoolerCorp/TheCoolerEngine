@@ -5,7 +5,7 @@
 #include "Core/GraphicsAPI/Vulkan/VulkanGraphicPipeline.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanDescriptorPool.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanCommandPool.h"
-#include "GamePlay/GameObject.h"
+#include "GamePlay/Others/GameObject.h"
 #include "GamePlay/Components/TextureComponent.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanBuffer.h"
 

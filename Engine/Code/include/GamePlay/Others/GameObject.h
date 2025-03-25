@@ -13,13 +13,13 @@
 #include "Math/Transform.h"
 #include "GamePlay/Components/Component.h"
 #include "Ressources/ResourceManager.h"
-#include "Components/ComponentsPool.h"
+#include "Gameplay/Components/ComponentsPool.h"
 
 
 #include "Core/Interfaces/IObjectDescriptor.h"
 #include "Core/Interfaces/ApiInterface.h"
 
-#include "ServiceLocator.h"
+#include "Gameplay/ServiceLocator.h"
 
 namespace Engine
 {

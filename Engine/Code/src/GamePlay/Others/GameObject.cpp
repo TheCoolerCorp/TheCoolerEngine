@@ -1,4 +1,4 @@
-#include "GamePlay/GameObject.h"
+#include "GamePlay/Others/GameObject.h"
 
 #include "GamePlay/Components/Meshcomponent.h"
 #include  "GamePlay/Components/TextureComponent.h"

@@ -3,9 +3,9 @@
 
 #include "EngineExport.h"
 
-#include "Components/ComponentsPool.h"
-#include "Systems/TransformSystem.h"
-#include "Systems/RenderSystem.h"
+#include "Gameplay/Components/ComponentsPool.h"
+#include "Gameplay/Systems/TransformSystem.h"
+#include "Gameplay/Systems/RenderSystem.h"
 #include "Core/Renderer/Renderer.h"
 
 namespace Engine
