@@ -1,12 +1,13 @@
 #ifndef VULKANOBJECTDESCRIPTOR_H
 #define VULKANOBJECTDESCRIPTOR_H
 
+#include <vulkan/vulkan.h>
+
 #include "EngineExport.h"
 
 #include <vector>
 
 #include "Core/Interfaces/IObjectDescriptor.h"
-#include "VulkanBuffer.h"
 
 namespace Engine
 {
@@ -14,6 +15,8 @@ namespace Engine
 	{
 		namespace GraphicsAPI
 		{
+			class VulkanBuffer;
+
 			class VulkanObjectDescriptor : public RHI::IObjectDescriptor
 			{
 			public:

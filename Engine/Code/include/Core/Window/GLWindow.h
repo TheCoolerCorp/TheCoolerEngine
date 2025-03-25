@@ -34,9 +34,11 @@ namespace Engine
 
 				ENGINE_API bool GetResized() override { return m_resized; }
 				ENGINE_API void SetResized(const bool a_resized) override { m_resized = a_resized; }
+				ENGINE_API GLFWwindow* GetWindow() { return m_window; }
 
 				ENGINE_API void ResizeFramebuffer() override;
-				ENGINE_API GLFWwindow* GetWindow() { return m_window; }
+
+				ENGINE_API void CaptureCursor(bool a_capture) override;
 			private:
 				GLFWwindow* m_window = nullptr;
 				int m_width = 800;

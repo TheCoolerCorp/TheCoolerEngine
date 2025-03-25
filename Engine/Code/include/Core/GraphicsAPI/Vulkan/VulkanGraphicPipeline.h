@@ -25,14 +25,16 @@ namespace Engine
 
 				ENGINE_API VkPipeline GetPipeline() const { return m_pipeline; }
 				ENGINE_API VkPipelineLayout GetLayout() const { return m_layout; }
-				ENGINE_API VkDescriptorSetLayout GetDescriptorSetLayout() const { return m_descriptor; }
+				ENGINE_API VkDescriptorSetLayout GetObjectDescriptorSetLayout() const { return m_objectDescriptor; }
+				ENGINE_API VkDescriptorSetLayout GetCameraDescriptorSetLayout() const { return m_cameraDescriptor; }
 
 			private:
 				VkShaderModule CreateShader(const std::string& a_path, VkDevice a_device);
 
 				VkPipeline m_pipeline = VK_NULL_HANDLE;
 				VkPipelineLayout m_layout = VK_NULL_HANDLE;
-				VkDescriptorSetLayout m_descriptor = VK_NULL_HANDLE;
+				VkDescriptorSetLayout m_objectDescriptor = VK_NULL_HANDLE;
+				VkDescriptorSetLayout m_cameraDescriptor = VK_NULL_HANDLE;
 			};
 		}
 	}

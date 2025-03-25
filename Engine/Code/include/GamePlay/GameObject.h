@@ -27,12 +27,11 @@ namespace Engine
 	{
 		struct GameObjectinfo
 		{
-			Core::RHI::ILogicalDevice* a_logicalDevice;
-			Core::RHI::IPhysicalDevice* a_physicalDevice;
-			Core::RHI::IGraphicPipeline* a_graphicPipeline;
-			Core::RHI::IDescriptorPool* a_descriptorPool;
-			Core::RHI::ICommandPool* a_commandPool;
-			int size;
+			Core::RHI::ILogicalDevice* mLogicalDevice;
+			Core::RHI::IPhysicalDevice* mPhysicalDevice;
+			Core::RHI::IGraphicPipeline* mGraphicPipeline;
+			Core::RHI::ICommandPool* mCommandPool;
+			int mSize;
 		};
 
 		struct ENGINE_API GameObjectData
@@ -55,7 +54,7 @@ namespace Engine
 
 			ENGINE_API void Create(Core::RHI::ApiInterface* a_interface, GameObjectinfo a_info);
 			ENGINE_API void Update(uint32_t a_frameIndex, Engine::Core::RHI::ILogicalDevice* a_logicalDevice);
-
+			ENGINE_API void Destroy(Core::RHI::ApiInterface* a_interface, Core::RHI::ILogicalDevice* a_logicalDevice);
 			ENGINE_API GameObjectData SubmitData();
 			
 
@@ -72,7 +71,7 @@ namespace Engine
 
 				std::shared_ptr<T> component = std::make_shared<T>();
 
-				component->Create(a_path, a_interface, a_info.a_physicalDevice, a_info.a_logicalDevice, a_info.a_commandPool);
+				component->Create(a_path, a_interface, a_info.mPhysicalDevice, a_info.mLogicalDevice, a_info.mCommandPool);
 
 				m_components.emplace_back(component);
 			}
@@ -122,6 +121,7 @@ namespace Engine
 			Math::Transform m_transform;
 
 			Core::RHI::IObjectDescriptor* m_descriptor{};
+			Core::RHI::IDescriptorPool* m_descriptorPool{};
 		};
 
 		

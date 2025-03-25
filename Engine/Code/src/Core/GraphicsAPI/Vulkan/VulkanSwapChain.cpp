@@ -180,7 +180,7 @@ namespace Engine
 				return m_framebuffers;
 			}
 
-			void VulkanSwapchain::DrawFrame(Window::IWindow* a_window, RHI::ILogicalDevice* a_logicalDevice, RHI::ICommandPool* a_commandPool, RHI::ISurface* a_surface, RHI::IPhysicalDevice* a_physicalDevice, RHI::IRenderPass* a_renderPass, std::vector<GamePlay::GameObjectData> a_objectsData)
+			void VulkanSwapchain::DrawFrame(Window::IWindow* a_window, RHI::ILogicalDevice* a_logicalDevice, RHI::ICommandPool* a_commandPool, RHI::ISurface* a_surface, RHI::IPhysicalDevice* a_physicalDevice, RHI::IRenderPass* a_renderPass, std::vector<GamePlay::GameObjectData> a_objectsData, GamePlay::Camera* camera)
 			{
 				VulkanCommandPool* t_commandPool = a_commandPool->CastVulkan();
 				const VulkanLogicalDevice* t_logicalDevice = a_logicalDevice->CastVulkan();
@@ -210,7 +210,7 @@ namespace Engine
 
 					t_commandBuffers.push_back(t_commandBuffer);
 					vkResetCommandBuffer(t_commandBuffer, 0);
-					VulkanCommandPool::RecordCommandBuffer(t_commandBuffer, t_imageIndex, t_renderPass, this, t_pipeline, a_objectsData);
+					VulkanCommandPool::RecordCommandBuffer(t_commandBuffer, t_imageIndex, t_renderPass, this, t_pipeline, a_objectsData, camera);
 				}
 
 				
@@ -308,14 +308,14 @@ namespace Engine
 
 			VkPresentModeKHR VulkanSwapchain::ChooseSurfacePresentMode(const std::vector<VkPresentModeKHR>& a_availablePresentModes)
 			{
-				for (const auto& availablePresentMode : a_availablePresentModes)
+				return VK_PRESENT_MODE_FIFO_KHR; // TODO : clean this
+				for (const auto& t_availablePresentMode : a_availablePresentModes)
 				{
-					if (availablePresentMode == VK_PRESENT_MODE_MAILBOX_KHR) 
+					if (t_availablePresentMode == VK_PRESENT_MODE_MAILBOX_KHR) 
 					{
-						return availablePresentMode;
+						return t_availablePresentMode;
 					}
 				}
-				return VK_PRESENT_MODE_FIFO_KHR;
 			}
 
 

@@ -7,8 +7,8 @@ namespace Engine
 		void Mesh::Create(std::string a_path, Core::RHI::ApiInterface* a_interface, Core::RHI::IPhysicalDevice* a_physicalDevice, Core::RHI::ILogicalDevice* a_logicalDevice, Core::RHI::ICommandPool* a_commandPool)
 		{
             Assimp::Importer t_importer{};
-            const aiScene* t_scene = t_importer.ReadFile(a_path, aiProcess_Triangulate | aiProcess_FlipUVs);
-            if (!t_scene || t_scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !t_scene->mRootNode)
+            const aiScene* t_scene = t_importer.ReadFile(a_path, aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_PreTransformVertices);
+            if (!t_scene || !t_scene->mRootNode)
             {
                 std::cout << "ERROR::ASSIMP::" << t_importer.GetErrorString() << '\n';
                 return;
@@ -68,7 +68,7 @@ namespace Engine
                 {
                     vertex.mUv = Math::vec2(
                         mesh->mTextureCoords[0][i].x,
-                        mesh->mTextureCoords[0][i].y
+                        1.f - mesh->mTextureCoords[0][i].y
                     );
                 }
 
