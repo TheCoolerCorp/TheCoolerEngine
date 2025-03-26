@@ -19,6 +19,7 @@ namespace Engine
 		{
 			void VulkanObjectDescriptor::Create(RHI::ILogicalDevice* a_logicalDevice, RHI::IPhysicalDevice* a_physicalDevice, RHI::IGraphicPipeline* a_pipeline, RHI::IDescriptorPool* a_descriptorPool, RHI::ICommandPool* a_commandPool, GamePlay::GameObject* a_gameObject, int a_size)
 			{
+				// Creation in commandPools.
 				VkDevice t_logicalDevice = a_logicalDevice->CastVulkan()->GetVkDevice();
 				VkDescriptorSetLayout t_descriptorSetLayout = a_pipeline->CastVulkan()->GetObjectDescriptorSetLayout();
 				VkDescriptorPool t_descriptorPool = a_descriptorPool->CastVulkan()->GetPool();
@@ -31,12 +32,14 @@ namespace Engine
 				allocInfo.pSetLayouts = layouts.data();
 
 				m_descriptorSets.resize(a_size);
-				m_uniforms.resize(a_size);
+
+				m_uniforms.resize(a_size); // transform 
 
 				VK_CHECK(vkAllocateDescriptorSets(t_logicalDevice, &allocInfo, m_descriptorSets.data()), "Can't allocate descriptor sets");
 
                 for (size_t i = 0; i < a_size; i++)
                 {
+					// model in transform
                     m_uniforms[i] = new VulkanBuffer;
 
 					Math::mat4 t_mat = a_gameObject->GetComponent<GamePlay::TransformComponent>()->GetTransform()->GetModel();
@@ -51,6 +54,7 @@ namespace Engine
                     t_bufferInfo.offset = 0;
                     t_bufferInfo.range = 16 * sizeof(float);
 
+					// image in mesh
                 	VkDescriptorImageInfo t_imageInfo{};
                     t_imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 					t_imageInfo.imageView = a_gameObject->GetComponent<GamePlay::MeshComponent>()->GetTexture()->GetImage()->CastVulkan()->GetView();

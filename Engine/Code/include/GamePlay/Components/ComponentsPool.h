@@ -116,6 +116,9 @@ namespace Engine
 			std::unordered_map<int, MeshComponent*> m_meshesComponents;
 
 			std::vector<int> m_registerId;
+
+			// TODO
+			//std::unordered_map<int, RHI::IDescriptorSets*> m_meshesComponents;
 		};
 	}
 }
