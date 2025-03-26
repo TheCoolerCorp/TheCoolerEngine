@@ -1,7 +1,7 @@
 #include "GamePlay/Others/GameObject.h"
 
 #include "GamePlay/Components/Meshcomponent.h"
-#include  "GamePlay/Components/TextureComponent.h"
+#include  "GamePlay/Components/MaterialComponent.h"
 #include "Core/Utils.h"
 namespace Engine
 {
