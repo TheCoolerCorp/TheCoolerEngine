@@ -10,16 +10,22 @@ namespace Engine
 {
 	namespace GamePlay
 	{
-		/*class TextureComponent : public Component
+		class MaterialComponent : public Component
 		{
 		public:
-			ENGINE_API void Create(std::string a_path, Core::RHI::ApiInterface* a_interface, Core::RHI::IPhysicalDevice* a_physicalDevice, Core::RHI::ILogicalDevice* a_logicalDevice, Core::RHI::ICommandPool* a_commandPool) override;
-			ENGINE_API void Destroy(Core::RHI::ILogicalDevice* a_logicalDevice) override;
+			MaterialComponent() = default;
+			~MaterialComponent() override = default;
 
-			Resource::Texture* GetTexture() { return m_texture; }
+			ENGINE_API void Create();
+
+			ENGINE_API void Update();
+
+			ENGINE_API void Destroy();
+
+			ENGINE_API void SetTexture(Resource::Texture* a_texture);
 		private:
 			Resource::Texture* m_texture = nullptr;
-		};*/
+		};
 	}
 }
 

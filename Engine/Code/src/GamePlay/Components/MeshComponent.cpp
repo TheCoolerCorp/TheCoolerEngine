@@ -27,5 +27,11 @@ namespace Engine
 			// Set the mesh to use.
 			m_mesh = a_mesh;
 		}
+
+		void MeshComponent::SetTexture(Resource::Texture* a_texture)
+		{
+			// Set the texture to use.
+			m_texture = a_texture;
+		}
 	}
 }

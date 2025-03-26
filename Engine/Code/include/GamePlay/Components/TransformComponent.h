@@ -30,6 +30,8 @@ namespace Engine
 			ENGINE_API void Move(Math::vec3 a_pos, Math::quat a_rot, Math::vec3 a_scale);
 			ENGINE_API void Move(Math::vec3 a_pos, Math::vec3 a_rot, Math::vec3 a_scale);
 
+			Math::Transform* GetTransform() { return m_transform; }
+
 		private:
 			Math::Transform* m_transform = nullptr;
 		};

@@ -20,6 +20,7 @@
 #include "Core/Interfaces/ApiInterface.h"
 
 #include "Gameplay/ServiceLocator.h"
+#include "Core/Renderer/Renderer.h"
 
 namespace Engine
 {
@@ -33,7 +34,7 @@ namespace Engine
 
 			~GameObject() = default;
 
-
+			void Create(Core::Renderer* a_renderer);
 			/*void Create(Core::RHI::ApiInterface* a_interface, GameObjectinfo a_info);
 			void Update(uint32_t a_frameIndex, Engine::Core::RHI::ILogicalDevice* a_logicalDevice);
 			void Destroy(Core::RHI::ApiInterface* a_interface, Core::RHI::ILogicalDevice* a_logicalDevice);
