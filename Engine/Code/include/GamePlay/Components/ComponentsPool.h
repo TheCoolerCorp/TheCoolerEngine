@@ -97,7 +97,7 @@ namespace Engine
 						delete m_transformComponents.at(a_id);
 					}
 				}
-				else if (std::is_same<Type, TransformComponent>::value)
+				else if (std::is_same<Type, MeshComponent>::value)
 				{
 					if (m_meshesComponents.find(a_id))
 					{
@@ -107,9 +107,11 @@ namespace Engine
 				}
 				else
 				{
-					LOG_ERROR("This type of component");
+					LOG_ERROR("Unsupported component type requested");
 				}
 			}
+
+			std::vector<int>& GetIds() { return m_registerId; }
 
 		private:
 			std::unordered_map<int, TransformComponent*> m_transformComponents;
