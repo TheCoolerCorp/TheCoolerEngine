@@ -84,6 +84,7 @@ namespace Engine
 
 			void  VulkanObjectDescriptor::Update(const uint32_t a_frameIndex, RHI::ILogicalDevice* a_logicalDevice, void* a_uploadData)
 			{
+				// Move to transform
                 void* t_data;
                 vkMapMemory(a_logicalDevice->CastVulkan()->GetVkDevice(), m_uniforms[a_frameIndex]->GetMemory(), 0, sizeof(VulkanBuffer), 0, &t_data);
                 memcpy(t_data, a_uploadData, sizeof(a_uploadData));

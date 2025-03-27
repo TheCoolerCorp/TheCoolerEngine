@@ -5,6 +5,8 @@
 
 #include "System.h"
 
+#include <unordered_map>
+
 namespace Engine
 {
 	namespace GamePlay
@@ -16,6 +18,9 @@ namespace Engine
 			ENGINE_API ~RenderSystem() = default;
 
 			ENGINE_API void Update(ComponentsPool& a_componentsPool) override;
+
+		private:
+			//std::unordered_map<int, > m_renderDescriptors;
 
 		};
 	}
