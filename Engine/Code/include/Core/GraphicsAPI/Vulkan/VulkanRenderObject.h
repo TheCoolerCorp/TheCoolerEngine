@@ -5,6 +5,8 @@
 
 #include "Core/Interfaces/IRenderObject.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanUtils.h"
+#include  "Core/GraphicsAPI/Vulkan/VulkanBuffer.h"
+
 
 #include <vector>
 #include <array>
@@ -25,9 +27,16 @@ namespace Engine
 				ENGINE_API void Create(RHI::ILogicalDevice* a_logicalDevice, RHI::IPhysicalDevice* a_physicalDevice, RHI::ISurface* a_surface, RHI::ICommandPool* a_commandPool, RHI::IGraphicPipeline* a_graphicPipeline, int a_maxFrame) override;
 				ENGINE_API void Destroy(RHI::ILogicalDevice* a_logicalDevice) override;
 
+				ENGINE_API void SetUniforms();
+				ENGINE_API void SetTexture();
+
+
+				ENGINE_API void UpdateUniforms(RHI::ILogicalDevice* a_logicalDevice, void* a_data, int a_imageIndex) override;
+
 			private:
 				std::vector<VkDescriptorSet> m_sets;
 				VkDescriptorPool m_pool = VK_NULL_HANDLE;
+				std::vector<VulkanBuffer*> m_uniforms;
 
 				void CreatePool(VkDevice a_logicalDevice, int a_maxFrame);
 				void CreateDescriptorSets(VkDevice a_logicalDevice, VkDescriptorSetLayout a_descriptorSetLayout, int a_maxFrame);

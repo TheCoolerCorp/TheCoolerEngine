@@ -23,6 +23,14 @@ namespace Engine
 
 				// Create descriptorSets.
 				CreateDescriptorSets(t_logicalDevice, t_descriptorSetLayout, a_maxFrame);
+
+				// Create empty uniform buffers.
+				m_uniforms.resize(a_maxFrame);
+
+				for (int i = 0; i < m_uniforms.size(); ++i)
+				{
+					m_uniforms[i] = new VulkanBuffer;
+				}
 			}
 
 			void VulkanRenderObject::Destroy(RHI::ILogicalDevice* a_logicalDevice)
@@ -34,6 +42,12 @@ namespace Engine
 				m_sets.clear();
 
 				vkDestroyDescriptorPool(t_logicalDevice, m_pool, nullptr);
+
+				for (int i = 0; i < m_uniforms.size(); ++i)
+				{
+					m_uniforms[i]->Destroy(a_logicalDevice);
+					delete m_uniforms[i];
+				}
 			}
 
 			void VulkanRenderObject::CreatePool(VkDevice a_logicalDevice, int a_maxFrame)
@@ -65,6 +79,17 @@ namespace Engine
 				m_sets.resize(a_maxFrame);
 
 				VK_CHECK(vkAllocateDescriptorSets(a_logicalDevice, &allocInfo, m_sets.data()), "Can't allocate descriptor sets");
+			}
+
+			void VulkanRenderObject::UpdateUniforms(RHI::ILogicalDevice* a_logicalDevice, void* a_data, int a_imageIndex)
+			{
+				// Create vulkan object from rhi object.
+				VkDevice t_logicalDevice = a_logicalDevice->CastVulkan()->GetVkDevice();
+
+				void* t_data;
+				vkMapMemory(a_logicalDevice->CastVulkan()->GetVkDevice(), m_uniforms[a_imageIndex]->GetMemory(), 0, sizeof(VulkanBuffer), 0, &t_data);
+				memcpy(t_data, a_data, sizeof(a_data));
+				vkUnmapMemory(a_logicalDevice->CastVulkan()->GetVkDevice(), m_uniforms[a_imageIndex]->GetMemory());
 			}
 		}
 	}
