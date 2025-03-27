@@ -47,6 +47,7 @@ namespace Engine
 			RHI::IGraphicPipeline* GetPipeline() { return m_graphicPipeline; }
 			RHI::ICommandPool* GetCommandPool() { return m_commandPool; }
 			RHI::ISwapChain* GetSwapChain() { return m_swapChain; }
+			RHI::ISurface* GetSurface() { return m_surface; }
 		private:
 			RendererType m_type = RendererType::VULKAN;
 

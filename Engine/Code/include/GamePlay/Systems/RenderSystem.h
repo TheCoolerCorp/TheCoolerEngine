@@ -4,7 +4,8 @@
 #include "EngineExport.h"
 
 #include "System.h"
-
+#include "Core/Renderer/Renderer.h"
+#include "Core/Interfaces/IRenderObject.h"
 #include <unordered_map>
 
 namespace Engine
@@ -17,10 +18,15 @@ namespace Engine
 			ENGINE_API RenderSystem() = default;
 			ENGINE_API ~RenderSystem() = default;
 
-			ENGINE_API void Update(ComponentsPool& a_componentsPool) override;
+			ENGINE_API void Init(ComponentsPool& a_componentsPool, Core::Renderer& a_renderer);
+
+			ENGINE_API void Update(ComponentsPool& a_componentsPool, Core::Renderer& a_renderer);
+			ENGINE_API void Render(ComponentsPool& a_componentsPool, Core::Renderer& a_renderer);
+
+			ENGINE_API void End(ComponentsPool& a_componentsPool, Core::Renderer& a_renderer);
 
 		private:
-			//std::unordered_map<int, > m_renderDescriptors;
+			std::unordered_map<int, Core::RHI::IRenderObject*> m_renderDescriptors;
 
 		};
 	}

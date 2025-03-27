@@ -17,7 +17,7 @@ namespace Engine
 	{
 		namespace GraphicsAPI
 		{
-			class VulkanRenderObject : RHI::IRenderObject
+			class VulkanRenderObject : public RHI::IRenderObject
 			{
 			public:
 				ENGINE_API ~VulkanRenderObject() override = default;
@@ -27,9 +27,8 @@ namespace Engine
 				ENGINE_API void Create(RHI::ILogicalDevice* a_logicalDevice, RHI::IPhysicalDevice* a_physicalDevice, RHI::ISurface* a_surface, RHI::ICommandPool* a_commandPool, RHI::IGraphicPipeline* a_graphicPipeline, int a_maxFrame) override;
 				ENGINE_API void Destroy(RHI::ILogicalDevice* a_logicalDevice) override;
 
-				ENGINE_API void SetUniforms(RHI::ILogicalDevice* a_logicalDevice, RHI::IPhysicalDevice* a_physicalDevice, RHI::ICommandPool* a_commandPool, void* a_data, int a_maxFrame);
-				ENGINE_API void SetTexture(RHI::ILogicalDevice* a_logicalDevice, RHI::IImage* a_image, int a_maxFrame);
-
+				ENGINE_API void SetUniforms(RHI::ILogicalDevice* a_logicalDevice, RHI::IPhysicalDevice* a_physicalDevice, RHI::ICommandPool* a_commandPool, void* a_data, int a_maxFrame) override;
+				ENGINE_API void SetTexture(RHI::ILogicalDevice* a_logicalDevice, RHI::IImage* a_image, int a_maxFrame) override;
 
 				ENGINE_API void UpdateUniforms(RHI::ILogicalDevice* a_logicalDevice, void* a_data, int a_imageIndex) override;
 

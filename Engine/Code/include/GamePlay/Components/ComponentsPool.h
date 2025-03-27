@@ -22,8 +22,6 @@ namespace Engine
 			ENGINE_API void Init();
 			ENGINE_API void Destroy();
 
-			ENGINE_API void RegisterTransform(int a_id, TransformComponent* a_transformComponent);
-			ENGINE_API void RegisterMesh(int a_id, MeshComponent* a_meshComponent);
 
 			template<typename Type>
 			void RegisterComponent(Type* a_component, int a_id)
@@ -31,6 +29,12 @@ namespace Engine
 				// Check if Type is a derived component and not the base class.
 				static_assert(std::is_base_of<Component, Type>::value);
 				static_assert(!std::is_same<Component, Type>::value);
+
+				if (std::find(m_registerId.begin(), m_registerId.end(), a_id) != m_registerId.end())
+				{
+					return;
+				}
+				m_registerId.push_back(a_id);
 
 				// Add the component to the right place holder.
 				if (std::is_same<Type, TransformComponent>::value/* && typeid(*a_component) == typeid(TransformComponent)*/)
