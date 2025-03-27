@@ -6,7 +6,7 @@
 #include "Core/Interfaces/IRenderObject.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanUtils.h"
 #include  "Core/GraphicsAPI/Vulkan/VulkanBuffer.h"
-
+#include "Core/GraphicsAPI/Vulkan/VulkanImage.h"
 
 #include <vector>
 #include <array>
@@ -27,8 +27,8 @@ namespace Engine
 				ENGINE_API void Create(RHI::ILogicalDevice* a_logicalDevice, RHI::IPhysicalDevice* a_physicalDevice, RHI::ISurface* a_surface, RHI::ICommandPool* a_commandPool, RHI::IGraphicPipeline* a_graphicPipeline, int a_maxFrame) override;
 				ENGINE_API void Destroy(RHI::ILogicalDevice* a_logicalDevice) override;
 
-				ENGINE_API void SetUniforms();
-				ENGINE_API void SetTexture();
+				ENGINE_API void SetUniforms(RHI::ILogicalDevice* a_logicalDevice, RHI::IPhysicalDevice* a_physicalDevice, RHI::ICommandPool* a_commandPool, void* a_data, int a_maxFrame);
+				ENGINE_API void SetTexture(RHI::ILogicalDevice* a_logicalDevice, RHI::IImage* a_image, int a_maxFrame);
 
 
 				ENGINE_API void UpdateUniforms(RHI::ILogicalDevice* a_logicalDevice, void* a_data, int a_imageIndex) override;

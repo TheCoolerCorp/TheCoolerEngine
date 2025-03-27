@@ -81,6 +81,63 @@ namespace Engine
 				VK_CHECK(vkAllocateDescriptorSets(a_logicalDevice, &allocInfo, m_sets.data()), "Can't allocate descriptor sets");
 			}
 
+			void VulkanRenderObject::SetUniforms(RHI::ILogicalDevice* a_logicalDevice, RHI::IPhysicalDevice* a_physicalDevice, RHI::ICommandPool* a_commandPool, void* a_data, int a_maxFrame)
+			{
+				VkDevice t_logicalDevice = a_logicalDevice->CastVulkan()->GetVkDevice();
+				VkPhysicalDevice t_physicalDevice = a_physicalDevice->CastVulkan()->GetVkPhysicalDevice();
+				VkCommandPool t_commandPool = a_commandPool->CastVulkan()->GetVkCommandPool();
+
+				for (size_t i = 0; i < a_maxFrame; i++)
+				{
+					RHI::BufferData t_uniformData;
+					t_uniformData.mUboData = a_data;
+					t_uniformData.mUboSize = 16 * sizeof(float);
+					m_uniforms[i]->Create(RHI::BufferType::UBO, t_uniformData, a_physicalDevice, a_logicalDevice, a_commandPool);
+
+					VkDescriptorBufferInfo t_bufferInfo{};
+					t_bufferInfo.buffer = m_uniforms[i]->GetBuffer();
+					t_bufferInfo.offset = 0;
+					t_bufferInfo.range = 16 * sizeof(float);
+
+					VkWriteDescriptorSet m_uniformDescriptor;
+
+					m_uniformDescriptor.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+					m_uniformDescriptor.dstSet = m_sets[i];
+					m_uniformDescriptor.dstBinding = 0;
+					m_uniformDescriptor.dstArrayElement = 0;
+					m_uniformDescriptor.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+					m_uniformDescriptor.descriptorCount = 1;
+					m_uniformDescriptor.pBufferInfo = &t_bufferInfo;
+
+					vkUpdateDescriptorSets(t_logicalDevice, 1, &m_uniformDescriptor, 0, nullptr);
+				}
+			}
+
+			void VulkanRenderObject::SetTexture(RHI::ILogicalDevice* a_logicalDevice, RHI::IImage* a_image, int a_maxFrame)
+			{
+				VkDevice t_logicalDevice = a_logicalDevice->CastVulkan()->GetVkDevice();
+
+				for (size_t i = 0; i < a_maxFrame; i++)
+				{
+					VkDescriptorImageInfo t_imageInfo{};
+					t_imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+					t_imageInfo.imageView = a_image->CastVulkan()->GetView();
+					t_imageInfo.sampler = a_image->CastVulkan()->GetSampler();
+
+					VkWriteDescriptorSet m_ImageDescriptor;
+
+					m_ImageDescriptor.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+					m_ImageDescriptor.dstSet = m_sets[i];
+					m_ImageDescriptor.dstBinding = 1;
+					m_ImageDescriptor.dstArrayElement = 0;
+					m_ImageDescriptor.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+					m_ImageDescriptor.descriptorCount = 1;
+					m_ImageDescriptor.pImageInfo = &t_imageInfo;
+
+					vkUpdateDescriptorSets(t_logicalDevice, 1, &m_ImageDescriptor, 0, nullptr);
+				}
+			}
+
 			void VulkanRenderObject::UpdateUniforms(RHI::ILogicalDevice* a_logicalDevice, void* a_data, int a_imageIndex)
 			{
 				// Create vulkan object from rhi object.
