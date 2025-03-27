@@ -27,7 +27,7 @@ namespace Engine
 
 		private:
 			std::unordered_map<int, Core::RHI::IRenderObject*> m_renderDescriptors;
-
+			void Update(ComponentsPool& a_componentsPool) override {}
 		};
 	}
 }

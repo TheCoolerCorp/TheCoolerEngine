@@ -19,7 +19,6 @@ namespace Engine
 		public:
 			~ComponentsPool() = default;
 
-			ENGINE_API void Init();
 			ENGINE_API void Destroy();
 
 
