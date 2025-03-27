@@ -21,7 +21,7 @@ namespace Engine
 			ENGINE_API void Init(ComponentsPool& a_componentsPool, Core::Renderer& a_renderer);
 
 			ENGINE_API void Update(ComponentsPool& a_componentsPool, Core::Renderer& a_renderer);
-			ENGINE_API void Render(ComponentsPool& a_componentsPool, Core::Renderer& a_renderer);
+			ENGINE_API void Render(ComponentsPool& a_componentsPool, const Core::Renderer& a_renderer, Core::Window::IWindow* a_window, GamePlay::Camera* a_camera);
 
 			ENGINE_API void End(ComponentsPool& a_componentsPool, Core::Renderer& a_renderer);
 

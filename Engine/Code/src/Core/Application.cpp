@@ -50,7 +50,7 @@ namespace Engine
 					m_gameObjectDatas.push_back(t_gameObject->SubmitData());
 				}
 				m_mainWindow->PollEvents();
-				m_renderer->Run(m_mainWindow, m_gameObjectDatas, m_camera);*/
+				m_renderer->Render(m_mainWindow, m_gameObjectDatas, m_camera);*/
 			}
 			m_renderer->WaitIdle();
 		}

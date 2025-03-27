@@ -7,6 +7,7 @@
 #include "Core/GraphicsAPI/Vulkan/VulkanLogicalDevice.h"
 #include "Core/GraphicsAPI/Vulkan/QueueFamilies.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanBuffer.h"
+#include "Core/GraphicsAPI/Vulkan/VulkanRenderObject.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanCameraDescriptor.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanGraphicPipeline.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanObjectDescritptor.h"
@@ -79,7 +80,7 @@ namespace Engine
 				mCommandBuffers.push_back(t_commandBuffers);
 			}
 
-			void VulkanCommandPool::RecordCommandBuffer(const VkCommandBuffer a_commandBuffer, const uint32_t a_imageIndex, const VkRenderPass a_renderPass, VulkanSwapchain* a_swapChain, const VulkanGraphicPipeline* a_graphicPipeline, std::vector<GamePlay::GameObjectData> a_objectsData, GamePlay::Camera* camera)
+			void VulkanCommandPool::RecordCommandBuffer(const VkCommandBuffer a_commandBuffer, const uint32_t a_imageIndex, const VkRenderPass a_renderPass, VulkanSwapchain* a_swapChain, const VulkanGraphicPipeline* a_graphicPipeline, const std::unordered_map<int, Core::RHI::IRenderObject*>& a_renderObjects, const std::vector<int>& a_ids, const std::unordered_map<int, Core::RHI::IBuffer*>& a_vertexBuffers, const std::unordered_map<int, Core::RHI::IBuffer*>& a_indexBuffers, const std::unordered_map<int, uint32_t>& a_nbIndices, const GamePlay::Camera* a_camera)
 			{
 				const VkExtent2D t_swapChainExtent = a_swapChain->GetExtent2D();
 				const VkPipeline t_pipeline = a_graphicPipeline->GetPipeline();
@@ -122,21 +123,20 @@ namespace Engine
 				t_scissor.extent = t_swapChainExtent;
 				vkCmdSetScissor(a_commandBuffer, 0, 1, &t_scissor);
 
-				VkDescriptorSet t_cameraDescriptorSet = camera->GetDescriptor()->CastVulkan()->GetDescriptorSet();
+				const VkDescriptorSet t_cameraDescriptorSet = a_camera->GetDescriptor()->CastVulkan()->GetDescriptorSet();
 				vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, t_layout, 0, 1, &t_cameraDescriptorSet, 0, nullptr);
 
-				for (int i = 0; i < a_objectsData.size(); ++i)
+				for (int i = 0; i < static_cast<int>(a_ids.size()); ++i)
 				{
-					/*GamePlay::GameObjectData t_gameObjectData = a_objectsData[i];
-					VkBuffer t_vertexBuffer = t_gameObjectData.mVertexBuffer->CastVulkan()->GetBuffer();
+					VkBuffer t_vertexBuffer = a_vertexBuffers.at(i)->CastVulkan()->GetBuffer();
 					constexpr VkDeviceSize t_offsets[] = { 0 };
 					vkCmdBindVertexBuffers(a_commandBuffer, 0, 1, &t_vertexBuffer, t_offsets);
 
-					vkCmdBindIndexBuffer(a_commandBuffer, t_gameObjectData.mIndexBuffer->CastVulkan()->GetBuffer(), 0, VK_INDEX_TYPE_UINT32);
+					vkCmdBindIndexBuffer(a_commandBuffer, a_indexBuffers.at(i)->CastVulkan()->GetBuffer(), 0, VK_INDEX_TYPE_UINT32);
 
-					vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, t_layout, 1, 1, &t_gameObjectData.mDescriptor->CastVulkan()->GetDescriptorSets()[a_imageIndex], 0, nullptr);
+					vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, t_layout, 1, 1, &a_renderObjects.at(i)->CastVulkan()->GetDescriptorSets()[a_imageIndex], 0, nullptr);
 
-					vkCmdDrawIndexed(a_commandBuffer, t_gameObjectData.mNbIndices, 1, 0, 0, 0);*/
+					vkCmdDrawIndexed(a_commandBuffer, a_nbIndices.at(i), 1, 0, 0, 0);
 				}
 
 				vkCmdEndRenderPass(a_commandBuffer);

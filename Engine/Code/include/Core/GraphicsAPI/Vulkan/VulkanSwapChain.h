@@ -41,9 +41,11 @@ namespace Engine
 
 				ENGINE_API int GetMaxFrame() override { return static_cast<int>(m_maxFrame); }
 
-				ENGINE_API virtual uint32_t GetCurrentFrame() override { return m_currentFrame; }
+				ENGINE_API uint32_t GetImageIndex() override { return m_imageIndex; }
 
-				ENGINE_API void DrawFrame(Window::IWindow* a_window, RHI::ILogicalDevice* a_logicalDevice, RHI::ICommandPool* a_commandPool, RHI::ISurface* a_surface, RHI::IPhysicalDevice* a_physicalDevice, RHI::IRenderPass* a_renderPass, std::vector<GamePlay::GameObjectData> a_objectsData, GamePlay::Camera* camera) override;
+				ENGINE_API uint32_t GetCurrentFrame() override { return m_currentFrame; }
+
+				ENGINE_API void DrawFrame(Window::IWindow* a_window, RHI::ILogicalDevice* a_logicalDevice, RHI::ICommandPool* a_commandPool, RHI::ISurface* a_surface, RHI::IPhysicalDevice* a_physicalDevice, RHI::IRenderPass* a_renderPass, const std::unordered_map<int, Core::RHI::IRenderObject*>& a_renderObjects, const std::vector<int>& a_ids, const std::unordered_map<int, Core::RHI::IBuffer*>& a_vertexBuffers, const std::unordered_map<int, Core::RHI::IBuffer*>& a_indexBuffers, const std::unordered_map<int, uint32_t>& a_nbIndices, GamePlay::Camera* a_camera) override;
 
 			private:
 				VkSwapchainKHR m_swapChain = VK_NULL_HANDLE;

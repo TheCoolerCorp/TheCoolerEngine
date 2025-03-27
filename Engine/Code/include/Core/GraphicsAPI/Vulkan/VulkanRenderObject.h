@@ -32,6 +32,8 @@ namespace Engine
 
 				ENGINE_API void UpdateUniforms(RHI::ILogicalDevice* a_logicalDevice, void* a_data, int a_imageIndex) override;
 
+				ENGINE_API std::vector<VkDescriptorSet> GetDescriptorSets() const { return m_sets; }
+
 			private:
 				std::vector<VkDescriptorSet> m_sets;
 				VkDescriptorPool m_pool = VK_NULL_HANDLE;
