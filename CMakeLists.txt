@@ -36,6 +36,7 @@ add_subdirectory(Editor)
 target_link_libraries(Engine PUBLIC stb)
 target_link_libraries(Engine PUBLIC assimp::assimp)
 target_link_libraries(Engine PUBLIC glfw)
+target_link_libraries(Engine PUBLIC Refureku)
 target_link_libraries(Engine PUBLIC Vulkan::Vulkan)
 
 #target_link_libraries(Editor PUBLIC Vulkan::Vulkan)

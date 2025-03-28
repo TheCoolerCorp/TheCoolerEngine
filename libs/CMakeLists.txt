@@ -8,6 +8,9 @@ add_subdirectory(assimp)
 # GLFW
 add_subdirectory(glfw)
 
+# Refureku
+add_subdirectory(Refureku)
+
 # IMGUI
 set(IMGUI_FILES_LOCATION "imgui")
 file(GLOB IMGUI_SOURCES_FILES "${IMGUI_FILES_LOCATION}/*.cpp")
