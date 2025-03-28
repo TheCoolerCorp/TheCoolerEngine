@@ -12,8 +12,7 @@ namespace Engine
 			{
 				Core::RHI::IRenderObject* t_renderObject = a_renderer.GetInterface()->InstantiateRenderObject();
 				t_renderObject->Create(a_renderer.GetLogicalDevice(), a_renderer.GetPhysicalDevice(), a_renderer.GetSurface(), a_renderer.GetCommandPool(), a_renderer.GetPipeline(), a_renderer.GetSwapChain()->GetMaxFrame());
-				t_renderObject->SetUniforms(a_renderer.GetLogicalDevice(), a_renderer.GetPhysicalDevice(), a_renderer.GetCommandPool(), a_componentsPool.GetComponent<TransformComponent>(a_componentsPool.GetIds()[i])->GetTransform()->GetModel().mElements.data(), a_renderer.GetSwapChain()->GetMaxFrame());
-				t_renderObject->SetTexture(a_renderer.GetLogicalDevice(), a_componentsPool.GetComponent<MeshComponent>(a_componentsPool.GetIds()[i])->GetTexture()->GetImage(), a_renderer.GetSwapChain()->GetMaxFrame());
+				t_renderObject->SetData(a_renderer.GetLogicalDevice(), a_renderer.GetPhysicalDevice(), a_renderer.GetCommandPool(), a_componentsPool.GetComponent<MeshComponent>(a_componentsPool.GetIds()[i])->GetTexture()->GetImage(), a_componentsPool.GetComponent<TransformComponent>(a_componentsPool.GetIds()[i])->GetTransform()->GetModel().mElements.data(), a_renderer.GetSwapChain()->GetMaxFrame());
 
 				m_renderDescriptors.emplace(a_componentsPool.GetIds()[i], t_renderObject);
 			}
@@ -36,7 +35,7 @@ namespace Engine
 			std::unordered_map<int, uint32_t> t_nbIndices;
 			for (const int t_id : t_ids)
 			{
-				Resource::Mesh* t_mesh = a_componentsPool.GetComponent<MeshComponent>(a_componentsPool.GetIds()[t_id])->GetMesh();
+				Resource::Mesh* t_mesh = a_componentsPool.GetComponent<MeshComponent>(t_id)->GetMesh();
 				t_mesh->Load(&a_renderer);
 				t_vertexBuffers.emplace(t_id, t_mesh->GetVertexBuffer());
 				t_indexBuffers.emplace(t_id, t_mesh->GetIndexBuffer());

@@ -128,15 +128,15 @@ namespace Engine
 
 				for (int i = 0; i < static_cast<int>(a_ids.size()); ++i)
 				{
-					VkBuffer t_vertexBuffer = a_vertexBuffers.at(i)->CastVulkan()->GetBuffer();
+					VkBuffer t_vertexBuffer = a_vertexBuffers.at(a_ids[i])->CastVulkan()->GetBuffer();
 					constexpr VkDeviceSize t_offsets[] = { 0 };
 					vkCmdBindVertexBuffers(a_commandBuffer, 0, 1, &t_vertexBuffer, t_offsets);
 
-					vkCmdBindIndexBuffer(a_commandBuffer, a_indexBuffers.at(i)->CastVulkan()->GetBuffer(), 0, VK_INDEX_TYPE_UINT32);
+					vkCmdBindIndexBuffer(a_commandBuffer, a_indexBuffers.at(a_ids[i])->CastVulkan()->GetBuffer(), 0, VK_INDEX_TYPE_UINT32);
 
-					vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, t_layout, 1, 1, &a_renderObjects.at(i)->CastVulkan()->GetDescriptorSets()[a_imageIndex], 0, nullptr);
+					vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, t_layout, 1, 1, &a_renderObjects.at(a_ids[i])->CastVulkan()->GetDescriptorSets()[a_imageIndex], 0, nullptr);
 
-					vkCmdDrawIndexed(a_commandBuffer, a_nbIndices.at(i), 1, 0, 0, 0);
+					vkCmdDrawIndexed(a_commandBuffer, a_nbIndices.at(a_ids[i]), 1, 0, 0, 0);
 				}
 
 				vkCmdEndRenderPass(a_commandBuffer);

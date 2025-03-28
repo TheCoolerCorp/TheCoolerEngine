@@ -40,7 +40,7 @@ namespace Engine
 				{
 					t_randomId = Utils::GenerateRandomInt(0, INT16_MAX);
 				}
-				m_resources.at(t_randomId) = t_resource;
+				m_resources.emplace(t_randomId, t_resource);
 
 				return t_resource;
 
