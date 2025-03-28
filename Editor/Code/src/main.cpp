@@ -1,18 +1,13 @@
 #include <iostream>
 #include <thread>
 
-#include "assimp/Logger.hpp"
-#include "Core/Application.h"
+//#include "Core/Application.h"
 #include "Core/Logger/Logger.h"
 //#include "Core/Assertion/Assertion.h"
 
-#define JE_BANDE_COMME_UN_DRAGON()
-
 int main()
 {
-    JE_BANDE_COMME_UN_DRAGON();
-
-    //LOG_INFO("Starting...");
+    LOG_INFO("Starting...");
     //Engine::Core::Debugging::Logger::Get().Log("bijour", Engine::Core::Debugging::LogLevel::INFO, Engine::Core::Debugging::ColorMap.at(Engine::Core::Debugging::LogColor::BOLD_YELLOW), __FILE__, __LINE__);
 
 //#ifdef TCDEBUG

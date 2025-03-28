@@ -2,6 +2,7 @@
 #define VULKANCOMMANDPOOL_H
 
 #include <vulkan/vulkan.h>
+#include <unordered_map>
 
 #include "Core/Interfaces/ICommandPool.h"
 
