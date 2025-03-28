@@ -45,6 +45,6 @@ namespace Engine
 	}
 }
 
-#include "Logger.tpp"
+#include "Logger.inl"
 
 #endif

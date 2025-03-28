@@ -23,7 +23,7 @@ namespace Engine
 					std::cout << " [" << a_file << ":" << a_line << "]";
 				}
 
-				std::cout << a_color << " " << a_message << ColorMap.at(LogColor::RESET) << '\n';
+				std::cout << a_color << " " << a_message << ColorMap.at(LogColor::RESET) << '\n' << std::flush;
 			}
 
 			void Logger::PrintFileLog(const std::string& a_message, const std::string& a_logLevel, const char* a_file,
@@ -50,11 +50,11 @@ namespace Engine
 			{
 				std::string t_logFolder = "../../Logs";
 
-				if (!std::filesystem::exists(t_logFolder))
+				if (!std::filesystem::exists(t_logFolder) && !std::filesystem::is_directory(t_logFolder)) 
 				{
 					std::filesystem::create_directories(t_logFolder);
 				}
-				m_logFile.open(t_logFolder + "/TheCoolerEngine.log", std::ios::out | std::ios::trunc);
+				m_logFile.open(t_logFolder + "/TheCoolerEngine.log", std::ios::out | std::ios::app | std::ios::ate);
 			}
 			Logger::~Logger()
 			{
