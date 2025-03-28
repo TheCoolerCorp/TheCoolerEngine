@@ -8,13 +8,21 @@
 #include "LogLevel.h"
 #include "LogColor.h"
 
-#define LOG(level, message, color) Engine::Core::Debugging::Logger::Get().Log(message, level, color, std::filesystem::path(__FILE__).filename().string().c_str(), __LINE__)
-#define LOG_DEBUG(message) LOG(Engine::Core::Debugging::LogLevel::DEBUGLOG, message, Engine::Core::Debugging::ColorMap.at(Engine::Core::Debugging::LogColor::BOLD_BLUE))
-#define LOG_VERBOSE(message) LOG(Engine::Core::Debugging::LogLevel::VERBOSE, message, Engine::Core::Debugging::ColorMap.at(Engine::Core::Debugging::LogColor::BOLD_WHITE))
-#define LOG_INFO(message) LOG(Engine::Core::Debugging::LogLevel::INFO, message, Engine::Core::Debugging::ColorMap.at(Engine::Core::Debugging::LogColor::BOLD_GREEN))
-#define LOG_WARNING(message) LOG(Engine::Core::Debugging::LogLevel::WARNING, message, Engine::Core::Debugging::ColorMap.at(Engine::Core::Debugging::LogColor::BOLD_YELLOW))
-#define LOG_ERROR(message) LOG(Engine::Core::Debugging::LogLevel::ERROR, message, Engine::Core::Debugging::ColorMap.at(Engine::Core::Debugging::LogColor::BOLD_RED))
-#define LOG_CRITICAL(message) LOG(Engine::Core::Debugging::LogLevel::CRITICAL, message, Engine::Core::Debugging::ColorMap.at(Engine::Core::Debugging::LogColor::BOLD_MAGENTA))
+//#define LOG(level, message, color) Engine::Core::Debugging::Logger::Get().Log(message, level, color, std::filesystem::path(__FILE__).filename().string().c_str(), __LINE__)
+//#define LOG(level, message, color) Engine::Core::Debugging::Logger::Get().Log(message, level, color, __FILE__, __LINE__)
+//#define LOG_DEBUG(message) LOG(Engine::Core::Debugging::LogLevel::DEBUGLOG, message, Engine::Core::Debugging::ColorMap.at(Engine::Core::Debugging::LogColor::BOLD_BLUE))
+//#define LOG_VERBOSE(message) LOG(Engine::Core::Debugging::LogLevel::VERBOSE, message, Engine::Core::Debugging::ColorMap.at(Engine::Core::Debugging::LogColor::BOLD_WHITE))
+//#define LOG_INFO(message) LOG(Engine::Core::Debugging::LogLevel::INFO, message, Engine::Core::Debugging::ColorMap.at(Engine::Core::Debugging::LogColor::BOLD_GREEN))
+//#define LOG_WARNING(message) LOG(Engine::Core::Debugging::LogLevel::WARNING, message, Engine::Core::Debugging::ColorMap.at(Engine::Core::Debugging::LogColor::BOLD_YELLOW))
+//#define LOG_ERROR(message) LOG(Engine::Core::Debugging::LogLevel::ERROR, message, Engine::Core::Debugging::ColorMap.at(Engine::Core::Debugging::LogColor::BOLD_RED))
+//#define LOG_CRITICAL(message) LOG(Engine::Core::Debugging::LogLevel::CRITICAL, message, Engine::Core::Debugging::ColorMap.at(Engine::Core::Debugging::LogColor::BOLD_MAGENTA))
+
+#define LOG_DEBUG(message)
+#define LOG_VERBOSE(message)
+#define LOG_INFO(message)
+#define LOG_WARNING(message)
+#define LOG_ERROR(message)
+#define LOG_CRITICAL(message)
 
 namespace Engine
 {
