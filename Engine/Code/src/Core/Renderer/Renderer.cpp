@@ -42,7 +42,7 @@ namespace Engine
 
 			m_commandPool = m_interface->InstantiateCommandPool();
 			m_commandPool->Create(m_physicalDevice, m_surface, m_logicalDevice);
-			m_swapChain->CreateFramebuffers(m_logicalDevice, m_physicalDevice, m_renderPass, m_commandPool);
+			m_swapChain->CreateFramebuffers(m_logicalDevice, m_physicalDevice, m_renderPass, m_commandPool, m_graphicPipeline);
 
 
 			m_descriptorPool = m_interface->InstantiateDescriptorPool();
@@ -55,7 +55,7 @@ namespace Engine
 
 		void Renderer::Run(Window::IWindow* a_window, std::vector<GamePlay::GameObjectData> a_objectsData, GamePlay::Camera* camera) const
 		{
-			m_swapChain->DrawFrame(a_window, m_logicalDevice, m_commandPool, m_surface, m_physicalDevice, m_renderPass, a_objectsData, camera);
+			m_swapChain->DrawFrame(a_window, m_logicalDevice, m_commandPool, m_surface, m_physicalDevice, m_renderPass, m_graphicPipeline, a_objectsData, camera);
 		}
 
 		void Renderer::WaitIdle() const

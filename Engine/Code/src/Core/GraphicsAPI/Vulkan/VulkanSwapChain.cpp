@@ -11,6 +11,7 @@
 #include "Core/GraphicsAPI/Vulkan/VulkanRenderPass.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanImage.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanCommandPool.h"
+#include "Core/GraphicsAPI/Vulkan/VulkanDescriptorPool.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanGraphicPipeline.h"
 #include "Core/Interfaces/IGraphicPipeline.h"
 #include "GamePlay/GameObject.h"
@@ -59,7 +60,7 @@ namespace Engine
 				t_createInfo.imageColorSpace = t_formats.colorSpace;
 				t_createInfo.imageExtent = t_extent;
 				t_createInfo.imageArrayLayers = 1;
-				t_createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+				t_createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
 
 				const QueueFamilyIndices t_indices = QueueFamilyIndices::FindQueueFamilies(
 					a_physicalDevice->CastVulkan()->GetVkPhysicalDevice(), a_surface->CastVulkan()->GetVkSurfaceKHR());
@@ -111,8 +112,11 @@ namespace Engine
 
 			}
 
-			void VulkanSwapchain::CreateFramebuffers(RHI::ILogicalDevice* a_logicalDevice, RHI::IPhysicalDevice* a_physicalDevice, RHI::IRenderPass* a_renderPass, RHI::ICommandPool* a_commandPool)
+			void VulkanSwapchain::CreateFramebuffers(RHI::ILogicalDevice* a_logicalDevice, RHI::IPhysicalDevice* a_physicalDevice, RHI::IRenderPass* a_renderPass, RHI::ICommandPool* a_commandPool, RHI::IGraphicPipeline* a_pipeline)
 			{
+				VkDescriptorSetLayout t_descriptorSetLayout = a_pipeline->CastVulkan()->GetObjectDescriptorSetLayout();
+				m_descriptorPool = new VulkanDescriptorPool();
+				m_descriptorPool->Create(a_logicalDevice, static_cast<int>(m_imageViews.size()));
 				VkFormat t_depthFormat = a_physicalDevice->CastVulkan()->FindSupportedFormat({ VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT },
 					VK_IMAGE_TILING_OPTIMAL,
 					VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
@@ -131,9 +135,39 @@ namespace Engine
 				                                   VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
 
 				m_framebuffers.resize(m_imageViews.size());
+				m_samplers.resize(m_imageViews.size());
+				m_descriptorSets.resize(m_imageViews.size());
+
+				const std::vector<VkDescriptorSetLayout> t_layouts(m_imageViews.size(), t_descriptorSetLayout);
+				VkDescriptorSetAllocateInfo t_allocInfo{};
+				t_allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+				t_allocInfo.descriptorPool = m_descriptorPool->GetPool();
+				t_allocInfo.descriptorSetCount = static_cast<uint32_t>(m_imageViews.size());
+				t_allocInfo.pSetLayouts = t_layouts.data();
+
+				VK_CHECK(vkAllocateDescriptorSets(a_logicalDevice->CastVulkan()->GetVkDevice(), &t_allocInfo, m_descriptorSets.data()), "Can't allocate descriptor sets");
 
 				for (size_t i = 0; i < m_framebuffers.size(); i++)
 				{
+					VulkanImage::CreateSampler(&m_samplers[i], a_logicalDevice->CastVulkan()->GetVkDevice(), a_physicalDevice->CastVulkan()->GetVkPhysicalDevice());
+
+					VkDescriptorImageInfo t_imageInfo{};
+					t_imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+					t_imageInfo.imageView = m_imageViews[i];
+					t_imageInfo.sampler = m_samplers[i];
+
+					std::array<VkWriteDescriptorSet, 1> t_descriptorWrites{};
+
+					t_descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+					t_descriptorWrites[0].dstSet = m_descriptorSets[i];
+					t_descriptorWrites[0].dstBinding = 1;
+					t_descriptorWrites[0].dstArrayElement = 0;
+					t_descriptorWrites[0].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+					t_descriptorWrites[0].descriptorCount = 1;
+					t_descriptorWrites[0].pImageInfo = &t_imageInfo;
+
+					vkUpdateDescriptorSets(a_logicalDevice->CastVulkan()->GetVkDevice(), static_cast<uint32_t>(t_descriptorWrites.size()), t_descriptorWrites.data(), 0, nullptr);
+
 					std::vector<VkImageView> attachments;
 
 					attachments.push_back(m_imageViews[i]);
@@ -180,7 +214,7 @@ namespace Engine
 				return m_framebuffers;
 			}
 
-			void VulkanSwapchain::DrawFrame(Window::IWindow* a_window, RHI::ILogicalDevice* a_logicalDevice, RHI::ICommandPool* a_commandPool, RHI::ISurface* a_surface, RHI::IPhysicalDevice* a_physicalDevice, RHI::IRenderPass* a_renderPass, std::vector<GamePlay::GameObjectData> a_objectsData, GamePlay::Camera* camera)
+			void VulkanSwapchain::DrawFrame(Window::IWindow* a_window, RHI::ILogicalDevice* a_logicalDevice, RHI::ICommandPool* a_commandPool, RHI::ISurface* a_surface, RHI::IPhysicalDevice* a_physicalDevice, RHI::IRenderPass* a_renderPass, RHI::IGraphicPipeline* a_pipeline, std::vector<GamePlay::GameObjectData> a_objectsData, GamePlay::Camera* camera)
 			{
 				VulkanCommandPool* t_commandPool = a_commandPool->CastVulkan();
 				const VulkanLogicalDevice* t_logicalDevice = a_logicalDevice->CastVulkan();
@@ -192,7 +226,7 @@ namespace Engine
 				VkResult t_result = vkAcquireNextImageKHR(t_device, m_swapChain, UINT64_MAX, m_imageAvailableSemaphores[m_currentFrame], VK_NULL_HANDLE, &t_imageIndex);
 
 				if (t_result == VK_ERROR_OUT_OF_DATE_KHR) {
-					RecreateSwapChain(a_window, a_logicalDevice, a_surface, a_physicalDevice, a_renderPass, a_commandPool);
+					RecreateSwapChain(a_window, a_logicalDevice, a_surface, a_physicalDevice, a_renderPass, a_commandPool, a_pipeline);
 					return;
 				}
 				if (t_result != VK_SUCCESS && t_result != VK_SUBOPTIMAL_KHR) {
@@ -246,7 +280,7 @@ namespace Engine
 
 				if (t_result == VK_ERROR_OUT_OF_DATE_KHR || t_result == VK_SUBOPTIMAL_KHR || a_window->GetResized()) {
 					a_window->SetResized(false);
-					RecreateSwapChain(a_window, a_logicalDevice, a_surface, a_physicalDevice, a_renderPass, a_commandPool);
+					RecreateSwapChain(a_window, a_logicalDevice, a_surface, a_physicalDevice, a_renderPass, a_commandPool, a_pipeline);
 				}
 				else if (t_result != VK_SUCCESS) {
 					throw std::runtime_error("failed to present swap chain image!");
@@ -260,7 +294,7 @@ namespace Engine
 			{
 				const VkDevice t_device = a_logicalDevice->CastVulkan()->GetVkDevice();
 
-				CleanupSwapChain(t_device);
+				CleanupSwapChain(a_logicalDevice);
 
 				for (size_t i = 0; i < m_maxFrame; i++) {
 					vkDestroySemaphore(t_device, m_renderFinishedSemaphores[i], nullptr);
@@ -272,21 +306,35 @@ namespace Engine
 				m_inFlightFences.clear();
 			}
 
-			void VulkanSwapchain::CleanupSwapChain(const VkDevice a_device) const
+			void VulkanSwapchain::CleanupSwapChain(RHI::ILogicalDevice* a_logicalDevice)
 			{
+				const VkDevice t_device = a_logicalDevice->CastVulkan()->GetVkDevice();
+
 				for (const auto& t_framebuffer : m_framebuffers)
 				{
-					vkDestroyFramebuffer(a_device, t_framebuffer, nullptr);
+					vkDestroyFramebuffer(t_device, t_framebuffer, nullptr);
 				}
 
 				for (const auto& t_imageView : m_imageViews)
 				{
-					vkDestroyImageView(a_device, t_imageView, nullptr);
+					vkDestroyImageView(t_device, t_imageView, nullptr);
 				}
-				vkDestroyImage(a_device, m_depthImage, nullptr);
-				vkDestroyImageView(a_device, m_depthImageView, nullptr);
-				vkFreeMemory(a_device, m_depthMemory, nullptr);
-				vkDestroySwapchainKHR(a_device, m_swapChain, nullptr);
+
+				for (const auto& t_sampler : m_samplers)
+				{
+					vkDestroySampler(t_device, t_sampler, nullptr);
+				}
+
+				vkFreeDescriptorSets(t_device, m_descriptorPool->GetPool(), static_cast<uint32_t>(m_descriptorSets.size()), m_descriptorSets.data());
+				m_descriptorSets.clear();
+
+				m_samplers.clear();
+				vkDestroyImage(t_device, m_depthImage, nullptr);
+				vkDestroyImageView(t_device, m_depthImageView, nullptr);
+				vkFreeMemory(t_device, m_depthMemory, nullptr);
+				vkDestroySwapchainKHR(t_device, m_swapChain, nullptr);
+				m_descriptorPool->Destroy(a_logicalDevice);
+				delete m_descriptorPool;
 			}
 
 			VkSurfaceFormatKHR VulkanSwapchain::ChooseSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& a_availableFormats)
@@ -360,7 +408,8 @@ namespace Engine
 
 			void VulkanSwapchain::RecreateSwapChain(Window::IWindow* a_window, RHI::ILogicalDevice* a_logicalDevice,
 			                                        RHI::ISurface* a_surface, RHI::IPhysicalDevice* a_physicalDevice,
-			                                        RHI::IRenderPass* a_renderPass, RHI::ICommandPool* a_commandPool)
+			                                        RHI::IRenderPass* a_renderPass, RHI::ICommandPool* a_commandPool,
+													RHI::IGraphicPipeline* a_pipeline)
 			{
 				const VkDevice t_device = a_logicalDevice->CastVulkan()->GetVkDevice();
 
@@ -368,10 +417,10 @@ namespace Engine
 
 				vkDeviceWaitIdle(t_device);
 
-				CleanupSwapChain(t_device);
+				CleanupSwapChain(a_logicalDevice);
 
 				Create(a_surface, a_window, a_physicalDevice, a_logicalDevice);
-				CreateFramebuffers(a_logicalDevice, a_physicalDevice, a_renderPass, a_commandPool);
+				CreateFramebuffers(a_logicalDevice, a_physicalDevice, a_renderPass, a_commandPool, a_pipeline);
 			}
 		}
 	}
