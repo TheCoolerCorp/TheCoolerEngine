@@ -24,6 +24,9 @@ namespace Engine
 			                                static_cast<float>(a_width) / static_cast<float>(a_height), 0.1f, 100.f, 10.f, 2.f);
 			m_camera->Create(m_renderer);
 
+			m_currentScene = new GamePlay::Scene();
+			m_currentScene->Create(*m_renderer);
+
 			/*GamePlay::GameObject* t_obj = new GamePlay::GameObject(Math::vec3(0.f, 0.f, 0.f), Math::quat(Math::vec3(Math::ToRadians(90.f), Math::ToRadians(90.f), 0.f)), Math::vec3(1.f, 1.f, 1.f));
 			t_obj->AddComponent<GamePlay::MeshComponent>("Assets/Meshes/viking_room.obj", { m_renderer->GetLogicalDevice(), m_renderer->GetPhysicalDevice(), m_renderer->GetPipeline(), m_renderer->GetDescriptorPool(), m_renderer->GetCommandPool(), 3 }, m_renderer->GetInterface());
 			t_obj->AddComponent<GamePlay::TextureComponent>("Assets/Textures/viking_room.png", { m_renderer->GetLogicalDevice(), m_renderer->GetPhysicalDevice(), m_renderer->GetPipeline(), m_renderer->GetDescriptorPool(), m_renderer->GetCommandPool(), 3 }, m_renderer->GetInterface());
@@ -36,7 +39,7 @@ namespace Engine
 		{
 			while (!m_mainWindow->ShouldClose())
 			{
-				
+				m_currentScene->Draw(m_renderer, m_mainWindow, m_camera);
 				/*m_gameObjectDatas.clear();
 				auto t_now = std::chrono::high_resolution_clock::now();
 				m_deltaTime = std::chrono::duration<float>(t_now - m_lastTime).count();
@@ -68,6 +71,8 @@ namespace Engine
 
 			m_camera->Destroy(m_renderer);
 			delete m_camera;
+
+			m_currentScene->Destroy(*m_renderer);
 
 			m_renderer->Destroy();
 			delete m_renderer;

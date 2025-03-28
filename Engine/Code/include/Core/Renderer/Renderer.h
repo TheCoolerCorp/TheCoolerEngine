@@ -9,8 +9,6 @@
 *
 *
 */
-#include "Ressources/Texture.h"
-#include "Ressources/Mesh.h"
 
 namespace Engine
 {
@@ -54,6 +52,7 @@ namespace Engine
 			RHI::ICommandPool* GetCommandPool() { return m_commandPool; }
 			RHI::ISwapChain* GetSwapChain() { return m_swapChain; }
 			RHI::ISurface* GetSurface() { return m_surface; }
+			RHI::IRenderPass* GetRenderPass() { return m_renderPass; }
 		private:
 			RendererType m_type = RendererType::VULKAN;
 

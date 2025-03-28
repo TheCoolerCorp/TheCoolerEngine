@@ -26,8 +26,8 @@ namespace Engine
 		class Texture : public IResource
 		{
 		public:
-			ENGINE_API void Create(std::string a_path);
-			ENGINE_API void Destroy();
+			ENGINE_API void Create(std::string a_path) override;
+			ENGINE_API void Destroy() override;
 
 			ENGINE_API void Load(Core::Renderer* a_renderer);
 			ENGINE_API void Unload(Core::Renderer* a_renderer);

@@ -1,7 +1,8 @@
 #include "Core/Renderer/Renderer.h"
 #include "Core/Logger/Logger.h"
 #include "GamePlay/Others/GameObject.h"
-
+#include "Ressources/Texture.h"
+#include "Ressources/Mesh.h"
 namespace Engine
 {
 	namespace Core
