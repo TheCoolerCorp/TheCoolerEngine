@@ -38,7 +38,7 @@ namespace Engine
 				// Create vulkan object from rhi object.
 				VkDevice t_logicalDevice = a_logicalDevice->CastVulkan()->GetVkDevice();
 
-				vkFreeDescriptorSets(t_logicalDevice, m_pool, static_cast<uint32_t>(m_sets.size()), m_sets.data());
+				//vkFreeDescriptorSets(t_logicalDevice, m_pool, static_cast<uint32_t>(m_sets.size()), m_sets.data());
 				m_sets.clear();
 
 				vkDestroyDescriptorPool(t_logicalDevice, m_pool, nullptr);

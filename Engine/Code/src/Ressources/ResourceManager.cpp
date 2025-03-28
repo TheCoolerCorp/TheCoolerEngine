@@ -8,7 +8,7 @@ namespace Engine
 		{
 			for (auto& [id, resource] : m_resources) 
 			{
-				
+				resource->Unload(a_renderer);
 				resource->Destroy();
 				delete resource;
 			}
