@@ -44,8 +44,8 @@ target_link_libraries(Engine PUBLIC Refureku)
 
 add_custom_target(RunRefurekuGenerator
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-    COMMAND "${CMAKE_SOURCE_DIR}/libs/RefurekuGenerator/Bin/RefurekuGenerator.exe"
-            "${CMAKE_SOURCE_DIR}/libs/RefurekuGenerator/RefurekuSettings.toml")
+    COMMAND libs/RefurekuGenerator/Bin/RefurekuGenerator.exe
+            libs/RefurekuGenerator/RefurekuSettings.toml)
 
 add_dependencies(Engine RunRefurekuGenerator)
 
