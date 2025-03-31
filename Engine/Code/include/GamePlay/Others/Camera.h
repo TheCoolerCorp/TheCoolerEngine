@@ -19,34 +19,23 @@ namespace Engine
 		namespace RHI
 		{
 			class ICameraDescriptor;
-			class ApiInterface;
-			class ILogicalDevice;
-			class IPhysicalDevice;
-			class IGraphicPipeline;
 			class IDescriptorPool;
-			class ICommandPool;
 		}
+
+		class Renderer;
 	}
 
 	namespace GamePlay
 	{
-		struct CameraObjectinfo
-		{
-			Core::RHI::ILogicalDevice* mLogicalDevice;
-			Core::RHI::IPhysicalDevice* mPhysicalDevice;
-			Core::RHI::IGraphicPipeline* mGraphicPipeline;
-			Core::RHI::ICommandPool* mCommandPool;
-		};
-
 		class Camera
 		{
 		public:
 			Camera(Math::vec3 a_up, Math::vec3 a_center, Math::vec3 a_eye, float a_fovY, float a_aspect, float a_near, float a_far, float a_speed, float a_sensitivity);
 			~Camera() = default;
 
-			ENGINE_API void Create(Core::RHI::ApiInterface* a_interface, const CameraObjectinfo& a_info);
-			ENGINE_API void Update(Core::RHI::ILogicalDevice* a_logicalDevice, Core::Window::IInputHandler* a_inputHandler, Core::Window::IWindow* a_window, float a_deltaTime);
-			ENGINE_API void Destroy(Core::RHI::ILogicalDevice* a_logicalDevice);
+			ENGINE_API void Create(Core::Renderer* a_renderer);
+			ENGINE_API void Update(Core::Renderer* a_renderer, Core::Window::IInputHandler* a_inputHandler, Core::Window::IWindow* a_window, const float a_deltaTime);
+			ENGINE_API void Destroy(Core::Renderer* a_renderer);
 
 			ENGINE_API Core::RHI::ICameraDescriptor* GetDescriptor() const { return m_descriptor; }
 

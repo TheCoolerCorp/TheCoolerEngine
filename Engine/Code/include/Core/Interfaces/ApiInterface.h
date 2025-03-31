@@ -18,6 +18,7 @@
 #include "Core/Interfaces/IObjectDescriptor.h"
 #include "Core/Interfaces/ICameraDescriptor.h"
 #include "Core/Interfaces/IBuffer.h"
+#include "Core/Interfaces/IRenderObject.h"
 
 namespace Engine
 {
@@ -84,6 +85,9 @@ namespace Engine
 
 				ENGINE_API virtual IImage* InstantiateImage() = 0;
 				ENGINE_API virtual void DestroyImage(IImage* a_image) { delete a_image; }
+
+				ENGINE_API virtual IRenderObject* InstantiateRenderObject() = 0;
+				ENGINE_API virtual void DestroyRenderObject(IRenderObject* a_renderObject) { delete a_renderObject; }
 			};
 		}
 	}

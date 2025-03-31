@@ -14,7 +14,7 @@
 #include "Core/GraphicsAPI/Vulkan/VulkanDescriptorPool.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanGraphicPipeline.h"
 #include "Core/Interfaces/IGraphicPipeline.h"
-#include "GamePlay/GameObject.h"
+#include "GamePlay/Others/GameObject.h"
 
 namespace Engine
 {
@@ -243,7 +243,7 @@ namespace Engine
 					const VulkanGraphicPipeline* t_pipeline = std::get<VulkanGraphicPipeline*>(t_commandPool->mCommandBuffers[i][m_currentFrame]);
 					t_commandBuffers.push_back(t_commandBuffer);
 					vkResetCommandBuffer(t_commandBuffer, 0);
-					VulkanCommandPool::RecordCommandBuffer(t_commandBuffer, t_imageIndex, t_renderPass, this, t_pipeline, a_objectsData, camera);
+					VulkanCommandPool::RecordCommandBuffer(t_commandBuffer, t_imageIndex, t_renderPass, this, t_pipeline, a_renderObjects, a_ids, a_vertexBuffers, a_indexBuffers, a_nbIndices, a_camera);
 				}
 
 				VkSubmitInfo t_submitInfo{};

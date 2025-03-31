@@ -4,6 +4,7 @@
 #include "EngineExport.h"
 
 #include <vector>
+#include <unordered_map>
 
 namespace Engine
 {
@@ -32,6 +33,8 @@ namespace Engine
 			class IRenderPass;
 			class ICommandPool;
 			class IGraphicPipeline;
+			class IRenderObject;
+			class IBuffer;
 
 			class ISwapChain
 			{
@@ -40,6 +43,7 @@ namespace Engine
 
 				ENGINE_API virtual GraphicsAPI::VulkanSwapchain* CastVulkan() { return nullptr; }
 				ENGINE_API virtual int GetMaxFrame() = 0;
+				ENGINE_API virtual uint32_t GetImageIndex() = 0;
 				ENGINE_API virtual uint32_t GetCurrentFrame() = 0;
 
 				ENGINE_API virtual void Create(ISurface* a_surface, Window::IWindow* a_window, RHI::IPhysicalDevice* a_physicalDevice, RHI::ILogicalDevice* a_logical_device) = 0;

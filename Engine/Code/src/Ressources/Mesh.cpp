@@ -1,10 +1,12 @@
 #include "Ressources/Mesh.h"
 
+#include "Core/Renderer/Renderer.h"
+
 namespace Engine
 {
 	namespace Resource
 	{
-		void Mesh::Create(std::string a_path, Core::RHI::ApiInterface* a_interface, Core::RHI::IPhysicalDevice* a_physicalDevice, Core::RHI::ILogicalDevice* a_logicalDevice, Core::RHI::ICommandPool* a_commandPool)
+		void Mesh::Create(std::string a_path)
 		{
             Assimp::Importer t_importer{};
             const aiScene* t_scene = t_importer.ReadFile(a_path, aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_PreTransformVertices);
@@ -20,24 +22,57 @@ namespace Engine
                 const aiMesh* t_mesh = t_scene->mMeshes[i];
                 ProcessMesh(t_mesh);
             }
-            m_vertexBuffer = a_interface->InstantiateBuffer();
-            m_indexBuffer = a_interface->InstantiateBuffer();
+
+            m_path = a_path;
+		}
+
+		void Mesh::Destroy()
+		{
+            m_vertices.clear();
+            m_indexes.clear();
+		}
+
+
+        void Mesh::Load(Core::Renderer* a_renderer)
+		{
+            if (m_isLoaded)
+            {
+            	return;
+            }
+
+            Core::RHI::ApiInterface* t_interface = a_renderer->GetInterface();
+            Core::RHI::IPhysicalDevice* t_physicalDevice = a_renderer->GetPhysicalDevice();
+            Core::RHI::ILogicalDevice* t_logicalDevice = a_renderer->GetLogicalDevice();
+            Core::RHI::ICommandPool* t_commandPool = a_renderer->GetCommandPool();
+
+            m_vertexBuffer = t_interface->InstantiateBuffer();
+            m_indexBuffer = t_interface->InstantiateBuffer();
 
             Core::RHI::BufferData t_bufferData;
             t_bufferData.mVertices = m_vertices;
             t_bufferData.mIndices = m_indexes;
 
-            m_vertexBuffer->Create(Core::RHI::BufferType::VERTEX, t_bufferData, a_physicalDevice, a_logicalDevice, a_commandPool);
-            m_indexBuffer->Create(Core::RHI::BufferType::INDEX, t_bufferData, a_physicalDevice, a_logicalDevice, a_commandPool);
+            m_vertexBuffer->Create(Core::RHI::BufferType::VERTEX, t_bufferData, t_physicalDevice, t_logicalDevice, t_commandPool);
+            m_indexBuffer->Create(Core::RHI::BufferType::INDEX, t_bufferData, t_physicalDevice, t_logicalDevice, t_commandPool);
+
+            m_isLoaded = true;
 		}
-		void Mesh::Destroy(Core::RHI::ILogicalDevice* a_logicalDevice)
+
+        void Mesh::Unload(Core::Renderer* a_renderer)
 		{
-            m_vertices.clear();
-            m_indexes.clear();
-            m_vertexBuffer->Destroy(a_logicalDevice);
-            m_indexBuffer->Destroy(a_logicalDevice);
+            if (!m_isLoaded)
+            {
+                return;
+            }
+
+            Core::RHI::ILogicalDevice* t_logicalDevice = a_renderer->GetLogicalDevice();
+
+            m_vertexBuffer->Destroy(t_logicalDevice);
+            m_indexBuffer->Destroy(t_logicalDevice);
             delete m_vertexBuffer;
             delete m_indexBuffer;
+
+            m_isLoaded = false;
 		}
 
         void Mesh::ProcessMesh(const aiMesh* mesh)

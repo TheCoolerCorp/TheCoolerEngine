@@ -1,6 +1,6 @@
 #include "Core/Renderer/Renderer.h"
 #include "Core/Logger/Logger.h"
-#include "GamePlay/GameObject.h"
+#include "GamePlay/Others/GameObject.h"
 
 namespace Engine
 {
@@ -45,15 +45,16 @@ namespace Engine
 			m_swapChain->CreateFramebuffers(m_logicalDevice, m_physicalDevice, m_renderPass, m_commandPool, m_graphicPipeline);
 
 
-			m_descriptorPool = m_interface->InstantiateDescriptorPool();
-			m_descriptorPool->Create(m_logicalDevice, static_cast<int>(m_swapChain->GetMaxFrame()));
-
 			m_commandPool->CreateCommandBuffer(m_logicalDevice, m_swapChain, m_renderPass, m_graphicPipeline);
 
 			m_swapChain->CreateSyncObjects(m_logicalDevice);
 		}
 
-		void Renderer::Run(Window::IWindow* a_window, std::vector<GamePlay::GameObjectData> a_objectsData, GamePlay::Camera* camera) const
+		void Renderer::Render(Window::IWindow* a_window,
+		                      const std::unordered_map<int, Core::RHI::IRenderObject*>& a_renderObjects,
+		                      const std::vector<int>& a_ids, const std::unordered_map<int, Core::RHI::IBuffer*>& a_vertexBuffers,
+		                      const std::unordered_map<int, Core::RHI::IBuffer*>& a_indexBuffers, const std::unordered_map<int, uint32_t>& a_nbIndices,
+		                      GamePlay::Camera* camera) const
 		{
 			m_swapChain->DrawFrame(a_window, m_logicalDevice, m_commandPool, m_surface, m_physicalDevice, m_renderPass, m_graphicPipeline, a_objectsData, camera);
 		}
@@ -65,8 +66,6 @@ namespace Engine
 
 		void Renderer::Destroy()
 		{
-			m_descriptorPool->Destroy(m_logicalDevice);
-			m_interface->DestroyDescriptorPool(m_descriptorPool);
 
 			m_commandPool->Destroy(m_logicalDevice);
 			m_interface->DestroyCommandPool(m_commandPool);

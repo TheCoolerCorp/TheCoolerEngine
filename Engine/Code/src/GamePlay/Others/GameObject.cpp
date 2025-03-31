@@ -1,18 +1,43 @@
-#include "GamePlay/GameObject.h"
+#include "GamePlay/Others/GameObject.h"
 
-#include "GamePlay/Meshcomponent.h"
-#include  "GamePlay/TextureComponent.h"
-
+#include "GamePlay/Components/Meshcomponent.h"
+#include  "GamePlay/Components/MaterialComponent.h"
+#include "Core/Utils.h"
 namespace Engine
 {
 	namespace GamePlay
 	{
-		GameObject::GameObject(Math::vec3 a_position, Math::quat a_rotation, Math::vec3 a_scale)
+		std::bitset<INT32_MAX> GameObject::m_idBitset{};
+
+		GameObject::GameObject(Math::vec3 a_position, Math::vec3 a_rotation, Math::vec3 a_scale)
 		{
-			m_transform = Math::Transform(a_position, a_rotation, a_scale);
+			AddComponent<TransformComponent>();
+			GetComponent<TransformComponent>()->Create(a_position, a_rotation, a_scale);
+
+			m_id = Utils::GenerateRandomInt(0, INT32_MAX);
+
+			while (m_idBitset[m_id])
+			{
+				m_id = Utils::GenerateRandomInt(0, INT32_MAX);
+			}
+			m_idBitset.set(m_id);
 		}
 
-		void GameObject::Create(Core::RHI::ApiInterface* a_interface, GameObjectinfo a_info)
+		GameObject::GameObject()
+		{
+			AddComponent<TransformComponent>();
+			GetComponent<TransformComponent>()->Create();
+
+			m_id = Utils::GenerateRandomInt(0, INT32_MAX);
+
+			while (m_idBitset[m_id])
+			{
+				m_id = Utils::GenerateRandomInt(0, INT32_MAX);
+			}
+			m_idBitset.set(m_id);
+		}
+
+		/*void GameObject::Create(Core::RHI::ApiInterface* a_interface, GameObjectinfo a_info)
 		{
 			m_descriptorPool = a_interface->InstantiateDescriptorPool();
 			m_descriptorPool->Create(a_info.mLogicalDevice, a_info.mSize);
@@ -47,6 +72,6 @@ namespace Engine
 				.mDescriptor= m_descriptor, 
 				.mNbIndices= GetComponent<MeshComponent>()->GetMesh()->GetNbIndices()
 			};
-		}
+		}*/
 	}
 }

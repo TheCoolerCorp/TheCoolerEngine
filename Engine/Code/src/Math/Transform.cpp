@@ -11,6 +11,13 @@ namespace Engine
 			m_model.Transpose();
 		}
 
+		Transform::Transform(vec3 a_pos, vec3 a_rot, vec3 a_scale) : m_pos(a_pos), m_rot(a_rot), m_scale(a_scale)
+		{
+			m_model = mat4::TRS(m_pos, m_rot, m_scale);
+			m_model.Transpose();
+		}
+
+
 		void Transform::UpdateMatrix()
 		{
 			if (!m_needUpdate)

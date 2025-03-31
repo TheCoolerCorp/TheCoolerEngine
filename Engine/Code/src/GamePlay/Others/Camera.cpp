@@ -1,8 +1,10 @@
-#include "GamePlay/Camera.h"
+#include "GamePlay/Others/Camera.h"
 
 #include "Core/Interfaces/ApiInterface.h"
 #include "Core/Window/IInputHandler.h"
 #include "Math/TheCoolerMath.h"
+#include "Core/Renderer/Renderer.h"
+#include "Core/Interfaces/IDescriptorPool.h"
 
 namespace Engine
 {
@@ -21,15 +23,15 @@ namespace Engine
 			m_vp.Transpose();
 		}
 
-		void Camera::Create(Core::RHI::ApiInterface* a_interface, const CameraObjectinfo& a_info)
+		void Camera::Create(Core::Renderer* a_renderer)
 		{
-			m_descriptorPool = a_interface->InstantiateDescriptorPool();
-			m_descriptorPool->Create(a_info.mLogicalDevice, 1);
-			m_descriptor = a_interface->InstantiateCameraDescriptor();
-			m_descriptor->Create(a_info.mLogicalDevice, a_info.mPhysicalDevice, a_info.mGraphicPipeline, m_descriptorPool, a_info.mCommandPool, m_vp);
+			m_descriptorPool = a_renderer->GetInterface()->InstantiateDescriptorPool();
+			m_descriptorPool->Create(a_renderer->GetLogicalDevice(), 1);
+			m_descriptor = a_renderer->GetInterface()->InstantiateCameraDescriptor();
+			m_descriptor->Create(a_renderer->GetLogicalDevice(), a_renderer->GetPhysicalDevice(), a_renderer->GetPipeline(), m_descriptorPool, a_renderer->GetCommandPool(), m_vp);
 		}
 
-		void Camera::Update(Core::RHI::ILogicalDevice* a_logicalDevice, Core::Window::IInputHandler* a_inputHandler, Core::Window::IWindow* a_window, const float a_deltaTime)
+		void Camera::Update(Core::Renderer* a_renderer, Core::Window::IInputHandler* a_inputHandler, Core::Window::IWindow* a_window, const float a_deltaTime)
 		{
 			ComputeInputs(a_inputHandler, a_window, a_deltaTime);
 
@@ -42,14 +44,14 @@ namespace Engine
 				m_needToUpdate = false;
 			}
 
-			m_descriptor->Update(a_logicalDevice, m_vp.mElements.data());
+			m_descriptor->Update(a_renderer->GetLogicalDevice(), m_vp.mElements.data());
 		}
 
-		void Camera::Destroy(Core::RHI::ILogicalDevice* a_logicalDevice)
+		void Camera::Destroy(Core::Renderer* a_renderer)
 		{
-			m_descriptor->Destroy(a_logicalDevice);
+			m_descriptor->Destroy(a_renderer->GetLogicalDevice());
 			delete m_descriptor;
-			m_descriptorPool->Destroy(a_logicalDevice);
+			m_descriptorPool->Destroy(a_renderer->GetLogicalDevice());
 			delete m_descriptorPool;
 		}
 

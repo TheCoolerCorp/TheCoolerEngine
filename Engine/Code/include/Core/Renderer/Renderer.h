@@ -36,7 +36,13 @@ namespace Engine
 			ENGINE_API ~Renderer() = default;
 
 			ENGINE_API void Init(RendererType a_type, Window::IWindow* a_window);
-			ENGINE_API void Run(Window::IWindow* a_window, std::vector<GamePlay::GameObjectData> a_objectsData, GamePlay::Camera* camera) const;
+			ENGINE_API void Render(Window::IWindow* a_window,
+			                       const std::unordered_map<int, Core::RHI::IRenderObject*>& a_renderObjects,
+			                       const std::vector<int>& a_ids,
+			                       const std::unordered_map<int, Core::RHI::IBuffer*>& a_vertexBuffers,
+			                       const std::unordered_map<int, Core::RHI::IBuffer*>& a_indexBuffers,
+								   const std::unordered_map<int, uint32_t>& a_nbIndices,
+			                       GamePlay::Camera* camera) const;
 			ENGINE_API void WaitIdle() const;
 			ENGINE_API void Destroy();
 
@@ -45,9 +51,9 @@ namespace Engine
 			RHI::ILogicalDevice* GetLogicalDevice() { return m_logicalDevice; }
 			RHI::IPhysicalDevice* GetPhysicalDevice() { return m_physicalDevice; }
 			RHI::IGraphicPipeline* GetPipeline() { return m_graphicPipeline; }
-			RHI::IDescriptorPool* GetDescriptorPool() { return m_descriptorPool; }
 			RHI::ICommandPool* GetCommandPool() { return m_commandPool; }
 			RHI::ISwapChain* GetSwapChain() { return m_swapChain; }
+			RHI::ISurface* GetSurface() { return m_surface; }
 		private:
 			RendererType m_type = RendererType::VULKAN;
 
@@ -65,7 +71,6 @@ namespace Engine
 			RHI::IRenderPass* m_renderPass = nullptr;
 			RHI::IGraphicPipeline* m_graphicPipeline = nullptr;
 			RHI::ICommandPool* m_commandPool = nullptr;
-			RHI::IDescriptorPool* m_descriptorPool = nullptr;
 			
 		};
 	}

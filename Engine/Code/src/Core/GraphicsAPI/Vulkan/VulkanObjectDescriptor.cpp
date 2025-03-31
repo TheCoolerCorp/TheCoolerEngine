@@ -5,9 +5,11 @@
 #include "Core/GraphicsAPI/Vulkan/VulkanGraphicPipeline.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanDescriptorPool.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanCommandPool.h"
-#include "GamePlay/GameObject.h"
-#include "GamePlay/TextureComponent.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanBuffer.h"
+
+#include "GamePlay/Others/GameObject.h"
+#include "GamePlay/Components/TransformComponent.h"
+#include "GamePlay/Components/Meshcomponent.h"
 
 namespace Engine
 {
@@ -17,6 +19,7 @@ namespace Engine
 		{
 			void VulkanObjectDescriptor::Create(RHI::ILogicalDevice* a_logicalDevice, RHI::IPhysicalDevice* a_physicalDevice, RHI::IGraphicPipeline* a_pipeline, RHI::IDescriptorPool* a_descriptorPool, RHI::ICommandPool* a_commandPool, GamePlay::GameObject* a_gameObject, int a_size)
 			{
+				// Creation in commandPools.
 				VkDevice t_logicalDevice = a_logicalDevice->CastVulkan()->GetVkDevice();
 				VkDescriptorSetLayout t_descriptorSetLayout = a_pipeline->CastVulkan()->GetObjectDescriptorSetLayout();
 				VkDescriptorPool t_descriptorPool = a_descriptorPool->CastVulkan()->GetPool();
@@ -29,15 +32,17 @@ namespace Engine
 				allocInfo.pSetLayouts = layouts.data();
 
 				m_descriptorSets.resize(a_size);
-				m_uniforms.resize(a_size);
+
+				m_uniforms.resize(a_size); // transform 
 
 				VK_CHECK(vkAllocateDescriptorSets(t_logicalDevice, &allocInfo, m_descriptorSets.data()), "Can't allocate descriptor sets");
 
                 for (size_t i = 0; i < a_size; i++)
                 {
+					// model in transform
                     m_uniforms[i] = new VulkanBuffer;
 
-                    Math::mat4 t_mat = a_gameObject->GetTransform().GetModel();
+					Math::mat4 t_mat = a_gameObject->GetComponent<GamePlay::TransformComponent>()->GetTransform()->GetModel();
 
                     RHI::BufferData t_uniformData;
                     t_uniformData.mUboData = t_mat.mElements.data();
@@ -49,10 +54,11 @@ namespace Engine
                     t_bufferInfo.offset = 0;
                     t_bufferInfo.range = 16 * sizeof(float);
 
+					// image in mesh
                 	VkDescriptorImageInfo t_imageInfo{};
                     t_imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-                    t_imageInfo.imageView = a_gameObject->GetComponent<GamePlay::TextureComponent>()->GetTexture()->GetImage()->CastVulkan()->GetView();
-					t_imageInfo.sampler = a_gameObject->GetComponent<GamePlay::TextureComponent>()->GetTexture()->GetImage()->CastVulkan()->GetSampler();
+					t_imageInfo.imageView = a_gameObject->GetComponent<GamePlay::MeshComponent>()->GetTexture()->GetImage()->CastVulkan()->GetView();
+					t_imageInfo.sampler = a_gameObject->GetComponent<GamePlay::MeshComponent>()->GetTexture()->GetImage()->CastVulkan()->GetSampler();
 
                     std::array<VkWriteDescriptorSet, 2> t_descriptorWrites{};
 
@@ -78,6 +84,7 @@ namespace Engine
 
 			void  VulkanObjectDescriptor::Update(const uint32_t a_frameIndex, RHI::ILogicalDevice* a_logicalDevice, void* a_uploadData)
 			{
+				// Move to transform
                 void* t_data;
                 vkMapMemory(a_logicalDevice->CastVulkan()->GetVkDevice(), m_uniforms[a_frameIndex]->GetMemory(), 0, sizeof(VulkanBuffer), 0, &t_data);
                 memcpy(t_data, a_uploadData, sizeof(a_uploadData));
