@@ -6,17 +6,21 @@
 #include <iostream>
 #include <string>
 #include <filesystem>
+#include <Refureku/Refureku.h>
+#include "Refureku/Generated/Component.rfkh.h"
 
 namespace Engine
 {
 	namespace GamePlay
 	{
-		class Component
+		class CLASS() Component
 		{
 		public:
 			virtual ~Component() = default;
 		};
 	}
 }
+
+File_Component_GENERATED
 
 #endif 
