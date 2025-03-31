@@ -11,7 +11,7 @@ namespace Engine
 	{
 		namespace Debugging
 		{
-			enum class LogLevel : int
+			enum class LogLevel : uint8_t
 			{
 				DEBUGLOG,
 				VERBOSE,

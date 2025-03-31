@@ -16,6 +16,7 @@
 #include <assimp/postprocess.h>
 
 #include "IResource.h"
+
 namespace Engine
 {
 	namespace Core
@@ -35,11 +36,11 @@ namespace Engine
 		public:
 			~Mesh() override = default;
 
-			ENGINE_API void Create(std::string a_path);
-			ENGINE_API void Destroy();
+			ENGINE_API void Create(std::string a_path) override;
+			ENGINE_API void Destroy() override;
 
-			ENGINE_API void Load(Core::Renderer* a_renderer);
-			ENGINE_API void Unload(Core::Renderer* a_renderer);
+			ENGINE_API void Load(Core::Renderer* a_renderer) override;
+			ENGINE_API void Unload(Core::Renderer* a_renderer) override;
 
 			ENGINE_API Core::RHI::IBuffer* GetVertexBuffer() const { return m_vertexBuffer; }
 			ENGINE_API Core::RHI::IBuffer* GetIndexBuffer() const { return m_indexBuffer; }

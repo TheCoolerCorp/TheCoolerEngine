@@ -13,9 +13,11 @@ namespace Engine
 		namespace Debugging
 		{
 			void Logger::PrintConsoleLog(const std::string& a_message, const std::string& a_logLevel,
-				const std::string& a_color, const char* a_file, const int a_line, const std::tm& a_localTime)
+				const LogColor& a_color, const char* a_file, const int a_line, const std::tm& a_localTime)
 			{
-				std::cout << a_color << a_logLevel << ColorMap.at(LogColor::RESET) << " : ";
+				const char* t_color = GetColor(a_color);
+
+				std::cout << t_color << a_logLevel << GetColor(LogColor::RESET) << " : ";
 				std::cout << "[" << std::put_time(&a_localTime, "%Y-%m-%d %H:%M:%S") << "]";
 
 				if (a_file != nullptr)
@@ -23,7 +25,7 @@ namespace Engine
 					std::cout << " [" << a_file << ":" << a_line << "]";
 				}
 
-				std::cout << a_color << " " << a_message << ColorMap.at(LogColor::RESET) << '\n';
+				std::cout << t_color << " " << a_message << GetColor(LogColor::RESET) << '\n';
 			}
 
 			void Logger::PrintFileLog(const std::string& a_message, const std::string& a_logLevel, const char* a_file,
@@ -50,11 +52,11 @@ namespace Engine
 			{
 				std::string t_logFolder = "../../Logs";
 
-				if (!std::filesystem::exists(t_logFolder))
+				if (!std::filesystem::exists(t_logFolder) && !std::filesystem::is_directory(t_logFolder)) 
 				{
 					std::filesystem::create_directories(t_logFolder);
 				}
-				m_logFile.open(t_logFolder + "/TheCoolerEngine.log", std::ios::out | std::ios::trunc);
+				m_logFile.open(t_logFolder + "/TheCoolerEngine.log", std::ios::out | std::ios::app | std::ios::ate);
 			}
 			Logger::~Logger()
 			{
@@ -62,12 +64,6 @@ namespace Engine
 				{
 					m_logFile.close();
 				}
-			}
-
-			Logger& Logger::Get()
-			{
-				static Logger s_logger{};
-				return s_logger;
 			}
 		}
 	}

@@ -80,6 +80,8 @@ namespace Engine
 
                     vkUpdateDescriptorSets(t_logicalDevice, static_cast<uint32_t>(t_descriptorWrites.size()), t_descriptorWrites.data(), 0, nullptr);
                 }
+
+
 			}
 
 			void  VulkanObjectDescriptor::Update(const uint32_t a_frameIndex, RHI::ILogicalDevice* a_logicalDevice, void* a_uploadData)

@@ -29,18 +29,17 @@ namespace Engine
 				static_assert(std::is_base_of<Component, Type>::value);
 				static_assert(!std::is_same<Component, Type>::value);
 
-				if (std::find(m_registerId.begin(), m_registerId.end(), a_id) != m_registerId.end())
+				if (std::find(m_registerId.begin(), m_registerId.end(), a_id) == m_registerId.end())
 				{
-					return;
+					m_registerId.push_back(a_id);
 				}
-				m_registerId.push_back(a_id);
 
 				// Add the component to the right place holder.
 				if (std::is_same<Type, TransformComponent>::value/* && typeid(*a_component) == typeid(TransformComponent)*/)
 				{
 					m_transformComponents.emplace(a_id, dynamic_cast<TransformComponent*>(a_component));
 				}
-				else if (std::is_same<Type, TransformComponent>::value/* && typeid(*a_component) == typeid(MeshComponent)*/)
+				else if (std::is_same<Type, MeshComponent>::value/* && typeid(*a_component) == typeid(MeshComponent)*/)
 				{
 					m_meshesComponents.emplace(a_id, dynamic_cast<MeshComponent*>(a_component));
 				}

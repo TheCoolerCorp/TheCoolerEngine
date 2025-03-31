@@ -1,28 +1,24 @@
 #include <iostream>
-#include "Math/vec3.h"
-#include "Core/Application.h"
+#include <thread>
+
+//#include "Core/Application.h"
 #include "Core/Logger/Logger.h"
-#include "Core/Assertion/Assertion.h"
-#include "Core/GraphicsAPI/Vulkan/VulkanInstance.h"
-#include "Core/GraphicsAPI/Vulkan/VulkanValidationLayers.h"
-#include "Core/GraphicsAPI/Vulkan/VulkanPhysicalDevice.h"
-#include "Core/GraphicsAPI/Vulkan/VulkanLogicalDevice.h"
-#include "Core/GraphicsAPI/Vulkan/VulkanSurface.h"
-#include "Core/GraphicsAPI/Vulkan/VulkanSwapChain.h"
-#include "imgui.h"
+//#include "Core/Assertion/Assertion.h"
+
 int main()
 {
     LOG_INFO("Starting...");
+    //Engine::Core::Debugging::Logger::Get().Log("bijour", Engine::Core::Debugging::LogLevel::INFO, Engine::Core::Debugging::ColorMap.at(Engine::Core::Debugging::LogColor::BOLD_YELLOW), __FILE__, __LINE__);
 
-#ifdef TCDEBUG
-    std::cout << "Debug mode enabled\n";
-#else
-    std::cout << "Release mode enabled\n";
-#endif
-    Engine::Core::Application app = Engine::Core::Application();
-    app.Create(1440, 1080);
-    app.Run();
-    app.Destroy();
-    
+//#ifdef TCDEBUG
+//    LOG_INFO("Debug mode enabled");
+//#else
+//    LOG_INFO("Release mode enabled");
+//#endif
+//    Engine::Core::Application app = Engine::Core::Application();
+//    app.Create(1440, 1080);
+//    app.Run();
+//    app.Destroy();
+    std::this_thread::sleep_for(std::chrono::duration<float>(10.f));
     return 0;
 }

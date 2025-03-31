@@ -1,8 +1,7 @@
 #ifndef LOGCOLOR_H
 #define LOGCOLOR_H
 
-#include <string>
-#include <unordered_map>
+#include <array>
 
 namespace Engine
 {
@@ -10,7 +9,7 @@ namespace Engine
     {
 	    namespace Debugging
 	    {
-            enum class LogColor : int
+            enum class LogColor : uint8_t
             {
                 RESET,
                 BLACK,
@@ -32,7 +31,7 @@ namespace Engine
                 BOLD_WHITE,
             };
 
-            static const std::unordered_map<LogColor, std::string> ColorMap =
+            /*static const std::unordered_map<LogColor, std::string> ColorMap =
             {
                 {LogColor::RESET, "\033[0m"},
                 {LogColor::BLACK, "\033[30m"},
@@ -52,7 +51,34 @@ namespace Engine
                 {LogColor::BOLD_MAGENTA, "\033[1m\033[95m"},
                 {LogColor::BOLD_CYAN, "\033[1m\033[96m"},
                 {LogColor::BOLD_WHITE, "\033[1m\033[97m"}
+            };*/
+
+            constexpr std::array<const char*, 18> COLOR_MAP = 
+            {
+				"\033[0m",        // RESET
+				"\033[30m",       // BLACK
+				"\033[31m",       // RED
+				"\033[32m",       // GREEN
+				"\033[33m",       // YELLOW
+				"\033[34m",       // BLUE
+				"\033[35m",       // MAGENTA
+				"\033[36m",       // CYAN
+				"\033[0m",        // WHITE (was duplicated)
+				"\033[37m",       // GRAY
+				"\033[1m\033[90m", // BOLD_BLACK
+				"\033[1m\033[91m", // BOLD_RED
+				"\033[1m\033[92m", // BOLD_GREEN
+				"\033[1m\033[93m", // BOLD_YELLOW
+				"\033[1m\033[94m", // BOLD_BLUE
+				"\033[1m\033[95m", // BOLD_MAGENTA
+				"\033[1m\033[96m", // BOLD_CYAN
+				"\033[1m\033[97m"  // BOLD_WHITE
             };
+
+            inline const char* GetColor(LogColor a_color)
+            {
+                return COLOR_MAP[static_cast<size_t>(a_color)];
+            }
 	    }
     }
 }

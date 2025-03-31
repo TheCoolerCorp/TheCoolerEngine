@@ -99,7 +99,7 @@ namespace Engine
 
 				float t_pitch = m_deltaMousePos.y * m_sensitivity * a_deltaTime;
 				float t_yaw = m_deltaMousePos.x * m_sensitivity * a_deltaTime;
-				m_worldPitch += t_pitch;
+				m_worldPitch -= t_pitch;
 				m_worldYaw -= t_yaw;
 
 				m_worldPitch = std::clamp(m_worldPitch, -45.f, 45.f);
