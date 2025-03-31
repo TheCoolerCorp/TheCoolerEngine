@@ -80,22 +80,22 @@ namespace Engine
 				mCommandBuffers.push_back(t_commandBuffers);
 			}
 
-			void VulkanCommandPool::RecordCommandBuffer(const VkCommandBuffer a_commandBuffer, const uint32_t a_imageIndex, const VkRenderPass a_renderPass, VulkanSwapchain* a_swapChain, const VulkanGraphicPipeline* a_graphicPipeline, std::vector<GamePlay::GameObjectData> a_objectsData, GamePlay::Camera* camera)
+			void VulkanCommandPool::RecordCommandBuffer(VkRecordCommandBufferInfo info)
 			{
-				const VkExtent2D t_swapChainExtent = a_swapChain->GetExtent2D();
-				const VkPipeline t_pipeline = a_graphicPipeline->GetPipeline();
-				const VkPipelineLayout t_layout = a_graphicPipeline->GetLayout();
+				const VkExtent2D t_swapChainExtent = info.swapChain->GetExtent2D();
+				const VkPipeline t_pipeline = info.graphicPipeline->GetPipeline();
+				const VkPipelineLayout t_layout = info.graphicPipeline->GetLayout();
 
 				VkCommandBufferBeginInfo t_beginInfo{};
 				t_beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 
-				VK_CHECK(vkBeginCommandBuffer(a_commandBuffer, &t_beginInfo), "failed to begin recording command buffer!");
+				VK_CHECK(vkBeginCommandBuffer(info.commandBuffer, &t_beginInfo), "failed to begin recording command buffer!");
 
 
 				VkRenderPassBeginInfo t_renderPassInfo{};
 				t_renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-				t_renderPassInfo.renderPass = a_renderPass;
-				t_renderPassInfo.framebuffer = a_swapChain->GetFramebuffers()[a_imageIndex];
+				t_renderPassInfo.renderPass = info.renderPass;
+				t_renderPassInfo.framebuffer = info.swapChain->GetFramebuffers()[info.imageIndex];
 				t_renderPassInfo.renderArea.offset = { .x= 0, .y= 0};
 				t_renderPassInfo.renderArea.extent = t_swapChainExtent;
 
@@ -106,46 +106,47 @@ namespace Engine
 				t_renderPassInfo.clearValueCount = static_cast<uint32_t>(t_clearValues.size());
 				t_renderPassInfo.pClearValues = t_clearValues.data();
 
-				vkCmdBeginRenderPass(a_commandBuffer, &t_renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+				vkCmdBeginRenderPass(info.commandBuffer, &t_renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 
-				vkCmdBindPipeline(a_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, t_pipeline);
+				vkCmdBindPipeline(info.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, t_pipeline);
 
 				VkViewport t_viewport;
 				t_viewport.x = 0.0f;
 				t_viewport.y = 0.0f;
-				t_viewport.width = static_cast<float>(a_swapChain->GetExtent2D().width);
+				t_viewport.width = static_cast<float>(info.swapChain->GetExtent2D().width);
 				t_viewport.height = static_cast<float>(t_swapChainExtent.height);
 				t_viewport.minDepth = 0.0f;
 				t_viewport.maxDepth = 1.0f;
-				vkCmdSetViewport(a_commandBuffer, 0, 1, &t_viewport);
+				vkCmdSetViewport(info.commandBuffer, 0, 1, &t_viewport);
 
 				VkRect2D t_scissor;
 				t_scissor.offset = { .x= 0, .y= 0};
 				t_scissor.extent = t_swapChainExtent;
-				vkCmdSetScissor(a_commandBuffer, 0, 1, &t_scissor);
+				vkCmdSetScissor(info.commandBuffer, 0, 1, &t_scissor);
 
-				VkDescriptorSet t_cameraDescriptorSet = camera->GetDescriptor()->CastVulkan()->GetDescriptorSet();
-				vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, t_layout, 0, 1, &t_cameraDescriptorSet, 0, nullptr);
+				VkDescriptorSet t_cameraDescriptorSet = info.camera->GetDescriptor()->CastVulkan()->GetDescriptorSet();
+				vkCmdBindDescriptorSets(info.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, t_layout, 0, 1, &t_cameraDescriptorSet, 0, nullptr);
 
-				for (int i = 0; i < a_objectsData.size(); ++i)
+				
+				for (int i = 0; i < info.objectsData.size(); ++i)
 				{
-					GamePlay::GameObjectData t_gameObjectData = a_objectsData[i];
+					GamePlay::GameObjectData t_gameObjectData = info.objectsData[i];
 					VkBuffer t_vertexBuffer = t_gameObjectData.mVertexBuffer->CastVulkan()->GetBuffer();
 					constexpr VkDeviceSize t_offsets[] = { 0 };
-					vkCmdBindVertexBuffers(a_commandBuffer, 0, 1, &t_vertexBuffer, t_offsets);
+					vkCmdBindVertexBuffers(info.commandBuffer, 0, 1, &t_vertexBuffer, t_offsets);
 
-					vkCmdBindIndexBuffer(a_commandBuffer, t_gameObjectData.mIndexBuffer->CastVulkan()->GetBuffer(), 0, VK_INDEX_TYPE_UINT32);
+					vkCmdBindIndexBuffer(info.commandBuffer, t_gameObjectData.mIndexBuffer->CastVulkan()->GetBuffer(), 0, VK_INDEX_TYPE_UINT32);
 
-					vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, t_layout, 1, 1, &t_gameObjectData.mDescriptor->CastVulkan()->GetDescriptorSets()[a_imageIndex], 0, nullptr);
+					vkCmdBindDescriptorSets(info.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, t_layout, 1, 1, &t_gameObjectData.mDescriptor->CastVulkan()->GetDescriptorSets()[info.imageIndex], 0, nullptr);
 
-					vkCmdDrawIndexed(a_commandBuffer, t_gameObjectData.mNbIndices, 1, 0, 0, 0);
+					vkCmdDrawIndexed(info.commandBuffer, t_gameObjectData.mNbIndices, 1, 0, 0, 0);
 				}
 
-				Renderer::RunRenderCallbacks(a_commandBuffer);
+				Renderer::RunRenderCallbacks(info.commandBuffer);
 
-				vkCmdEndRenderPass(a_commandBuffer);
+				vkCmdEndRenderPass(info.commandBuffer);
 
-				VK_CHECK(vkEndCommandBuffer(a_commandBuffer), "failed to end command buffer!");
+				VK_CHECK(vkEndCommandBuffer(info.commandBuffer), "failed to end command buffer!");
 			}
 
 			VkCommandBuffer VulkanCommandPool::BeginSingleTimeCommands(const VkDevice a_device, const VkCommandPool a_commandPool)

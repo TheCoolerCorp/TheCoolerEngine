@@ -25,6 +25,9 @@ namespace Engine
 			VulkanSwapchain::VulkanSwapchain() : m_swapChainImageFormat(), m_swapChainExtent(),
 			                                     m_imageIndex(0){}
 
+			/*
+			 * Creates a swapchain and all elements related to it
+			 */
 			void VulkanSwapchain::Create(RHI::ISurface* a_surface, Window::IWindow* a_window, RHI::IPhysicalDevice* a_physicalDevice, RHI::ILogicalDevice* a_logicalDevice)
 			{
 				uint32_t t_imageCount = 0;
@@ -112,6 +115,12 @@ namespace Engine
 
 			}
 
+/*
+Creates framebuffers and associated resources for the Vulkan swapchain. 
+This includes depth buffer creation, image views, descriptor sets, samplers, 
+and framebuffers for each swapchain image. Ensures resources are properly allocated 
+and configured for rendering.
+ */
 			void VulkanSwapchain::CreateFramebuffers(RHI::ILogicalDevice* a_logicalDevice, RHI::IPhysicalDevice* a_physicalDevice, RHI::IRenderPass* a_renderPass, RHI::ICommandPool* a_commandPool, RHI::IGraphicPipeline* a_pipeline)
 			{
 				VkDescriptorSetLayout t_descriptorSetLayout = a_pipeline->CastVulkan()->GetObjectDescriptorSetLayout();
@@ -214,17 +223,27 @@ namespace Engine
 				return m_framebuffers;
 			}
 
+/*
+ Handles rendering a single frame in Vulkan.
+ This includes acquiring an image from the swapchain, recording command buffers,
+ submitting them for execution, and presenting the rendered image.
+ Also manages synchronization using semaphores and fences,
+ and recreates the swapchain if needed.
+ */
 			void VulkanSwapchain::DrawFrame(Window::IWindow* a_window, RHI::ILogicalDevice* a_logicalDevice, RHI::ICommandPool* a_commandPool, RHI::ISurface* a_surface, RHI::IPhysicalDevice* a_physicalDevice, RHI::IRenderPass* a_renderPass, RHI::IGraphicPipeline* a_pipeline, std::vector<GamePlay::GameObjectData> a_objectsData, GamePlay::Camera* camera)
 			{
 				VulkanCommandPool* t_commandPool = a_commandPool->CastVulkan();
 				const VulkanLogicalDevice* t_logicalDevice = a_logicalDevice->CastVulkan();
 				const VkDevice t_device = t_logicalDevice->GetVkDevice();
 
+				// Wait for the previous frame to finish before proceeding
 				vkWaitForFences(t_device, 1, &m_inFlightFences[m_currentFrame], VK_TRUE, UINT64_MAX);
 
 				uint32_t t_imageIndex;
+				// Acquire an image from the swapchain for rendering
 				VkResult t_result = vkAcquireNextImageKHR(t_device, m_swapChain, UINT64_MAX, m_imageAvailableSemaphores[m_currentFrame], VK_NULL_HANDLE, &t_imageIndex);
 
+				// If the swapchain is outdated (e.g., due to resizing), recreate it and exit early
 				if (t_result == VK_ERROR_OUT_OF_DATE_KHR) {
 					RecreateSwapChain(a_window, a_logicalDevice, a_surface, a_physicalDevice, a_renderPass, a_commandPool, a_pipeline);
 					return;
@@ -233,8 +252,10 @@ namespace Engine
 					throw std::runtime_error("failed to acquire swap chain image!");
 				}
 
+				// Reset the fence so we can wait for this frame's completion later
 				vkResetFences(t_device, 1, &m_inFlightFences[m_currentFrame]);
 
+				// Record command buffers for rendering
 				std::vector<VkCommandBuffer> t_commandBuffers;
 				for (int i = 0; i < static_cast<int>(t_commandPool->mCommandBuffers.size()); ++i) 
 				{
@@ -244,11 +265,21 @@ namespace Engine
 
 					t_commandBuffers.push_back(t_commandBuffer);
 					vkResetCommandBuffer(t_commandBuffer, 0);
-					VulkanCommandPool::RecordCommandBuffer(t_commandBuffer, t_imageIndex, t_renderPass, this, t_pipeline, a_objectsData, camera);
+
+					VkRecordCommandBufferInfo info;
+					info.commandBuffer = t_commandBuffer;
+					info.imageIndex = t_imageIndex;
+					info.renderPass = t_renderPass;
+					info.swapChain = this;
+					info.graphicPipeline = t_pipeline;
+					info.objectsData = a_objectsData;
+					info.camera = camera;
+
+					VulkanCommandPool::RecordCommandBuffer(info);
 				}
 
 				
-
+				// Set up the submit info struct for queue submission
 				VkSubmitInfo t_submitInfo{};
 				t_submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 
@@ -265,8 +296,10 @@ namespace Engine
 				t_submitInfo.signalSemaphoreCount = 1;
 				t_submitInfo.pSignalSemaphores = t_signalSemaphores;
 
+				// Submit the command buffer for execution on the graphics queue
 				VK_CHECK(vkQueueSubmit(t_logicalDevice->GetGraphicsQueue(), 1, &t_submitInfo, m_inFlightFences[m_currentFrame]), "failed to submit draw command buffer!");
 
+				// Set up the present info struct for presenting the rendered frame
 				VkPresentInfoKHR t_presentInfo{};
 				t_presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
 
@@ -279,8 +312,10 @@ namespace Engine
 
 				t_presentInfo.pImageIndices = &t_imageIndex;
 
+				// Present the image to the swapchain
 				t_result = vkQueuePresentKHR(t_logicalDevice->GetPresentQueue(), &t_presentInfo);
 
+				// Handle swapchain recreation if the window was resized
 				if (t_result == VK_ERROR_OUT_OF_DATE_KHR || t_result == VK_SUBOPTIMAL_KHR || a_window->GetResized()) {
 					a_window->SetResized(false);
 					RecreateSwapChain(a_window, a_logicalDevice, a_surface, a_physicalDevice, a_renderPass, a_commandPool, a_pipeline);
@@ -289,6 +324,7 @@ namespace Engine
 					throw std::runtime_error("failed to present swap chain image!");
 				}
 
+				// Advance to the next frame in the swapchain
 				m_currentFrame = (m_currentFrame + 1) % m_maxFrame;
 				t_commandBuffers.clear();
 			}
@@ -309,6 +345,9 @@ namespace Engine
 				m_inFlightFences.clear();
 			}
 
+			/*
+			 * Cleans up all vulkan swapchain-related ressources
+			 */
 			void VulkanSwapchain::CleanupSwapChain(RHI::ILogicalDevice* a_logicalDevice)
 			{
 				const VkDevice t_device = a_logicalDevice->CastVulkan()->GetVkDevice();
@@ -409,6 +448,11 @@ namespace Engine
 				return t_imageView;
 			}
 
+/*
+ Recreates the vulkan swapchain https://vulkan-tutorial.com/Drawing_a_triangle/Presentation/Swap_chain
+ waits for the window to not be minimized then waits for the device to be idle
+ Cleans up the old swapchain and creates a new one along with the framebuffers
+ */
 			void VulkanSwapchain::RecreateSwapChain(Window::IWindow* a_window, RHI::ILogicalDevice* a_logicalDevice,
 			                                        RHI::ISurface* a_surface, RHI::IPhysicalDevice* a_physicalDevice,
 			                                        RHI::IRenderPass* a_renderPass, RHI::ICommandPool* a_commandPool,
@@ -416,13 +460,18 @@ namespace Engine
 			{
 				const VkDevice t_device = a_logicalDevice->CastVulkan()->GetVkDevice();
 
+				//Wait till the framebuffer is valid
 				a_window->ResizeFramebuffer();
 
+				//wait till the device is idle
 				vkDeviceWaitIdle(t_device);
 
+				//clean up the old swapchain
 				CleanupSwapChain(a_logicalDevice);
 
+				//create a new swapchain
 				Create(a_surface, a_window, a_physicalDevice, a_logicalDevice);
+				//create framebuffers
 				CreateFramebuffers(a_logicalDevice, a_physicalDevice, a_renderPass, a_commandPool, a_pipeline);
 			}
 		}

@@ -21,6 +21,17 @@ namespace Engine
 			class VulkanSwapchain;
 			class VulkanGraphicPipeline;
 
+			struct VkRecordCommandBufferInfo
+			{
+				VkCommandBuffer commandBuffer;
+				uint32_t imageIndex;
+				VkRenderPass renderPass;
+				VulkanSwapchain* swapChain;
+				const VulkanGraphicPipeline* graphicPipeline;
+				std::vector<GamePlay::GameObjectData> objectsData;
+				GamePlay::Camera* camera;
+			};
+
 			class VulkanCommandPool : public RHI::ICommandPool
 			{
 			public:
@@ -31,7 +42,7 @@ namespace Engine
 				ENGINE_API void Destroy(RHI::ILogicalDevice* a_logicalDevice) override;
 				ENGINE_API VulkanCommandPool* CastVulkan() override { return this; }
 				ENGINE_API void CreateCommandBuffer(RHI::ILogicalDevice* a_logicalDevice, RHI::ISwapChain* a_swapChain, RHI::IRenderPass* a_renderPass, RHI::IGraphicPipeline* a_graphicPipeline) override;
-				ENGINE_API static void RecordCommandBuffer(const VkCommandBuffer a_commandBuffer, const uint32_t a_imageIndex, const VkRenderPass a_renderPass, VulkanSwapchain* a_swapChain, const VulkanGraphicPipeline* a_graphicPipeline, std::vector<GamePlay::GameObjectData> a_objectsData, GamePlay::Camera* camera);
+				ENGINE_API static void RecordCommandBuffer(VkRecordCommandBufferInfo info);
 
 				ENGINE_API static VkCommandBuffer BeginSingleTimeCommands(VkDevice a_device, VkCommandPool a_commandPool);
 				ENGINE_API static void EndSingleTimeCommands(VkCommandBuffer a_commandBuffer, VkCommandPool a_commandPool, VkDevice a_logicalDevice, VkQueue a_queue);

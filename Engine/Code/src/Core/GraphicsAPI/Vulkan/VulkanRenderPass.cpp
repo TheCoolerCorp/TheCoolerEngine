@@ -10,6 +10,10 @@ namespace Engine
 	{
 		namespace GraphicsAPI
 		{
+			std::vector<std::function<void(VkCommandBuffer)>> VulkanRenderPass::m_renderCallbacks;
+			std::vector < std::function<void(Core::GraphicsAPI::VkRecordCommandBufferInfo)> VulkanRenderPass::m_renderPasses;
+			int VulkanRenderPass::currentRenderCallback = 0;
+
 			void VulkanRenderPass::Create(RHI::ISwapChain* a_swapChain, RHI::IPhysicalDevice* a_physicalDevice, RHI::ILogicalDevice* a_logicalDevice)
 			{
                 // VERSION 2

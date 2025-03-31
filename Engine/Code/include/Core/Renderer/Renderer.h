@@ -53,25 +53,9 @@ namespace Engine
 			RHI::ISwapChain* GetSwapChain() { return m_swapChain; }
 			RHI::IRenderPass* GetRenderPass() const { return m_renderPass; }
 
-			ENGINE_API static void AddRenderCallBack(std::function<void(VkCommandBuffer)> callback)
-			{
-				m_renderCallbacks.push_back(callback);
-			}
-
-			ENGINE_API static void RunRenderCallbacks(VkCommandBuffer commandBuffer)
-			{
-				for (auto& callback : m_renderCallbacks)
-				{
-					callback(commandBuffer);
-				}
-			}
+			
 		private:
-			/*static function because we want to call it quickly and from everywhere
-			 * this is an important callback for any render-related functions like ImGUI and i do not want it hidden
-			 * in something like the VulkanCommandPool that will actually call it, because the call chain to
-			 * set it there is long and inconvenient. As such i think a static for such an important function is justified
-			 */
-			static std::vector<std::function<void(VkCommandBuffer)>> m_renderCallbacks;
+			
 
 			RendererType m_type = RendererType::VULKAN;
 

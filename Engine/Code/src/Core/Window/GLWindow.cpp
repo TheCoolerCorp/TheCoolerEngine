@@ -64,6 +64,11 @@ namespace Engine
 				return glfwGetRequiredInstanceExtensions(a_count);
 			}
 
+			/*
+Ensures the framebuffer size is valid before proceeding with rendering.
+Retrieves the current framebuffer dimensions and waits if they are zero.
+This prevents issues when the window is minimized or not yet ready.
+			 */
 			void GLwindow::ResizeFramebuffer()
 			{
 				int t_width = 0, t_height = 0;
