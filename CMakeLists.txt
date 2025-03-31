@@ -34,9 +34,21 @@ add_subdirectory(Editor)
 #			LIBS LINK					#
 #---------------------------------------#
 target_link_libraries(Engine PUBLIC stb)
+
 target_link_libraries(Engine PUBLIC assimp::assimp)
+
 target_link_libraries(Engine PUBLIC glfw)
+
+target_link_directories(Engine PUBLIC "libs/RefurekuGenerator/Bin")
 target_link_libraries(Engine PUBLIC Refureku)
+
+add_custom_target(RunRefurekuGenerator
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    COMMAND "${CMAKE_SOURCE_DIR}/libs/RefurekuGenerator/Bin/RefurekuGenerator.exe"
+            "${CMAKE_SOURCE_DIR}/libs/RefurekuGenerator/RefurekuSettings.toml")
+
+add_dependencies(Engine RunRefurekuGenerator)
+
 target_link_libraries(Engine PUBLIC Vulkan::Vulkan)
 
 #target_link_libraries(Editor PUBLIC Vulkan::Vulkan)
