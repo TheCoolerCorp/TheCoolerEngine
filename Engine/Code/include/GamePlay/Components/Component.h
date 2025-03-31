@@ -11,7 +11,7 @@ namespace Engine
 {
 	namespace GamePlay
 	{
-		class  Component
+		class Component
 		{
 		public:
 			virtual ~Component() = default;

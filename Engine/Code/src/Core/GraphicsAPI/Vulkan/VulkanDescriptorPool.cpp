@@ -24,7 +24,6 @@ namespace Engine
                 t_poolInfo.poolSizeCount = static_cast<uint32_t>(t_poolSizes.size());
                 t_poolInfo.pPoolSizes = t_poolSizes.data();
                 t_poolInfo.maxSets = static_cast<uint32_t>(m_maxFrame);
-				t_poolInfo.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
 
 				VK_CHECK(vkCreateDescriptorPool(a_logicalDevice->CastVulkan()->GetVkDevice(), &t_poolInfo, nullptr, &m_pool), "failed to create descriptorPool");
 			}

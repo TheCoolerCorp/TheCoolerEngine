@@ -47,11 +47,11 @@ namespace Engine
 				ENGINE_API virtual uint32_t GetCurrentFrame() = 0;
 
 				ENGINE_API virtual void Create(ISurface* a_surface, Window::IWindow* a_window, RHI::IPhysicalDevice* a_physicalDevice, RHI::ILogicalDevice* a_logical_device) = 0;
-				ENGINE_API virtual void CreateFramebuffers(RHI::ILogicalDevice* a_logicalDevice, RHI::IPhysicalDevice* a_physicalDevice, RHI::IRenderPass* a_renderPass, RHI::ICommandPool* a_commandPool, RHI::IGraphicPipeline* a_pipeline) = 0;
+				ENGINE_API virtual void CreateFramebuffers(RHI::ILogicalDevice* a_logicalDevice, RHI::IPhysicalDevice* a_physicalDevice, RHI::IRenderPass* a_renderPass, RHI::ICommandPool* a_commandPool) = 0;
 				ENGINE_API virtual void CreateSyncObjects(ILogicalDevice* a_logicalDevice) {}
 				ENGINE_API virtual void Destroy(RHI::ILogicalDevice* a_logicalDevice) = 0;
 
-				ENGINE_API virtual void DrawFrame(Window::IWindow* a_window, RHI::ILogicalDevice* a_logicalDevice, RHI::ICommandPool* a_commandPool, RHI::ISurface* a_surface, RHI::IPhysicalDevice* a_physicalDevice, RHI::IRenderPass* a_renderPass, RHI::IGraphicPipeline* a_pipeline, std::vector<GamePlay::GameObjectData> a_objectsDatas, GamePlay::Camera* camera) = 0;
+				ENGINE_API virtual void DrawFrame(Window::IWindow* a_window, RHI::ILogicalDevice* a_logicalDevice, RHI::ICommandPool* a_commandPool, RHI::ISurface* a_surface, RHI::IPhysicalDevice* a_physicalDevice, RHI::IRenderPass* a_renderPass, const std::unordered_map<int, Core::RHI::IRenderObject*>& a_renderObjects, const std::vector<int>& a_ids, const std::unordered_map<int, Core::RHI::IBuffer*>& a_vertexBuffers, const std::unordered_map<int, Core::RHI::IBuffer*>& a_indexBuffers, const std::unordered_map<int, uint32_t>& a_nbIndices, GamePlay::Camera* a_camera) = 0;
 
 			};
 		}
