@@ -9,7 +9,7 @@ add_subdirectory(assimp)
 add_subdirectory(glfw)
 
 # Refureku
-add_subdirectory(Refureku)
+add_subdirectory(Refureku/Refureku/Library)
 
 # IMGUI
 set(IMGUI_FILES_LOCATION "imgui")

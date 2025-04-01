@@ -40,14 +40,22 @@ target_link_libraries(Engine PUBLIC assimp::assimp)
 target_link_libraries(Engine PUBLIC glfw)
 
 
-target_link_directories(Engine PUBLIC "libs/Refureku/Refureku/Library/Include/Public")
-
 target_link_directories(Engine PUBLIC "libs/RefurekuGenerator/Bin")
-target_link_libraries(Engine PUBLIC Refureku)
-target_include_directories(Engine PUBLIC "libs/Refureku/Refureku/Library/Include/Public/Refureku/Generated")
-target_include_directories(Engine PUBLIC "libs/Refureku/Refureku/Library/Include/Public")
 
-message(VERBOSE "Start generating...")
+set_target_properties(Refureku PROPERTIES
+    DEBUG_POSTFIX "d"
+    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/libs"
+    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}"
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}"
+)
+target_include_directories(Engine PUBLIC "libs/Refureku/Refureku/Library/Include/Public")
+target_link_directories(Engine PUBLIC "${CMAKE_BINARY_DIR}/libs") 
+target_link_libraries(Engine PUBLIC
+    debug Refurekud
+    optimized Refureku
+)
+
+message("[${CMAKE_PROJECT_NAME}]: Start generating...")
 add_custom_target(RunRefurekuGenerator
    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
    COMMAND libs/RefurekuGenerator/Bin/RefurekuGenerator.exe
@@ -55,9 +63,8 @@ add_custom_target(RunRefurekuGenerator
 
 add_dependencies(Engine RunRefurekuGenerator)
 target_include_directories(Engine PUBLIC "Generated")
-message(VERBOSE "Finish generating")
+message("[${CMAKE_PROJECT_NAME}]: Finish generating")
 
 target_link_libraries(Engine PUBLIC Vulkan::Vulkan)
 
-#target_link_libraries(Editor PUBLIC Vulkan::Vulkan)
 target_link_libraries(Editor PUBLIC imgui)
