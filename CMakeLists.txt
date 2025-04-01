@@ -40,11 +40,12 @@ target_link_libraries(Engine PUBLIC assimp::assimp)
 target_link_libraries(Engine PUBLIC glfw)
 
 
-target_link_directories(Engine PUBLIC "libs/Refureku/Refureku/Library/Include")
+target_link_directories(Engine PUBLIC "libs/Refureku/Refureku/Library/Include/Public")
 
 target_link_directories(Engine PUBLIC "libs/RefurekuGenerator/Bin")
-target_link_libraries(Engine PUBLIC RefurekuLibrary)
+target_link_libraries(Engine PUBLIC Refureku)
 target_include_directories(Engine PUBLIC "libs/Refureku/Refureku/Library/Include/Public/Refureku/Generated")
+target_include_directories(Engine PUBLIC "libs/Refureku/Refureku/Library/Include/Public")
 
 message(VERBOSE "Start generating...")
 add_custom_target(RunRefurekuGenerator
