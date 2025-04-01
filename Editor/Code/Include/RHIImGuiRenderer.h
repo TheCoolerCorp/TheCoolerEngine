@@ -16,6 +16,7 @@ public:
 
 	virtual void NewFrame() = 0;
 	virtual void Render() = 0;
+	virtual void DrawSceneAsImage() = 0;
 	virtual ImDrawData* GetDrawData() = 0;
 };
 

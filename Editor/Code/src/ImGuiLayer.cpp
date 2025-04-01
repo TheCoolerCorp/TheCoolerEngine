@@ -18,9 +18,18 @@ void ImGuiLayer::Init(Engine::Core::Window::IWindow* window, Engine::Core::Rende
 	//we only have vulkan so its hardcoded for now
 	m_imGuiRenderer = new VulkanImGuiRenderer;
 	m_imGuiRenderer->Init(window, renderer);
+	Engine::Core::GraphicsAPI::VulkanRenderPass::AddRenderPassCallback([this]
+		{
+			this->DrawUpdate();
+		}, 1);
 }
 
 void ImGuiLayer::Update()
+{
+	
+}
+
+void ImGuiLayer::DrawUpdate()
 {
 	NewFrame();
 	ImGuiDraw();
@@ -45,6 +54,9 @@ void ImGuiLayer::NewFrame()
 void ImGuiLayer::ImGuiDraw()
 { 
 	ImGui::ShowDemoWindow();
+	Start("Scene");
+	m_imGuiRenderer->DrawSceneAsImage();
+	End();
 }
 
 void ImGuiLayer::Render()

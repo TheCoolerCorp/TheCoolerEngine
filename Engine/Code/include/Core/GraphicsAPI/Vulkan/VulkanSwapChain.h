@@ -43,7 +43,8 @@ namespace Engine
 				ENGINE_API std::vector<VkFramebuffer> GetFramebuffers() const;
 				ENGINE_API VkExtent2D GetExtent2D() const { return m_swapChainExtent; }
 				ENGINE_API std::vector<VkDescriptorSet> GetFramebuffersDescriptorSets() const { return m_descriptorSets; }
-
+				ENGINE_API std::vector<VkSampler> GetSamplers() const { return m_samplers; }
+				ENGINE_API std::vector<VkImageView> GetImageViews() const { return m_imageViews; }
 
 				ENGINE_API int GetMaxFrame() override { return static_cast<int>(m_maxFrame); }
 

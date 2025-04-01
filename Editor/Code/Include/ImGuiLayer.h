@@ -24,6 +24,7 @@ public:
 
 	void Init(Engine::Core::Window::IWindow* window, Engine::Core::Renderer* renderer) override;
 	void Update() override;
+	void DrawUpdate();
 	void Destroy() override;
 
 	static void NewFrame();

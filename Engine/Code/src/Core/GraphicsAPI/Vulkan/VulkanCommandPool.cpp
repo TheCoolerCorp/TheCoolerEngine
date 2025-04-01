@@ -80,7 +80,7 @@ namespace Engine
 				mCommandBuffers.push_back(t_commandBuffers);
 			}
 
-			void VulkanCommandPool::RecordCommandBuffer(VkRecordCommandBufferInfo info)
+			void VulkanCommandPool::RecordCommandBuffer(VkRecordCommandBufferInfo info, std::vector<GamePlay::GameObjectData> objectsData)
 			{
 				const VkExtent2D t_swapChainExtent = info.swapChain->GetExtent2D();
 				const VkPipeline t_pipeline = info.graphicPipeline->GetPipeline();
@@ -127,22 +127,24 @@ namespace Engine
 				VkDescriptorSet t_cameraDescriptorSet = info.camera->GetDescriptor()->CastVulkan()->GetDescriptorSet();
 				vkCmdBindDescriptorSets(info.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, t_layout, 0, 1, &t_cameraDescriptorSet, 0, nullptr);
 
-				
-				for (int i = 0; i < info.objectsData.size(); ++i)
-				{
-					GamePlay::GameObjectData t_gameObjectData = info.objectsData[i];
-					VkBuffer t_vertexBuffer = t_gameObjectData.mVertexBuffer->CastVulkan()->GetBuffer();
-					constexpr VkDeviceSize t_offsets[] = { 0 };
-					vkCmdBindVertexBuffers(info.commandBuffer, 0, 1, &t_vertexBuffer, t_offsets);
 
-					vkCmdBindIndexBuffer(info.commandBuffer, t_gameObjectData.mIndexBuffer->CastVulkan()->GetBuffer(), 0, VK_INDEX_TYPE_UINT32);
+				VulkanRenderPass::RunRenderPass(info, objectsData);
+				//for (int i = 0; i < info.objectsData.size(); ++i)
+				//{
+				//	GamePlay::GameObjectData t_gameObjectData = info.objectsData[i];
+				//	VkBuffer t_vertexBuffer = t_gameObjectData.mVertexBuffer->CastVulkan()->GetBuffer();
+				//	constexpr VkDeviceSize t_offsets[] = { 0 };
+				//	vkCmdBindVertexBuffers(info.commandBuffer, 0, 1, &t_vertexBuffer, t_offsets);
 
-					vkCmdBindDescriptorSets(info.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, t_layout, 1, 1, &t_gameObjectData.mDescriptor->CastVulkan()->GetDescriptorSets()[info.imageIndex], 0, nullptr);
+				//	vkCmdBindIndexBuffer(info.commandBuffer, t_gameObjectData.mIndexBuffer->CastVulkan()->GetBuffer(), 0, VK_INDEX_TYPE_UINT32);
 
-					vkCmdDrawIndexed(info.commandBuffer, t_gameObjectData.mNbIndices, 1, 0, 0, 0);
-				}
+				//	vkCmdBindDescriptorSets(info.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, t_layout, 1, 1, &t_gameObjectData.mDescriptor->CastVulkan()->GetDescriptorSets()[info.imageIndex], 0, nullptr);
 
-				Renderer::RunRenderCallbacks(info.commandBuffer);
+				//	vkCmdDrawIndexed(info.commandBuffer, t_gameObjectData.mNbIndices, 1, 0, 0, 0);
+				//}
+
+
+				//VulkanRenderPass::RunRenderCallbacks(info.commandBuffer);
 
 				vkCmdEndRenderPass(info.commandBuffer);
 

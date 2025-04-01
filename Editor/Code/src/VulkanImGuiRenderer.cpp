@@ -36,7 +36,7 @@ static void check_vk_result(VkResult err)
 
 void VulkanImGuiRenderer::Init(IWindow* window, Renderer* renderer)
 {
-	
+    m_renderer = renderer;
     GLFWwindow* glWindow = window->CastGLFW()->GetWindow();
 
 	VkInstance g_Instance = renderer->GetApiInstance()->CastVulkan()->GetVkInstance();
@@ -49,7 +49,11 @@ void VulkanImGuiRenderer::Init(IWindow* window, Renderer* renderer)
 	VkPipelineCache g_PipelineCache = VK_NULL_HANDLE;
 	VkRenderPass g_RenderPass = renderer->GetRenderPass()->CastVulkan()->GetRenderPass();
 	VulkanSwapchain* swapChain = renderer->GetSwapChain()->CastVulkan();
-    Renderer::AddRenderCallBack(RenderDrawData);
+    VulkanRenderPass::AddRenderPass([renderer](VkRecordCommandBufferInfo info, std::vector<Engine::GamePlay::GameObjectData> data)
+    {
+    	vkQueueWaitIdle(renderer->GetLogicalDevice()->CastVulkan()->GetGraphicsQueue());
+    	RenderDrawData(info);
+    }, 2);
 	uint32_t g_MinImageCount = swapChain->GetMaxFrame();
 	uint32_t g_ImageCount = g_MinImageCount;
 	VkAllocationCallbacks* g_Allocator = nullptr;
@@ -95,9 +99,9 @@ void VulkanImGuiRenderer::NewFrame()
 	ImGui::NewFrame();
 }
 
-void VulkanImGuiRenderer::RenderDrawData(VkCommandBuffer commandBuffer)
+void VulkanImGuiRenderer::RenderDrawData(Engine::Core::GraphicsAPI::VkRecordCommandBufferInfo info)
 {
-	ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), commandBuffer);
+	ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), info.commandBuffer);
 }
 
 void VulkanImGuiRenderer::Render()
@@ -124,7 +128,22 @@ void VulkanImGuiRenderer::CreateDescriptorPool(VkDevice device)
         check_vk_result(err);
 }
 
+void VulkanImGuiRenderer::DrawSceneAsImage()
+{
+    std::vector<VkDescriptorSet> m_Dset;
+	VulkanSwapchain* swapchain = m_renderer->GetSwapChain()->CastVulkan();
+	std::vector<VkImageView> imageViews = swapchain->GetImageViews();
+	std::vector<VkSampler> samplers = swapchain->GetSamplers();
+    m_Dset.resize(imageViews.size());
+    for (uint32_t i = 0; i < imageViews.size(); i++)
+        m_Dset[i] = ImGui_ImplVulkan_AddTexture(samplers[i], imageViews[i], VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+
+    ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
+    ImGui::Image(reinterpret_cast<ImTextureID>(m_Dset[swapchain->GetCurrentFrame()]), ImVec2{ viewportPanelSize.x, viewportPanelSize.y });
+}
+
 ImDrawData* VulkanImGuiRenderer::GetDrawData()
 {
 	return m_drawData;
 }
+

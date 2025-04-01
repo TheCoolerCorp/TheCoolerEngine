@@ -14,13 +14,16 @@ public:
 	void Init(Engine::Core::Window::IWindow* window, Engine::Core::Renderer* renderer) override;
 
 	void NewFrame() override;
-	static void RenderDrawData(VkCommandBuffer commandBuffer);
+	static void RenderDrawData(Engine::Core::GraphicsAPI::VkRecordCommandBufferInfo info);
 	void Render() override;
 
 	void CreateDescriptorPool(VkDevice device);
+	void DrawSceneAsImage();
 
 	ImDrawData* GetDrawData() override;
 private:
+	Engine::Core::Renderer* m_renderer;
+
 	VkDescriptorPool m_pool;
 	ImDrawData* m_drawData = nullptr;
 };

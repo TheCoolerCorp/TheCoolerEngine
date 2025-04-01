@@ -2,7 +2,10 @@
 #include "Core/GraphicsAPI/Vulkan/VulkanSwapChain.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanLogicalDevice.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanPhysicalDevice.h"
-
+#include "Core/GraphicsAPI/Vulkan/VulkanBuffer.h"
+#include "Core/GraphicsAPI/Vulkan/VulkanGraphicPipeline.h"
+#include "Core/GraphicsAPI/Vulkan/VulkanObjectDescritptor.h"
+#include "GamePlay/GameObject.h"
 
 namespace Engine
 {
@@ -10,9 +13,11 @@ namespace Engine
 	{
 		namespace GraphicsAPI
 		{
-			std::vector<std::function<void(VkCommandBuffer)>> VulkanRenderPass::m_renderCallbacks;
-			std::vector < std::function<void(Core::GraphicsAPI::VkRecordCommandBufferInfo)> VulkanRenderPass::m_renderPasses;
-			int VulkanRenderPass::currentRenderCallback = 0;
+            std::map<int, std::vector<std::function<void(Core::GraphicsAPI::VkRecordCommandBufferInfo, std::vector<GamePlay::GameObjectData>)>>> VulkanRenderPass::m_renderPasses;
+            //callbacks that get executed after a specified render pass id
+            std::map<int, std::vector<std::function<void()>>> VulkanRenderPass::m_renderPassCallbacks;
+            int VulkanRenderPass::m_renderPassCount;
+            int VulkanRenderPass::m_currentRenderCallback;
 
 			void VulkanRenderPass::Create(RHI::ISwapChain* a_swapChain, RHI::IPhysicalDevice* a_physicalDevice, RHI::ILogicalDevice* a_logicalDevice)
 			{
@@ -87,6 +92,23 @@ namespace Engine
 
                 VK_CHECK(vkCreateRenderPass(a_logicalDevice->CastVulkan()->GetVkDevice(), &t_renderPassInfo, nullptr, &m_renderPass), "Failed to create render pass !");
                 m_subpasses = static_cast<uint32_t>(t_subpasses.size());
+
+				AddRenderPass([](VkRecordCommandBufferInfo info, std::vector<GamePlay::GameObjectData> objectsData)
+					{
+                        for (int i = 0; i < objectsData.size(); ++i)
+                        {
+	                        GamePlay::GameObjectData t_gameObjectData = objectsData[i];
+	                        VkBuffer t_vertexBuffer = t_gameObjectData.mVertexBuffer->CastVulkan()->GetBuffer();
+	                        constexpr VkDeviceSize t_offsets[] = { 0 };
+	                        vkCmdBindVertexBuffers(info.commandBuffer, 0, 1, &t_vertexBuffer, t_offsets);
+
+	                        vkCmdBindIndexBuffer(info.commandBuffer, t_gameObjectData.mIndexBuffer->CastVulkan()->GetBuffer(), 0, VK_INDEX_TYPE_UINT32);
+
+	                        vkCmdBindDescriptorSets(info.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, info.graphicPipeline->GetLayout(), 1, 1, &t_gameObjectData.mDescriptor->CastVulkan()->GetDescriptorSets()[info.imageIndex], 0, nullptr);
+
+	                        vkCmdDrawIndexed(info.commandBuffer, t_gameObjectData.mNbIndices, 1, 0, 0, 0);
+                        }
+					});
 			}
 
 
