@@ -43,7 +43,7 @@ target_link_libraries(Engine PUBLIC glfw)
 target_link_directories(Engine PUBLIC "libs/Refureku/Refureku/Library/Include")
 
 target_link_directories(Engine PUBLIC "libs/RefurekuGenerator/Bin")
-target_link_libraries(Engine PUBLIC Refureku)
+target_link_libraries(Engine PUBLIC RefurekuLibrary)
 target_include_directories(Engine PUBLIC "libs/Refureku/Refureku/Library/Include/Public/Refureku/Generated")
 
 message(VERBOSE "Start generating...")
