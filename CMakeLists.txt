@@ -51,6 +51,7 @@ add_custom_target(RunRefurekuGenerator
            libs/RefurekuGenerator/RefurekuSettings.toml)
 
 add_dependencies(Engine RunRefurekuGenerator)
+target_include_directories(Engine PUBLIC "Generated")
 
 target_link_libraries(Engine PUBLIC Vulkan::Vulkan)
 
