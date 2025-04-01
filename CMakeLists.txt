@@ -46,6 +46,7 @@ target_link_directories(Engine PUBLIC "libs/RefurekuGenerator/Bin")
 target_link_libraries(Engine PUBLIC Refureku)
 target_include_directories(Engine PUBLIC "libs/Refureku/Refureku/Library/Include/Public/Refureku/Generated")
 
+message(VERBOSE "Start generating...")
 add_custom_target(RunRefurekuGenerator
    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
    COMMAND libs/RefurekuGenerator/Bin/RefurekuGenerator.exe
@@ -53,6 +54,7 @@ add_custom_target(RunRefurekuGenerator
 
 add_dependencies(Engine RunRefurekuGenerator)
 target_include_directories(Engine PUBLIC "Generated")
+message(VERBOSE "Finish generating")
 
 target_link_libraries(Engine PUBLIC Vulkan::Vulkan)
 
