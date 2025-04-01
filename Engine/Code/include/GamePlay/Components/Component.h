@@ -9,14 +9,16 @@
 #include <Refureku/Refureku.h>
 #include "Component.rfkh.h"
 
-namespace Engine
+namespace Engine NAMESPACE()
 {
-	namespace GamePlay
+	namespace GamePlay NAMESPACE()
 	{
 		class CLASS() Component
 		{
 		public:
-			virtual ~Component() = default;
+			 METHOD() virtual ~Component() = default;
+
+			 Engine_GamePlay_Component_GENERATED
 		};
 	}
 }

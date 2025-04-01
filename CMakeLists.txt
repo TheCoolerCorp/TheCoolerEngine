@@ -44,6 +44,7 @@ target_link_directories(Engine PUBLIC "libs/Refureku/Refureku/Library/Include")
 
 target_link_directories(Engine PUBLIC "libs/RefurekuGenerator/Bin")
 target_link_libraries(Engine PUBLIC Refureku)
+target_include_directories(Engine PUBLIC "libs/Refureku/Refureku/Library/Include/Public/Refureku/Generated")
 
 add_custom_target(RunRefurekuGenerator
    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
