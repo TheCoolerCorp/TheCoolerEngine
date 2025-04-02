@@ -1,4 +1,4 @@
-//#include "GamePlay/Systems/RenderSystem.h"
+#include "GamePlay/Systems/MeshRendererSystem.h"
 
 //#include "GamePlay/Others/Camera.h"
 
@@ -6,18 +6,32 @@ namespace Engine
 {
 	namespace GamePlay
 	{
-		/*void RenderSystem::Init(ComponentsPool& a_componentsPool, Core::Renderer& a_renderer)
+		void MeshRendererSystem::Create(Core::Renderer* a_renderer)
 		{
-			for (int i = 0; i < a_componentsPool.GetIds().size(); ++i)
-			{
-				Core::RHI::IRenderObject* t_renderObject = a_renderer.GetInterface()->InstantiateRenderObject();
-				t_renderObject->Create(a_renderer.GetLogicalDevice(), a_renderer.GetPhysicalDevice(), a_renderer.GetSurface(), a_renderer.GetCommandPool(), a_renderer.GetPipeline(), a_renderer.GetSwapChain()->GetMaxFrame());
-				t_renderObject->SetData(a_renderer.GetLogicalDevice(), a_renderer.GetPhysicalDevice(), a_renderer.GetCommandPool(), a_componentsPool.GetComponent<MeshComponent>(a_componentsPool.GetIds()[i])->GetTexture()->GetImage(), a_componentsPool.GetComponent<TransformComponent>(a_componentsPool.GetIds()[i])->GetTransform()->GetModel().mElements.data(), a_renderer.GetSwapChain()->GetMaxFrame());
+			// DO NOTHING FOR NOW
+		}
 
-				m_renderDescriptors.emplace(a_componentsPool.GetIds()[i], t_renderObject);
+		void MeshRendererSystem::Update(Core::Renderer* a_renderer)
+		{
+			// DO NOTHING FOR NOW, maybe update descriptors ??
+		}
+
+		void MeshRendererSystem::Render(Core::Renderer* a_renderer)
+		{
+			
+		}
+
+		void MeshRendererSystem::Destroy(Core::Renderer* a_renderer)
+		{
+			for (int i = 0; i < m_components.size(); ++i)
+			{
+				auto& comp = m_components[i];
+				comp->Destroy();
+				delete comp;
 			}
 		}
 
+		/*
 		void RenderSystem::Update(ComponentsPool& a_componentsPool, Core::Renderer& a_renderer)
 		{
 			for (const std::vector<int>& t_ids = a_componentsPool.GetIds(); const int t_id : t_ids)

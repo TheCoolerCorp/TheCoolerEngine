@@ -2,6 +2,7 @@
 #define GAMEOBJECT_H
 
 #include <bitset>
+#include <map>
 
 #include "EngineExport.h"
 
@@ -49,6 +50,11 @@ namespace Engine
 				static_assert(!std::is_same<Component, ComponentType>::value);
 
 				ComponentType* t_newComponent = new ComponentType();
+
+				
+				//t_newComponent.Create();
+
+
 				//t_newComponent.Create(&m_transformId);
 
 				//Type* t_component = new Type();
@@ -88,6 +94,8 @@ namespace Engine
 
 			uint32_t m_transformId = -1;
 			uint32_t m_meshId = -1;
+
+			//static std::map<>
 		};
 
 		

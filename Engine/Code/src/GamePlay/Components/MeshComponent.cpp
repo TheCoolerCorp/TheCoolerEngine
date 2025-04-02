@@ -6,9 +6,11 @@ namespace Engine
 {
 	namespace GamePlay
 	{
-		void MeshComponent::Create()
+		int MeshComponent::Create()
 		{
 			// Do nothing for now.
+
+			//ServiceLocator::m_meshsystem.Add(this);
 		}
 
 		void MeshComponent::Update()

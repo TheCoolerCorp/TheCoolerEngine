@@ -18,7 +18,7 @@ namespace Engine
 			MeshComponent() = default;
 			~MeshComponent() override = default;
 
-			ENGINE_API void Create();
+			ENGINE_API int Create();
 
 			ENGINE_API void Update();
 
