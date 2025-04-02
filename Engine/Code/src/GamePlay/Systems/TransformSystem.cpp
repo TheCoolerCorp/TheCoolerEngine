@@ -4,9 +4,19 @@ namespace Engine
 {
 	namespace GamePlay
 	{
-		void TransformSystem::Update(ComponentsPool& a_componentsPool)
+		void TransformSystem::Create()
+		{
+
+		}
+
+		void TransformSystem::Update()
 		{
 			
+		}
+
+		void TransformSystem::Destroy()
+		{
+
 		}
 	}
 }

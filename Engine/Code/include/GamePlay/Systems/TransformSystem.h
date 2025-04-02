@@ -4,6 +4,7 @@
 #include "EngineExport.h"
 
 #include "System.h"
+#include "GamePlay/Components/TransformComponent.h"
 
 namespace Engine
 {
@@ -15,7 +16,12 @@ namespace Engine
 			ENGINE_API TransformSystem() = default;
 			ENGINE_API ~TransformSystem() = default;
 
-			ENGINE_API void Update(ComponentsPool& a_componentsPool) override;
+			ENGINE_API void Create();
+			ENGINE_API void Update();
+			ENGINE_API void Destroy();
+
+		private:
+			std::vector<TransformComponent*> m_component;
 
 		};
 	}

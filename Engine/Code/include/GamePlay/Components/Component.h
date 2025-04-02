@@ -7,22 +7,22 @@
 #include <string>
 #include <filesystem>
 #include <Refureku/Refureku.h>
-#include "Component.rfkh.h"
+//#include "Component.rfkh.h"
 
-namespace Engine NAMESPACE()
+namespace Engine
 {
-	namespace GamePlay NAMESPACE()
+	namespace GamePlay
 	{
-		class CLASS() Component
+		class Component
 		{
 		public:
-			 METHOD() virtual ~Component() = default;
+			virtual ~Component() = default;
 
-			 Engine_GamePlay_Component_GENERATED
+			ENGINE_API virtual void Create(int* a_id) = 0;
 		};
 	}
 }
 
-File_Component_GENERATED
+//File_Component_GENERATED
 
 #endif 

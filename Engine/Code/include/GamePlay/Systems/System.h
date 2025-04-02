@@ -13,10 +13,7 @@ namespace Engine
 		{
 		public:
 			ENGINE_API System() = default;
-			ENGINE_API ~System() = default;
-
-			ENGINE_API virtual void Update(ComponentsPool& a_componentsPool) = 0;
-
+			ENGINE_API virtual ~System() = default;
 		};
 	}
 }

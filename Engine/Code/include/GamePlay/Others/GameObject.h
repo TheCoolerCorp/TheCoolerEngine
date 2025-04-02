@@ -41,49 +41,53 @@ namespace Engine
 			GameObjectData SubmitData();*/
 
 
-			template<typename Type>
+			template<typename ComponentType>
 			void AddComponent()
 			{
 				// Check if Type is a derived component and not the base class.
-				static_assert(std::is_base_of<Component, Type>::value);
-				static_assert(!std::is_same<Component, Type>::value);
+				static_assert(std::is_base_of<Component, ComponentType>::value);
+				static_assert(!std::is_same<Component, ComponentType>::value);
 
-				Type* t_component = new Type();
+				ComponentType* t_newComponent = new ComponentType();
+				//t_newComponent.Create(&m_transformId);
+
+				//Type* t_component = new Type();
 				//t_component->Create():
 				
 				// Add this component to the pool.
-				ServiceLocator::GetComponentsPool()->RegisterComponent<Type>(t_component, m_id);
+				//ServiceLocator::GetComponentsPool()->RegisterComponent<Type>(t_component, m_id);
 			}
 
-			template<typename Type>
-			Type* GetComponent()
-			{
-				// Check if Type is a derived component and not the base class.
-				static_assert(std::is_base_of<Component, Type>::value);
-				static_assert(!std::is_same<Component, Type>::value);
+		//	template<typename Type>
+		//	Type* GetComponent()
+		//	{
+		//		// Check if Type is a derived component and not the base class.
+		//		static_assert(std::is_base_of<Component, Type>::value);
+		//		static_assert(!std::is_same<Component, Type>::value);
 
-				// Get the component from the pool.
-				return ServiceLocator::GetComponentsPool()->GetComponent<Type>(m_id);
-			}
+		//		// Get the component from the pool.
+		//		return ServiceLocator::GetComponentsPool()->GetComponent<Type>(m_id);
+		//	}
 
-			template<typename Type>
-			void RemoveComponent()
-			{
-				// Check if Type is a derived component and not base class.
-				static_assert(std::is_base_of<Component, Type>::value);
-				static_assert(!std::is_same<Component, Type>::value);
+		//	template<typename Type>
+		//	void RemoveComponent()
+		//	{
+		//		// Check if Type is a derived component and not base class.
+		//		static_assert(std::is_base_of<Component, Type>::value);
+		//		static_assert(!std::is_same<Component, Type>::value);
 
-				//Type* t_component = new Type();
-				ServiceLocator::GetComponentsPool()->RemoveComponent<Type>(m_id);
-			}
-			
-		private:
-			Core::RHI::IObjectDescriptor* m_descriptor{};
-			Core::RHI::IDescriptorPool* m_descriptorPool{};
+		//		//Type* t_component = new Type();
+		//		ServiceLocator::GetComponentsPool()->RemoveComponent<Type>(m_id);
+		//	}
+		//	
+		//private:
+		//	Core::RHI::IObjectDescriptor* m_descriptor{};
+		//	Core::RHI::IDescriptorPool* m_descriptorPool{};
 
-			static std::bitset<INT32_MAX> m_idBitset;
+		//	static std::bitset<INT32_MAX> m_idBitset;
 
-			int m_id = 0;
+			uint32_t m_transformId = -1;
+			uint32_t m_meshId = -1;
 		};
 
 		

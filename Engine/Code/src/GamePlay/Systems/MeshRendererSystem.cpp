@@ -1,12 +1,12 @@
-#include "GamePlay/Systems/RenderSystem.h"
+//#include "GamePlay/Systems/RenderSystem.h"
 
-#include "GamePlay/Others/Camera.h"
+//#include "GamePlay/Others/Camera.h"
 
 namespace Engine
 {
 	namespace GamePlay
 	{
-		void RenderSystem::Init(ComponentsPool& a_componentsPool, Core::Renderer& a_renderer)
+		/*void RenderSystem::Init(ComponentsPool& a_componentsPool, Core::Renderer& a_renderer)
 		{
 			for (int i = 0; i < a_componentsPool.GetIds().size(); ++i)
 			{
@@ -58,6 +58,6 @@ namespace Engine
 				delete t_renderObject;
 			}
 			m_renderDescriptors.clear();
-		}
+		}*/
 	}
 }
