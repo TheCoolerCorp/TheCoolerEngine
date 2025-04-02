@@ -4,7 +4,7 @@
 #include "EngineExport.h"
 
 #include "System.h"
-#include "Components/Meshcomponent.h"
+#include "GamePlay/Components/Meshcomponent.h"
 
 
 #include "Core/Renderer/Renderer.h"
@@ -15,21 +15,32 @@ namespace Engine
 {
 	namespace GamePlay
 	{
-		template<typename ComponentType>
-		class System : public ISystem
+		class MeshRendererSystem : public System
 		{
 		public:
-			ENGINE_API System() = default;
-			ENGINE_API ~System() override = default;
+			ENGINE_API MeshRendererSystem() = default;
+			ENGINE_API ~MeshRendererSystem() override = default;
 
-			ENGINE_API void Create(Core::Renderer* a_renderer) override;
-			ENGINE_API void Update(Core::Renderer* a_renderer) override;
-			ENGINE_API void Destroy(Core::Renderer* a_renderer) override;
+			ENGINE_API void Create(Core::Renderer* a_renderer);
+			ENGINE_API void Update(Core::Renderer* a_renderer);
+			ENGINE_API void Render(Core::Renderer* a_renderer);
+			ENGINE_API void Destroy(Core::Renderer* a_renderer);
+
+			/*void AddComponent(MeshComponent* a_component, int* a_gameObjectComponentId)
+			{
+				m_availableIndexes != 0
+
+
+			}*/
+
 
 
 
 		private:
-			std::vector<ComponentType*> m_components;
+			std::vector<MeshComponent*> m_components;
+			std::vector<Core::RHI::IRenderObject*> m_renderDescriptors;
+
+			std::vector<int> m_availableIndexes;
 		};
 		//class RenderSystem : public System
 		//{
