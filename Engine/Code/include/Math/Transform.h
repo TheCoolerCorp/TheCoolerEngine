@@ -18,6 +18,12 @@ namespace Engine
 			ENGINE_API Transform(vec3 a_pos, vec3 a_rot, vec3 a_scale);
 			ENGINE_API ~Transform() = default;
 
+			/*
+			 * DON'T UPDATE HERE, in system + not sure if we stock matrix here ?
+			 * ADD Function bellow in transformComponent
+			 * ADD need to create a vector of matrix in system to use in meshrenderer i think ??
+			 */
+
 
 			/*void Translate(vec3 a_translate) { m_pos += a_translate; m_needUpdate = true; }
 
