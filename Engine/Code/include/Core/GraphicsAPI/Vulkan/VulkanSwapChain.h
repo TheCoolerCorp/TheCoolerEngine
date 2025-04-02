@@ -52,11 +52,11 @@ namespace Engine
 
 				ENGINE_API void DrawFrame(Window::IWindow* a_window, RHI::ILogicalDevice* a_logicalDevice, RHI::ICommandPool* a_commandPool, RHI::ISurface* a_surface, RHI::IPhysicalDevice* a_physicalDevice, RHI::IRenderPass* a_renderPass, RHI::IGraphicPipeline* a_pipeline, std::vector<GamePlay::GameObjectData> a_objectsData, GamePlay::Camera* camera) override;
 
-				
+				ENGINE_API static VkImageView CreateImageView(VkImage a_image, VkFormat a_format, VkImageAspectFlags a_aspectFlags, VkDevice a_device);
+
+				ENGINE_API std::vector<VkImage> GetImages() const { return m_images; }
 
 			private:
-				
-
 				VkSwapchainKHR m_swapChain = VK_NULL_HANDLE;
 
 				VkFormat m_swapChainImageFormat = VK_FORMAT_UNDEFINED;
@@ -90,7 +90,6 @@ namespace Engine
 				ENGINE_API static VkPresentModeKHR ChooseSurfacePresentMode(const std::vector<VkPresentModeKHR>& a_availablePresentModes);
 				ENGINE_API static VkExtent2D ChooseSurfaceExtent(const VkSurfaceCapabilitiesKHR& a_availableCapabilities, Window::IWindow* a_window);
 
-				ENGINE_API static VkImageView CreateImageView(VkImage a_image, VkFormat a_format, VkImageAspectFlags a_aspectFlags, VkDevice a_device);
 
 				void RecreateSwapChain(Window::IWindow* a_window, RHI::ILogicalDevice* a_logicalDevice, RHI::ISurface* a_surface, RHI::IPhysicalDevice* a_physicalDevice, RHI::IRenderPass* a_renderPass, RHI::ICommandPool* a_commandPool, RHI::IGraphicPipeline* a_pipeline);
 

@@ -260,8 +260,12 @@ and configured for rendering.
 
 				for (int a = 0; a<VulkanRenderPass::GetRenderPassCount(); a++)
 				{
-					
-						
+					//wait for the buffer to no longer be in flight
+					if (a!=0)
+					{
+						vkWaitForFences(t_device, 1, &m_inFlightFences[m_currentFrame], VK_TRUE, UINT64_MAX);
+						vkResetFences(t_device, 1, &m_inFlightFences[m_currentFrame]);
+					}
 
 					// Record command buffers for rendering
 					std::vector<VkCommandBuffer> t_commandBuffers;
@@ -293,15 +297,30 @@ and configured for rendering.
 
 					const VkSemaphore t_waitSemaphores[] = { m_imageAvailableSemaphores[m_currentFrame] };
 					constexpr VkPipelineStageFlags t_waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
-					t_submitInfo.waitSemaphoreCount = 1;
-					t_submitInfo.pWaitSemaphores = t_waitSemaphores;
+					if (a==0)
+					{
+						t_submitInfo.waitSemaphoreCount = 1;
+						t_submitInfo.pWaitSemaphores = t_waitSemaphores;
+					}
+					else
+					{
+						t_submitInfo.waitSemaphoreCount = 0;
+					}
 					t_submitInfo.pWaitDstStageMask = t_waitStages;
 
 					t_submitInfo.commandBufferCount = static_cast<uint32_t>(t_commandPool->mCommandBuffers.size());
 					t_submitInfo.pCommandBuffers = t_commandBuffers.data();
+
+					if (a==0)
+					{
+						t_submitInfo.signalSemaphoreCount = 0;
+					}
+					else
+					{
+						t_submitInfo.signalSemaphoreCount = 1;
+						t_submitInfo.pSignalSemaphores = t_signalSemaphores;
+					}
 					
-					t_submitInfo.signalSemaphoreCount = 1;
-					t_submitInfo.pSignalSemaphores = t_signalSemaphores;
 
 					// Submit the command buffer for execution on the graphics queue
 					VK_CHECK(vkQueueSubmit(t_logicalDevice->GetGraphicsQueue(), 1, &t_submitInfo, m_inFlightFences[m_currentFrame]), "failed to submit draw command buffer!");

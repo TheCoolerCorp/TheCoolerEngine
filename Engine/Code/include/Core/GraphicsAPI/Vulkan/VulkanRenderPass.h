@@ -16,6 +16,11 @@ namespace Engine
 	{
 		namespace GraphicsAPI
 		{
+			enum VulkanRenderPasFlags
+			{
+				FLAG_OVERRIDE_DEFAULT_RENDERPASS = 1
+			};
+
 			class VulkanRenderPass : public RHI::IRenderPass
 			{
 			public:
@@ -37,6 +42,8 @@ namespace Engine
 
 				ENGINE_API static void RunRenderPass(VkRecordCommandBufferInfo info, std::vector<GamePlay::GameObjectData> data)
 				{
+					if (m_currentRenderCallback == 0)
+						NextRenderPass();
 					for (auto& callback : m_renderPasses[m_currentRenderCallback])
 					{
 						callback(info, data);
@@ -45,8 +52,8 @@ namespace Engine
 
 				ENGINE_API static void NextRenderPass()
 				{
-					auto it = m_renderPassCallbacks.upper_bound(m_currentRenderCallback);
-					if (it != m_renderPassCallbacks.end())
+					auto it = m_renderPasses.upper_bound(m_currentRenderCallback);
+					if (it != m_renderPasses.end())
 					{
 						m_currentRenderCallback = it->first;
 					}

@@ -18,12 +18,39 @@ public:
 	void Render() override;
 
 	void CreateDescriptorPool(VkDevice device);
-	void DrawSceneAsImage();
+	void DrawSceneAsImage() override;
+
+	void ClearDescriptorSets();
 
 	ImDrawData* GetDrawData() override;
+
+	void createViewportImage();
+	void createViewportImageViews();
+	void InsertImageMemoryBarrier(VkCommandBuffer cmdbuffer,
+		VkImage image,
+		VkAccessFlags srcAccessMask,
+		VkAccessFlags dstAccessMask,
+		VkImageLayout oldImageLayout,
+		VkImageLayout newImageLayout,
+		VkPipelineStageFlags srcStageMask,
+		VkPipelineStageFlags dstStageMask,
+		VkImageSubresourceRange subresourceRange);
+
+	void SceneRenderPassImGui(Engine::Core::GraphicsAPI::VkRecordCommandBufferInfo info, std::vector<Engine::GamePlay::GameObjectData> objectsData);
 private:
 	Engine::Core::Renderer* m_renderer;
+	std::vector<VkDescriptorSet> m_Dset;
 
 	VkDescriptorPool m_pool;
 	ImDrawData* m_drawData = nullptr;
+
+	std::vector<VkImage> m_ViewportImages;
+	std::vector<VkDeviceMemory> m_DstImageMemory;
+	std::vector<VkImageView> m_ViewportImageViews;
+
+	VkRenderPass m_ViewportRenderPass;
+	VkPipeline m_ViewportPipeline;
+	VkCommandPool m_ViewportCommandPool;
+	std::vector<VkFramebuffer> m_ViewportFramebuffers;
+	std::vector<VkCommandBuffer> m_ViewportCommandBuffers;
 };
