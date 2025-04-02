@@ -21,7 +21,8 @@ namespace Engine
 			ENGINE_API void Destroy();
 
 		private:
-			std::vector<TransformComponent*> m_component;
+			std::vector<TransformComponent*> m_component{};
+			std::vector<uint32_t> m_availableIds{};
 
 		};
 	}

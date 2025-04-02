@@ -18,7 +18,7 @@ namespace Engine
 		public:
 			virtual ~Component() = default;
 
-			ENGINE_API virtual void Create(int* a_id) = 0;
+			//ENGINE_API virtual void Create(int* a_id) = 0;
 		};
 	}
 }
