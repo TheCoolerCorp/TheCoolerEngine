@@ -16,11 +16,11 @@ namespace Engine
 			TransformComponent() = default;
 			~TransformComponent() override = default;
 
-			ENGINE_API void Create();
-			ENGINE_API void Create(Math::vec3 a_pos, Math::quat a_rot, Math::vec3 a_scale);
-			ENGINE_API void Create(Math::vec3 a_pos, Math::vec3 a_rot, Math::vec3 a_scale);
+			ENGINE_API ComponentType Create(uint32_t& a_outId);
+			ENGINE_API ComponentType Create(Math::vec3 a_pos, Math::quat a_rot, Math::vec3 a_scale, uint32_t& a_outId);
+			ENGINE_API ComponentType Create(Math::vec3 a_pos, Math::vec3 a_rot, Math::vec3 a_scale, uint32_t& a_outId);
 
-			ENGINE_API void Update();
+			ENGINE_API void Update() const;
 
 			ENGINE_API void Destroy();
 
