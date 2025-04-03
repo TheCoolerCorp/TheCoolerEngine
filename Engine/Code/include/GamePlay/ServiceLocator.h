@@ -4,7 +4,8 @@
 #include "EngineExport.h"
 
 #include "Ressources/ResourceManager.h"
-#include "GamePlay/Components/ComponentsPool.h"
+#include "GamePlay/Systems/TransformSystem.h"
+#include "GamePlay/Systems/MeshRendererSystem.h"
 
 namespace Engine
 {
@@ -14,14 +15,17 @@ namespace Engine
 		{
 		public:
 			static void ProvideResourceManager(Resource::ResourceManager* a_resourceManager);
-			static void ProvideComponentsPool(ComponentsPool* a_componentsPool);
+			static void ProvideTransformSystem(TransformSystem* a_transformSystem);
+			static void ProvideRendererSystem(MeshRendererSystem* a_meshRendererSystem);
 
 			static Resource::ResourceManager* GetResourceManager();
-			static ComponentsPool* GetComponentsPool();
+			static TransformSystem* GetTransformSystem();
+			static MeshRendererSystem* GetMeshRendererSystem();
 
 		private:
 			static Resource::ResourceManager* m_resourceManager;
-			static ComponentsPool* m_componentsPool;
+			static TransformSystem* m_transformSystem;
+			static MeshRendererSystem* m_meshRendererSystem;
 		};
 	}
 }

@@ -6,11 +6,12 @@ namespace Engine
 {
 	namespace GamePlay
 	{
-		int MeshComponent::Create()
+		ComponentType MeshComponent::Create(int* a_outId)
 		{
-			// Do nothing for now.
-
 			//ServiceLocator::m_meshsystem.Add(this);
+
+
+			return ComponentType::MESH;
 		}
 
 		void MeshComponent::Update()

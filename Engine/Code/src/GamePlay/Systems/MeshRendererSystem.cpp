@@ -28,9 +28,37 @@ namespace Engine
 				auto& comp = m_components[i];
 				comp->Destroy();
 				delete comp;
+				m_components.clear();
 			}
 		}
 
+		int MeshRendererSystem::AddComponent(MeshComponent* a_meshComponent)
+		{
+			if (m_availableIndexes.empty())
+			{
+				m_components.emplace_back(a_meshComponent);
+				return m_components.size() - 1;
+			}
+			for (int i = 0; i < m_availableIndexes.size(); ++i)
+			{
+				int t_availableIndex = m_availableIndexes.at(i);
+				if (m_components.at(t_availableIndex) == nullptr)
+				{
+					m_components.at(t_availableIndex) = a_meshComponent;
+					return t_availableIndex;
+				}
+			}
+			return -1;
+		}
+
+		void MeshRendererSystem::RemoveComponent(int a_id)
+		{
+			if (m_components.at(a_id) != nullptr && a_id < m_components.size())
+			{
+				delete m_components.at(a_id);
+				m_availableIndexes.push_back(a_id);
+			}
+		}
 		/*
 		void RenderSystem::Update(ComponentsPool& a_componentsPool, Core::Renderer& a_renderer)
 		{

@@ -5,16 +5,22 @@ namespace Engine
 	namespace GamePlay
 	{
 		Resource::ResourceManager* ServiceLocator::m_resourceManager = nullptr;
-		ComponentsPool* ServiceLocator::m_componentsPool = nullptr;
+		TransformSystem* ServiceLocator::m_transformSystem = nullptr;
+		MeshRendererSystem* ServiceLocator::m_meshRendererSystem = nullptr;
 
 		void ServiceLocator::ProvideResourceManager(Resource::ResourceManager* a_resourceManager)
 		{
 			m_resourceManager = a_resourceManager;
 		}
 
-		void ServiceLocator::ProvideComponentsPool(ComponentsPool* a_componentsPool)
+		void ServiceLocator::ProvideTransformSystem(TransformSystem* a_transformSystem)
 		{
-			m_componentsPool = a_componentsPool;
+			m_transformSystem = a_transformSystem;
+		}
+
+		void ServiceLocator::ProvideRendererSystem(MeshRendererSystem* a_meshRendererSystem)
+		{
+			m_meshRendererSystem = a_meshRendererSystem;
 		}
 
 
@@ -23,9 +29,14 @@ namespace Engine
 			return m_resourceManager;
 		}
 
-		ComponentsPool* ServiceLocator::GetComponentsPool()
+		TransformSystem* ServiceLocator::GetTransformSystem()
 		{
-			return m_componentsPool;
+			return m_transformSystem;
+		}
+
+		TransformSystem* ServiceLocator::GetMeshRendererSystem()
+		{
+			return m_meshRendererSystem;
 		}
 	}
 }

@@ -17,12 +17,15 @@ namespace Engine
 		{
 		public:
 			virtual ~Component() = default;
+		};
 
-			//ENGINE_API virtual void Create(int* a_id) = 0;
+		enum class ComponentType
+		{
+			TRANSFORM = 0,
+			MESH,
+			MATERIAL
 		};
 	}
 }
-
-//File_Component_GENERATED
 
 #endif 

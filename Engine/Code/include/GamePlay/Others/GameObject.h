@@ -11,6 +11,8 @@
 
 #include "Core/Logger/Logger.h"
 
+#include "GamePlay/Components/Component.h"
+
 #include "Math/Transform.h"
 #include "GamePlay/Components/Component.h"
 #include "Ressources/ResourceManager.h"
@@ -42,26 +44,17 @@ namespace Engine
 			GameObjectData SubmitData();*/
 
 
-			template<typename ComponentType>
+			template<typename Component>
 			void AddComponent()
 			{
-				// Check if Type is a derived component and not the base class.
-				static_assert(std::is_base_of<Component, ComponentType>::value);
-				static_assert(!std::is_same<Component, ComponentType>::value);
+				static_assert(std::is_base_of<Component, Component>::value);
+				static_assert(!std::is_same<Component, Component>::value);
+				static_assert(std::is_member_function_pointer<decltype(&Component::Create)>::value);
 
-				ComponentType* t_newComponent = new ComponentType();
-
-				
-				//t_newComponent.Create();
-
-
-				//t_newComponent.Create(&m_transformId);
-
-				//Type* t_component = new Type();
-				//t_component->Create():
-				
-				// Add this component to the pool.
-				//ServiceLocator::GetComponentsPool()->RegisterComponent<Type>(t_component, m_id);
+				Component* t_newComponent = new Component();
+				int id = 0;
+				ComponentType t_componentType = t_newComponent->Create(&id);
+				m_compsId.insert({ id, t_componentType });
 			}
 
 		//	template<typename Type>
@@ -92,10 +85,13 @@ namespace Engine
 
 		//	static std::bitset<INT32_MAX> m_idBitset;
 
-			uint32_t m_transformId = -1;
-			uint32_t m_meshId = -1;
+			//uint32_t m_meshId = -1;
 
-			//static std::map<>
+			// vector<id>
+
+
+			std::unordered_map<int, ComponentType> m_compsId;
+			
 		};
 
 		
