@@ -13,18 +13,19 @@ namespace Engine
 {
 	namespace GamePlay
 	{
+		enum class ComponentType
+		{
+			TRANSFORM = 0,
+			MESH = 1,
+			MATERIAL = 2
+		};
+
 		class Component
 		{
 		public:
 			virtual ~Component() = default;
 		};
 
-		enum class ComponentType
-		{
-			TRANSFORM = 0,
-			MESH,
-			MATERIAL
-		};
 	}
 }
 
