@@ -32,7 +32,7 @@ namespace Engine
 			}
 		}
 
-		int MeshRendererSystem::AddComponent(MeshComponent* a_meshComponent)
+		uint32_t MeshRendererSystem::AddComponent(MeshComponent* a_meshComponent)
 		{
 			if (m_availableIndexes.empty())
 			{

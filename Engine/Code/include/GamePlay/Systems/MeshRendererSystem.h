@@ -23,7 +23,7 @@ namespace Engine
 			ENGINE_API void Render(Core::Renderer* a_renderer);
 			ENGINE_API void Destroy(Core::Renderer* a_renderer);
 
-			ENGINE_API int AddComponent(MeshComponent* a_meshComponent);
+			ENGINE_API uint32_t AddComponent(MeshComponent* a_meshComponent);
 			ENGINE_API void RemoveComponent(int a_id);
 
 		private:

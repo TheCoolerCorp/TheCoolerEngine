@@ -44,16 +44,18 @@ namespace Engine
 			GameObjectData SubmitData();*/
 
 
-			template<typename Component>
+			template<typename ComponentClass>
 			void AddComponent()
 			{
-				static_assert(std::is_base_of<Component, Component>::value);
-				static_assert(!std::is_same<Component, Component>::value);
-				static_assert(std::is_member_function_pointer<decltype(&Component::Create)>::value);
+				static_assert(std::is_base_of<ComponentClass, Component>::value);
+				static_assert(!std::is_same<ComponentClass, Component>::value);
+				static_assert(std::is_member_function_pointer<decltype(&ComponentClass::Create)>::value);
 
-				Component* t_newComponent = new Component();
-				int id = 0;
+				ComponentClass* t_newComponent = new ComponentClass();
+
+				uint32_t id = 0;
 				ComponentType t_componentType = t_newComponent->Create(&id);
+
 				m_compsId.insert({ id, t_componentType });
 			}
 
@@ -90,7 +92,7 @@ namespace Engine
 			// vector<id>
 
 
-			std::unordered_map<int, ComponentType> m_compsId;
+			std::unordered_map<uint32_t, ComponentType> m_compsId;
 			
 		};
 
