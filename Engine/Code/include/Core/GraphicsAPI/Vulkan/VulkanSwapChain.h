@@ -55,7 +55,9 @@ namespace Engine
 				ENGINE_API static VkImageView CreateImageView(VkImage a_image, VkFormat a_format, VkImageAspectFlags a_aspectFlags, VkDevice a_device);
 
 				ENGINE_API std::vector<VkImage> GetImages() const { return m_images; }
+				ENGINE_API VkImageView GetDepthImageView() const { return m_depthImageView; }
 
+				ENGINE_API VkSurfaceFormatKHR GetSurfaceFormat() const { return m_surfaceFormat; }
 			private:
 				VkSwapchainKHR m_swapChain = VK_NULL_HANDLE;
 
@@ -85,6 +87,8 @@ namespace Engine
 				std::vector<VkSemaphore> m_imageAvailableSemaphores;
 				std::vector<VkSemaphore> m_renderFinishedSemaphores;
 				std::vector<VkFence> m_inFlightFences;
+
+				VkSurfaceFormatKHR m_surfaceFormat;
 
 				ENGINE_API static VkSurfaceFormatKHR ChooseSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& a_availableFormats);
 				ENGINE_API static VkPresentModeKHR ChooseSurfacePresentMode(const std::vector<VkPresentModeKHR>& a_availablePresentModes);

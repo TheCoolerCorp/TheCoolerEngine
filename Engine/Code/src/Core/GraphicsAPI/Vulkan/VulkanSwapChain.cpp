@@ -50,6 +50,7 @@ namespace Engine
 				}
 
 				const VkSurfaceFormatKHR t_formats = ChooseSurfaceFormat(t_surfaceFormats);
+				m_surfaceFormat = t_formats;
 				const VkPresentModeKHR t_presentMode = ChooseSurfacePresentMode(t_surfacePresentModes);
 				const VkExtent2D t_extent = ChooseSurfaceExtent(t_surfaceCapabilities, a_window);
 
@@ -258,6 +259,7 @@ and configured for rendering.
 
 				const VkSemaphore t_signalSemaphores[] = { m_renderFinishedSemaphores[m_currentFrame] };
 
+				int renderPassCount = VulkanRenderPass::GetRenderPassCount()+1; //+1 for scene renderpass that's separate
 				for (int a = 0; a<VulkanRenderPass::GetRenderPassCount(); a++)
 				{
 					//wait for the buffer to no longer be in flight
@@ -287,14 +289,18 @@ and configured for rendering.
 						info.camera = camera;
 
 						//RecordCommandBuffer calls RunRenderPass for the current renderpass
-						VulkanCommandPool::RecordCommandBuffer(info, a_objectsData);
+						//VulkanCommandPool::RecordCommandBuffer(info, a_objectsData);
+						if (a == 0)
+							VulkanRenderPass::RunSceneRenderPass(info, a_objectsData);
+						else
+							VulkanRenderPass::RunRenderPass(info, a_objectsData);
 					}
 
 
 					// Set up the submit info struct for queue submission
 					VkSubmitInfo t_submitInfo{};
 					t_submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-
+						
 					const VkSemaphore t_waitSemaphores[] = { m_imageAvailableSemaphores[m_currentFrame] };
 					constexpr VkPipelineStageFlags t_waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
 					if (a==0)

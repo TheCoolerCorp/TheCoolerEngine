@@ -3,6 +3,7 @@
 
 #include <functional>
 #include <map>
+#include <utility>
 
 #include "EngineExport.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanUtils.h"
@@ -16,10 +17,12 @@ namespace Engine
 	{
 		namespace GraphicsAPI
 		{
-			enum VulkanRenderPasFlags
+			enum VulkanRenderPassFlags
 			{
 				FLAG_OVERRIDE_DEFAULT_RENDERPASS = 1
 			};
+
+			std::string VulkanRenderPassFlagToString(VulkanRenderPassFlags flag);
 
 			class VulkanRenderPass : public RHI::IRenderPass
 			{
@@ -32,6 +35,9 @@ namespace Engine
 
 				ENGINE_API VkRenderPass GetRenderPass() { return m_renderPass; }
 				ENGINE_API uint32_t GetSubpassesCount() { return m_subpasses; }
+
+				//default scene renderpass
+				ENGINE_API void RecordSceneRenderPass(VkRecordCommandBufferInfo info, std::vector<GamePlay::GameObjectData> objectsData);
 
 				ENGINE_API static void AddRenderPass(std::function<void(Core::GraphicsAPI::VkRecordCommandBufferInfo, std::vector<GamePlay::GameObjectData>)> callback, int priority = 1)
 				{
@@ -60,12 +66,14 @@ namespace Engine
 				}
 
 				ENGINE_API static void ResetRenderPassCount()
-				{
+				{ 
 					m_currentRenderCallback = 0;
 				}
 
 				ENGINE_API static void AddRenderPassCallback(std::function<void()> callback, int priority)
 				{
+					if (m_renderPasses[priority].empty())
+						LOG_WARNING("VulkanRenderPass: Added callback to priority with no associated renderpasses, callback will not be called");
 					m_renderPassCallbacks[priority].push_back(callback);
 				}
 
@@ -79,6 +87,38 @@ namespace Engine
 
 				ENGINE_API static int GetRenderPassCount() { return m_renderPassCount; }
 
+				ENGINE_API static void SetSceneRenderPass(std::function<void(Core::GraphicsAPI::VkRecordCommandBufferInfo, std::vector<GamePlay::GameObjectData>)> callback)
+				{
+					m_sceneRenderPass = std::move(callback);
+				}
+
+				ENGINE_API static void RunSceneRenderPass(Core::GraphicsAPI::VkRecordCommandBufferInfo info, std::vector<GamePlay::GameObjectData> data)
+				{
+					if (m_sceneRenderPass)
+					{
+						m_sceneRenderPass(info, data);
+					}
+				}
+
+				//add renderpass flag if it doesn't exist
+				ENGINE_API static void AddRenderPassFlag(VulkanRenderPassFlags flag)
+				{
+					if(std::ranges::find(m_renderPassFlags, flag) == m_renderPassFlags.end())
+						m_renderPassFlags.push_back(flag);
+				}
+
+				ENGINE_API static void RemoveRenderPassFlag(VulkanRenderPassFlags flag)
+				{
+					if (auto it = std::ranges::find(m_renderPassFlags, flag); it != m_renderPassFlags.end())
+						m_renderPassFlags.erase(it);
+					else
+						LOG_WARNING("Tried to remove vulkan render pass flag " + VulkanRenderPassFlagToString(flag) + ", but flag is not present");
+				}
+
+				ENGINE_API static bool HasRenderPassFlag(VulkanRenderPassFlags flag)
+				{
+					return std::ranges::find(m_renderPassFlags, flag) != m_renderPassFlags.end();
+				}
 			private:
 				/*static function because we want to call it quickly and from everywhere
 			 * this is an important callback for any render-related functions like ImGUI and i do not want it hidden
@@ -88,9 +128,11 @@ namespace Engine
 				static std::map<int,std::vector<std::function<void(Core::GraphicsAPI::VkRecordCommandBufferInfo, std::vector<GamePlay::GameObjectData>)>>> m_renderPasses;
 				//callbacks that get executed after a specified render pass id
 				static std::map<int, std::vector<std::function<void()>>> m_renderPassCallbacks;
+				static std::function<void(Core::GraphicsAPI::VkRecordCommandBufferInfo, std::vector<GamePlay::GameObjectData>)> m_sceneRenderPass;
 				static int m_renderPassCount;
 				static int m_currentRenderCallback;
 
+				static std::vector<VulkanRenderPassFlags> m_renderPassFlags;
 
 				VkRenderPass m_renderPass = VK_NULL_HANDLE;
 				uint32_t m_subpasses = 0;
