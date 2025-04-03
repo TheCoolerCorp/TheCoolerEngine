@@ -36,7 +36,7 @@ namespace Engine
 		{
 			if (m_availableIndexes.empty())
 			{
-				m_components.emplace_back(a_meshComponent);
+				m_components.push_back(a_meshComponent);
 				return m_components.size() - 1;
 			}
 			for (int i = 0; i < m_availableIndexes.size(); ++i)
@@ -51,7 +51,16 @@ namespace Engine
 			return -1;
 		}
 
-		void MeshRendererSystem::RemoveComponent(int a_id)
+		MeshComponent* MeshRendererSystem::GetComponent(uint32_t a_id)
+		{
+			if (a_id >= m_components.size())
+			{
+				return nullptr;
+			}
+			return m_components.at(a_id);
+		}
+
+		void MeshRendererSystem::RemoveComponent(uint32_t a_id)
 		{
 			if (m_components.at(a_id) != nullptr && a_id < m_components.size())
 			{

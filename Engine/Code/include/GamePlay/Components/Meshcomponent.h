@@ -28,9 +28,16 @@ namespace Engine
 
 			ENGINE_API void SetTexture(Resource::Texture* a_texture);
 
+			ENGINE_API static ComponentType GetType() { return ComponentType::MESH; }
+
+			ENGINE_API static MeshComponent* GetComponent(uint32_t a_id);
+
+			ENGINE_API static void RemoveComponent(uint32_t a_id);
+
 			Resource::Mesh* GetMesh() { return m_mesh; }
 			Resource::Texture* GetTexture() { return m_texture; }
 
+			//static MeshComponent* FindComponent(uint32_t a_id)
 		private:
 			Resource::Mesh* m_mesh = nullptr;
 			Resource::Texture* m_texture = nullptr;

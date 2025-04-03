@@ -32,10 +32,10 @@ namespace Engine
 		class GameObject
 		{
 		public:
-			GameObject();
-			GameObject(Math::vec3 a_position, Math::vec3 a_rotation, Math::vec3 a_scale);
+			ENGINE_API GameObject();
+			ENGINE_API GameObject(Math::vec3 a_position, Math::vec3 a_rotation, Math::vec3 a_scale);
 
-			~GameObject() = default;
+			ENGINE_API ~GameObject() = default;
 
 			void Create(Core::Renderer* a_renderer);
 			/*void Create(Core::RHI::ApiInterface* a_interface, GameObjectinfo a_info);
@@ -47,53 +47,48 @@ namespace Engine
 			template<typename ComponentClass>
 			void AddComponent()
 			{
-				static_assert(std::is_base_of<ComponentClass, Component>::value);
-				static_assert(!std::is_same<ComponentClass, Component>::value);
+				static_assert(std::is_base_of_v<ComponentClass, Component>);
+				static_assert(!std::is_same_v<ComponentClass, Component>);
 				static_assert(std::is_member_function_pointer<decltype(&ComponentClass::Create)>::value);
 
 				ComponentClass* t_newComponent = new ComponentClass();
 
 				uint32_t id = 0;
-				ComponentType t_componentType = t_newComponent->Create(&id);
+				ComponentType t_componentType = t_newComponent->Create(id);
 
-				m_compsId.insert({ id, t_componentType });
+				m_compsId.insert({ t_componentType, id });
 			}
 
-		//	template<typename Type>
-		//	Type* GetComponent()
-		//	{
-		//		// Check if Type is a derived component and not the base class.
-		//		static_assert(std::is_base_of<Component, Type>::value);
-		//		static_assert(!std::is_same<Component, Type>::value);
+			template<typename ComponentClass>
+			ComponentClass* GetComponent()
+			{
+				static_assert(std::is_base_of_v<ComponentClass, Component>);
+				static_assert(!std::is_same_v<ComponentClass, Component>);
+				static_assert(std::is_member_function_pointer<decltype(&ComponentClass::GetType)>::value);
+				static_assert(std::is_member_function_pointer<decltype(&ComponentClass::GetComponent)>::value);
 
-		//		// Get the component from the pool.
-		//		return ServiceLocator::GetComponentsPool()->GetComponent<Type>(m_id);
-		//	}
+				ComponentType t_componentType = ComponentClass::GetType();
+				uint32_t t_id = m_compsId.at(t_componentType);
 
-		//	template<typename Type>
-		//	void RemoveComponent()
-		//	{
-		//		// Check if Type is a derived component and not base class.
-		//		static_assert(std::is_base_of<Component, Type>::value);
-		//		static_assert(!std::is_same<Component, Type>::value);
+				return ComponentClass::GetComponent(t_id);
+			}
 
-		//		//Type* t_component = new Type();
-		//		ServiceLocator::GetComponentsPool()->RemoveComponent<Type>(m_id);
-		//	}
-		//	
-		//private:
-		//	Core::RHI::IObjectDescriptor* m_descriptor{};
-		//	Core::RHI::IDescriptorPool* m_descriptorPool{};
+			template<typename ComponentClass>
+			void RemoveComponent()
+			{
+				static_assert(std::is_base_of_v<ComponentClass, Component>);
+				static_assert(!std::is_same_v<ComponentClass, Component>);
+				static_assert(std::is_member_function_pointer<decltype(&ComponentClass::GetType)>::value);
+				static_assert(std::is_member_function_pointer<decltype(&ComponentClass::RemoveComponent)>::value);
 
-		//	static std::bitset<INT32_MAX> m_idBitset;
+				ComponentType t_componentType = ComponentClass::GetType();
+				uint32_t t_id = m_compsId.at(t_componentType);
 
-			//uint32_t m_meshId = -1;
+				ComponentClass::RemoveComponent(t_id);
+			}
 
-			// vector<id>
-
-
-			std::unordered_map<uint32_t, ComponentType> m_compsId;
-			
+		private:
+			std::unordered_map<ComponentType, uint32_t> m_compsId;
 		};
 
 		
