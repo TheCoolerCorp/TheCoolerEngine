@@ -5,7 +5,7 @@
 
 #include "Gameplay/Components/ComponentsPool.h"
 #include "Gameplay/Systems/TransformSystem.h"
-#include "Gameplay/Systems/RenderSystem.h"
+#include "Gameplay/Systems/MeshRendererSystem.h"
 #include "Core/Renderer/Renderer.h"
 #include "Ressources/ResourceManager.h"
 #include "Math/TheCoolerMath.h"
@@ -27,7 +27,7 @@ namespace Engine
 		private:
 			ComponentsPool* m_componentsPool = nullptr;
 			TransformSystem* m_transformSystem = nullptr;
-			RenderSystem* m_renderSystem = nullptr;
+			MeshRendererSystem* m_meshRendererSystem = nullptr;
 			Resource::ResourceManager* m_resourceManager = nullptr;
 		};
 	}

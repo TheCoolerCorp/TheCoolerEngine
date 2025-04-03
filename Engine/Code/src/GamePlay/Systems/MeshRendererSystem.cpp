@@ -37,11 +37,10 @@ namespace Engine
 			if (m_availableIndexes.empty())
 			{
 				m_components.emplace_back(a_meshComponent);
-				return m_components.size() - 1;
+				return static_cast<uint32_t>(m_components.size()) - 1u;
 			}
-			for (int i = 0; i < m_availableIndexes.size(); ++i)
+			for (const uint32_t t_availableIndex : m_availableIndexes)
 			{
-				int t_availableIndex = m_availableIndexes.at(i);
 				if (m_components.at(t_availableIndex) == nullptr)
 				{
 					m_components.at(t_availableIndex) = a_meshComponent;

@@ -1,28 +1,36 @@
 #include  "GamePlay/Components/TransformComponent.h"
 
+#include "Gameplay/ServiceLocator.h"
+
 namespace Engine
 {
 	namespace GamePlay
 	{
-		void TransformComponent::Create()
+		ComponentType TransformComponent::Create(uint32_t& a_outId)
 		{
-			m_transform = new Math::Transform(Math::vec3(0.f), Math::vec3(0.f), Math::vec3(1.f));
+			m_transform = new Math::Transform();
+			a_outId = ServiceLocator::GetTransformSystem()->AddTransformComponent(this);
+			return ComponentType::TRANSFORM;
 		}
 
-		void TransformComponent::Create(Math::vec3 a_pos, Math::quat a_rot, Math::vec3 a_scale)
+		ComponentType TransformComponent::Create(Math::vec3 a_pos, Math::quat a_rot, Math::vec3 a_scale, uint32_t& a_outId)
 		{
 			m_transform = new Math::Transform(a_pos, a_rot, a_scale);
+			a_outId = ServiceLocator::GetTransformSystem()->AddTransformComponent(this);
+			return ComponentType::TRANSFORM;
 		}
 
-		void TransformComponent::Create(Math::vec3 a_pos, Math::vec3 a_rot, Math::vec3 a_scale)
+		ComponentType TransformComponent::Create(Math::vec3 a_pos, Math::vec3 a_rot, Math::vec3 a_scale, uint32_t& a_outId)
 		{
 			m_transform = new Math::Transform(a_pos, a_rot, a_scale);
+			a_outId = ServiceLocator::GetTransformSystem()->AddTransformComponent(this);
+			return ComponentType::TRANSFORM;
 		}
 
 
-		void TransformComponent::Update()
+		void TransformComponent::Update() const
 		{
-			m_transform->UpdateMatrix();
+			m_transform->Update();
 		}
 
 		void TransformComponent::Destroy()
