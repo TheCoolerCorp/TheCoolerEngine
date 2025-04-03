@@ -23,6 +23,7 @@ namespace Engine
 			ENGINE_API uint32_t AddTransformComponent(TransformComponent* a_component);
 			ENGINE_API void RemoveTransformComponent(uint32_t a_id);
 
+			ENGINE_API uint32_t GetSize() { return m_components.size(); }
 		private:
 			std::vector<TransformComponent*> m_components{};
 			std::vector<uint32_t> m_availableIds{};

@@ -23,6 +23,7 @@ namespace Engine
 			ENGINE_API void Destroy(Core::Renderer* a_renderer);
 
 		private:
+			std::vector<GamePlay::GameObject*> m_objs;
 			TransformSystem* m_transformSystem = nullptr;
 			MeshRendererSystem* m_meshRendererSystem = nullptr;
 			Resource::ResourceManager* m_resourceManager = nullptr;

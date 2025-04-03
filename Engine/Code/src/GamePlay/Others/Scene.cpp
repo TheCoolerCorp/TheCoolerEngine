@@ -2,6 +2,7 @@
 
 #include "Gameplay/ServiceLocator.h"
 #include "GamePlay/Others/GameObject.h"
+#include "Math/TheCoolerMath.h"
 
 namespace Engine
 {
@@ -35,8 +36,17 @@ namespace Engine
 
 		void Scene::Update(Core::Renderer* a_renderer)
 		{
-			m_transformSystem->Update();
-			//m_meshRendererSystem->Update(a_renderer);
+			/*m_transformSystem->Update();
+
+			std::vector<std::pair<int, Math::mat4>> syncro;
+			for (int i = 0; i < m_objs.size(); ++i)
+			{
+				m_objs[i]->GetComponent<TransformComponent>()->GetTransform().matrix;
+				uint32_t meshId = m_objs[i]->MEshId();
+				syncro.push_back({ meshId, matrix });
+			}
+
+			m_meshRendererSystem->Update(a_renderer, syncro);*/
 		}
 
 		void Scene::Draw(Core::Renderer* a_renderer, Core::Window::IWindow* a_window, Camera* a_camera)

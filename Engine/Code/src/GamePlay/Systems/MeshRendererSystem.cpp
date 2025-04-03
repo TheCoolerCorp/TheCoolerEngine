@@ -13,6 +13,8 @@ namespace Engine
 
 		void MeshRendererSystem::Update(Core::Renderer* a_renderer, std::vector<Math::mat4> a_updatedMatrix)
 		{
+			// CreateSyncro std::pair<int, int> index mesh, index matrix
+
 
 			// DO NOTHING FOR NOW, maybe update descriptors ??
 		}
