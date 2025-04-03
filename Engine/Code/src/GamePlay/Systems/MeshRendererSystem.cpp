@@ -11,8 +11,9 @@ namespace Engine
 			// DO NOTHING FOR NOW
 		}
 
-		void MeshRendererSystem::Update(Core::Renderer* a_renderer)
+		void MeshRendererSystem::Update(Core::Renderer* a_renderer, std::vector<Math::mat4> a_updatedMatrix)
 		{
+
 			// DO NOTHING FOR NOW, maybe update descriptors ??
 		}
 
