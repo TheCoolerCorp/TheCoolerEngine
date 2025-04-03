@@ -34,6 +34,8 @@ namespace Engine
 
 			ENGINE_API vec3 GetScale() const { return m_scale; }
 
+			ENGINE_API mat4 GetTransformMatrix() const { return m_transform; }
+
 			ENGINE_API void SetPosition(const vec3 a_pos) { m_pos = a_pos; m_needUpdate = true; }
 
 			ENGINE_API void SetRotation(const quat a_rot) { m_rot = a_rot; m_needUpdate = true; }
