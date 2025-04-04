@@ -72,7 +72,7 @@ namespace Engine
 
 				ENGINE_API static void AddRenderPassCallback(std::function<void()> callback, int priority)
 				{
-					if (m_renderPasses[priority].empty())
+					if (m_renderPasses[priority].empty() && priority != 0)
 						LOG_WARNING("VulkanRenderPass: Added callback to priority with no associated renderpasses, callback will not be called");
 					m_renderPassCallbacks[priority].push_back(callback);
 				}

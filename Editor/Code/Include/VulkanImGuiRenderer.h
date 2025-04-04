@@ -29,6 +29,7 @@ public:
 	void CreateViewportFrameBuffers();
 
 	void CreateViewportRenderPass();
+	void CreateViewportPipeline();
 
 	void CreateViewportImage();
 	void InsertImageMemoryBarrier(VkCommandBuffer cmdbuffer,
@@ -42,7 +43,7 @@ public:
 		VkImageSubresourceRange subresourceRange);
 
 	void SceneRenderPassImGui(Engine::Core::GraphicsAPI::VkRecordCommandBufferInfo info, std::vector<Engine::GamePlay::GameObjectData> objectsData);
-	void CreateViewportRenderPass(Engine::Core::GraphicsAPI::VkRecordCommandBufferInfo info, std::vector<Engine::GamePlay::GameObjectData> objectsData);
+	void ViewportRenderPass(Engine::Core::GraphicsAPI::VkRecordCommandBufferInfo info, std::vector<Engine::GamePlay::GameObjectData> objectsData);
 private:
 	Engine::Core::Renderer* m_renderer;
 	std::vector<VkDescriptorSet> m_Dset;
@@ -54,9 +55,9 @@ private:
 	std::vector<VkDeviceMemory> m_DstImageMemory; //done
 	std::vector<VkImageView> m_ViewportImageViews; //done
 
-	VkRenderPass m_ViewportRenderPass;
-	VkPipeline m_ViewportPipeline;
-	VkCommandPool m_ViewportCommandPool;
+	VkRenderPass m_ViewportRenderPass; //done
+	VkPipeline m_ViewportPipeline; //done
+	//VkCommandPool m_ViewportCommandPool;
 	std::vector<VkFramebuffer> m_ViewportFramebuffers; //done
 	std::vector<VkCommandBuffer> m_ViewportCommandBuffers; //done
 };

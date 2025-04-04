@@ -260,7 +260,7 @@ and configured for rendering.
 				const VkSemaphore t_signalSemaphores[] = { m_renderFinishedSemaphores[m_currentFrame] };
 
 				int renderPassCount = VulkanRenderPass::GetRenderPassCount()+1; //+1 for scene renderpass that's separate
-				for (int a = 0; a<VulkanRenderPass::GetRenderPassCount(); a++)
+				for (int a = 0; a< renderPassCount; a++)
 				{
 					//wait for the buffer to no longer be in flight
 					if (a!=0)
@@ -423,7 +423,7 @@ and configured for rendering.
 				ASSERT(!a_availableFormats.empty(), "No available formats !");
 				for (const auto& t_availableFormat : a_availableFormats)
 				{
-					if (t_availableFormat.format == VK_FORMAT_B8G8R8A8_UNORM && t_availableFormat.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR)
+					if (t_availableFormat.format == VK_FORMAT_R8G8B8A8_UNORM && t_availableFormat.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR)
 					{
 						return t_availableFormat;
 					}

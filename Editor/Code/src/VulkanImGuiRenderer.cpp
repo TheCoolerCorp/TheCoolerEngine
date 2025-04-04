@@ -17,6 +17,7 @@
 #include "Core/GraphicsAPI/Vulkan/VulkanPhysicalDevice.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanLogicalDevice.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanSurface.h"
+#include "Core/GraphicsAPI/Vulkan/VulkanUtils.h"
 
 //glfw includes
 #include <GLFW/glfw3.h>
@@ -62,7 +63,7 @@ void VulkanImGuiRenderer::Init(IWindow* window, Renderer* renderer)
 		});
 	VulkanRenderPass::AddRenderPass([this](VkRecordCommandBufferInfo info, std::vector<Engine::GamePlay::GameObjectData> data)
 		{
-			this->CreateViewportRenderPass(info, data);
+			this->ViewportRenderPass(info, data);
 		}, 1);
 
     CreateDescriptorPool(g_Device);
@@ -96,8 +97,13 @@ void VulkanImGuiRenderer::Init(IWindow* window, Renderer* renderer)
     init_info.CheckVkResultFn = check_vk_result;
     ImGui_ImplVulkan_Init(&init_info);
 
-	CreateViewportCommandBuffer();
-	CreateViewportFrameBuffers();
+    CreateViewportImage();
+    CreateViewportImageViews();
+    CreateViewportCommandBuffer();
+    CreateViewportRenderPass();
+    CreateViewportFrameBuffers();
+
+    CreateViewportPipeline();
 }
 
 void VulkanImGuiRenderer::NewFrame()
@@ -170,7 +176,7 @@ void VulkanImGuiRenderer::CreateViewportImageViews()
 	VkDevice a_logicalDevice = m_renderer->GetLogicalDevice()->CastVulkan()->GetVkDevice();
 	for (uint32_t i = 0; i < m_ViewportImages.size(); i++)
 	{
-		VulkanImage::CreateImageView(m_ViewportImages[i], &m_ViewportImageViews[i], a_logicalDevice, VK_FORMAT_B8G8R8A8_SRGB, VK_IMAGE_ASPECT_COLOR_BIT);
+		VulkanImage::CreateImageView(m_ViewportImages[i], &m_ViewportImageViews[i], a_logicalDevice, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_ASPECT_COLOR_BIT);
 	}
 }
 
@@ -178,12 +184,14 @@ void VulkanImGuiRenderer::CreateViewportCommandBuffer()
 {
 	m_ViewportCommandBuffers.resize(m_ViewportImageViews.size());
 
+	VkCommandPool commandPool = m_renderer->GetCommandPool()->CastVulkan()->GetVkCommandPool();
+
 	VkDevice t_device = m_renderer->GetLogicalDevice()->CastVulkan()->GetVkDevice();
 
 	VkCommandBufferAllocateInfo allocInfo{};
 	allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
 	allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-	allocInfo.commandPool = m_ViewportCommandPool;
+	allocInfo.commandPool = commandPool;
 	allocInfo.commandBufferCount = (uint32_t)m_ViewportCommandBuffers.size();
 	if (vkAllocateCommandBuffers(t_device, &allocInfo, m_ViewportCommandBuffers.data()) != VK_SUCCESS)
 	{
@@ -222,7 +230,9 @@ void VulkanImGuiRenderer::CreateViewportFrameBuffers()
 void VulkanImGuiRenderer::CreateViewportRenderPass()
 {
 	std::array<VkAttachmentDescription, 2> attachments = {};
-	VkSurfaceFormatKHR surfaceFormat = m_renderer->GetSwapChain()->CastVulkan()->GetSurfaceFormat();
+	VkFormat m_SwapChainImageFormat = m_renderer->GetSwapChain()->CastVulkan()->GetImageFormat();
+	VkDevice m_Device = m_renderer->GetLogicalDevice()->CastVulkan()->GetVkDevice();
+	VkFormat m_DepthFormat = m_renderer->GetSwapChain()->CastVulkan()->GetDepthFormat();
 	// Color attachment
 	attachments[0].format = m_SwapChainImageFormat;
 	attachments[0].samples = VK_SAMPLE_COUNT_1_BIT;
@@ -233,7 +243,7 @@ void VulkanImGuiRenderer::CreateViewportRenderPass()
 	attachments[0].initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 	attachments[0].finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 	// Depth attachment
-	attachments[1].format = findDepthFormat();
+	attachments[1].format = m_DepthFormat;
 	attachments[1].samples = VK_SAMPLE_COUNT_1_BIT;
 	attachments[1].loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
 	attachments[1].storeOp = VK_ATTACHMENT_STORE_OP_STORE;
@@ -295,6 +305,182 @@ void VulkanImGuiRenderer::CreateViewportRenderPass()
 	}
 }
 
+void VulkanImGuiRenderer::CreateViewportPipeline()
+{
+	VkDevice a_logicalDevice = m_renderer->GetLogicalDevice()->CastVulkan()->GetVkDevice();
+	VkDescriptorSetLayout a_cameraDescriptor = m_renderer->GetPipeline()->CastVulkan()->GetCameraDescriptorSetLayout();
+	VkDescriptorSetLayout a_objectDescriptor = m_renderer->GetPipeline()->CastVulkan()->GetObjectDescriptorSetLayout();
+	VkPipelineLayout a_layout = m_renderer->GetPipeline()->CastVulkan()->GetLayout();
+	// Shader creation
+	VkShaderModule t_vertexShader = VulkanGraphicPipeline::CreateShader("Assets/Shaders/vert.spv", a_logicalDevice);
+	VkShaderModule t_fragmentShader = VulkanGraphicPipeline::CreateShader("Assets/Shaders/frag.spv", a_logicalDevice);
+
+	VkPipelineShaderStageCreateInfo vertShaderStageInfo{};
+	vertShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+	vertShaderStageInfo.stage = VK_SHADER_STAGE_VERTEX_BIT;
+	vertShaderStageInfo.module = t_vertexShader;
+	vertShaderStageInfo.pName = "main";
+
+	VkPipelineShaderStageCreateInfo fragShaderStageInfo{};
+	fragShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+	fragShaderStageInfo.stage = VK_SHADER_STAGE_FRAGMENT_BIT;
+	fragShaderStageInfo.module = t_fragmentShader;
+	fragShaderStageInfo.pName = "main";
+
+	VkPipelineShaderStageCreateInfo shaderStages[] = { vertShaderStageInfo, fragShaderStageInfo };
+
+	// Vertex setup
+	VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
+	vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
+	auto bindingDescription = Engine::Resource::VulkanVertexSpec::getBindingDescription();
+	auto attributeDescriptions = Engine::Resource::VulkanVertexSpec::getAttributeDescriptions();
+	vertexInputInfo.vertexBindingDescriptionCount = 1;
+	vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());
+	vertexInputInfo.pVertexBindingDescriptions = &bindingDescription;
+	vertexInputInfo.pVertexAttributeDescriptions = attributeDescriptions.data();
+
+
+	// Pipeline spec
+	VkPipelineInputAssemblyStateCreateInfo inputAssembly{};
+	inputAssembly.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
+	inputAssembly.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+	inputAssembly.primitiveRestartEnable = VK_FALSE;
+
+	VkPipelineViewportStateCreateInfo viewportState{};
+	viewportState.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
+	viewportState.viewportCount = 1;
+	viewportState.scissorCount = 1;
+
+	VkPipelineRasterizationStateCreateInfo rasterizer{};
+	rasterizer.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
+	rasterizer.depthClampEnable = VK_FALSE;
+	rasterizer.rasterizerDiscardEnable = VK_FALSE;
+	rasterizer.polygonMode = VK_POLYGON_MODE_FILL;
+	rasterizer.lineWidth = 1.0f;
+	rasterizer.cullMode = VK_CULL_MODE_BACK_BIT;
+	rasterizer.frontFace = VK_FRONT_FACE_CLOCKWISE;
+	rasterizer.depthBiasEnable = VK_FALSE;
+
+	// Multisampling disable
+	VkPipelineMultisampleStateCreateInfo multisampling{};
+	multisampling.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
+	multisampling.sampleShadingEnable = VK_FALSE;
+	multisampling.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
+
+	// Depth activate by default, need to be modular later
+	VkPipelineDepthStencilStateCreateInfo depthStencil{};
+	depthStencil.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
+	depthStencil.depthTestEnable = VK_TRUE;
+	depthStencil.depthWriteEnable = VK_TRUE;
+	depthStencil.depthCompareOp = VK_COMPARE_OP_LESS;
+	depthStencil.depthBoundsTestEnable = VK_FALSE;
+	depthStencil.stencilTestEnable = VK_FALSE;
+
+	VkPipelineColorBlendAttachmentState colorBlendAttachment{};
+	colorBlendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
+	colorBlendAttachment.blendEnable = VK_FALSE; // Set to true if uncomment below
+	//colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
+	//colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+	//colorBlendAttachment.colorBlendOp = VK_BLEND_OP_ADD;
+	//colorBlendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
+	//colorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
+	//colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD;
+
+	VkPipelineColorBlendStateCreateInfo colorBlending{};
+	colorBlending.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
+	colorBlending.logicOpEnable = VK_FALSE;
+	colorBlending.logicOp = VK_LOGIC_OP_COPY;
+	colorBlending.attachmentCount = 1;
+	colorBlending.pAttachments = &colorBlendAttachment;
+
+	std::vector<VkDynamicState> dynamicStates =
+	{
+	VK_DYNAMIC_STATE_VIEWPORT,
+	VK_DYNAMIC_STATE_SCISSOR
+	};
+
+	VkPipelineDynamicStateCreateInfo dynamicState{};
+	dynamicState.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
+	dynamicState.dynamicStateCount = static_cast<uint32_t>(dynamicStates.size());
+	dynamicState.pDynamicStates = dynamicStates.data();
+
+	VkDescriptorSetLayoutBinding camUBOLayoutBinding{};
+	camUBOLayoutBinding.binding = 0;
+	camUBOLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+	camUBOLayoutBinding.descriptorCount = 1;
+	camUBOLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+	camUBOLayoutBinding.pImmutableSamplers = nullptr;
+
+	VkDescriptorSetLayoutCreateInfo camUBOLayoutInfo{};
+	camUBOLayoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+	camUBOLayoutInfo.bindingCount = 1;
+	camUBOLayoutInfo.pBindings = &camUBOLayoutBinding;
+
+	VK_CHECK(vkCreateDescriptorSetLayout(a_logicalDevice, &camUBOLayoutInfo, nullptr, &a_cameraDescriptor),
+		"Failed to create Camera UBO descriptor set layout");
+
+	VkDescriptorSetLayoutBinding objUBOLayoutBinding{};
+	objUBOLayoutBinding.binding = 0;
+	objUBOLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+	objUBOLayoutBinding.descriptorCount = 1;
+	objUBOLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+	objUBOLayoutBinding.pImmutableSamplers = nullptr;
+
+	VkDescriptorSetLayoutBinding samplerLayoutBinding{};
+	samplerLayoutBinding.binding = 1;
+	samplerLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+	samplerLayoutBinding.descriptorCount = 1;
+	samplerLayoutBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+	samplerLayoutBinding.pImmutableSamplers = nullptr;
+
+	std::array<VkDescriptorSetLayoutBinding, 2> objBindings = { objUBOLayoutBinding, samplerLayoutBinding };
+
+	VkDescriptorSetLayoutCreateInfo objUBOLayoutInfo{};
+	objUBOLayoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+	objUBOLayoutInfo.bindingCount = static_cast<uint32_t>(objBindings.size());
+	objUBOLayoutInfo.pBindings = objBindings.data();
+
+	VK_CHECK(vkCreateDescriptorSetLayout(a_logicalDevice, &objUBOLayoutInfo, nullptr, &a_objectDescriptor),
+		"Failed to create Object UBO + Sampler descriptor set layout");
+
+	std::array<VkDescriptorSetLayout, 2> descriptorSetLayouts = { a_cameraDescriptor, a_objectDescriptor };
+
+	VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
+	pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+	pipelineLayoutInfo.setLayoutCount = static_cast<uint32_t>(descriptorSetLayouts.size());
+	pipelineLayoutInfo.pSetLayouts = descriptorSetLayouts.data();
+
+	VK_CHECK(vkCreatePipelineLayout(a_logicalDevice, &pipelineLayoutInfo, nullptr, &a_layout),
+		"Failed to create pipeline layout");
+
+	VkGraphicsPipelineCreateInfo pipelineInfo{};
+	pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
+	pipelineInfo.stageCount = 2;
+	pipelineInfo.pStages = shaderStages;
+	pipelineInfo.pVertexInputState = &vertexInputInfo;
+	pipelineInfo.pInputAssemblyState = &inputAssembly;
+	pipelineInfo.pViewportState = &viewportState;
+	pipelineInfo.pRasterizationState = &rasterizer;
+	pipelineInfo.pMultisampleState = &multisampling;
+	pipelineInfo.pColorBlendState = &colorBlending;
+	pipelineInfo.pDynamicState = &dynamicState;
+	pipelineInfo.layout = a_layout;
+	pipelineInfo.renderPass = m_ViewportRenderPass;
+	pipelineInfo.subpass = 0;
+	pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
+	pipelineInfo.basePipelineIndex = -1;
+	pipelineInfo.pDepthStencilState = &depthStencil;
+
+	VK_CHECK(vkCreateGraphicsPipelines(a_logicalDevice, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_ViewportPipeline),
+		"Failed to create graphic pipeline");
+
+
+	// Destroy shader, already load don't need to store them
+	vkDestroyShaderModule(a_logicalDevice, t_vertexShader, nullptr);
+	vkDestroyShaderModule(a_logicalDevice, t_fragmentShader, nullptr);
+
+}
+
 void VulkanImGuiRenderer::CreateViewportImage()
 {
 	VulkanSwapchain* swapchain = m_renderer->GetSwapChain()->CastVulkan();
@@ -302,6 +488,7 @@ void VulkanImGuiRenderer::CreateViewportImage()
 	VkExtent2D m_SwapChainExtent = swapchain->GetExtent2D();
 	VkDevice m_Device = m_renderer->GetLogicalDevice()->CastVulkan()->GetVkDevice();
 	VkPhysicalDevice physicalDevice = m_renderer->GetPhysicalDevice()->CastVulkan()->GetVkPhysicalDevice();
+	VkCommandPool commandPool = m_renderer->GetCommandPool()->CastVulkan()->GetVkCommandPool();
 	m_ViewportImages.resize(swapchainImageCount);
 	m_DstImageMemory.resize(swapchainImageCount);
 
@@ -312,7 +499,7 @@ void VulkanImGuiRenderer::CreateViewportImage()
 		imageCreateCI.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
 		imageCreateCI.imageType = VK_IMAGE_TYPE_2D;
 		// Note that vkCmdBlitImage (if supported) will also do format conversions if the swapchain color format would differ
-		imageCreateCI.format = VK_FORMAT_B8G8R8A8_SRGB;
+		imageCreateCI.format = VK_FORMAT_R8G8B8A8_UNORM;
 		imageCreateCI.extent.width = m_SwapChainExtent.width;
 		imageCreateCI.extent.height = m_SwapChainExtent.height;
 		imageCreateCI.extent.depth = 1;
@@ -339,7 +526,7 @@ void VulkanImGuiRenderer::CreateViewportImage()
 		vkAllocateMemory(m_Device, &memAllocInfo, nullptr, &m_DstImageMemory[i]);
 		vkBindImageMemory(m_Device, m_ViewportImages[i], m_DstImageMemory[i], 0);
 
-		VkCommandBuffer copyCmd = VulkanCommandPool::BeginSingleTimeCommands(m_Device,m_ViewportCommandPool);
+		VkCommandBuffer copyCmd = VulkanCommandPool::BeginSingleTimeCommands(m_Device, commandPool);
 
 		InsertImageMemoryBarrier(
 			copyCmd,
@@ -352,7 +539,7 @@ void VulkanImGuiRenderer::CreateViewportImage()
 			VK_PIPELINE_STAGE_TRANSFER_BIT,
 			VkImageSubresourceRange{VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1});
 
-		VulkanCommandPool::EndSingleTimeCommands(copyCmd, m_ViewportCommandPool, m_Device, m_renderer->GetLogicalDevice()->CastVulkan()->GetGraphicsQueue());
+		VulkanCommandPool::EndSingleTimeCommands(copyCmd, commandPool, m_Device, m_renderer->GetLogicalDevice()->CastVulkan()->GetGraphicsQueue());
 	}
 }
 
@@ -399,7 +586,7 @@ void VulkanImGuiRenderer::SceneRenderPassImGui(VkRecordCommandBufferInfo info,
 	// beginInfo.flags = 0;									// Optional
 	// beginInfo.pInheritanceInfo = nullptr; // Optional
 
-	if (vkBeginCommandBuffer(m_ViewportCommandBuffers[currentFrame], &beginInfo) != VK_SUCCESS)
+	if (vkBeginCommandBuffer(info.commandBuffer, &beginInfo) != VK_SUCCESS)
 	{
 		throw std::runtime_error("failed to begin recording command buffer!");
 	}
@@ -418,9 +605,29 @@ void VulkanImGuiRenderer::SceneRenderPassImGui(VkRecordCommandBufferInfo info,
 	renderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
 	renderPassInfo.pClearValues = clearValues.data();
 
-	vkCmdBeginRenderPass(m_ViewportCommandBuffers[currentFrame], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+	vkCmdBeginRenderPass(info.commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 
-	vkCmdBindPipeline(m_ViewportCommandBuffers[currentFrame], VK_PIPELINE_BIND_POINT_GRAPHICS, m_ViewportPipeline);
+	vkCmdBindPipeline(info.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_ViewportPipeline);
+
+	VkViewport viewport = {};
+	viewport.x = 0.0f;
+	viewport.y = 0.0f;
+	viewport.width = (float)m_SwapChainExtent.width;
+	viewport.height = (float)m_SwapChainExtent.height;
+	viewport.minDepth = 0.0f;
+	viewport.maxDepth = 1.0f;
+
+	vkCmdSetViewport(info.commandBuffer, 0, 1, &viewport);
+
+	VkRect2D scissor = {};
+	scissor.offset = { 0, 0 };
+	scissor.extent = m_SwapChainExtent;
+
+	vkCmdSetScissor(info.commandBuffer, 0, 1, &scissor);
+
+	VkDescriptorSet t_cameraDescriptorSet = info.camera->GetDescriptor()->CastVulkan()->GetDescriptorSet();
+	vkCmdBindDescriptorSets(info.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, t_layout, 0, 1, &t_cameraDescriptorSet, 0, nullptr);
+
 
 	// render scene
 	for (auto t_gameObjectData : objectsData)
@@ -435,15 +642,15 @@ void VulkanImGuiRenderer::SceneRenderPassImGui(VkRecordCommandBufferInfo info,
 
 		vkCmdDrawIndexed(info.commandBuffer, t_gameObjectData.mNbIndices, 1, 0, 0, 0);
 	}
-	vkCmdEndRenderPass(m_ViewportCommandBuffers[currentFrame]);
+	vkCmdEndRenderPass(info.commandBuffer);
 
-	if (vkEndCommandBuffer(m_ViewportCommandBuffers[currentFrame]) != VK_SUCCESS)
+	if (vkEndCommandBuffer(info.commandBuffer) != VK_SUCCESS)
 	{
 		throw std::runtime_error("failed to record command buffer!");
 	}
 }
 
-void VulkanImGuiRenderer::CreateViewportRenderPass(Engine::Core::GraphicsAPI::VkRecordCommandBufferInfo info,
+void VulkanImGuiRenderer::ViewportRenderPass(Engine::Core::GraphicsAPI::VkRecordCommandBufferInfo info,
 	std::vector<Engine::GamePlay::GameObjectData> objectsData)
 {
 	const VkExtent2D t_swapChainExtent = info.swapChain->GetExtent2D();

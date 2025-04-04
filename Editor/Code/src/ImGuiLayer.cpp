@@ -22,7 +22,7 @@ void ImGuiLayer::Init(Engine::Core::Window::IWindow* window, Engine::Core::Rende
 		{
 			vkQueueWaitIdle(renderer->GetLogicalDevice()->CastVulkan()->GetGraphicsQueue());
 			this->DrawUpdate();
-		}, 1);
+		}, 0);
 }
 
 void ImGuiLayer::Update()

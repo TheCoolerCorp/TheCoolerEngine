@@ -14,8 +14,8 @@ namespace Engine
 		class VulkanVertexSpec
 		{
 		public:
-			static VkVertexInputBindingDescription getBindingDescription();
-			static std::array<VkVertexInputAttributeDescription, 3> getAttributeDescriptions();
+			ENGINE_API static VkVertexInputBindingDescription getBindingDescription();
+			ENGINE_API static std::array<VkVertexInputAttributeDescription, 3> getAttributeDescriptions();
 		};
 
 		class Vertex

@@ -58,6 +58,7 @@ namespace Engine
 				ENGINE_API VkImageView GetDepthImageView() const { return m_depthImageView; }
 
 				ENGINE_API VkSurfaceFormatKHR GetSurfaceFormat() const { return m_surfaceFormat; }
+				ENGINE_API VkFormat GetDepthFormat() const { return m_depthFormat; }
 			private:
 				VkSwapchainKHR m_swapChain = VK_NULL_HANDLE;
 

@@ -190,6 +190,8 @@ namespace Engine
 					vkDestroyPipelineLayout(a_logicalDevice->CastVulkan()->GetVkDevice(), m_layout, nullptr);
 				}
 
+
+
 				VkShaderModule VulkanGraphicPipeline::CreateShader(const std::string& a_path, VkDevice a_device)
 				{
 					const std::vector<char>& code = Utils::ReadFile(a_path);
