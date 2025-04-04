@@ -94,5 +94,10 @@ namespace Engine
 		{
 			return ServiceLocator::GetTransformSystem()->GetComponent(a_id);
 		}
+
+		void TransformComponent::RemoveComponent(uint32_t a_id)
+		{
+			ServiceLocator::GetTransformSystem()->RemoveComponent(a_id);
+		}
 	}
 }

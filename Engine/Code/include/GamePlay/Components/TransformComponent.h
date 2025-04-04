@@ -33,6 +33,8 @@ namespace Engine
 			ENGINE_API Math::Transform* GetTransform() { return m_transform; }
 
 			ENGINE_API static TransformComponent* GetComponent(uint32_t a_id);
+
+			ENGINE_API static void RemoveComponent(uint32_t a_id);
 			
 
 			ENGINE_API static ComponentType GetType() { return ComponentType::TRANSFORM; }
