@@ -28,10 +28,14 @@ namespace Engine
 			ENGINE_API void RemoveComponent(uint32_t a_id);
 
 		private:
-			std::vector<MeshComponent*> m_components;
+			std::vector<MeshComponent*> m_components; // ADD HERE
 			std::vector<Core::RHI::IRenderObject*> m_renderDescriptors;
 
 			std::vector<int> m_availableIndexes;
+
+			std::vector<int> m_pendingComponents;
+
+			void CreatePendingComponentsDescriptors(Core::RHI::ApiInterface* apiInterface, Core::RHI::ILogicalDevice* a_logicalDevice, Core::RHI::IPhysicalDevice* a_physicalDevice, Core::RHI::ISurface* a_surface, Core::RHI::ICommandPool* a_commandPool, Core::RHI::IGraphicPipeline* a_graphicPipeline, int a_maxFrame,std::vector<std::pair<int, Math::mat4>>& a_updatedMatrix);
 		};
 	}
 }

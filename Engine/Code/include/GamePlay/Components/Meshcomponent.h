@@ -34,8 +34,8 @@ namespace Engine
 
 			ENGINE_API static void RemoveComponent(uint32_t a_id);
 
-			Resource::Mesh* GetMesh() { return m_mesh; }
-			Resource::Texture* GetTexture() { return m_texture; }
+			ENGINE_API Resource::Mesh* GetMesh() { return m_mesh; }
+			ENGINE_API Resource::Texture* GetTexture() { return m_texture; }
 
 			//static MeshComponent* FindComponent(uint32_t a_id)
 		private:

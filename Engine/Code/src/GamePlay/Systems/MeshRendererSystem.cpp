@@ -13,16 +13,20 @@ namespace Engine
 
 		void MeshRendererSystem::Update(Core::Renderer* a_renderer, std::vector<std::pair<int, Math::mat4>> a_updatedMatrix)
 		{
-			// CreateSyncro std::pair<int, int> index mesh, index matrix
+			Core::RHI::ILogicalDevice* t_logicalDevice = a_renderer->GetLogicalDevice();
+			Core::RHI::IPhysicalDevice* t_physicalDevice = a_renderer->GetPhysicalDevice();
+			Core::RHI::ISurface* t_surface = a_renderer->GetSurface();
+			Core::RHI::ICommandPool* t_commandPool = a_renderer->GetCommandPool();
+			Core::RHI::IGraphicPipeline* t_graphicPipeline = a_renderer->GetPipeline();
+			int t_maxFrame = a_renderer->GetSwapChain()->GetMaxFrame();
 
+			CreatePendingComponentsDescriptors(a_renderer->GetInterface(), t_logicalDevice, t_physicalDevice, t_surface, t_commandPool, t_graphicPipeline, t_maxFrame, a_updatedMatrix);
 
+			for (int i = 0; i < a_updatedMatrix.size(); ++i)
+			{
+				m_renderDescriptors.at(a_updatedMatrix.at(i).first)->UpdateUniforms(t_logicalDevice, a_updatedMatrix.at(i).second.mElements.data(), a_renderer->GetSwapChain()->GetCurrentFrame());
+			}
 
-
-			//Core::RHI::IRenderObject* obj;
-
-			// DO NOTHING FOR NOW, maybe update descriptors ??
-
-			// UPDATE MATRIX IN DESCRIPTOR
 		}
 
 		void MeshRendererSystem::Render(Core::Renderer* a_renderer)
@@ -53,10 +57,12 @@ namespace Engine
 				if (m_components.at(t_availableIndex) == nullptr)
 				{
 					m_components.at(t_availableIndex) = a_meshComponent;
+					m_pendingComponents.push_back(t_availableIndex);
 					return t_availableIndex;
 				}
 			}
 			return -1;
+			// ADD PENDING INDEX
 		}
 
 		MeshComponent* MeshRendererSystem::GetComponent(uint32_t a_id)
@@ -75,6 +81,31 @@ namespace Engine
 				delete m_components.at(a_id);
 				m_availableIndexes.push_back(a_id);
 			}
+		}
+
+		void MeshRendererSystem::CreatePendingComponentsDescriptors(Core::RHI::ApiInterface* apiInterface, Core::RHI::ILogicalDevice* a_logicalDevice, Core::RHI::IPhysicalDevice* a_physicalDevice, Core::RHI::ISurface* a_surface, Core::RHI::ICommandPool* a_commandPool, Core::RHI::IGraphicPipeline* a_graphicPipeline, int a_maxFrame, std::vector<std::pair<int, Math::mat4>>& a_updatedMatrix)
+		{
+			for (int i = 0; i < m_pendingComponents.size(); ++i)
+			{
+				Core::RHI::IRenderObject* t_newRenderObject = apiInterface->InstantiateRenderObject();
+
+				t_newRenderObject->Create(a_logicalDevice, a_physicalDevice, a_surface, a_commandPool, a_graphicPipeline, a_maxFrame);
+
+				Core::RHI::IImage* t_newRenderObjectTexture = m_components.at(m_pendingComponents.at(i))->GetTexture()->GetImage();
+				void* t_newRenderObjectMatrixData = a_updatedMatrix.at(m_pendingComponents.at(i)).second.mElements.data();
+
+				t_newRenderObject->SetData(a_logicalDevice, a_physicalDevice, a_commandPool, t_newRenderObjectTexture, t_newRenderObjectMatrixData, a_maxFrame);
+
+				if (m_renderDescriptors.at(m_pendingComponents.at(i)) == nullptr)
+				{
+					m_renderDescriptors.at(m_pendingComponents.at(i)) = t_newRenderObject;
+				}
+				else
+				{
+					m_renderDescriptors.push_back(t_newRenderObject);
+				}
+			}
+			m_pendingComponents.clear();
 		}
 		/*
 		void RenderSystem::Update(ComponentsPool& a_componentsPool, Core::Renderer& a_renderer)
