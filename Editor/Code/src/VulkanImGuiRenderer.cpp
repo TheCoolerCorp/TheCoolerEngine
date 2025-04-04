@@ -578,7 +578,7 @@ void VulkanImGuiRenderer::SceneRenderPassImGui(VkRecordCommandBufferInfo info,
 	std::vector<Engine::GamePlay::GameObjectData> objectsData)
 {
 	uint32_t currentFrame = m_renderer->GetSwapChain()->CastVulkan()->GetCurrentFrame();
-	VkExtent2D m_SwapChainExtent = m_renderer->GetSwapChain()->CastVulkan()->GetExtent2D();
+	VkExtent2D m_SwapChainExtent = info.swapChain->GetExtent2D();
 	VkPipelineLayout t_layout = info.graphicPipeline->GetLayout();
 
 	VkCommandBufferBeginInfo beginInfo{};

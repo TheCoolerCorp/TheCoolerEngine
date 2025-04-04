@@ -288,8 +288,8 @@ and configured for rendering.
 						info.graphicPipeline = t_pipeline;
 						info.camera = camera;
 
-						//RecordCommandBuffer calls RunRenderPass for the current renderpass
-						//VulkanCommandPool::RecordCommandBuffer(info, a_objectsData);
+						//RunSceneRenderPass records the scene renderpass and
+						// RunRenderPass here does the imgui renderpass
 						if (a == 0)
 							VulkanRenderPass::RunSceneRenderPass(info, a_objectsData);
 						else
