@@ -45,17 +45,17 @@ add_custom_command(
         $<TARGET_FILE_DIR:Engine>/Assets
 )
 
-add_custom_command(TARGET Engine POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        "${CMAKE_BINARY_DIR}/libs/$<CONFIG>/Refurekud.dll"
-        "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Refurekud.dll"
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        "${CMAKE_BINARY_DIR}/libs/$<CONFIG>/Refurekud.pdb"
-        "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Refurekud.pdb"
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        "${CMAKE_BINARY_DIR}/libs/$<CONFIG>/Refurekud.lib"
-        "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/libs/Refurekud.lib"
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        "${CMAKE_BINARY_DIR}/libs/$<CONFIG>/Refurekud.exp"
-        "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/libs/Refurekud.exp"
-)
+#add_custom_command(TARGET Engine POST_BUILD
+#    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+#        "${CMAKE_BINARY_DIR}/libs/$<CONFIG>/Refurekud.dll"
+#        "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Refurekud.dll"
+#    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+#        "${CMAKE_BINARY_DIR}/libs/$<CONFIG>/Refurekud.pdb"
+#        "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Refurekud.pdb"
+#    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+#        "${CMAKE_BINARY_DIR}/libs/$<CONFIG>/Refurekud.lib"
+#        "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/libs/Refurekud.lib"
+#    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+#        "${CMAKE_BINARY_DIR}/libs/$<CONFIG>/Refurekud.exp"
+#        "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/libs/Refurekud.exp"
+#)

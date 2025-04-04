@@ -63,8 +63,8 @@ namespace Engine
 				{
 					static_assert(std::is_base_of<Component, ComponentClass>::value);
 					static_assert(!std::is_same<ComponentClass, Component>::value);
-					static_assert(std::is_member_function_pointer<decltype(&ComponentClass::GetType)>::value);
-					static_assert(std::is_member_function_pointer<decltype(&ComponentClass::GetComponent)>::value);
+					static_assert(std::is_invocable<decltype(&ComponentClass::GetType)>::value);
+					static_assert(std::is_invocable<decltype(&ComponentClass::GetComponent), uint32_t>::value);
 						
 					ComponentType t_componentType = ComponentClass::GetType();
 					uint32_t t_id = m_compsId.at(t_componentType);
@@ -77,8 +77,7 @@ namespace Engine
 				{
 					static_assert(std::is_base_of<Component, ComponentClass>::value);
 					static_assert(!std::is_same<ComponentClass, Component>::value);
-					static_assert(std::is_member_function_pointer<decltype(&ComponentClass::GetType)>::value);
-					static_assert(std::is_member_function_pointer<decltype(&ComponentClass::GetComponent)>::value);
+					static_assert(std::is_invocable<decltype(&ComponentClass::GetType)>::value);
 
 					ComponentType t_componentType = ComponentClass::GetType();
 
@@ -90,8 +89,8 @@ namespace Engine
 				{
 					static_assert(std::is_base_of<Component, ComponentClass>::value);
 					static_assert(!std::is_same<ComponentClass, Component>::value);
-					static_assert(std::is_member_function_pointer<decltype(&ComponentClass::GetType)>::value);
-					static_assert(std::is_member_function_pointer<decltype(&ComponentClass::RemoveComponent)>::value);
+					static_assert(std::is_invocable<decltype(&ComponentClass::GetType)>::value);
+					static_assert(std::is_invocable<decltype(&ComponentClass::RemoveComponent), uint32_t>::value);
 
 					ComponentType t_componentType = ComponentClass::GetType();
 					uint32_t t_id = m_compsId.at(t_componentType);
