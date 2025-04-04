@@ -19,7 +19,7 @@ namespace Engine
 			ENGINE_API ~MeshRendererSystem() override = default;
 
 			ENGINE_API void Create(Core::Renderer* a_renderer);
-			ENGINE_API void Update(Core::Renderer* a_renderer, std::vector<Math::mat4> a_updatedMatrix);
+			ENGINE_API void Update(Core::Renderer* a_renderer, std::vector<std::pair<int, Math::mat4>> a_updatedMatrix);
 			ENGINE_API void Render(Core::Renderer* a_renderer);
 			ENGINE_API void Destroy(Core::Renderer* a_renderer);
 

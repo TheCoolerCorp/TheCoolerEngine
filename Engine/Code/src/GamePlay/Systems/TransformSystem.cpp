@@ -27,7 +27,7 @@ namespace Engine
 			m_availableIds.clear();
 		}
 
-		uint32_t TransformSystem::AddTransformComponent(TransformComponent* a_component)
+		uint32_t TransformSystem::AddComponent(TransformComponent* a_component)
 		{
 			if (m_availableIds.empty())
 			{
@@ -45,7 +45,16 @@ namespace Engine
 			return -1;
 		}
 
-		void TransformSystem::RemoveTransformComponent(const uint32_t a_id)
+		TransformComponent* TransformSystem::GetComponent(uint32_t a_id)
+		{
+			if (a_id >= m_components.size())
+			{
+				return nullptr;
+			}
+			return m_components.at(a_id);
+		}
+
+		void TransformSystem::RemoveComponent(const uint32_t a_id)
 		{
 			m_components[a_id]->Destroy();
 			delete m_components[a_id];

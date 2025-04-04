@@ -11,17 +11,23 @@ namespace Engine
 			// DO NOTHING FOR NOW
 		}
 
-		void MeshRendererSystem::Update(Core::Renderer* a_renderer, std::vector<Math::mat4> a_updatedMatrix)
+		void MeshRendererSystem::Update(Core::Renderer* a_renderer, std::vector<std::pair<int, Math::mat4>> a_updatedMatrix)
 		{
 			// CreateSyncro std::pair<int, int> index mesh, index matrix
 
 
+
+
+			//Core::RHI::IRenderObject* obj;
+
 			// DO NOTHING FOR NOW, maybe update descriptors ??
+
+			// UPDATE MATRIX IN DESCRIPTOR
 		}
 
 		void MeshRendererSystem::Render(Core::Renderer* a_renderer)
 		{
-			
+			// SEND TO VULKAN
 		}
 
 		void MeshRendererSystem::Destroy(Core::Renderer* a_renderer)
@@ -40,7 +46,7 @@ namespace Engine
 			if (m_availableIndexes.empty())
 			{
 				m_components.push_back(a_meshComponent);
-				return m_components.size() - 1;
+				return static_cast<uint32_t>(m_components.size() - 1);
 			}
 			for (const uint32_t t_availableIndex : m_availableIndexes)
 			{

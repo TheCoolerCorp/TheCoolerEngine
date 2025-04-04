@@ -17,7 +17,6 @@
 #include  "Core/GraphicsAPI/Vulkan/VulkanGraphicPipeline.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanCommandPool.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanDescriptorPool.h"
-#include "Core/GraphicsAPI/Vulkan/VulkanObjectDescritptor.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanCameraDescriptor.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanImage.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanRenderObject.h"
@@ -54,8 +53,6 @@ namespace Engine
 				ENGINE_API RHI::ICommandPool* InstantiateCommandPool() override { return new VulkanCommandPool; }
 
 				ENGINE_API RHI::IDescriptorPool* InstantiateDescriptorPool() override { return new VulkanDescriptorPool; }
-
-				ENGINE_API RHI::IObjectDescriptor* InstantiateObjectDescriptor() override { return new VulkanObjectDescriptor; }
 
 				ENGINE_API RHI::ICameraDescriptor* InstantiateCameraDescriptor() override { return new VulkanCameraDescriptor; }
 

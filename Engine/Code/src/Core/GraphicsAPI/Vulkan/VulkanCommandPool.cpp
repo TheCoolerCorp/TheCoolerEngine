@@ -10,7 +10,6 @@
 #include "Core/GraphicsAPI/Vulkan/VulkanRenderObject.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanCameraDescriptor.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanGraphicPipeline.h"
-#include "Core/GraphicsAPI/Vulkan/VulkanObjectDescritptor.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanRenderPass.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanSwapChain.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanUtils.h"

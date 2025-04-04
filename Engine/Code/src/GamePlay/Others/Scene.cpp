@@ -36,17 +36,20 @@ namespace Engine
 
 		void Scene::Update(Core::Renderer* a_renderer)
 		{
-			/*m_transformSystem->Update();
+			m_transformSystem->Update();
 
 			std::vector<std::pair<int, Math::mat4>> syncro;
+
 			for (int i = 0; i < m_objs.size(); ++i)
 			{
-				m_objs[i]->GetComponent<TransformComponent>()->GetTransform().matrix;
-				uint32_t meshId = m_objs[i]->MEshId();
-				syncro.push_back({ meshId, matrix });
+				uint32_t t_meshId = m_objs[i]->GetComponentID<MeshComponent>();
+				if (t_meshId != -1)
+				{
+					Math::mat4 t_matrix = m_objs[i]->GetComponent<TransformComponent>()->GetTransform()->GetTransformMatrix();
+					syncro.push_back({ t_meshId, t_matrix });
+				}
 			}
-
-			m_meshRendererSystem->Update(a_renderer, syncro);*/
+			m_meshRendererSystem->Update(a_renderer, syncro);
 		}
 
 		void Scene::Draw(Core::Renderer* a_renderer, Core::Window::IWindow* a_window, Camera* a_camera)

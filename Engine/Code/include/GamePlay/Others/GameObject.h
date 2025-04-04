@@ -19,7 +19,6 @@
 #include "Gameplay/Components/ComponentsPool.h"
 
 
-#include "Core/Interfaces/IObjectDescriptor.h"
 #include "Core/Interfaces/ApiInterface.h"
 
 #include "Gameplay/ServiceLocator.h"
@@ -47,13 +46,13 @@ namespace Engine
 				template<typename ComponentClass>
 				void AddComponent()
 				{
-					static_assert(std::is_base_of_v<ComponentClass, Component>);
-					static_assert(!std::is_same_v<ComponentClass, Component>);
+					static_assert(std::is_base_of<ComponentClass, Component>::value);
+					static_assert(!std::is_same<ComponentClass, Component>::value);
 					static_assert(std::is_member_function_pointer<decltype(&ComponentClass::Create)>::value);
 
 					ComponentClass* t_newComponent = new ComponentClass();
 
-					uint32_t id = 0;
+					uint32_t id = -1;
 					ComponentType t_componentType = t_newComponent->Create(id);
 
 					m_compsId.insert({ t_componentType, id });
@@ -62,8 +61,8 @@ namespace Engine
 				template<typename ComponentClass>
 				ComponentClass* GetComponent()
 				{
-					static_assert(std::is_base_of_v<ComponentClass, Component>);
-					static_assert(!std::is_same_v<ComponentClass, Component>);
+					static_assert(std::is_base_of<ComponentClass, Component>::value);
+					static_assert(!std::is_same<ComponentClass, Component>::value);
 					static_assert(std::is_member_function_pointer<decltype(&ComponentClass::GetType)>::value);
 					static_assert(std::is_member_function_pointer<decltype(&ComponentClass::GetComponent)>::value);
 
@@ -74,10 +73,23 @@ namespace Engine
 				}
 
 				template<typename ComponentClass>
+				uint32_t GetComponentID()
+				{
+					static_assert(std::is_base_of<ComponentClass, Component>::value);
+					static_assert(!std::is_same<ComponentClass, Component>::value);
+					static_assert(std::is_member_function_pointer<decltype(&ComponentClass::GetType)>::value);
+					static_assert(std::is_member_function_pointer<decltype(&ComponentClass::GetComponent)>::value);
+
+					ComponentType t_componentType = ComponentClass::GetType();
+
+					return m_compsId.at(t_componentType);
+				}
+
+				template<typename ComponentClass>
 				void RemoveComponent()
 				{
-					static_assert(std::is_base_of_v<ComponentClass, Component>);
-					static_assert(!std::is_same_v<ComponentClass, Component>);
+					static_assert(std::is_base_of<ComponentClass, Component>::value);
+					static_assert(!std::is_same<ComponentClass, Component>::value);
 					static_assert(std::is_member_function_pointer<decltype(&ComponentClass::GetType)>::value);
 					static_assert(std::is_member_function_pointer<decltype(&ComponentClass::RemoveComponent)>::value);
 

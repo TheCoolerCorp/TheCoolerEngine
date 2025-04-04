@@ -33,10 +33,12 @@ namespace Engine
 
 				ENGINE_API std::vector<VkDescriptorSet> GetDescriptorSets() const { return m_sets; }
 
+				ENGINE_API bool IsUpdated() override { return m_Updated; }
 			private:
 				std::vector<VkDescriptorSet> m_sets;
 				VkDescriptorPool m_pool = VK_NULL_HANDLE;
 				std::vector<VulkanBuffer*> m_uniforms;
+				bool m_Updated = false;
 
 				void CreatePool(VkDevice a_logicalDevice, int a_maxFrame);
 				void CreateDescriptorSets(VkDevice a_logicalDevice, VkDescriptorSetLayout a_descriptorSetLayout, int a_maxFrame);

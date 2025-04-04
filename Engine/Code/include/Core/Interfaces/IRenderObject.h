@@ -34,6 +34,8 @@ namespace Engine
 
 				ENGINE_API virtual void UpdateUniforms(ILogicalDevice* a_logicalDevice, void* a_data, int a_imageIndex) = 0;
 
+				ENGINE_API virtual bool IsUpdated() { return false; }
+
 			};
 		}
 	}

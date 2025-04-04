@@ -34,7 +34,7 @@ namespace Engine
 			return m_transformSystem;
 		}
 
-		TransformSystem* ServiceLocator::GetMeshRendererSystem()
+		MeshRendererSystem* ServiceLocator::GetMeshRendererSystem()
 		{
 			return m_meshRendererSystem;
 		}

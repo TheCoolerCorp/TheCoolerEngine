@@ -7,6 +7,7 @@
 #include "Gameplay/Systems/MeshRendererSystem.h"
 #include "Core/Renderer/Renderer.h"
 #include "Ressources/ResourceManager.h"
+#include "GamePlay/Others/GameObject.h"
 
 namespace Engine
 {

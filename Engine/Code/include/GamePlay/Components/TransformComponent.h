@@ -4,6 +4,7 @@
 #include "EngineExport.h"
 
 #include "Component.h"
+#include "Gameplay/ServiceLocator.h"
 #include  "Math/Transform.h"
 
 namespace Engine
@@ -30,7 +31,12 @@ namespace Engine
 			ENGINE_API void Move(Math::vec3 a_pos, Math::quat a_rot, Math::vec3 a_scale);
 			ENGINE_API void Move(Math::vec3 a_pos, Math::vec3 a_rot, Math::vec3 a_scale);
 
-			Math::Transform* GetTransform() { return m_transform; }
+			ENGINE_API Math::Transform* GetTransform() { return m_transform; }
+
+			ENGINE_API static TransformComponent* GetComponent(uint32_t a_id);
+			
+
+			ENGINE_API ComponentType GetType() { return ComponentType::TRANSFORM; }
 
 		private:
 			Math::Transform* m_transform = nullptr;
