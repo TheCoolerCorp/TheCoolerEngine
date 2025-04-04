@@ -24,14 +24,33 @@ namespace Engine
 
 			for (int i = 0; i < a_updatedMatrix.size(); ++i)
 			{
-				m_renderDescriptors.at(a_updatedMatrix.at(i).first)->UpdateUniforms(t_logicalDevice, a_updatedMatrix.at(i).second.mElements.data(), a_renderer->GetSwapChain()->GetCurrentFrame());
+				m_renderDescriptors[a_updatedMatrix[i].first]->UpdateUniforms(t_logicalDevice, a_updatedMatrix[i].second.mElements.data(), a_renderer->GetSwapChain()->GetCurrentFrame());
 			}
 
 		}
 
-		void MeshRendererSystem::Render(Core::Renderer* a_renderer)
+		void MeshRendererSystem::Render(Core::Renderer* a_renderer, Core::Window::IWindow* a_window, GamePlay::Camera* a_camera)
 		{
-			// SEND TO VULKAN
+			/*const std::vector<int>& t_ids = a_componentsPool.GetIds();
+			std::unordered_map<int, Core::RHI::IBuffer*> t_vertexBuffers;
+			std::unordered_map<int, Core::RHI::IBuffer*> t_indexBuffers;
+			std::unordered_map<int, uint32_t> t_nbIndices;
+			for (const int t_id : t_ids)
+			{
+				Resource::Mesh* t_mesh = a_componentsPool.GetComponent<MeshComponent>(t_id)->GetMesh();
+				t_mesh->Load(&a_renderer);
+				t_vertexBuffers.emplace(t_id, t_mesh->GetVertexBuffer());
+				t_indexBuffers.emplace(t_id, t_mesh->GetIndexBuffer());
+				t_nbIndices.emplace(t_id, t_mesh->GetNbIndices());
+			}
+
+			a_renderer.GetSwapChain()->DrawFrame(a_window, a_renderer.GetLogicalDevice(), a_renderer.GetCommandPool(), a_renderer.GetSurface(), a_renderer.GetPhysicalDevice(), a_renderer.GetRenderPass(), m_renderDescriptors, t_ids, t_vertexBuffers, t_indexBuffers, t_nbIndices, a_camera);
+
+			t_nbIndices.clear();
+			t_indexBuffers.clear();
+			t_vertexBuffers.clear();*/
+
+
 		}
 
 		void MeshRendererSystem::Destroy(Core::Renderer* a_renderer)
@@ -40,6 +59,7 @@ namespace Engine
 			{
 				auto& comp = m_components[i];
 				comp->Destroy();
+				m_renderDescriptors[i]->Destroy(a_renderer->GetLogicalDevice());
 				delete comp;
 				m_components.clear();
 			}
