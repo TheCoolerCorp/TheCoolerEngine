@@ -61,5 +61,10 @@ namespace Engine
 			m_components[a_id] = nullptr;
 			m_availableIds.push_back(a_id);
 		}
+		
 	}
 }
+		
+		
+		
+		

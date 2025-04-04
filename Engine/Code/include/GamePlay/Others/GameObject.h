@@ -46,7 +46,7 @@ namespace Engine
 				template<typename ComponentClass>
 				void AddComponent()
 				{
-					static_assert(std::is_base_of<ComponentClass, Component>::value);
+					static_assert(std::is_base_of<Component, ComponentClass>::value);
 					static_assert(!std::is_same<ComponentClass, Component>::value);
 					static_assert(std::is_member_function_pointer<decltype(&ComponentClass::Create)>::value);
 
@@ -61,11 +61,11 @@ namespace Engine
 				template<typename ComponentClass>
 				ComponentClass* GetComponent()
 				{
-					static_assert(std::is_base_of<ComponentClass, Component>::value);
+					static_assert(std::is_base_of<Component, ComponentClass>::value);
 					static_assert(!std::is_same<ComponentClass, Component>::value);
 					static_assert(std::is_member_function_pointer<decltype(&ComponentClass::GetType)>::value);
 					static_assert(std::is_member_function_pointer<decltype(&ComponentClass::GetComponent)>::value);
-
+						
 					ComponentType t_componentType = ComponentClass::GetType();
 					uint32_t t_id = m_compsId.at(t_componentType);
 
@@ -75,7 +75,7 @@ namespace Engine
 				template<typename ComponentClass>
 				uint32_t GetComponentID()
 				{
-					static_assert(std::is_base_of<ComponentClass, Component>::value);
+					static_assert(std::is_base_of<Component, ComponentClass>::value);
 					static_assert(!std::is_same<ComponentClass, Component>::value);
 					static_assert(std::is_member_function_pointer<decltype(&ComponentClass::GetType)>::value);
 					static_assert(std::is_member_function_pointer<decltype(&ComponentClass::GetComponent)>::value);
@@ -88,7 +88,7 @@ namespace Engine
 				template<typename ComponentClass>
 				void RemoveComponent()
 				{
-					static_assert(std::is_base_of<ComponentClass, Component>::value);
+					static_assert(std::is_base_of<Component, ComponentClass>::value);
 					static_assert(!std::is_same<ComponentClass, Component>::value);
 					static_assert(std::is_member_function_pointer<decltype(&ComponentClass::GetType)>::value);
 					static_assert(std::is_member_function_pointer<decltype(&ComponentClass::RemoveComponent)>::value);
