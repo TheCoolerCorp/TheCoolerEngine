@@ -5,7 +5,7 @@ namespace Engine
 {
 	namespace Math
 	{
-		Transform::Transform() : m_pos(vec3()), m_rot(quat()), m_scale(vec3())
+		Transform::Transform() : m_pos(vec3()), m_rot(quat()), m_scale(vec3(1.f))
 		{
 			m_transform = mat4::TRS(m_pos, m_rot, m_scale);
 		}

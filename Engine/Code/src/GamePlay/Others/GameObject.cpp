@@ -20,7 +20,7 @@ namespace Engine
 			//m_idBitset.set(m_id);
 
 			AddComponent<TransformComponent>();
-			GetComponent<TransformComponent>()->Create();
+			//GetComponent<TransformComponent>()->Create(&m_id);
 
 		}
 
@@ -35,7 +35,7 @@ namespace Engine
 			m_idBitset.set(m_id);*/
 
 			AddComponent<TransformComponent>();
-			GetComponent<TransformComponent>()->Create(a_position, a_rotation, a_scale);
+			//GetComponent<TransformComponent>()->Create(a_position, a_rotation, a_scale);
 
 		}
 

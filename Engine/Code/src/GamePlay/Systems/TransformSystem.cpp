@@ -13,7 +13,7 @@ namespace Engine
 		{
 			for (const TransformComponent* t_component : m_components)
 			{
-				t_component->Update();
+				t_component->Update(); // NON
 			}
 		}
 

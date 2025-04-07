@@ -44,7 +44,7 @@ namespace Engine
 			ENGINE_API void SetScale(const vec3 a_scale) { m_scale = a_scale; m_needUpdate = true; }
 
 		private:
-			bool m_needUpdate = false;
+			bool m_needUpdate = true;
 			vec3 m_pos;
 			quat m_rot;
 			vec3 m_scale;

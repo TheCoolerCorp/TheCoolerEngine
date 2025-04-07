@@ -127,13 +127,16 @@ namespace Engine
 
 				t_newRenderObject->SetData(a_logicalDevice, a_physicalDevice, a_commandPool, t_newRenderObjectTexture, t_newRenderObjectMatrixData, a_maxFrame);
 
-				if (m_renderDescriptors.at(m_pendingComponents.at(i)) == nullptr)
+				if (m_availableIndexes.empty())
 				{
-					m_renderDescriptors.at(m_pendingComponents.at(i)) = t_newRenderObject;
+					m_renderDescriptors.push_back(t_newRenderObject);
 				}
 				else
 				{
-					m_renderDescriptors.push_back(t_newRenderObject);
+					if (m_renderDescriptors.at(m_availableIndexes.at(i)) == nullptr)
+					{
+						m_renderDescriptors.at(m_availableIndexes.at(i)) = t_newRenderObject;
+					}
 				}
 			}
 			m_pendingComponents.clear();
