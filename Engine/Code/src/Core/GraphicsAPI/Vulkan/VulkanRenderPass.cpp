@@ -15,10 +15,10 @@ namespace Engine
 	{
 		namespace GraphicsAPI
 		{
-            std::map<int, std::vector<std::function<void(Core::GraphicsAPI::VkRecordCommandBufferInfo, std::vector<GamePlay::GameObjectData>)>>> VulkanRenderPass::m_renderPasses;
+            std::map<int, std::vector<std::function<void(Core::GraphicsAPI::VkRecordCommandBufferInfo, std::vector<GamePlay::GameObjectData>, std::vector<VkCommandBuffer>&)>>> VulkanRenderPass::m_renderPasses;
             //callbacks that get executed after a specified render pass id
             std::map<int, std::vector<std::function<void()>>> VulkanRenderPass::m_renderPassCallbacks;
-			std::function<void(Core::GraphicsAPI::VkRecordCommandBufferInfo, std::vector<GamePlay::GameObjectData>)> VulkanRenderPass::m_sceneRenderPass;
+			std::function<void(Core::GraphicsAPI::VkRecordCommandBufferInfo, std::vector<GamePlay::GameObjectData>, std::vector<VkCommandBuffer>&)> VulkanRenderPass::m_sceneRenderPass;
 			int VulkanRenderPass::m_renderPassCount;
             int VulkanRenderPass::m_currentRenderCallback;
 
@@ -112,9 +112,9 @@ namespace Engine
 				if (!HasRenderPassFlag(FLAG_OVERRIDE_DEFAULT_RENDERPASS))
 				{
 					// Create the default render pass
-					SetSceneRenderPass([this](VkRecordCommandBufferInfo info, std::vector<GamePlay::GameObjectData> objectsData)
+					SetSceneRenderPass([this](VkRecordCommandBufferInfo info, std::vector<GamePlay::GameObjectData> objectsData, std::vector<VkCommandBuffer>& buffers)
 						{
-							this->RecordSceneRenderPass(info, objectsData);
+							this->RecordSceneRenderPass(info, objectsData, buffers);
 						});
 				}
 			}
@@ -126,7 +126,7 @@ namespace Engine
 			}
 
 			void VulkanRenderPass::RecordSceneRenderPass(VkRecordCommandBufferInfo info,
-				std::vector<GamePlay::GameObjectData> objectsData)
+				std::vector<GamePlay::GameObjectData> objectsData, std::vector<VkCommandBuffer>& buffers)
 			{
 				const VkExtent2D t_swapChainExtent = info.swapChain->GetExtent2D();
 				const VkPipeline t_pipeline = info.graphicPipeline->GetPipeline();

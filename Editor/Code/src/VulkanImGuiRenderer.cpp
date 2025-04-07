@@ -18,6 +18,7 @@
 #include "Core/GraphicsAPI/Vulkan/VulkanLogicalDevice.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanSurface.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanUtils.h"
+#include "Core/GraphicsAPI/Vulkan/VulkanCommandPool.h"
 
 //glfw includes
 #include <GLFW/glfw3.h>
@@ -57,13 +58,13 @@ void VulkanImGuiRenderer::Init(IWindow* window, Renderer* renderer)
 	VkAllocationCallbacks* g_Allocator = nullptr;
 
 	VulkanRenderPass::AddRenderPassFlag(FLAG_OVERRIDE_DEFAULT_RENDERPASS);
-	VulkanRenderPass::SetSceneRenderPass([this](VkRecordCommandBufferInfo info, std::vector<Engine::GamePlay::GameObjectData> data)
+	VulkanRenderPass::SetSceneRenderPass([this](VkRecordCommandBufferInfo info, std::vector<Engine::GamePlay::GameObjectData> data, std::vector<VkCommandBuffer>& buffers)
 		{
-			this->SceneRenderPassImGui(info, data);
+			this->SceneRenderPassImGui(info, data, buffers);
 		});
-	VulkanRenderPass::AddRenderPass([this](VkRecordCommandBufferInfo info, std::vector<Engine::GamePlay::GameObjectData> data)
+	VulkanRenderPass::AddRenderPass([this](VkRecordCommandBufferInfo info, std::vector<Engine::GamePlay::GameObjectData> data, std::vector<VkCommandBuffer>& buffers)
 		{
-			this->ViewportRenderPass(info, data);
+			this->ViewportRenderPass(info, data, buffers);
 		}, 1);
 
     CreateDescriptorPool(g_Device);
@@ -102,7 +103,7 @@ void VulkanImGuiRenderer::Init(IWindow* window, Renderer* renderer)
     CreateViewportCommandBuffer();
     CreateViewportRenderPass();
     CreateViewportFrameBuffers();
-
+	VulkanCommandPool::CreateCommandPool(&m_ViewportCommandPool, m_renderer);
     CreateViewportPipeline();
 }
 
@@ -113,7 +114,7 @@ void VulkanImGuiRenderer::NewFrame()
 	ImGui::NewFrame();
 }
 
-void VulkanImGuiRenderer::RenderDrawData(Engine::Core::GraphicsAPI::VkRecordCommandBufferInfo info)
+void VulkanImGuiRenderer::RenderDrawData(VkRecordCommandBufferInfo info)
 {
 	ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), info.commandBuffer);
 }
@@ -575,7 +576,7 @@ void VulkanImGuiRenderer::InsertImageMemoryBarrier(VkCommandBuffer cmdbuffer,
 }
 
 void VulkanImGuiRenderer::SceneRenderPassImGui(VkRecordCommandBufferInfo info,
-	std::vector<Engine::GamePlay::GameObjectData> objectsData)
+	std::vector<Engine::GamePlay::GameObjectData> objectsData, std::vector<VkCommandBuffer>& buffers)
 {
 	uint32_t currentFrame = m_renderer->GetSwapChain()->CastVulkan()->GetCurrentFrame();
 	VkExtent2D m_SwapChainExtent = info.swapChain->GetExtent2D();
@@ -586,7 +587,8 @@ void VulkanImGuiRenderer::SceneRenderPassImGui(VkRecordCommandBufferInfo info,
 	// beginInfo.flags = 0;									// Optional
 	// beginInfo.pInheritanceInfo = nullptr; // Optional
 
-	if (vkBeginCommandBuffer(info.commandBuffer, &beginInfo) != VK_SUCCESS)
+
+	if (vkBeginCommandBuffer(m_ViewportCommandBuffers[currentFrame], &beginInfo) != VK_SUCCESS)
 	{
 		throw std::runtime_error("failed to begin recording command buffer!");
 	}
@@ -605,9 +607,9 @@ void VulkanImGuiRenderer::SceneRenderPassImGui(VkRecordCommandBufferInfo info,
 	renderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
 	renderPassInfo.pClearValues = clearValues.data();
 
-	vkCmdBeginRenderPass(info.commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+	vkCmdBeginRenderPass(m_ViewportCommandBuffers[currentFrame], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 
-	vkCmdBindPipeline(info.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_ViewportPipeline);
+	vkCmdBindPipeline(m_ViewportCommandBuffers[currentFrame], VK_PIPELINE_BIND_POINT_GRAPHICS, m_ViewportPipeline);
 
 	VkViewport viewport = {};
 	viewport.x = 0.0f;
@@ -617,16 +619,16 @@ void VulkanImGuiRenderer::SceneRenderPassImGui(VkRecordCommandBufferInfo info,
 	viewport.minDepth = 0.0f;
 	viewport.maxDepth = 1.0f;
 
-	vkCmdSetViewport(info.commandBuffer, 0, 1, &viewport);
+	vkCmdSetViewport(m_ViewportCommandBuffers[currentFrame], 0, 1, &viewport);
 
 	VkRect2D scissor = {};
 	scissor.offset = { 0, 0 };
 	scissor.extent = m_SwapChainExtent;
 
-	vkCmdSetScissor(info.commandBuffer, 0, 1, &scissor);
+	vkCmdSetScissor(m_ViewportCommandBuffers[currentFrame], 0, 1, &scissor);
 
 	VkDescriptorSet t_cameraDescriptorSet = info.camera->GetDescriptor()->CastVulkan()->GetDescriptorSet();
-	vkCmdBindDescriptorSets(info.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, t_layout, 0, 1, &t_cameraDescriptorSet, 0, nullptr);
+	vkCmdBindDescriptorSets(m_ViewportCommandBuffers[currentFrame], VK_PIPELINE_BIND_POINT_GRAPHICS, t_layout, 0, 1, &t_cameraDescriptorSet, 0, nullptr);
 
 
 	// render scene
@@ -634,24 +636,23 @@ void VulkanImGuiRenderer::SceneRenderPassImGui(VkRecordCommandBufferInfo info,
 	{
 		VkBuffer t_vertexBuffer = t_gameObjectData.mVertexBuffer->CastVulkan()->GetBuffer();
 		constexpr VkDeviceSize t_offsets[] = { 0 };
-		vkCmdBindVertexBuffers(info.commandBuffer, 0, 1, &t_vertexBuffer, t_offsets);
+		vkCmdBindVertexBuffers(m_ViewportCommandBuffers[currentFrame], 0, 1, &t_vertexBuffer, t_offsets);
 
-		vkCmdBindIndexBuffer(info.commandBuffer, t_gameObjectData.mIndexBuffer->CastVulkan()->GetBuffer(), 0, VK_INDEX_TYPE_UINT32);
+		vkCmdBindIndexBuffer(m_ViewportCommandBuffers[currentFrame], t_gameObjectData.mIndexBuffer->CastVulkan()->GetBuffer(), 0, VK_INDEX_TYPE_UINT32);
 
-		vkCmdBindDescriptorSets(info.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, t_layout, 1, 1, &t_gameObjectData.mDescriptor->CastVulkan()->GetDescriptorSets()[info.imageIndex], 0, nullptr);
+		vkCmdBindDescriptorSets(m_ViewportCommandBuffers[currentFrame], VK_PIPELINE_BIND_POINT_GRAPHICS, t_layout, 1, 1, &t_gameObjectData.mDescriptor->CastVulkan()->GetDescriptorSets()[info.imageIndex], 0, nullptr);
 
-		vkCmdDrawIndexed(info.commandBuffer, t_gameObjectData.mNbIndices, 1, 0, 0, 0);
+		vkCmdDrawIndexed(m_ViewportCommandBuffers[currentFrame], t_gameObjectData.mNbIndices, 1, 0, 0, 0);
 	}
-	vkCmdEndRenderPass(info.commandBuffer);
+	vkCmdEndRenderPass(m_ViewportCommandBuffers[currentFrame]);
 
-	if (vkEndCommandBuffer(info.commandBuffer) != VK_SUCCESS)
-	{
-		throw std::runtime_error("failed to record command buffer!");
-	}
+	VK_CHECK(vkEndCommandBuffer(m_ViewportCommandBuffers[currentFrame]), "failed to record command buffer!")
+
+	buffers[info.bufferIndex] = m_ViewportCommandBuffers[currentFrame];
 }
 
 void VulkanImGuiRenderer::ViewportRenderPass(Engine::Core::GraphicsAPI::VkRecordCommandBufferInfo info,
-	std::vector<Engine::GamePlay::GameObjectData> objectsData)
+	std::vector<Engine::GamePlay::GameObjectData> objectsData, std::vector<VkCommandBuffer>& buffers)
 {
 	const VkExtent2D t_swapChainExtent = info.swapChain->GetExtent2D();
 	const VkPipeline t_pipeline = info.graphicPipeline->GetPipeline();

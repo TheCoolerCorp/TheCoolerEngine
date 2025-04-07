@@ -7,6 +7,11 @@
 
 namespace Engine
 {
+	namespace Core
+	{
+		class Renderer;
+	}
+
 	namespace GamePlay
 	{
 		struct GameObjectData;
@@ -29,6 +34,7 @@ namespace Engine
 				VulkanSwapchain* swapChain;
 				const VulkanGraphicPipeline* graphicPipeline;
 				GamePlay::Camera* camera;
+				int bufferIndex;
 			};
 
 			class VulkanCommandPool : public RHI::ICommandPool
@@ -41,10 +47,12 @@ namespace Engine
 				ENGINE_API void Destroy(RHI::ILogicalDevice* a_logicalDevice) override;
 				ENGINE_API VulkanCommandPool* CastVulkan() override { return this; }
 				ENGINE_API void CreateCommandBuffer(RHI::ILogicalDevice* a_logicalDevice, RHI::ISwapChain* a_swapChain, RHI::IRenderPass* a_renderPass, RHI::IGraphicPipeline* a_graphicPipeline) override;
-				ENGINE_API static void RecordCommandBuffer(VkRecordCommandBufferInfo info, std::vector<GamePlay::GameObjectData> objectsData);
+				ENGINE_API static void RecordCommandBuffer(VkRecordCommandBufferInfo info, std::vector<GamePlay::GameObjectData> objectsData, std::vector<VkCommandBuffer>& buffers);
 
 				ENGINE_API static VkCommandBuffer BeginSingleTimeCommands(VkDevice a_device, VkCommandPool a_commandPool);
 				ENGINE_API static void EndSingleTimeCommands(VkCommandBuffer a_commandBuffer, VkCommandPool a_commandPool, VkDevice a_logicalDevice, VkQueue a_queue);
+
+				ENGINE_API static void CreateCommandPool(VkCommandPool* a_commandPool, Engine::Core::Renderer* a_renderer);
 
 				std::vector<std::vector<std::tuple<VkCommandBuffer, VkRenderPass, VulkanGraphicPipeline*>>> mCommandBuffers{};
 			private:

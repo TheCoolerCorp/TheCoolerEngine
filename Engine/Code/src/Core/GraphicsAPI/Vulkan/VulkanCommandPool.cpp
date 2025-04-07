@@ -80,7 +80,7 @@ namespace Engine
 				mCommandBuffers.push_back(t_commandBuffers);
 			}
 
-			void VulkanCommandPool::RecordCommandBuffer(VkRecordCommandBufferInfo info, std::vector<GamePlay::GameObjectData> objectsData)
+			void VulkanCommandPool::RecordCommandBuffer(VkRecordCommandBufferInfo info, std::vector<GamePlay::GameObjectData> objectsData, std::vector<VkCommandBuffer>& buffers)
 			{
 				const VkExtent2D t_swapChainExtent = info.swapChain->GetExtent2D();
 				const VkPipeline t_pipeline = info.graphicPipeline->GetPipeline();
@@ -128,7 +128,7 @@ namespace Engine
 				vkCmdBindDescriptorSets(info.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, t_layout, 0, 1, &t_cameraDescriptorSet, 0, nullptr);
 
 
-				VulkanRenderPass::RunRenderPass(info, objectsData);
+				VulkanRenderPass::RunRenderPass(info, objectsData, buffers);
 				//for (int i = 0; i < info.objectsData.size(); ++i)
 				//{
 				//	GamePlay::GameObjectData t_gameObjectData = info.objectsData[i];
@@ -184,6 +184,18 @@ namespace Engine
 				vkQueueWaitIdle(a_queue);
 
 				vkFreeCommandBuffers(a_logicalDevice, a_commandPool, 1, &a_commandBuffer);
+			}
+
+			void VulkanCommandPool::CreateCommandPool(VkCommandPool* a_commandPool, Engine::Core::Renderer* a_renderer)
+			{
+				uint32_t m_QueueFamilyIndices = QueueFamilyIndices::FindQueueFamilies(a_renderer->GetPhysicalDevice()->CastVulkan()->GetVkPhysicalDevice(), a_renderer->GetSurface()->CastVulkan()->GetVkSurfaceKHR()).GetGraphicsFamily().value();
+				VkDevice m_Device = a_renderer->GetLogicalDevice()->CastVulkan()->GetVkDevice();
+				VkCommandPoolCreateInfo poolInfo{};
+				poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+				poolInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
+				poolInfo.queueFamilyIndex = m_QueueFamilyIndices;
+
+				VK_CHECK(vkCreateCommandPool(m_Device, &poolInfo, nullptr, a_commandPool), "failed to create command pool!")
 			}
 		}
 	}

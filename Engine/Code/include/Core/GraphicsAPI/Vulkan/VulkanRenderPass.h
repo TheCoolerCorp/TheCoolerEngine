@@ -37,22 +37,22 @@ namespace Engine
 				ENGINE_API uint32_t GetSubpassesCount() { return m_subpasses; }
 
 				//default scene renderpass
-				ENGINE_API void RecordSceneRenderPass(VkRecordCommandBufferInfo info, std::vector<GamePlay::GameObjectData> objectsData);
+				ENGINE_API void RecordSceneRenderPass(VkRecordCommandBufferInfo info, std::vector<GamePlay::GameObjectData> objectsData, std::vector<VkCommandBuffer>& buffers);
 
-				ENGINE_API static void AddRenderPass(std::function<void(Core::GraphicsAPI::VkRecordCommandBufferInfo, std::vector<GamePlay::GameObjectData>)> callback, int priority = 1)
+				ENGINE_API static void AddRenderPass(std::function<void(Engine::Core::GraphicsAPI::VkRecordCommandBufferInfo, std::vector<GamePlay::GameObjectData>, std::vector<VkCommandBuffer>&)> callback, int priority = 1)
 				{
 					if (m_renderPasses[priority].empty())
 						m_renderPassCount++;
 					m_renderPasses[priority].push_back(callback);
 				}
 
-				ENGINE_API static void RunRenderPass(VkRecordCommandBufferInfo info, std::vector<GamePlay::GameObjectData> data)
+				ENGINE_API static void RunRenderPass(VkRecordCommandBufferInfo info, std::vector<GamePlay::GameObjectData> data, std::vector<VkCommandBuffer>& buffers)
 				{
 					if (m_currentRenderCallback == 0)
 						NextRenderPass();
 					for (auto& callback : m_renderPasses[m_currentRenderCallback])
 					{
-						callback(info, data);
+						callback(info, data, buffers);
 					}
 				}
 
@@ -87,16 +87,16 @@ namespace Engine
 
 				ENGINE_API static int GetRenderPassCount() { return m_renderPassCount; }
 
-				ENGINE_API static void SetSceneRenderPass(std::function<void(Core::GraphicsAPI::VkRecordCommandBufferInfo, std::vector<GamePlay::GameObjectData>)> callback)
+				ENGINE_API static void SetSceneRenderPass(std::function<void(Core::GraphicsAPI::VkRecordCommandBufferInfo, std::vector<GamePlay::GameObjectData>,std::vector<VkCommandBuffer>&)> callback)
 				{
 					m_sceneRenderPass = std::move(callback);
 				}
 
-				ENGINE_API static void RunSceneRenderPass(Core::GraphicsAPI::VkRecordCommandBufferInfo info, std::vector<GamePlay::GameObjectData> data)
+				ENGINE_API static void RunSceneRenderPass(Core::GraphicsAPI::VkRecordCommandBufferInfo info, std::vector<GamePlay::GameObjectData> data, std::vector<VkCommandBuffer>& buffers)
 				{
 					if (m_sceneRenderPass)
 					{
-						m_sceneRenderPass(info, data);
+						m_sceneRenderPass(info, data, buffers);
 					}
 				}
 
@@ -125,10 +125,10 @@ namespace Engine
 			 * in something like the VulkanCommandPool that will actually call it, because the call chain to
 			 * set it there is long and inconvenient. As such i think a static for such an important function is justified
 			 */
-				static std::map<int,std::vector<std::function<void(Core::GraphicsAPI::VkRecordCommandBufferInfo, std::vector<GamePlay::GameObjectData>)>>> m_renderPasses;
+				static std::map<int,std::vector<std::function<void(Core::GraphicsAPI::VkRecordCommandBufferInfo, std::vector<GamePlay::GameObjectData>, std::vector<VkCommandBuffer>&)>>> m_renderPasses;
 				//callbacks that get executed after a specified render pass id
 				static std::map<int, std::vector<std::function<void()>>> m_renderPassCallbacks;
-				static std::function<void(Core::GraphicsAPI::VkRecordCommandBufferInfo, std::vector<GamePlay::GameObjectData>)> m_sceneRenderPass;
+				static std::function<void(Core::GraphicsAPI::VkRecordCommandBufferInfo, std::vector<GamePlay::GameObjectData>, std::vector<VkCommandBuffer>&)> m_sceneRenderPass;
 				static int m_renderPassCount;
 				static int m_currentRenderCallback;
 

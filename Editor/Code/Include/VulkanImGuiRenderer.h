@@ -42,8 +42,8 @@ public:
 		VkPipelineStageFlags dstStageMask,
 		VkImageSubresourceRange subresourceRange);
 
-	void SceneRenderPassImGui(Engine::Core::GraphicsAPI::VkRecordCommandBufferInfo info, std::vector<Engine::GamePlay::GameObjectData> objectsData);
-	void ViewportRenderPass(Engine::Core::GraphicsAPI::VkRecordCommandBufferInfo info, std::vector<Engine::GamePlay::GameObjectData> objectsData);
+	void SceneRenderPassImGui(Engine::Core::GraphicsAPI::VkRecordCommandBufferInfo info, std::vector<Engine::GamePlay::GameObjectData> objectsData, std::vector<VkCommandBuffer>& buffers);
+	void ViewportRenderPass(Engine::Core::GraphicsAPI::VkRecordCommandBufferInfo info, std::vector<Engine::GamePlay::GameObjectData> objectsData, std::vector<VkCommandBuffer>& buffers);
 private:
 	Engine::Core::Renderer* m_renderer;
 	std::vector<VkDescriptorSet> m_Dset;
@@ -57,7 +57,7 @@ private:
 
 	VkRenderPass m_ViewportRenderPass; //done
 	VkPipeline m_ViewportPipeline; //done
-	//VkCommandPool m_ViewportCommandPool;
+	VkCommandPool m_ViewportCommandPool;
 	std::vector<VkFramebuffer> m_ViewportFramebuffers; //done
 	std::vector<VkCommandBuffer> m_ViewportCommandBuffers; //done
 };
