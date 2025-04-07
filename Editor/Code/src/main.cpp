@@ -19,6 +19,5 @@ int main()
     app.Create(1440, 1080);
     app.Run();
     app.Destroy();
-    std::this_thread::sleep_for(std::chrono::duration<float>(10.f));
     return 0;
 }

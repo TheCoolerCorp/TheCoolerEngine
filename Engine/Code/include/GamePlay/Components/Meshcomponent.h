@@ -24,9 +24,9 @@ namespace Engine
 
 			ENGINE_API void Destroy();
 
-			ENGINE_API void SetMesh(Resource::Mesh* a_mesh);
+			ENGINE_API void SetMesh(Ref<Resource::Mesh> a_mesh);
 
-			ENGINE_API void SetTexture(Resource::Texture* a_texture);
+			ENGINE_API void SetTexture(Ref<Resource::Texture> a_texture);
 
 			ENGINE_API static ComponentType GetType() { return ComponentType::MESH; }
 
@@ -34,13 +34,13 @@ namespace Engine
 
 			ENGINE_API static void RemoveComponent(uint32_t a_id);
 
-			ENGINE_API Resource::Mesh* GetMesh() { return m_mesh; }
-			ENGINE_API Resource::Texture* GetTexture() { return m_texture; }
+			ENGINE_API Ref<Resource::Mesh> GetMesh() { return m_mesh; }
+			ENGINE_API Ref<Resource::Texture> GetTexture() { return m_texture; }
 
 			//static MeshComponent* FindComponent(uint32_t a_id)
 		private:
-			Resource::Mesh* m_mesh = nullptr;
-			Resource::Texture* m_texture = nullptr;
+			Ref<Resource::Mesh> m_mesh = nullptr;
+			Ref<Resource::Texture> m_texture = nullptr;
 		};
 	}
 }

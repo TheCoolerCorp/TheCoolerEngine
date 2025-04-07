@@ -20,8 +20,8 @@ namespace Engine
 			ServiceLocator::ProvideTransformSystem(m_transformSystem);
 			ServiceLocator::ProvideRendererSystem(m_meshRendererSystem);
 
-			Resource::Mesh* t_mesh = m_resourceManager->CreateResource<Resource::Mesh>("Assets/Meshes/viking_room.obj");
-			Resource::Texture* t_texture = m_resourceManager->CreateResource<Resource::Texture>("Assets/Textures/viking_room.png");
+			Ref<Resource::Mesh> t_mesh = m_resourceManager->CreateResource<Resource::Mesh>("Assets/Meshes/viking_room.obj");
+			Ref<Resource::Texture> t_texture = m_resourceManager->CreateResource<Resource::Texture>("Assets/Textures/viking_room.png");
 			t_mesh->Load(a_renderer);
 			t_texture->Load(a_renderer);
 
