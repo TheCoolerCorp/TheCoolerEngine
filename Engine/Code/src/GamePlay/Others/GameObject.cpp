@@ -20,8 +20,6 @@ namespace Engine
 			//m_idBitset.set(m_id);
 
 			AddComponent<TransformComponent>();
-			GetComponent<TransformComponent>()->Create();
-
 		}
 
 		GameObject::GameObject(Math::vec3 a_position, Math::vec3 a_rotation, Math::vec3 a_scale)
@@ -35,8 +33,6 @@ namespace Engine
 			m_idBitset.set(m_id);*/
 
 			AddComponent<TransformComponent>();
-			GetComponent<TransformComponent>()->Create(a_position, a_rotation, a_scale);
-
 		}
 
 

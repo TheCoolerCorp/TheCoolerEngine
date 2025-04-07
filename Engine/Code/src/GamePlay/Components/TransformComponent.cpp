@@ -13,7 +13,7 @@ namespace Engine
 			return ComponentType::TRANSFORM;
 		}
 
-		ComponentType TransformComponent::Create(Math::vec3 a_pos, Math::quat a_rot, Math::vec3 a_scale, uint32_t& a_outId)
+		/*ComponentType TransformComponent::Create(Math::vec3 a_pos, Math::quat a_rot, Math::vec3 a_scale, uint32_t& a_outId)
 		{
 			m_transform = new Math::Transform(a_pos, a_rot, a_scale);
 			a_outId = ServiceLocator::GetTransformSystem()->AddComponent(this);
@@ -25,13 +25,7 @@ namespace Engine
 			m_transform = new Math::Transform(a_pos, a_rot, a_scale);
 			a_outId = ServiceLocator::GetTransformSystem()->AddComponent(this);
 			return ComponentType::TRANSFORM;
-		}
-
-
-		void TransformComponent::Update() const
-		{
-			m_transform->Update();
-		}
+		}*/
 
 		void TransformComponent::Destroy()
 		{
