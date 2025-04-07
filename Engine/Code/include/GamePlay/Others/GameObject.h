@@ -99,7 +99,7 @@ namespace Engine
 				}
 
 			private:
-				std::unordered_map<ComponentType, uint32_t> m_compsId;
+				std::unordered_map<ComponentType, uint32_t> m_compsId = std::unordered_map<ComponentType, uint32_t>(0);
 			};
 
 		

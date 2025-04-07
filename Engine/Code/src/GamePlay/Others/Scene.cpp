@@ -25,13 +25,14 @@ namespace Engine
 			t_mesh->Load(a_renderer);
 			t_texture->Load(a_renderer);
 
-			GameObject t_object = GameObject(Math::vec3(0.f), Math::vec3(0.f, Math::ToRadians(270.f), 0.f), Math::vec3(1.f));
-			t_object.AddComponent<MeshComponent>();
+			GameObject* t_object = new GameObject(Math::vec3(0.f), Math::vec3(0.f, Math::ToRadians(270.f), 0.f), Math::vec3(1.f));
+			t_object->AddComponent<MeshComponent>();
 
-			MeshComponent* t_component = t_object.GetComponent<MeshComponent>();
 
-			t_object.GetComponent<MeshComponent>()->SetMesh(t_mesh);
-			t_object.GetComponent<MeshComponent>()->SetTexture(t_texture);
+			t_object->GetComponent<MeshComponent>()->SetMesh(t_mesh);
+			t_object->GetComponent<MeshComponent>()->SetTexture(t_texture);
+
+			m_objs.push_back(t_object);
 		}
 
 		void Scene::Update(Core::Renderer* a_renderer)
@@ -54,7 +55,7 @@ namespace Engine
 
 		void Scene::Draw(Core::Renderer* a_renderer, Core::Window::IWindow* a_window, Camera* a_camera)
 		{
-			//m_meshRendererSystem->Render(a_renderer, a_window, a_camera);
+			m_meshRendererSystem->Render(a_renderer, a_window, a_camera);
 		}
 
 		void Scene::Destroy(Core::Renderer* a_renderer)

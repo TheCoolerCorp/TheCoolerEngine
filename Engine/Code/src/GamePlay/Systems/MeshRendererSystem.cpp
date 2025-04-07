@@ -31,6 +31,17 @@ namespace Engine
 
 		void MeshRendererSystem::Render(Core::Renderer* a_renderer, Core::Window::IWindow* a_window, GamePlay::Camera* a_camera)
 		{
+			std::vector<Core::RHI::IBuffer*> m_vertexBuffers;
+			std::vector<Core::RHI::IBuffer*> m_indexesBuffers;
+			std::vector<uint32_t> m_indexesCount;
+			for (int i = 0; i < m_components.size(); ++i)
+			{
+				m_vertexBuffers.push_back(m_components.at(i)->GetMesh()->GetVertexBuffer());
+				m_indexesBuffers.push_back(m_components.at(i)->GetMesh()->GetIndexBuffer());
+				m_indexesCount.push_back(m_components.at(i)->GetMesh()->GetNbIndices());
+			}
+
+			a_renderer->GetSwapChain()->DrawFrame(a_window, a_renderer->GetLogicalDevice(), a_renderer->GetCommandPool(), a_renderer->GetSurface(), a_renderer->GetPhysicalDevice(), a_renderer->GetRenderPass(), m_renderDescriptors, m_vertexBuffers, m_indexesBuffers, m_indexesCount, a_camera);
 			/*const std::vector<int>& t_ids = a_componentsPool.GetIds();
 			std::unordered_map<int, Core::RHI::IBuffer*> t_vertexBuffers;
 			std::unordered_map<int, Core::RHI::IBuffer*> t_indexBuffers;
@@ -44,7 +55,6 @@ namespace Engine
 				t_nbIndices.emplace(t_id, t_mesh->GetNbIndices());
 			}
 
-			a_renderer.GetSwapChain()->DrawFrame(a_window, a_renderer.GetLogicalDevice(), a_renderer.GetCommandPool(), a_renderer.GetSurface(), a_renderer.GetPhysicalDevice(), a_renderer.GetRenderPass(), m_renderDescriptors, t_ids, t_vertexBuffers, t_indexBuffers, t_nbIndices, a_camera);
 
 			t_nbIndices.clear();
 			t_indexBuffers.clear();
@@ -70,6 +80,7 @@ namespace Engine
 			if (m_availableIndexes.empty())
 			{
 				m_components.push_back(a_meshComponent);
+				m_pendingComponents.push_back((int)(m_components.size() - 1));
 				return static_cast<uint32_t>(m_components.size() - 1);
 			}
 			for (const uint32_t t_availableIndex : m_availableIndexes)

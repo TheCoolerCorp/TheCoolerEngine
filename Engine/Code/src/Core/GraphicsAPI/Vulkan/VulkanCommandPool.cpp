@@ -79,7 +79,7 @@ namespace Engine
 				mCommandBuffers.push_back(t_commandBuffers);
 			}
 
-			void VulkanCommandPool::RecordCommandBuffer(const VkCommandBuffer a_commandBuffer, const uint32_t a_imageIndex, const VkRenderPass a_renderPass, VulkanSwapchain* a_swapChain, const VulkanGraphicPipeline* a_graphicPipeline, const std::unordered_map<int, Core::RHI::IRenderObject*>& a_renderObjects, const std::vector<int>& a_ids, const std::unordered_map<int, Core::RHI::IBuffer*>& a_vertexBuffers, const std::unordered_map<int, Core::RHI::IBuffer*>& a_indexBuffers, const std::unordered_map<int, uint32_t>& a_nbIndices, const GamePlay::Camera* a_camera)
+			void VulkanCommandPool::RecordCommandBuffer(const VkCommandBuffer a_commandBuffer, const uint32_t a_imageIndex, const VkRenderPass a_renderPass, VulkanSwapchain* a_swapChain, const VulkanGraphicPipeline* a_graphicPipeline, const std::vector<Core::RHI::IRenderObject*>& a_renderObjects, const std::vector<Core::RHI::IBuffer*>& a_vertexBuffers, const std::vector<Core::RHI::IBuffer*>& a_indexBuffers, const std::vector<uint32_t>& a_nbIndices, const GamePlay::Camera* a_camera)
 			{
 				const VkExtent2D t_swapChainExtent = a_swapChain->GetExtent2D();
 				const VkPipeline t_pipeline = a_graphicPipeline->GetPipeline();
@@ -125,19 +125,24 @@ namespace Engine
 				const VkDescriptorSet t_cameraDescriptorSet = a_camera->GetDescriptor()->CastVulkan()->GetDescriptorSet();
 				vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, t_layout, 0, 1, &t_cameraDescriptorSet, 0, nullptr);
 
-				for (int i = 0; i < static_cast<int>(a_ids.size()); ++i)
+				for (int i = 0; i < a_renderObjects.size(); ++i)
 				{
-					VkBuffer t_vertexBuffer = a_vertexBuffers.at(a_ids[i])->CastVulkan()->GetBuffer();
-					constexpr VkDeviceSize t_offsets[] = { 0 };
-					vkCmdBindVertexBuffers(a_commandBuffer, 0, 1, &t_vertexBuffer, t_offsets);
+					if (a_vertexBuffers.at(i)->CastVulkan()->GetBuffer() != nullptr)
+					{
+						VkBuffer t_vertexBuffer = a_vertexBuffers.at(i)->CastVulkan()->GetBuffer();
+						constexpr VkDeviceSize t_offsets[] = { 0 };
+						vkCmdBindVertexBuffers(a_commandBuffer, 0, 1, &t_vertexBuffer, t_offsets);
+					}
 
-					vkCmdBindIndexBuffer(a_commandBuffer, a_indexBuffers.at(a_ids[i])->CastVulkan()->GetBuffer(), 0, VK_INDEX_TYPE_UINT32);
+					if (a_indexBuffers.at(i)->CastVulkan()->GetBuffer() != nullptr)
+					{
+						vkCmdBindIndexBuffer(a_commandBuffer, a_indexBuffers.at(i)->CastVulkan()->GetBuffer(), 0, VK_INDEX_TYPE_UINT32);
+					}
 
-					vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, t_layout, 1, 1, &a_renderObjects.at(a_ids[i])->CastVulkan()->GetDescriptorSets()[a_imageIndex], 0, nullptr);
+					vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, t_layout, 1, 1, &a_renderObjects.at(i)->CastVulkan()->GetDescriptorSets()[a_imageIndex], 0, nullptr);
 
-					vkCmdDrawIndexed(a_commandBuffer, a_nbIndices.at(a_ids[i]), 1, 0, 0, 0);
+					vkCmdDrawIndexed(a_commandBuffer, a_nbIndices.at(i), 1, 0, 0, 0);
 				}
-
 				vkCmdEndRenderPass(a_commandBuffer);
 
 				VK_CHECK(vkEndCommandBuffer(a_commandBuffer), "failed to end command buffer!");

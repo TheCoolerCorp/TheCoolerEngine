@@ -39,6 +39,7 @@ namespace Engine
 		{
 			while (!m_mainWindow->ShouldClose())
 			{
+				m_currentScene->Update(m_renderer);
 				m_currentScene->Draw(m_renderer, m_mainWindow, m_camera);
 				auto t_now = std::chrono::high_resolution_clock::now();
 				m_deltaTime = std::chrono::duration<float>(t_now - m_lastTime).count();

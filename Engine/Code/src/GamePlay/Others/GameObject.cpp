@@ -19,8 +19,8 @@ namespace Engine
 			//}
 			//m_idBitset.set(m_id);
 
-			//AddComponent<TransformComponent>();
-			//GetComponent<TransformComponent>()->Create();
+			AddComponent<TransformComponent>();
+			GetComponent<TransformComponent>()->Create();
 
 		}
 
@@ -32,10 +32,10 @@ namespace Engine
 			{
 				m_id = Utils::GenerateRandomInt(0, INT32_MAX);
 			}
-			m_idBitset.set(m_id);
+			m_idBitset.set(m_id);*/
 
 			AddComponent<TransformComponent>();
-			GetComponent<TransformComponent>()->Create(a_position, a_rotation, a_scale);*/
+			GetComponent<TransformComponent>()->Create(a_position, a_rotation, a_scale);
 
 		}
 
