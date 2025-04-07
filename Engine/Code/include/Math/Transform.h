@@ -48,7 +48,7 @@ namespace Engine
 			ENGINE_API void SetNeedToUpdate(const bool a_needToUpdate) { m_needUpdate = a_needToUpdate; }
 
 		private:
-			bool m_needUpdate = false;
+			bool m_needUpdate = true;
 			vec3 m_pos;
 			quat m_rot;
 			vec3 m_scale;

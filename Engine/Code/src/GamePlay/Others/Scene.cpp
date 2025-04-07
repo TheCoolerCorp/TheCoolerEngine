@@ -67,6 +67,12 @@ namespace Engine
 
 
 			m_resourceManager->DestroyAll(a_renderer);
+
+			for (int i = 0; i < m_objs.size(); ++i)
+			{
+				delete m_objs[i];
+			}
+			m_objs.clear();
 		}
 	}
 }
