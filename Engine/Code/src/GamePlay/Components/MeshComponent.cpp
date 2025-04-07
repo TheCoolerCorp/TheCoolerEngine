@@ -23,13 +23,13 @@ namespace Engine
 			m_mesh = nullptr;
 		}
 
-		void MeshComponent::SetMesh(Resource::Mesh* a_mesh)
+		void MeshComponent::SetMesh(Ref<Resource::Mesh> a_mesh)
 		{
 			// Set the mesh to use.
 			m_mesh = a_mesh;
 		}
 
-		void MeshComponent::SetTexture(Resource::Texture* a_texture)
+		void MeshComponent::SetTexture(Ref<Resource::Texture> a_texture)
 		{
 			// Set the texture to use.
 			m_texture = a_texture;
