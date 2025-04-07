@@ -19,15 +19,5 @@ namespace Engine
 		{
 			m_transform = mat4::TRS(m_pos, m_rot, m_scale);
 		}
-
-		void Transform::Update()
-		{
-			if (!m_needUpdate)
-			{
-				return;
-			}
-			m_transform = mat4::TRS(m_pos, m_rot, m_scale);
-			m_needUpdate = false;
-		}
 	}
 }

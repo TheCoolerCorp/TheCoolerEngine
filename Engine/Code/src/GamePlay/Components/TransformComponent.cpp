@@ -27,12 +27,6 @@ namespace Engine
 			return ComponentType::TRANSFORM;
 		}*/
 
-
-		void TransformComponent::Update() const
-		{
-			m_transform->Update();
-		}
-
 		void TransformComponent::Destroy()
 		{
 			delete m_transform;

@@ -13,7 +13,13 @@ namespace Engine
 		{
 			for (const TransformComponent* t_component : m_components)
 			{
-				t_component->Update(); // NON
+				Math::Transform* t_transform = t_component->GetTransform();
+				if (t_transform->GetNeedToUpdate())
+				{
+					Math::mat4 t_trs = Math::mat4::TRS(t_transform->GetPosition(), t_transform->GetRotation(), t_transform->GetScale());
+					t_transform->SetMatrix(t_trs);
+					t_transform->SetNeedToUpdate(false);
+				}
 			}
 		}
 
