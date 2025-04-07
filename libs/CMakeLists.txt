@@ -11,6 +11,11 @@ add_subdirectory(glfw)
 # Refureku
 #add_subdirectory(Refureku/Refureku/Library)
 
+#Jolt
+#set(JPH_DIR JoltPhysics/Jolt)
+
+#add_subdirectory(${JPH_DIR})
+
 # IMGUI
 set(IMGUI_FILES_LOCATION "imgui")
 file(GLOB IMGUI_SOURCES_FILES "${IMGUI_FILES_LOCATION}/*.cpp")

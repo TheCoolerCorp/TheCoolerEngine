@@ -39,6 +39,7 @@ target_link_libraries(Engine PUBLIC assimp::assimp)
 
 target_link_libraries(Engine PUBLIC glfw)
 
+#target_link_libraries(Engine PUBLIC Jolt)
 
 #target_link_directories(Engine PUBLIC "libs/RefurekuGenerator/Bin")
 
