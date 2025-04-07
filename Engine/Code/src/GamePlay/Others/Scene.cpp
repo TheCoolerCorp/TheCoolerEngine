@@ -63,6 +63,7 @@ namespace Engine
 			m_meshRendererSystem->Destroy(a_renderer);
 			delete m_meshRendererSystem;
 
+			m_transformSystem->Destroy();
 			delete m_transformSystem;
 
 
