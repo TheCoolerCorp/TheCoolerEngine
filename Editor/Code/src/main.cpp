@@ -1,6 +1,3 @@
-#include <iostream>
-#include <thread>
-
 #include "Core/Application.h"
 #include "Core/Logger/Logger.h"
 #include "Core/Assertion/Assertion.h"
@@ -8,7 +5,6 @@
 int main()
 {
     LOG_INFO("Starting...");
-    //Engine::Core::Debugging::Logger::Get().Log("bijour", Engine::Core::Debugging::LogLevel::INFO, Engine::Core::Debugging::ColorMap.at(Engine::Core::Debugging::LogColor::BOLD_YELLOW), __FILE__, __LINE__);
 
 #ifdef TCDEBUG
     LOG_INFO("Debug mode enabled");
@@ -19,6 +15,5 @@ int main()
     app.Create(1440, 1080);
     app.Run();
     app.Destroy();
-    std::this_thread::sleep_for(std::chrono::duration<float>(10.f));
     return 0;
 }
