@@ -1,7 +1,7 @@
-#include "Core/Application.h"
+//#include "Core/Application.h"
 #include "Core/Logger/Logger.h"
 #include "Core/Assertion/Assertion.h"
-
+#include "Application.h"
 int main()
 {
     LOG_INFO("Starting...");

@@ -53,6 +53,7 @@ namespace Engine
 			RHI::ISwapChain* GetSwapChain() { return m_swapChain; }
 			RHI::ISurface* GetSurface() { return m_surface; }
 			RHI::IRenderPass* GetRenderPass() { return m_renderPass; }
+			RHI::IInstance* GetInstance() { return m_apiInstance; }
 		private:
 			RendererType m_type = RendererType::VULKAN;
 
