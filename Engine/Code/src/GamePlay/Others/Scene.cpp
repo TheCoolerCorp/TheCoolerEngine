@@ -100,6 +100,7 @@ namespace Engine
 
 
 			m_resourceManager->DestroyAll(a_renderer);
+			delete m_resourceManager;
 
 			for (int i = 0; i < m_objs.size(); ++i)
 			{

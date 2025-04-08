@@ -70,6 +70,7 @@ namespace Engine
 				auto& comp = m_components[i];
 				comp->Destroy();
 				m_renderDescriptors[i]->Destroy(a_renderer->GetLogicalDevice());
+				a_renderer->GetInterface()->DestroyRenderObject(m_renderDescriptors[i]);
 				delete comp;
 			}
 			m_components.clear();
