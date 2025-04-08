@@ -648,7 +648,7 @@ void VulkanImGuiRenderer::SceneRenderPassImGui(VkRecordCommandBufferInfo info,
 
 	VK_CHECK(vkEndCommandBuffer(m_ViewportCommandBuffers[currentFrame]), "failed to record command buffer!")
 
-	buffers[info.bufferIndex] = m_ViewportCommandBuffers[currentFrame];
+	buffers.push_back(m_ViewportCommandBuffers[currentFrame]);
 }
 
 void VulkanImGuiRenderer::ViewportRenderPass(Engine::Core::GraphicsAPI::VkRecordCommandBufferInfo info,
@@ -706,4 +706,6 @@ void VulkanImGuiRenderer::ViewportRenderPass(Engine::Core::GraphicsAPI::VkRecord
 	vkCmdEndRenderPass(info.commandBuffer);
 
 	VK_CHECK(vkEndCommandBuffer(info.commandBuffer), "failed to end command buffer!");
+
+	buffers.push_back(info.commandBuffer);
 }

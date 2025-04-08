@@ -18,23 +18,23 @@ void ImGuiLayer::Init(Engine::Core::Window::IWindow* window, Engine::Core::Rende
 	//we only have vulkan so its hardcoded for now
 	m_imGuiRenderer = new VulkanImGuiRenderer;
 	m_imGuiRenderer->Init(window, renderer);
-	Engine::Core::GraphicsAPI::VulkanRenderPass::AddRenderPassCallback([this, renderer]
-		{
-			vkQueueWaitIdle(renderer->GetLogicalDevice()->CastVulkan()->GetGraphicsQueue());
-			this->DrawUpdate();
-		}, 0);
+	//Engine::Core::GraphicsAPI::VulkanRenderPass::AddRenderPassCallback([this, renderer]
+	//	{
+	//		vkQueueWaitIdle(renderer->GetLogicalDevice()->CastVulkan()->GetGraphicsQueue());
+	//		this->DrawUpdate();
+	//	}, 0);
 }
 
 void ImGuiLayer::Update()
 {
-	
+	NewFrame();
+	ImGuiDraw();
+	Render();
 }
 
 void ImGuiLayer::DrawUpdate()
 {
-	NewFrame();
-	ImGuiDraw();
-	Render();
+	
 }
 
 void ImGuiLayer::Destroy()

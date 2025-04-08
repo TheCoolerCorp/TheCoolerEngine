@@ -259,86 +259,66 @@ and configured for rendering.
 
 				const VkSemaphore t_signalSemaphores[] = { m_renderFinishedSemaphores[m_currentFrame] };
 
+				std::vector<VkCommandBuffer> submitCommandBuffers;
+
 				int renderPassCount = VulkanRenderPass::GetRenderPassCount()+1; //+1 for scene renderpass that's separate
 				for (int a = 0; a< renderPassCount; a++)
 				{
 					//wait for the buffer to no longer be in flight
-					if (a!=0)
+					/*if (a!=0)
 					{
 						vkWaitForFences(t_device, 1, &m_inFlightFences[m_currentFrame], VK_TRUE, UINT64_MAX);
 						vkResetFences(t_device, 1, &m_inFlightFences[m_currentFrame]);
-					}
+					}*/
 
 					// Record command buffers for rendering
-					std::vector<VkCommandBuffer> t_commandBuffers;
-					for (int i = 0; i < static_cast<int>(t_commandPool->mCommandBuffers.size()); ++i)
-					{
-						const VkCommandBuffer t_commandBuffer = std::get<VkCommandBuffer>(t_commandPool->mCommandBuffers[i][m_currentFrame]);
-						const VkRenderPass t_renderPass = std::get<VkRenderPass>(t_commandPool->mCommandBuffers[i][m_currentFrame]);
-						const VulkanGraphicPipeline* t_pipeline = std::get<VulkanGraphicPipeline*>(t_commandPool->mCommandBuffers[i][m_currentFrame]);
+					const VkCommandBuffer t_commandBuffer = std::get<VkCommandBuffer>(t_commandPool->mCommandBuffers[0][m_currentFrame]);
+					const VkRenderPass t_renderPass = std::get<VkRenderPass>(t_commandPool->mCommandBuffers[0][m_currentFrame]);
+					const VulkanGraphicPipeline* t_pipeline = std::get<VulkanGraphicPipeline*>(t_commandPool->mCommandBuffers[0][m_currentFrame]);
 
-						t_commandBuffers.push_back(t_commandBuffer);
-						vkResetCommandBuffer(t_commandBuffer, 0);
+					vkResetCommandBuffer(t_commandBuffer, 0);
 
-						VkRecordCommandBufferInfo info;
-						info.commandBuffer = t_commandBuffer;
-						info.imageIndex = t_imageIndex;
-						info.renderPass = t_renderPass;
-						info.swapChain = this;
-						info.graphicPipeline = t_pipeline;
-						info.camera = camera;
-						info.bufferIndex = i;
+					VkRecordCommandBufferInfo info;
+					info.commandBuffer = t_commandBuffer;
+					info.imageIndex = t_imageIndex;
+					info.renderPass = t_renderPass;
+					info.swapChain = this;
+					info.graphicPipeline = t_pipeline;
+					info.camera = camera;
 
-						//RunSceneRenderPass records the scene renderpass and
-						// RunRenderPass here does the imgui renderpass
-						if (a == 0)
-							VulkanRenderPass::RunSceneRenderPass(info, a_objectsData, t_commandBuffers);
-						else
-							VulkanRenderPass::RunRenderPass(info, a_objectsData, t_commandBuffers);
-					}
-
-
-					// Set up the submit info struct for queue submission
-					VkSubmitInfo t_submitInfo{};
-					t_submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-						
-					const VkSemaphore t_waitSemaphores[] = { m_imageAvailableSemaphores[m_currentFrame] };
-					constexpr VkPipelineStageFlags t_waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
-					if (a==0)
-					{
-						t_submitInfo.waitSemaphoreCount = 1;
-						t_submitInfo.pWaitSemaphores = t_waitSemaphores;
-					}
+					//RunSceneRenderPass records the scene renderpass and
+					// RunRenderPass here does the imgui renderpass
+					if (a == 0)
+						VulkanRenderPass::RunSceneRenderPass(info, a_objectsData, submitCommandBuffers);
 					else
-					{
-						t_submitInfo.waitSemaphoreCount = 0;
-					}
-					t_submitInfo.pWaitDstStageMask = t_waitStages;
-
-					t_submitInfo.commandBufferCount = static_cast<uint32_t>(t_commandPool->mCommandBuffers.size());
-					t_submitInfo.pCommandBuffers = t_commandBuffers.data();
-
-					if (a==0)
-					{
-						t_submitInfo.signalSemaphoreCount = 0;
-					}
-					else
-					{
-						t_submitInfo.signalSemaphoreCount = 1;
-						t_submitInfo.pSignalSemaphores = t_signalSemaphores;
-					}
-					
-
-					// Submit the command buffer for execution on the graphics queue
-					VK_CHECK(vkQueueSubmit(t_logicalDevice->GetGraphicsQueue(), 1, &t_submitInfo, m_inFlightFences[m_currentFrame]), "failed to submit draw command buffer!");
+						VulkanRenderPass::RunRenderPass(info, a_objectsData, submitCommandBuffers);
 
 					//runs the post-renderpass callbacks and advances to the next renderpass
 					VulkanRenderPass::RunRenderPassCallbacks();
 					VulkanRenderPass::NextRenderPass();
-					t_commandBuffers.clear();
 				}
 				
+				// Set up the submit info struct for queue submission
+				VkSubmitInfo t_submitInfo{};
+				t_submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 
+				const VkSemaphore t_waitSemaphores[] = { m_imageAvailableSemaphores[m_currentFrame] };
+				constexpr VkPipelineStageFlags t_waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
+				t_submitInfo.waitSemaphoreCount = 1;
+				t_submitInfo.pWaitSemaphores = t_waitSemaphores;
+				t_submitInfo.pWaitDstStageMask = t_waitStages;
+
+				t_submitInfo.commandBufferCount = static_cast<uint32_t>(submitCommandBuffers.size());
+				t_submitInfo.pCommandBuffers = submitCommandBuffers.data();
+
+				t_submitInfo.signalSemaphoreCount = 1;
+				t_submitInfo.pSignalSemaphores = t_signalSemaphores;
+
+
+				// Submit the command buffer for execution on the graphics queue
+				VK_CHECK(vkQueueSubmit(t_logicalDevice->GetGraphicsQueue(), 1, &t_submitInfo, m_inFlightFences[m_currentFrame]), "failed to submit draw command buffer!");
+
+				vkQueueWaitIdle(t_logicalDevice->GetGraphicsQueue());
 
 				// Set up the present info struct for presenting the rendered frame
 				VkPresentInfoKHR t_presentInfo{};
