@@ -57,8 +57,9 @@ namespace Engine
 
 		void TransformSystem::Destroy()
 		{
-			for (const TransformComponent* t_component : m_components)
+			for (TransformComponent* t_component : m_components)
 			{
+				t_component->Destroy();
 				delete t_component;
 			}
 			m_components.clear();

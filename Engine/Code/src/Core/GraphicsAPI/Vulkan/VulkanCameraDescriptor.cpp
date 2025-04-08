@@ -51,6 +51,7 @@ void Engine::Core::GraphicsAPI::VulkanCameraDescriptor::Create(RHI::ILogicalDevi
 void Engine::Core::GraphicsAPI::VulkanCameraDescriptor::Destroy(RHI::ILogicalDevice* a_logicalDevice)
 {
 	m_uniform->Destroy(a_logicalDevice);
+    delete m_uniform;
 }
 
 void Engine::Core::GraphicsAPI::VulkanCameraDescriptor::Update(RHI::ILogicalDevice* a_logicalDevice, void* a_uploadData) 
