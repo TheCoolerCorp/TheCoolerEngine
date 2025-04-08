@@ -9,13 +9,26 @@ namespace Engine
 			
 		}
 
-		void TransformSystem::Update() const
+		void TransformSystem::Update()
 		{
-			for (const TransformComponent* t_component : m_components)
+			for (TransformComponent* t_component : m_components)
 			{
+				uint32_t t_componentParentId = t_component->GetParentID();
 				Math::Transform* t_transform = t_component->GetTransform();
+
 				if (t_transform->GetNeedToUpdate())
 				{
+					if (t_componentParentId != -1)
+					{
+						Math::mat4 newLocalMatrix = Math::mat4::TRS(t_transform->GetPosition(), t_transform->GetRotation(), t_transform->GetScale());
+						Math::mat4 GlobalParentMatrix = GetParentsMatrix(t_componentParentId);
+						Math::mat4 newGlobalMatrix = GlobalParentMatrix * newLocalMatrix;
+
+						t_component->GetTransform()->SetMatrix(newGlobalMatrix);
+						
+						continue;
+					}
+
 					Math::vec3 pos = t_transform->GetPosition();
 					Math::quat rot = t_transform->GetRotation();
 					Math::vec3 scale = t_transform->GetScale();
@@ -24,6 +37,22 @@ namespace Engine
 					t_transform->SetNeedToUpdate(false);
 				}
 			}
+		}
+
+		Math::mat4 TransformSystem::GetParentsMatrix(uint32_t a_id)
+		{
+			TransformComponent* t_firstParentComp = m_components[a_id];
+
+			if (t_firstParentComp->GetTransform()->GetNeedToUpdate())
+			{
+				uint32_t otherParent = m_components[a_id]->GetParentID();
+				if (otherParent != -1)
+				{
+					t_firstParentComp->GetTransform()->SetNeedToUpdate(false);
+					return t_firstParentComp->GetTransform()->GetTransformMatrix() * GetParentsMatrix(otherParent);
+				}
+			}
+			return t_firstParentComp->GetTransform()->GetTransformMatrix();
 		}
 
 		void TransformSystem::Destroy()

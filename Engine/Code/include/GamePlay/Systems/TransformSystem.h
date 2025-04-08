@@ -17,7 +17,7 @@ namespace Engine
 			ENGINE_API ~TransformSystem() override = default;
 
 			ENGINE_API void Create();
-			ENGINE_API void Update() const;
+			ENGINE_API void Update();
 			ENGINE_API void Destroy();
 
 			ENGINE_API uint32_t AddComponent(TransformComponent* a_component);
@@ -26,6 +26,8 @@ namespace Engine
 
 			ENGINE_API uint32_t GetSize() { return static_cast<uint32_t>(m_components.size()); }
 		private:
+			Math::mat4 GetParentsMatrix(uint32_t a_id);
+
 			std::vector<TransformComponent*> m_components{};
 			std::vector<uint32_t> m_availableIds{};
 		};
