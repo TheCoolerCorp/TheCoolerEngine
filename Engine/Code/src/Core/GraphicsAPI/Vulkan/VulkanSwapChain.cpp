@@ -27,7 +27,9 @@ namespace Engine
 			void VulkanSwapchain::Create(RHI::ISurface* a_surface, Window::IWindow* a_window, RHI::IPhysicalDevice* a_physicalDevice, RHI::ILogicalDevice* a_logicalDevice)
 			{
 				uint32_t t_imageCount = 0;
-				const VulkanSurface* t_surface = a_surface->CastVulkan();
+				VkDevice t_device = a_logicalDevice->CastVulkan()->GetVkDevice();
+				VulkanSurface* t_surface = a_surface->CastVulkan();
+				t_surface->SetupInfo(a_physicalDevice);
 				const VkSurfaceCapabilitiesKHR t_surfaceCapabilities = t_surface->GetSurfaceCapabilities();
 				const std::vector<VkSurfaceFormatKHR> t_surfaceFormats = t_surface->GetSurfaceFormats();
 				const std::vector<VkPresentModeKHR> t_surfacePresentModes = t_surface->GetSurfacePresentModes();
@@ -87,12 +89,12 @@ namespace Engine
 
 				t_createInfo.oldSwapchain = VK_NULL_HANDLE;
 
-				VK_CHECK(vkCreateSwapchainKHR(a_logicalDevice->CastVulkan()->GetVkDevice(), &t_createInfo, nullptr, &m_swapChain), "failed to create swap chain!");
+				VK_CHECK(vkCreateSwapchainKHR(t_device, &t_createInfo, nullptr, &m_swapChain), "failed to create swap chain!");
 
-				vkGetSwapchainImagesKHR(a_logicalDevice->CastVulkan()->GetVkDevice(), m_swapChain, &t_imageCount, nullptr);
+				vkGetSwapchainImagesKHR(t_device, m_swapChain, &t_imageCount, nullptr);
 				m_images.resize(t_imageCount);
 				m_imageViews.resize(t_imageCount);
-				vkGetSwapchainImagesKHR(a_logicalDevice->CastVulkan()->GetVkDevice(), m_swapChain, &t_imageCount, m_images.data());
+				vkGetSwapchainImagesKHR(t_device, m_swapChain, &t_imageCount, m_images.data());
 
 				m_swapChainImageFormat = t_formats.format;
 				m_swapChainExtent = t_extent;
@@ -101,7 +103,7 @@ namespace Engine
 				// Create imagesViews;
 				for (int i = 0; i < m_images.size(); ++i)
 				{
-					VulkanImage::CreateImageView(m_images[i], &m_imageViews[i], a_logicalDevice->CastVulkan()->GetVkDevice(), m_swapChainImageFormat, VK_IMAGE_ASPECT_COLOR_BIT);
+					VulkanImage::CreateImageView(m_images[i], &m_imageViews[i], t_device, m_swapChainImageFormat, VK_IMAGE_ASPECT_COLOR_BIT);
 
 
 					m_depthFormat = a_physicalDevice->CastVulkan()->FindSupportedFormat({ VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT },

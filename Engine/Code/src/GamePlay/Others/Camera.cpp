@@ -35,8 +35,14 @@ namespace Engine
 		{
 			ComputeInputs(a_inputHandler, a_window, a_deltaTime);
 
-			if (m_needToUpdate)
+			int t_width, t_height;
+			a_window->GetFramebufferSize(&t_width, &t_height);
+
+			const float t_aspect = static_cast<float>(t_width) / static_cast<float>(t_height);
+
+			if (m_needToUpdate || fabsf(t_aspect - m_aspect) > std::numeric_limits<float>::epsilon())
 			{
+				m_aspect = t_aspect;
 				const Math::mat4 t_proj = Math::mat4::Perspective(m_fovY, m_aspect, m_near, m_far);
 				const Math::mat4 t_view = Math::mat4::View(m_up, m_center, m_eye);
 				m_vp = t_proj * t_view;

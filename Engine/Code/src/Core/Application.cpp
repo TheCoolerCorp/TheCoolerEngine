@@ -26,13 +26,6 @@ namespace Engine
 
 			m_currentScene = new GamePlay::Scene();
 			m_currentScene->Create(m_renderer);
-
-			/*GamePlay::GameObject* t_obj = new GamePlay::GameObject(Math::vec3(0.f, 0.f, 0.f), Math::quat(Math::vec3(Math::ToRadians(90.f), Math::ToRadians(90.f), 0.f)), Math::vec3(1.f, 1.f, 1.f));
-			t_obj->AddComponent<GamePlay::MeshComponent>("Assets/Meshes/viking_room.obj", { m_renderer->GetLogicalDevice(), m_renderer->GetPhysicalDevice(), m_renderer->GetPipeline(), m_renderer->GetDescriptorPool(), m_renderer->GetCommandPool(), 3 }, m_renderer->GetInterface());
-			t_obj->AddComponent<GamePlay::TextureComponent>("Assets/Textures/viking_room.png", { m_renderer->GetLogicalDevice(), m_renderer->GetPhysicalDevice(), m_renderer->GetPipeline(), m_renderer->GetDescriptorPool(), m_renderer->GetCommandPool(), 3 }, m_renderer->GetInterface());
-			t_obj->Create(m_renderer->GetInterface(), { m_renderer->GetLogicalDevice(), m_renderer->GetPhysicalDevice(), m_renderer->GetPipeline(), m_renderer->GetDescriptorPool(), m_renderer->GetCommandPool(), 3 });
-			m_gameObjectDatas.push_back(t_obj->SubmitData());
-			m_gameObjects.push_back(t_obj);*/
 		}
 
 		void Application::Run()
@@ -52,19 +45,11 @@ namespace Engine
 
 		void Application::Destroy()
 		{
-			/*m_gameObjectDatas.clear();
-
-			for (int i = 0; i < m_gameObjects.size(); ++i)
-			{
-				m_gameObjects[i]->Destroy(m_renderer->GetInterface(), m_renderer->GetLogicalDevice());
-				delete m_gameObjects[i];
-			}
-			m_gameObjects.clear();*/
-
 			m_camera->Destroy(m_renderer);
 			delete m_camera;
 
 			m_currentScene->Destroy(m_renderer);
+			delete m_currentScene;
 
 			m_renderer->Destroy();
 			delete m_renderer;
