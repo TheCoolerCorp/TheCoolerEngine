@@ -37,6 +37,7 @@ namespace Engine
 
 		void Scene::Update(Core::Renderer* a_renderer)
 		{
+			m_objs[0]->GetComponent<TransformComponent>()->GetTransform()->Rotate(Math::vec3(0.05f, 0.05f,0.f));
 			m_transformSystem->Update();
 
 			std::vector<std::pair<int, Math::mat4>> syncro;
@@ -47,10 +48,12 @@ namespace Engine
 				if (t_meshId != -1)
 				{
 					Math::mat4 t_matrix = m_objs[i]->GetComponent<TransformComponent>()->GetTransform()->GetTransformMatrix();
+					t_matrix.Transpose(); // transpose ici
 					syncro.push_back({ t_meshId, t_matrix });
 				}
 			}
 			m_meshRendererSystem->Update(a_renderer, syncro);
+			syncro.clear();
 		}
 
 		void Scene::Draw(Core::Renderer* a_renderer, Core::Window::IWindow* a_window, Camera* a_camera)

@@ -16,7 +16,10 @@ namespace Engine
 				Math::Transform* t_transform = t_component->GetTransform();
 				if (t_transform->GetNeedToUpdate())
 				{
-					Math::mat4 t_trs = Math::mat4::TRS(t_transform->GetPosition(), t_transform->GetRotation(), t_transform->GetScale());
+					Math::vec3 pos = t_transform->GetPosition();
+					Math::quat rot = t_transform->GetRotation();
+					Math::vec3 scale = t_transform->GetScale();
+					Math::mat4 t_trs = Math::mat4::TRS(pos, rot, scale);
 					t_transform->SetMatrix(t_trs);
 					t_transform->SetNeedToUpdate(false);
 				}

@@ -160,7 +160,7 @@ namespace Engine
 
 				void* t_data;
 				vkMapMemory(a_logicalDevice->CastVulkan()->GetVkDevice(), m_uniforms[a_imageIndex]->GetMemory(), 0, sizeof(VulkanBuffer), 0, &t_data);
-				memcpy(t_data, a_data, sizeof(a_data));
+				memcpy(t_data, a_data, 16 * sizeof(float));
 				vkUnmapMemory(a_logicalDevice->CastVulkan()->GetVkDevice(), m_uniforms[a_imageIndex]->GetMemory());
 			}
 		}
