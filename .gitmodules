@@ -14,3 +14,6 @@
 [submodule "libs/Refureku"]
 	path = libs/Refureku
 	url = https://github.com/jsoysouvanh/Refureku.git
+[submodule "libs/GLFW"]
+	path = libs/GLFW
+	url = https://github.com/glfw/glfw.git
