@@ -20,8 +20,8 @@ namespace Engine
 			ServiceLocator::ProvideTransformSystem(m_transformSystem);
 			ServiceLocator::ProvideRendererSystem(m_meshRendererSystem);
 
-			Resource::Mesh* t_mesh = m_resourceManager->CreateResource<Resource::Mesh>("Assets/Meshes/viking_room.obj");
-			Resource::Texture* t_texture = m_resourceManager->CreateResource<Resource::Texture>("Assets/Textures/viking_room.png");
+			Ref<Resource::Mesh> t_mesh = m_resourceManager->CreateResource<Resource::Mesh>("Assets/Meshes/viking_room.obj");
+			Ref<Resource::Texture> t_texture = m_resourceManager->CreateResource<Resource::Texture>("Assets/Textures/viking_room.png");
 			t_mesh->Load(a_renderer);
 			t_texture->Load(a_renderer);
 
@@ -37,6 +37,7 @@ namespace Engine
 
 		void Scene::Update(Core::Renderer* a_renderer)
 		{
+			m_objs[0]->GetComponent<TransformComponent>()->GetTransform()->Rotate(Math::vec3(0.05f, 0.05f,0.f));
 			m_transformSystem->Update();
 
 			std::vector<std::pair<int, Math::mat4>> syncro;
@@ -47,10 +48,12 @@ namespace Engine
 				if (t_meshId != -1)
 				{
 					Math::mat4 t_matrix = m_objs[i]->GetComponent<TransformComponent>()->GetTransform()->GetTransformMatrix();
+					t_matrix.Transpose(); // transpose ici
 					syncro.push_back({ t_meshId, t_matrix });
 				}
 			}
 			m_meshRendererSystem->Update(a_renderer, syncro);
+			syncro.clear();
 		}
 
 		void Scene::Draw(Core::Renderer* a_renderer, Core::Window::IWindow* a_window, Camera* a_camera)

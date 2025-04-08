@@ -10,7 +10,7 @@ namespace Engine
 			{
 				resource->Unload(a_renderer);
 				resource->Destroy();
-				delete resource;
+				resource.reset();
 			}
 		}
 	}

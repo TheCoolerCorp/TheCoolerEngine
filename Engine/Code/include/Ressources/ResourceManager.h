@@ -20,40 +20,44 @@ namespace Engine
 		{
 		public:
 			template<typename Type, typename... Args>
-			Type* CreateResource(Args&&... args)
+			Ref<Type> CreateResource(Args&&... args)
 			{
 				static_assert(std::is_base_of<IResource, Type>::value);
-				//static_assert(std::is_member_function_pointer_v<decltype(&Type::Create)>);
+				static_assert(!std::is_same<IResource, Type>::value);
+				static_assert(std::is_member_function_pointer<decltype(&Type::Create)>::value);
 
-				Type* t_resource = new Type();
+				Ref<Type> t_resource = CreateRef<Type>();
 				t_resource->Create(std::forward<Args>(args)...);
 
 				for (auto& [id, resource] : m_resources)
 				{
 					if (resource == t_resource)
 					{
-						return static_cast<Type*>(resource);
+						return t_resource;
 					}
 				}
-				int t_randomId = Utils::GenerateRandomInt(0, INT16_MAX);
-				while (m_resources.find(t_randomId) != m_resources.end())
+
+				int t_id = -1;
+				int m_resourcesSize = static_cast<int>(m_resources.size());
+
+				if (m_resourcesSize != 0)
 				{
-					t_randomId = Utils::GenerateRandomInt(0, INT16_MAX);
+					t_id = m_resourcesSize;
 				}
-				m_resources.emplace(t_randomId, t_resource);
+				else
+				{
+					t_id = 0;
+				}
+
+				m_resources.emplace(t_id, t_resource);
 
 				return t_resource;
-
 			}
 
 			ENGINE_API void DestroyAll(Core::Renderer* a_renderer);
-			//ENGINE_API IResource* CreateResourceReference(ResourceType a_type, std::string a_path, std::string a_name, Core::RHI::ApiInterface* a_interface, Core::RHI::IPhysicalDevice* a_physicalDevice, Core::RHI::ILogicalDevice* a_logicalDevice, Core::RHI::ICommandPool* a_commandPool);
-			//ENGINE_API void DestroyResource(std::string a_name, Core::RHI::ILogicalDevice* a_logicalDevice);
-
-			//ENGINE_API IResource* GetResource(std::string a_name);
 
 		private:
-			std::unordered_map<int, IResource*> m_resources;
+			std::unordered_map<int, Ref<IResource>> m_resources;
 		};
 
 	}
