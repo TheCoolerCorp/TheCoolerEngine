@@ -91,8 +91,7 @@ namespace Engine
 
 			void GLwindow::GetFramebufferSize(int* a_width, int* a_height)
 			{
-				a_width = &m_width;
-				a_height = &m_height;
+				glfwGetFramebufferSize(m_window, a_width, a_height);
 			}
 
 			void GLwindow::CreateWindowSurface(RHI::IInstance* a_instance, RHI::ISurface* a_surface)
