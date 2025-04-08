@@ -12,9 +12,22 @@ add_subdirectory(glfw)
 #add_subdirectory(Refureku/Refureku/Library)
 
 #Jolt
-#set(JPH_DIR JoltPhysics/Jolt)
+set(PHYSICS_REPO_ROOT ${CMAKE_SOURCE_DIR}/libs/JoltPhysics)
 
-#add_subdirectory(${JPH_DIR})
+set(JPH_BUILD_DEMOS OFF CACHE BOOL "" FORCE)
+
+set(JPH_ENABLE_ASSERTS ON CACHE BOOL "" FORCE)
+
+include(${PHYSICS_REPO_ROOT}/Jolt/Jolt.cmake)
+
+target_compile_definitions(Jolt PUBLIC "$<$<CONFIG:RelWithDebInfo>:JPH_PROFILE_ENABLED;JPH_DEBUG_RENDERER>")
+target_compile_definitions(Jolt PUBLIC "$<$<CONFIG:Debug>:JPH_PROFILE_ENABLED;JPH_DEBUG_RENDERER>")
+
+option(FLOATING_POINT_EXCEPTIONS_ENABLED "Enable FPE in Jolt" OFF)
+if (FLOATING_POINT_EXCEPTIONS_ENABLED AND "${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
+    target_compile_definitions(Jolt PUBLIC "$<$<CONFIG:RelWithDebInfo>:JPH_FLOATING_POINT_EXCEPTIONS_ENABLED>")
+    target_compile_definitions(Jolt PUBLIC "$<$<CONFIG:Debug>:JPH_FLOATING_POINT_EXCEPTIONS_ENABLED>")
+endif()
 
 # IMGUI
 set(IMGUI_FILES_LOCATION "imgui")
