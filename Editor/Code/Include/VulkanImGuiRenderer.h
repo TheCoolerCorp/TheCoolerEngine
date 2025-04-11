@@ -18,6 +18,7 @@ public:
 	void Render() override;
 
 	void CreateDescriptorPool(VkDevice device);
+	void CreateSceneImageDescriptorSets();
 	void DrawSceneAsImage() override;
 
 	void ClearDescriptorSets();
@@ -51,13 +52,13 @@ private:
 	VkDescriptorPool m_pool;
 	ImDrawData* m_drawData = nullptr;
 
-	std::vector<VkImage> m_ViewportImages; //done
-	std::vector<VkDeviceMemory> m_DstImageMemory; //done
-	std::vector<VkImageView> m_ViewportImageViews; //done
+	std::vector<VkImage> m_ViewportImages; 
+	std::vector<VkDeviceMemory> m_DstImageMemory; 
+	std::vector<VkImageView> m_ViewportImageViews; 
 
-	VkRenderPass m_ViewportRenderPass; //done
-	VkPipeline m_ViewportPipeline; //done
+	VkRenderPass m_ViewportRenderPass; 
+	VkPipeline m_ViewportPipeline; 
 	VkCommandPool m_ViewportCommandPool;
-	std::vector<VkFramebuffer> m_ViewportFramebuffers; //done
-	std::vector<VkCommandBuffer> m_ViewportCommandBuffers; //done
+	std::vector<VkFramebuffer> m_ViewportFramebuffers;
+	std::vector<VkCommandBuffer> m_ViewportCommandBuffers; 
 };

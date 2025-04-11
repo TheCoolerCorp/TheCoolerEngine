@@ -30,6 +30,7 @@ namespace Engine
 			{
 				VkCommandBuffer commandBuffer;
 				uint32_t imageIndex;
+				uint32_t currentFrame;
 				VkRenderPass renderPass;
 				VulkanSwapchain* swapChain;
 				const VulkanGraphicPipeline* graphicPipeline;

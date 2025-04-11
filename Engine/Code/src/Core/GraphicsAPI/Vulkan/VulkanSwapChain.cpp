@@ -281,6 +281,7 @@ and configured for rendering.
 					VkRecordCommandBufferInfo info;
 					info.commandBuffer = t_commandBuffer;
 					info.imageIndex = t_imageIndex;
+					info.currentFrame = m_currentFrame;
 					info.renderPass = t_renderPass;
 					info.swapChain = this;
 					info.graphicPipeline = t_pipeline;
@@ -314,11 +315,11 @@ and configured for rendering.
 				t_submitInfo.signalSemaphoreCount = 1;
 				t_submitInfo.pSignalSemaphores = t_signalSemaphores;
 
-
 				// Submit the command buffer for execution on the graphics queue
 				VK_CHECK(vkQueueSubmit(t_logicalDevice->GetGraphicsQueue(), 1, &t_submitInfo, m_inFlightFences[m_currentFrame]), "failed to submit draw command buffer!");
 
-				vkQueueWaitIdle(t_logicalDevice->GetGraphicsQueue());
+				//vkWaitForFences(t_device, 1, &m_inFlightFences[m_currentFrame], VK_TRUE, UINT64_MAX);
+				//vkQueueWaitIdle(t_logicalDevice->GetGraphicsQueue());
 
 				// Set up the present info struct for presenting the rendered frame
 				VkPresentInfoKHR t_presentInfo{};

@@ -23,6 +23,8 @@
 //glfw includes
 #include <GLFW/glfw3.h>
 
+#include <utility>
+
 #include "GamePlay/Camera.h"
 
 using namespace Engine::Core::GraphicsAPI;
@@ -60,11 +62,11 @@ void VulkanImGuiRenderer::Init(IWindow* window, Renderer* renderer)
 	VulkanRenderPass::AddRenderPassFlag(FLAG_OVERRIDE_DEFAULT_RENDERPASS);
 	VulkanRenderPass::SetSceneRenderPass([this](VkRecordCommandBufferInfo info, std::vector<Engine::GamePlay::GameObjectData> data, std::vector<VkCommandBuffer>& buffers)
 		{
-			this->SceneRenderPassImGui(info, data, buffers);
+			this->SceneRenderPassImGui(info, std::move(data), buffers);
 		});
 	VulkanRenderPass::AddRenderPass([this](VkRecordCommandBufferInfo info, std::vector<Engine::GamePlay::GameObjectData> data, std::vector<VkCommandBuffer>& buffers)
 		{
-			this->ViewportRenderPass(info, data, buffers);
+			this->ViewportRenderPass(info, std::move(data), buffers);
 		}, 1);
 
     CreateDescriptorPool(g_Device);
@@ -105,6 +107,7 @@ void VulkanImGuiRenderer::Init(IWindow* window, Renderer* renderer)
     CreateViewportFrameBuffers();
 	VulkanCommandPool::CreateCommandPool(&m_ViewportCommandPool, m_renderer);
     CreateViewportPipeline();
+	CreateSceneImageDescriptorSets();
 }
 
 void VulkanImGuiRenderer::NewFrame()
@@ -143,18 +146,23 @@ void VulkanImGuiRenderer::CreateDescriptorPool(VkDevice device)
         check_vk_result(err);
 }
 
-void VulkanImGuiRenderer::DrawSceneAsImage()
+void VulkanImGuiRenderer::CreateSceneImageDescriptorSets()
 {
-    ClearDescriptorSets();
+	ClearDescriptorSets();
 	VulkanSwapchain* swapchain = m_renderer->GetSwapChain()->CastVulkan();
 	std::vector<VkImageView> imageViews = swapchain->GetImageViews();
 	std::vector<VkSampler> samplers = swapchain->GetSamplers();
-    m_Dset.resize(imageViews.size());
-    for (uint32_t i = 0; i < imageViews.size(); i++)
-        m_Dset[i] = ImGui_ImplVulkan_AddTexture(samplers[i], imageViews[i], VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+	m_Dset.resize(imageViews.size());
+	for (uint32_t i = 0; i < imageViews.size(); i++)
+		m_Dset[i] = ImGui_ImplVulkan_AddTexture(samplers[i], imageViews[i], VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 
-    ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
-    ImGui::Image(reinterpret_cast<ImTextureID>(m_Dset[swapchain->GetCurrentFrame()]), ImVec2{ viewportPanelSize.x, viewportPanelSize.y });
+}
+
+void VulkanImGuiRenderer::DrawSceneAsImage()
+{
+	//VulkanSwapchain* swapchain = m_renderer->GetSwapChain()->CastVulkan();
+ //   ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
+ //   ImGui::Image(reinterpret_cast<ImTextureID>(m_Dset[swapchain->GetCurrentFrame()]), ImVec2{ viewportPanelSize.x, viewportPanelSize.y });
 
 }
 
@@ -163,7 +171,7 @@ void VulkanImGuiRenderer::ClearDescriptorSets()
     for (int a = 0; a<m_Dset.size(); a++)
     {
         ImGui_ImplVulkan_RemoveTexture(m_Dset[a]);
-    }
+    } 
 }
 
 ImDrawData* VulkanImGuiRenderer::GetDrawData()
@@ -221,10 +229,7 @@ void VulkanImGuiRenderer::CreateViewportFrameBuffers()
 		framebufferInfo.height = t_extent.height;
 		framebufferInfo.layers = 1;
 
-		if (vkCreateFramebuffer(t_device, &framebufferInfo, nullptr, &m_ViewportFramebuffers[i]) != VK_SUCCESS)
-		{
-			throw std::runtime_error("failed to create framebuffer!");
-		}
+		VK_CHECK(vkCreateFramebuffer(t_device, &framebufferInfo, nullptr, &m_ViewportFramebuffers[i]), "Failed to create framebuffer!")
 	}
 }
 
@@ -582,16 +587,16 @@ void VulkanImGuiRenderer::SceneRenderPassImGui(VkRecordCommandBufferInfo info,
 	VkExtent2D m_SwapChainExtent = info.swapChain->GetExtent2D();
 	VkPipelineLayout t_layout = info.graphicPipeline->GetLayout();
 
+	const VkCommandBuffer commandBuffer = m_ViewportCommandBuffers[info.currentFrame];
+	vkResetCommandBuffer(commandBuffer, 0);
+
 	VkCommandBufferBeginInfo beginInfo{};
 	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 	// beginInfo.flags = 0;									// Optional
 	// beginInfo.pInheritanceInfo = nullptr; // Optional
 
 
-	if (vkBeginCommandBuffer(m_ViewportCommandBuffers[currentFrame], &beginInfo) != VK_SUCCESS)
-	{
-		throw std::runtime_error("failed to begin recording command buffer!");
-	}
+	VK_CHECK(vkBeginCommandBuffer(commandBuffer, &beginInfo), "ImGui Scene Render Pass: Failed to begin recording command buffer")
 
 	VkRenderPassBeginInfo renderPassInfo{};
 	renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
@@ -607,9 +612,9 @@ void VulkanImGuiRenderer::SceneRenderPassImGui(VkRecordCommandBufferInfo info,
 	renderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
 	renderPassInfo.pClearValues = clearValues.data();
 
-	vkCmdBeginRenderPass(m_ViewportCommandBuffers[currentFrame], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+	vkCmdBeginRenderPass(commandBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 
-	vkCmdBindPipeline(m_ViewportCommandBuffers[currentFrame], VK_PIPELINE_BIND_POINT_GRAPHICS, m_ViewportPipeline);
+	vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_ViewportPipeline);
 
 	VkViewport viewport = {};
 	viewport.x = 0.0f;
@@ -619,16 +624,16 @@ void VulkanImGuiRenderer::SceneRenderPassImGui(VkRecordCommandBufferInfo info,
 	viewport.minDepth = 0.0f;
 	viewport.maxDepth = 1.0f;
 
-	vkCmdSetViewport(m_ViewportCommandBuffers[currentFrame], 0, 1, &viewport);
+	vkCmdSetViewport(commandBuffer, 0, 1, &viewport);
 
 	VkRect2D scissor = {};
 	scissor.offset = { 0, 0 };
 	scissor.extent = m_SwapChainExtent;
 
-	vkCmdSetScissor(m_ViewportCommandBuffers[currentFrame], 0, 1, &scissor);
+	vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
 
 	VkDescriptorSet t_cameraDescriptorSet = info.camera->GetDescriptor()->CastVulkan()->GetDescriptorSet();
-	vkCmdBindDescriptorSets(m_ViewportCommandBuffers[currentFrame], VK_PIPELINE_BIND_POINT_GRAPHICS, t_layout, 0, 1, &t_cameraDescriptorSet, 0, nullptr);
+	vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, t_layout, 0, 1, &t_cameraDescriptorSet, 0, nullptr);
 
 
 	// render scene
@@ -636,22 +641,22 @@ void VulkanImGuiRenderer::SceneRenderPassImGui(VkRecordCommandBufferInfo info,
 	{
 		VkBuffer t_vertexBuffer = t_gameObjectData.mVertexBuffer->CastVulkan()->GetBuffer();
 		constexpr VkDeviceSize t_offsets[] = { 0 };
-		vkCmdBindVertexBuffers(m_ViewportCommandBuffers[currentFrame], 0, 1, &t_vertexBuffer, t_offsets);
+		vkCmdBindVertexBuffers(commandBuffer, 0, 1, &t_vertexBuffer, t_offsets);
 
-		vkCmdBindIndexBuffer(m_ViewportCommandBuffers[currentFrame], t_gameObjectData.mIndexBuffer->CastVulkan()->GetBuffer(), 0, VK_INDEX_TYPE_UINT32);
+		vkCmdBindIndexBuffer(commandBuffer, t_gameObjectData.mIndexBuffer->CastVulkan()->GetBuffer(), 0, VK_INDEX_TYPE_UINT32);
 
-		vkCmdBindDescriptorSets(m_ViewportCommandBuffers[currentFrame], VK_PIPELINE_BIND_POINT_GRAPHICS, t_layout, 1, 1, &t_gameObjectData.mDescriptor->CastVulkan()->GetDescriptorSets()[info.imageIndex], 0, nullptr);
+		vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, t_layout, 1, 1, &t_gameObjectData.mDescriptor->CastVulkan()->GetDescriptorSets()[info.imageIndex], 0, nullptr);
 
-		vkCmdDrawIndexed(m_ViewportCommandBuffers[currentFrame], t_gameObjectData.mNbIndices, 1, 0, 0, 0);
+		vkCmdDrawIndexed(commandBuffer, t_gameObjectData.mNbIndices, 1, 0, 0, 0);
 	}
-	vkCmdEndRenderPass(m_ViewportCommandBuffers[currentFrame]);
+	vkCmdEndRenderPass(commandBuffer);
 
-	VK_CHECK(vkEndCommandBuffer(m_ViewportCommandBuffers[currentFrame]), "failed to record command buffer!")
+	VK_CHECK(vkEndCommandBuffer(commandBuffer), "failed to record command buffer!")
 
-	buffers.push_back(m_ViewportCommandBuffers[currentFrame]);
+	buffers.push_back(commandBuffer);
 }
 
-void VulkanImGuiRenderer::ViewportRenderPass(Engine::Core::GraphicsAPI::VkRecordCommandBufferInfo info,
+void VulkanImGuiRenderer::ViewportRenderPass(VkRecordCommandBufferInfo info,
 	std::vector<Engine::GamePlay::GameObjectData> objectsData, std::vector<VkCommandBuffer>& buffers)
 {
 	const VkExtent2D t_swapChainExtent = info.swapChain->GetExtent2D();
