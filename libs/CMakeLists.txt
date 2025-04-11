@@ -18,3 +18,4 @@ file(GLOB IMGUI_SOURCES_FILES "${IMGUI_FILES_LOCATION}/*.cpp" "${IMGUI_FILES_LOC
 file(GLOB IMGUI_SOURCES_FILES "${IMGUI_FILES_LOCATION}/*.cpp" "${IMGUI_FILES_LOCATION}/backends/imgui_impl_glfw.cpp")
 add_library(imgui STATIC ${IMGUI_SOURCES_FILES})
 target_include_directories(imgui PUBLIC ${IMGUI_FILES_LOCATION})
+target_link_libraries(imgui PUBLIC glfw)
