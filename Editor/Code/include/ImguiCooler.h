@@ -13,6 +13,8 @@ public:
 
 private:
 	VkDescriptorPool m_pool;
+	VkCommandBuffer m_commandBuffer;
+	VkCommandPool m_commandPool;
 	Engine::Core::GraphicsAPI::VulkanRenderPass* m_renderPass = nullptr;
 };
 

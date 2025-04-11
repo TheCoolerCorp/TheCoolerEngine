@@ -177,7 +177,7 @@ namespace Engine
 
 			}
 
-			std::vector<VkFramebuffer> VulkanSwapchain::GetFramebuffers() const
+			std::vector<VkFramebuffer> VulkanSwapchain::GetFramebuffers()
 			{
 				return m_framebuffers;
 			}

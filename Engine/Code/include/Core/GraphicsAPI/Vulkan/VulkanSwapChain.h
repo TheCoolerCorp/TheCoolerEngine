@@ -35,7 +35,7 @@ namespace Engine
 				ENGINE_API VulkanSwapchain* CastVulkan() override { return this; }
 
 				ENGINE_API VkFormat GetImageFormat() const { return m_swapChainImageFormat; }
-				ENGINE_API std::vector<VkFramebuffer> GetFramebuffers() const;
+				ENGINE_API std::vector<VkFramebuffer> GetFramebuffers();
 				ENGINE_API VkExtent2D GetExtent2D() const { return m_swapChainExtent; }
 
 
