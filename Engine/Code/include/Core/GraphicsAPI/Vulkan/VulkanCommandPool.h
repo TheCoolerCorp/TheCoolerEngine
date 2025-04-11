@@ -43,6 +43,8 @@ namespace Engine
 				ENGINE_API static VkCommandBuffer BeginSingleTimeCommands(VkDevice a_device, VkCommandPool a_commandPool);
 				ENGINE_API static void EndSingleTimeCommands(VkCommandBuffer a_commandBuffer, VkCommandPool a_commandPool, VkDevice a_logicalDevice, VkQueue a_queue);
 
+				ENGINE_API VkCommandPool GetCommandPool() { return m_commandPool; }
+
 				std::vector<std::vector<std::tuple<VkCommandBuffer, VkRenderPass, VulkanGraphicPipeline*>>> mCommandBuffers{};
 			private:
 				VkCommandPool m_commandPool = VK_NULL_HANDLE;

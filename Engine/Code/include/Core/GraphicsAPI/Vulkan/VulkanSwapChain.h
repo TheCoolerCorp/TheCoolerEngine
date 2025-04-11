@@ -47,6 +47,10 @@ namespace Engine
 
 				ENGINE_API void DrawFrame(Window::IWindow* a_window, RHI::ILogicalDevice* a_logicalDevice, RHI::ICommandPool* a_commandPool, RHI::ISurface* a_surface, RHI::IPhysicalDevice* a_physicalDevice, RHI::IRenderPass* a_renderPass, const std::vector<Core::RHI::IRenderObject*>& a_renderObjects, const std::vector<Core::RHI::IBuffer*>& a_vertexBuffers, const std::vector<Core::RHI::IBuffer*>& a_indexBuffers, const std::vector<uint32_t>& a_nbIndices, const GamePlay::Camera* a_camera) override;
 
+				ENGINE_API VkSemaphore GetAvailableSemaphore(int index) { return m_imageAvailableSemaphores[index]; }
+				ENGINE_API VkSemaphore GetRenderSemaphore(int index) { return m_renderFinishedSemaphores[index]; }
+				ENGINE_API VkSwapchainKHR GetSwapChain() { return m_swapChain; }
+
 			private:
 				VkSwapchainKHR m_swapChain = VK_NULL_HANDLE;
 

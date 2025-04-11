@@ -36,6 +36,9 @@ namespace Engine
 		{
 			while (!m_mainWindow->ShouldClose())
 			{
+				m_mainWindow->PollEvents();
+				ui.Update(m_mainWindow, m_renderer);
+
 				m_currentScene->Update(m_renderer);
 				m_currentScene->Draw(m_renderer, m_mainWindow, m_camera);
 				auto t_now = std::chrono::high_resolution_clock::now();
@@ -44,15 +47,14 @@ namespace Engine
 				m_camera->Update(m_renderer, m_inputHandler, m_mainWindow, m_deltaTime);
 
 
-				m_mainWindow->PollEvents();
-				//UI::Update(m_mainWindow, m_renderer);
-				ui.Update(m_mainWindow, m_renderer);
 			}
 			m_renderer->WaitIdle();
 		}
 
 		void Application::Destroy()
 		{
+			ui.Destroy(m_renderer);
+
 			m_camera->Destroy(m_renderer);
 			delete m_camera;
 
