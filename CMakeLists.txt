@@ -66,5 +66,6 @@ message("[${CMAKE_PROJECT_NAME}]: Start generating...")
 message("[${CMAKE_PROJECT_NAME}]: Finish generating")
 
 target_link_libraries(Engine PUBLIC Vulkan::Vulkan)
+target_link_libraries(imgui PUBLIC Vulkan::Vulkan)
 
 target_link_libraries(Editor PUBLIC imgui)

@@ -28,8 +28,8 @@ namespace Engine
 			m_currentScene = new GamePlay::Scene();
 			m_currentScene->Create(m_renderer);
 
-			UI::Init(m_mainWindow, m_renderer);
-
+			//UI::Init(m_mainWindow, m_renderer);
+			ui.Init(m_mainWindow, m_renderer);
 		}
 
 		void Application::Run()
@@ -43,9 +43,10 @@ namespace Engine
 				m_lastTime = t_now;
 				m_camera->Update(m_renderer, m_inputHandler, m_mainWindow, m_deltaTime);
 
-				UI::Update(m_mainWindow, m_renderer);
 
 				m_mainWindow->PollEvents();
+				//UI::Update(m_mainWindow, m_renderer);
+				ui.Update(m_mainWindow, m_renderer);
 			}
 			m_renderer->WaitIdle();
 		}

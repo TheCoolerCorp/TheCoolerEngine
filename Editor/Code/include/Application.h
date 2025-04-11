@@ -5,7 +5,7 @@
 
 
 #include "Core/GraphicsAPI/Vulkan/VulkanInterface.h"
-
+#include "ImguiCooler.h"
 #include "Core/Window/GLWindow.h"
 #include "Core/Window/GLInputHandler.h"
 #include "Core/Renderer/Renderer.h"
@@ -39,6 +39,7 @@ namespace Engine
 			std::vector<GamePlay::Scene*> m_scenes;
 			std::chrono::high_resolution_clock::time_point m_lastTime = std::chrono::high_resolution_clock::now();
 			float m_deltaTime = 0.0f;
+			UI ui;
 		};
 	}
 }

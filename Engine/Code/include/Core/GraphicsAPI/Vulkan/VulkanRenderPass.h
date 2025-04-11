@@ -19,6 +19,7 @@ namespace Engine
 
 				ENGINE_API void Create(RHI::ISwapChain* a_swapChain, RHI::IPhysicalDevice* a_physicalDevice, RHI::ILogicalDevice* a_logicalDevice) override;
 				ENGINE_API void Destroy(RHI::ILogicalDevice* a_logicalDevice) override;
+				ENGINE_API void CreateEmpty(RHI::ISwapChain* a_swapChain, RHI::IPhysicalDevice* a_physicalDevice, RHI::ILogicalDevice* a_logicalDevice);
 
 				ENGINE_API VkRenderPass GetRenderPass() { return m_renderPass; }
 				ENGINE_API uint32_t GetSubpassesCount() { return m_subpasses; }
