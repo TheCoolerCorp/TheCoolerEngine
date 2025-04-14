@@ -9,6 +9,7 @@ JPH_NAMESPACE_BEGIN
 		case Layers::NON_MOVING:
 			return a_inObject2 == Layers::MOVING;
 		case Layers::MOVING:
+			return true;
 		default:
 			JPH_ASSERT(false);
 			return false;

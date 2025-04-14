@@ -7,6 +7,7 @@
 
 #include "Core/Logger/Logger.h"
 #include "Core/Assertion/Assertion.h"
+#include "EngineExport.h"
 
 JPH_NAMESPACE_BEGIN
 
@@ -20,7 +21,7 @@ namespace Layers
 class ObjectLayerPairFilterImpl final : public ObjectLayerPairFilter
 {
 public:
-    [[nodiscard]] bool ShouldCollide(ObjectLayer a_inObject1, ObjectLayer a_inObject2) const override;
+    ENGINE_API [[nodiscard]] bool ShouldCollide(ObjectLayer a_inObject1, ObjectLayer a_inObject2) const override;
 };
 
 namespace BroadPhaseLayers
@@ -33,14 +34,14 @@ namespace BroadPhaseLayers
 class MyBroadPhaseLayerInterface final : public BroadPhaseLayerInterface
 {
 public:
-    MyBroadPhaseLayerInterface();
+    ENGINE_API MyBroadPhaseLayerInterface();
 
-    [[nodiscard]] uint32_t GetNumBroadPhaseLayers() const override;
+    ENGINE_API [[nodiscard]] uint32_t GetNumBroadPhaseLayers() const override;
 
-    [[nodiscard]] BroadPhaseLayer GetBroadPhaseLayer(ObjectLayer a_iLayer) const override;
+    ENGINE_API [[nodiscard]] BroadPhaseLayer GetBroadPhaseLayer(ObjectLayer a_iLayer) const override;
 
 #if defined(JPH_EXTERNAL_PROFILE) || defined(JPH_PROFILE_ENABLED)
-    [[nodiscard]] const char* GetBroadPhaseLayerName(BroadPhaseLayer a_inLayer) const override;
+    ENGINE_API [[nodiscard]] const char* GetBroadPhaseLayerName(BroadPhaseLayer a_inLayer) const override;
 #endif
 
 private:
@@ -50,7 +51,7 @@ private:
 class ObjectVsBroadPhaseLayerFilterImpl final : public ObjectVsBroadPhaseLayerFilter
 {
 public:
-	[[nodiscard]] bool ShouldCollide(ObjectLayer a_inLayer1, BroadPhaseLayer a_inLayer2) const override;
+    ENGINE_API [[nodiscard]] bool ShouldCollide(ObjectLayer a_inLayer1, BroadPhaseLayer a_inLayer2) const override;
 };
 
 JPH_NAMESPACE_END
