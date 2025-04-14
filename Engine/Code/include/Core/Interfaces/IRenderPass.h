@@ -8,9 +8,11 @@ namespace Engine
 {
 	namespace Core
 	{
+		class Renderer;
+
 		namespace GraphicsAPI
 		{
-			class VulkanRenderPass;
+			class VulkanRenderPassManager;
 		}
 		namespace RHI
 		{
@@ -22,9 +24,9 @@ namespace Engine
 			{
 			public:
 				ENGINE_API virtual ~IRenderPass() = default;
-				ENGINE_API virtual GraphicsAPI::VulkanRenderPass* CastVulkan() { LOG_ERROR("Try to return wrong cast type : VulkanPhysicalDevice!"); return nullptr; }
+				ENGINE_API virtual GraphicsAPI::VulkanRenderPassManager* CastVulkan() { LOG_ERROR("Try to return wrong cast type : VulkanPhysicalDevice!"); return nullptr; }
 
-				ENGINE_API virtual void Create(ISwapChain* a_swapChain, IPhysicalDevice* a_physicalDevice, ILogicalDevice* a_logicalDevice) = 0;
+				ENGINE_API virtual void Create(Renderer* renderer) = 0;
 				ENGINE_API virtual void Destroy(ILogicalDevice* a_logicalDevice) = 0;
 			};
 		}

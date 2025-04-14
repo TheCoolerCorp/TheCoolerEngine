@@ -56,7 +56,7 @@ namespace Engine
 			void VulkanCommandPool::CreateCommandBuffer(RHI::ILogicalDevice* a_logicalDevice, RHI::ISwapChain* a_swapChain, RHI::IRenderPass* a_renderPass, RHI::IGraphicPipeline* a_graphicPipeline)
 			{
 				const uint32_t t_maxFrames = a_swapChain->CastVulkan()->GetMaxFrame();
-				VkRenderPass t_renderPass = a_renderPass->CastVulkan()->GetRenderPass();
+				VkRenderPass t_renderPass = a_renderPass->CastVulkan()->GetSceneRenderPass()->GetRenderPass();
 				VulkanGraphicPipeline* t_pipeline = a_graphicPipeline->CastVulkan();
 				std::vector<std::tuple<VkCommandBuffer, VkRenderPass, VulkanGraphicPipeline*>> t_commandBuffers = std::vector<std::tuple<VkCommandBuffer, VkRenderPass, VulkanGraphicPipeline*>>(t_maxFrames);
 
@@ -79,21 +79,21 @@ namespace Engine
 				mCommandBuffers.push_back(t_commandBuffers);
 			}
 
-			void VulkanCommandPool::RecordCommandBuffer(const VkCommandBuffer a_commandBuffer, const uint32_t a_imageIndex, const VkRenderPass a_renderPass, VulkanSwapchain* a_swapChain, const VulkanGraphicPipeline* a_graphicPipeline, const std::vector<Core::RHI::IRenderObject*>& a_renderObjects, const std::vector<Core::RHI::IBuffer*>& a_vertexBuffers, const std::vector<Core::RHI::IBuffer*>& a_indexBuffers, const std::vector<uint32_t>& a_nbIndices, const GamePlay::Camera* a_camera)
+			void VulkanCommandPool::RecordCommandBuffer(RecordCommandBufferInfo info, const std::vector<Core::RHI::IRenderObject*>& a_renderObjects, const std::vector<Core::RHI::IBuffer*>& a_vertexBuffers, const std::vector<Core::RHI::IBuffer*>& a_indexBuffers, const std::vector<uint32_t>& a_nbIndices)
 			{
-				const VkExtent2D t_swapChainExtent = a_swapChain->GetExtent2D();
-				const VkPipeline t_pipeline = a_graphicPipeline->GetPipeline();
-				const VkPipelineLayout t_layout = a_graphicPipeline->GetLayout();
+				const VkExtent2D t_swapChainExtent = info.a_swapChain->GetExtent2D();
+				const VkPipeline t_pipeline = info.a_graphicPipeline->GetPipeline();
+				const VkPipelineLayout t_layout = info.a_graphicPipeline->GetLayout();
 
 				VkCommandBufferBeginInfo t_beginInfo{};
 				t_beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 
-				VK_CHECK(vkBeginCommandBuffer(a_commandBuffer, &t_beginInfo), "failed to begin recording command buffer!");
+				VK_CHECK(vkBeginCommandBuffer(info.a_commandBuffer, &t_beginInfo), "failed to begin recording command buffer!");
 
 				VkRenderPassBeginInfo t_renderPassInfo{};
 				t_renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-				t_renderPassInfo.renderPass = a_renderPass;
-				t_renderPassInfo.framebuffer = a_swapChain->GetFramebuffers()[a_imageIndex];
+				t_renderPassInfo.renderPass = info.a_renderPass;
+				t_renderPassInfo.framebuffer = info.a_swapChain->GetFramebuffers()[info.a_imageIndex];
 				t_renderPassInfo.renderArea.offset = { .x= 0, .y= 0};
 				t_renderPassInfo.renderArea.extent = t_swapChainExtent;
 
@@ -104,26 +104,26 @@ namespace Engine
 				t_renderPassInfo.clearValueCount = static_cast<uint32_t>(t_clearValues.size());
 				t_renderPassInfo.pClearValues = t_clearValues.data();
 
-				vkCmdBeginRenderPass(a_commandBuffer, &t_renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+				vkCmdBeginRenderPass(info.a_commandBuffer, &t_renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 
-				vkCmdBindPipeline(a_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, t_pipeline);
+				vkCmdBindPipeline(info.a_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, t_pipeline);
 
 				VkViewport t_viewport;
 				t_viewport.x = 0.0f;
 				t_viewport.y = 0.0f;
-				t_viewport.width = static_cast<float>(a_swapChain->GetExtent2D().width);
+				t_viewport.width = static_cast<float>(info.a_swapChain->GetExtent2D().width);
 				t_viewport.height = static_cast<float>(t_swapChainExtent.height);
 				t_viewport.minDepth = 0.0f;
 				t_viewport.maxDepth = 1.0f;
-				vkCmdSetViewport(a_commandBuffer, 0, 1, &t_viewport);
+				vkCmdSetViewport(info.a_commandBuffer, 0, 1, &t_viewport);
 
 				VkRect2D t_scissor;
 				t_scissor.offset = { .x= 0, .y= 0};
 				t_scissor.extent = t_swapChainExtent;
-				vkCmdSetScissor(a_commandBuffer, 0, 1, &t_scissor);
+				vkCmdSetScissor(info.a_commandBuffer, 0, 1, &t_scissor);
 
-				const VkDescriptorSet t_cameraDescriptorSet = a_camera->GetDescriptor()->CastVulkan()->GetDescriptorSet();
-				vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, t_layout, 0, 1, &t_cameraDescriptorSet, 0, nullptr);
+				const VkDescriptorSet t_cameraDescriptorSet = info.a_camera->GetDescriptor()->CastVulkan()->GetDescriptorSet();
+				vkCmdBindDescriptorSets(info.a_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, t_layout, 0, 1, &t_cameraDescriptorSet, 0, nullptr);
 
 				for (int i = 0; i < a_renderObjects.size(); ++i)
 				{
@@ -131,21 +131,21 @@ namespace Engine
 					{
 						VkBuffer t_vertexBuffer = a_vertexBuffers.at(i)->CastVulkan()->GetBuffer();
 						constexpr VkDeviceSize t_offsets[] = { 0 };
-						vkCmdBindVertexBuffers(a_commandBuffer, 0, 1, &t_vertexBuffer, t_offsets);
+						vkCmdBindVertexBuffers(info.a_commandBuffer, 0, 1, &t_vertexBuffer, t_offsets);
 					}
 
 					if (a_indexBuffers.at(i)->CastVulkan()->GetBuffer() != nullptr)
 					{
-						vkCmdBindIndexBuffer(a_commandBuffer, a_indexBuffers.at(i)->CastVulkan()->GetBuffer(), 0, VK_INDEX_TYPE_UINT32);
+						vkCmdBindIndexBuffer(info.a_commandBuffer, a_indexBuffers.at(i)->CastVulkan()->GetBuffer(), 0, VK_INDEX_TYPE_UINT32);
 					}
 
-					vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, t_layout, 1, 1, &a_renderObjects.at(i)->CastVulkan()->GetDescriptorSets()[a_imageIndex], 0, nullptr);
+					vkCmdBindDescriptorSets(info.a_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, t_layout, 1, 1, &a_renderObjects.at(i)->CastVulkan()->GetDescriptorSets()[info.a_imageIndex], 0, nullptr);
 
-					vkCmdDrawIndexed(a_commandBuffer, a_nbIndices.at(i), 1, 0, 0, 0);
+					vkCmdDrawIndexed(info.a_commandBuffer, a_nbIndices.at(i), 1, 0, 0, 0);
 				}
-				vkCmdEndRenderPass(a_commandBuffer);
+				vkCmdEndRenderPass(info.a_commandBuffer);
 
-				VK_CHECK(vkEndCommandBuffer(a_commandBuffer), "failed to end command buffer!");
+				VK_CHECK(vkEndCommandBuffer(info.a_commandBuffer), "failed to end command buffer!");
 			}
 
 			VkCommandBuffer VulkanCommandPool::BeginSingleTimeCommands(const VkDevice a_device, const VkCommandPool a_commandPool)

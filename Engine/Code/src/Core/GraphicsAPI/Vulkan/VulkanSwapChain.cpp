@@ -143,7 +143,7 @@ namespace Engine
 
 					VkFramebufferCreateInfo framebufferInfo{};
 					framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-					framebufferInfo.renderPass = a_renderPass->CastVulkan()->GetRenderPass();
+					framebufferInfo.renderPass = a_renderPass->CastVulkan()->GetSceneRenderPass()->GetRenderPass();
 					framebufferInfo.attachmentCount = static_cast<uint32_t>(attachments.size());
 					framebufferInfo.pAttachments = attachments.data();
 					framebufferInfo.width = m_swapChainExtent.width;
@@ -211,7 +211,10 @@ namespace Engine
 					const VulkanGraphicPipeline* t_pipeline = std::get<VulkanGraphicPipeline*>(t_commandPool->mCommandBuffers[i][m_currentFrame]);
 					t_commandBuffers.push_back(t_commandBuffer);
 					vkResetCommandBuffer(t_commandBuffer, 0);
-					VulkanCommandPool::RecordCommandBuffer(t_commandBuffer, t_imageIndex, t_renderPass, this, t_pipeline, a_renderObjects, a_vertexBuffers, a_indexBuffers, a_nbIndices, a_camera);
+
+					//TODO : Change to use VulkanRenderPass instead of VulkanCommandPool
+
+					//VulkanCommandPool::RecordCommandBuffer(t_commandBuffer, t_imageIndex, t_renderPass, this, t_pipeline, a_renderObjects, a_vertexBuffers, a_indexBuffers, a_nbIndices, a_camera);
 				}
 
 				VkSubmitInfo t_submitInfo{};

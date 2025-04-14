@@ -30,7 +30,7 @@ namespace Engine
 		class Camera
 		{
 		public:
-			Camera(Math::vec3 a_up, Math::vec3 a_center, Math::vec3 a_eye, float a_fovY, float a_aspect, float a_near, float a_far, float a_speed, float a_sensitivity);
+			ENGINE_API Camera(Math::vec3 a_up, Math::vec3 a_center, Math::vec3 a_eye, float a_fovY, float a_aspect, float a_near, float a_far, float a_speed, float a_sensitivity);
 			~Camera() = default;
 
 			ENGINE_API void Create(Core::Renderer* a_renderer);

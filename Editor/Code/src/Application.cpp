@@ -1,11 +1,18 @@
-#include "Core/Application.h"
+#include "../Inlude/Application.h"
 
+#include "Core/Window/GLInputHandler.h"
 #include "GamePlay/Others/GameObject.h"
 #include "GamePlay/Components/MAterialComponent.h"
 #include "GamePlay/Components/Meshcomponent.h"
+#include "GamePlay/Others/Scene.h"
 #include "Math/TheCoolerMath.h"
 
-namespace Engine
+using namespace Engine::Core;
+using namespace Engine::GamePlay;
+using namespace Engine;
+using namespace Engine::Math;
+
+namespace Editor
 {
 	namespace Core
 	{
@@ -19,12 +26,12 @@ namespace Engine
 			m_renderer = new Renderer();
 			m_renderer->Init(RendererType::VULKAN, m_mainWindow);
 
-			m_camera = new GamePlay::Camera(Math::vec3(0.f, 1.f, 0.f), Math::vec3(0.f, 0.f, 0.f),
-			                                Math::vec3(0.f, 1.f, -3.f), Math::ToRadians(70.f),
-			                                static_cast<float>(a_width) / static_cast<float>(a_height), 0.1f, 100.f, 10.f, 2.f);
+			m_camera = new Camera(vec3(0.f, 1.f, 0.f), vec3(0.f, 0.f, 0.f),
+			                                        vec3(0.f, 1.f, -3.f), ToRadians(70.f),
+			                                        static_cast<float>(a_width) / static_cast<float>(a_height), 0.1f, 100.f, 10.f, 2.f);
 			m_camera->Create(m_renderer);
 
-			m_currentScene = new GamePlay::Scene();
+			m_currentScene = new Scene();
 			m_currentScene->Create(m_renderer);
 		}
 

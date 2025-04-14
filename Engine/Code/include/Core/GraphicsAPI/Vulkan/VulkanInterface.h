@@ -46,7 +46,7 @@ namespace Engine
 
 				ENGINE_API RHI::ISwapChain* InstantiateSwapChain() override { return new VulkanSwapchain; }
 
-				ENGINE_API RHI::IRenderPass* InstantiateRenderPass() override { return new VulkanRenderPass; }
+				ENGINE_API RHI::IRenderPass* InstantiateRenderPass() override { return new VulkanRenderPassManager; }
 
 				ENGINE_API RHI::IGraphicPipeline* InstantiateGraphicPipeline() override { return new VulkanGraphicPipeline; }
 
