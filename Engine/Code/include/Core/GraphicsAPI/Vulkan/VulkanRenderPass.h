@@ -24,6 +24,7 @@ namespace Engine
 		namespace GraphicsAPI
 		{
 			class VulkanRenderPass;
+			struct RecordRenderPassinfo;
 
 			enum RenderPassFlags : std::uint8_t
 			{
@@ -40,6 +41,8 @@ namespace Engine
 				ENGINE_API void Destroy(RHI::ILogicalDevice* a_logicalDevice) override;
 
 				ENGINE_API void CreateDefaultRenderPass(Renderer* a_renderer);
+
+				ENGINE_API void RunSceneRenderPass(RecordRenderPassinfo a_info, const std::vector<Core::RHI::IRenderObject*>& a_renderObjects, const std::vector<Core::RHI::IBuffer*>& a_vertexBuffers, const std::vector<Core::RHI::IBuffer*>& a_indexBuffers, const std::vector<uint32_t>& a_nbIndices);
 
 				//getters
 				[[nodiscard]] ENGINE_API VulkanRenderPass* GetSceneRenderPass() const { return m_sceneRenderPass; }

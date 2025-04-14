@@ -36,7 +36,8 @@ namespace Engine
 			m_swapChain->Create(m_surface, a_window, m_physicalDevice, m_logicalDevice);
 
 			m_renderPass = m_interface->InstantiateRenderPass();
-			m_renderPass->Create(m_swapChain, m_physicalDevice, m_logicalDevice);
+			m_renderPass->Create(this);
+			m_renderPass->CastVulkan()->CreateDefaultRenderPass(this);
 
 			m_graphicPipeline = m_interface->InstantiateGraphicPipeline();
 			m_graphicPipeline->Create(m_logicalDevice, m_renderPass);

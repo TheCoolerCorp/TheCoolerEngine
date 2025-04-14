@@ -94,6 +94,45 @@ namespace Engine
 				
 				m_sceneRenderPass->Create(config);
 				m_sceneRenderPass->SetFramebuffers(m_renderer->GetSwapChain()->CastVulkan()->GetFramebuffers());
+
+				m_sceneRenderPass->SetDrawFunc(
+					[this](RecordRenderPassinfo a_info, const std::vector<Core::RHI::IRenderObject*>& a_renderObjects,
+						const std::vector<Core::RHI::IBuffer*>& a_vertexBuffers,
+						const std::vector<Core::RHI::IBuffer*>& a_indexBuffers, const std::vector<uint32_t>& a_nbIndices)
+					{
+						const VkPipelineLayout t_layout = a_info.graphicPipeline->GetLayout();
+
+						const VkDescriptorSet t_cameraDescriptorSet = a_info.camera->GetDescriptor()->CastVulkan()->GetDescriptorSet();
+						vkCmdBindDescriptorSets(a_info.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, t_layout, 0, 1, &t_cameraDescriptorSet, 0, nullptr);
+
+						for (int i = 0; i < a_renderObjects.size(); ++i)
+						{
+							if (a_vertexBuffers.at(i)->CastVulkan()->GetBuffer() != nullptr)
+							{
+								VkBuffer t_vertexBuffer = a_vertexBuffers.at(i)->CastVulkan()->GetBuffer();
+								constexpr VkDeviceSize t_offsets[] = { 0 };
+								vkCmdBindVertexBuffers(a_info.commandBuffer, 0, 1, &t_vertexBuffer, t_offsets);
+							}
+
+							if (a_indexBuffers.at(i)->CastVulkan()->GetBuffer() != nullptr)
+							{
+								vkCmdBindIndexBuffer(a_info.commandBuffer, a_indexBuffers.at(i)->CastVulkan()->GetBuffer(), 0, VK_INDEX_TYPE_UINT32);
+							}
+
+							vkCmdBindDescriptorSets(a_info.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, t_layout, 1, 1, &a_renderObjects.at(i)->CastVulkan()->GetDescriptorSets()[a_info.imageIndex], 0, nullptr);
+
+							vkCmdDrawIndexed(a_info.commandBuffer, a_nbIndices.at(i), 1, 0, 0, 0);
+						}
+					}
+				);
+			}
+
+			void VulkanRenderPassManager::RunSceneRenderPass(RecordRenderPassinfo a_info,
+				const std::vector<Core::RHI::IRenderObject*>& a_renderObjects,
+				const std::vector<Core::RHI::IBuffer*>& a_vertexBuffers,
+				const std::vector<Core::RHI::IBuffer*>& a_indexBuffers, const std::vector<uint32_t>& a_nbIndices)
+			{
+				m_sceneRenderPass->RecordRenderPass(a_info, a_renderObjects, a_vertexBuffers, a_indexBuffers, a_nbIndices);
 			}
 
 			VulkanRenderPass::VulkanRenderPass(VkDevice device, Renderer* renderer)
