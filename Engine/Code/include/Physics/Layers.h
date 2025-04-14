@@ -4,7 +4,6 @@
 #include <Jolt/Jolt.h>
 #include <Jolt/Physics/Collision/ObjectLayer.h>
 #include <Jolt/Physics/Collision/BroadPhase/BroadPhaseLayer.h>
-#include <Jolt/Physics/Collision/ContactListener.h>
 
 #include "Core/Logger/Logger.h"
 #include "Core/Assertion/Assertion.h"
@@ -18,17 +17,17 @@ namespace Layers
     static constexpr uint8 NUM_LAYERS = 2;
 }
 
-class ObjectLayerPairFilterImpl : public ObjectLayerPairFilter
+class ObjectLayerPairFilterImpl final : public ObjectLayerPairFilter
 {
 public:
-    virtual bool ShouldCollide(ObjectLayer inObject1, ObjectLayer inObject2) const override;
+    [[nodiscard]] bool ShouldCollide(ObjectLayer a_inObject1, ObjectLayer a_inObject2) const override;
 };
 
 namespace BroadPhaseLayers
 {
     static constexpr BroadPhaseLayer NON_MOVING(0);
     static constexpr BroadPhaseLayer MOVING(1);
-    static constexpr uint NUM_LAYERS(2);
+    static constexpr uint32_t NUM_LAYERS(2);
 }
 
 class MyBroadPhaseLayerInterface final : public BroadPhaseLayerInterface
@@ -36,22 +35,22 @@ class MyBroadPhaseLayerInterface final : public BroadPhaseLayerInterface
 public:
     MyBroadPhaseLayerInterface();
 
-    uint GetNumBroadPhaseLayers() const override;
+    [[nodiscard]] uint32_t GetNumBroadPhaseLayers() const override;
 
-    BroadPhaseLayer GetBroadPhaseLayer(ObjectLayer i_layer) const override;
+    [[nodiscard]] BroadPhaseLayer GetBroadPhaseLayer(ObjectLayer a_iLayer) const override;
 
-#ifdef (JPH_EXTERNAL_PROFILE) || defined(JPH_PROFILE_ENABLED)
-    const char* GetBroadPhaseLayerName(BroadPhaseLayer inLayer) const override;
+#if defined(JPH_EXTERNAL_PROFILE) || defined(JPH_PROFILE_ENABLED)
+    [[nodiscard]] const char* GetBroadPhaseLayerName(BroadPhaseLayer a_inLayer) const override;
 #endif
 
 private:
-    BroadPhaseLayer objectToBroadPhase[Layers::NUM_LAYERS]{};
+    BroadPhaseLayer m_objectToBroadPhase[Layers::NUM_LAYERS]{};
 };
 
-class ObjectVsBroadPhaseLayerFilterImpl : public ObjectVsBroadPhaseLayerFilter
+class ObjectVsBroadPhaseLayerFilterImpl final : public ObjectVsBroadPhaseLayerFilter
 {
 public:
-	virtual bool ShouldCollide(ObjectLayer inLayer1, BroadPhaseLayer inLayer2) const override;
+	[[nodiscard]] bool ShouldCollide(ObjectLayer a_inLayer1, BroadPhaseLayer a_inLayer2) const override;
 };
 
 JPH_NAMESPACE_END
