@@ -15,14 +15,12 @@ namespace Engine
 		class MeshComponent : public Component 
 		{
 		public:
-			MeshComponent() = default;
-			~MeshComponent() override = default;
+			ENGINE_API MeshComponent() = default;
+			ENGINE_API ~MeshComponent() override = default;
 
-			ENGINE_API ComponentType Create(uint32_t& a_outId);
+			ENGINE_API ComponentType Create(uint32_t& a_outId) override;
 
-			ENGINE_API void Update();
-
-			ENGINE_API void Destroy();
+			ENGINE_API void Destroy() override;
 
 			ENGINE_API void SetMesh(Ref<Resource::Mesh> a_mesh);
 

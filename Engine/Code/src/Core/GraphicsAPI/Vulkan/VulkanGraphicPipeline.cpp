@@ -97,8 +97,8 @@ namespace Engine
 
 					std::vector<VkDynamicState> dynamicStates = 
 					{
-					VK_DYNAMIC_STATE_VIEWPORT,
-					VK_DYNAMIC_STATE_SCISSOR
+						VK_DYNAMIC_STATE_VIEWPORT,
+						VK_DYNAMIC_STATE_SCISSOR
 					};
 
 					VkPipelineDynamicStateCreateInfo dynamicState{};
@@ -106,6 +106,8 @@ namespace Engine
 					dynamicState.dynamicStateCount = static_cast<uint32_t>(dynamicStates.size());
 					dynamicState.pDynamicStates = dynamicStates.data();
 
+
+					#pragma region Set0
 					VkDescriptorSetLayoutBinding camUBOLayoutBinding{};
 					camUBOLayoutBinding.binding = 0;
 					camUBOLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
@@ -113,13 +115,24 @@ namespace Engine
 					camUBOLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
 					camUBOLayoutBinding.pImmutableSamplers = nullptr;
 
+					VkDescriptorSetLayoutBinding lightUBOLayoutBinding{};
+					camUBOLayoutBinding.binding = 1;
+					camUBOLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+					camUBOLayoutBinding.descriptorCount = 1;
+					camUBOLayoutBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+					camUBOLayoutBinding.pImmutableSamplers = nullptr;
+
+					std::array<VkDescriptorSetLayoutBinding, 2> set0Bindings = { camUBOLayoutBinding, lightUBOLayoutBinding };
+
 					VkDescriptorSetLayoutCreateInfo camUBOLayoutInfo{};
 					camUBOLayoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
 					camUBOLayoutInfo.bindingCount = 1;
-					camUBOLayoutInfo.pBindings = &camUBOLayoutBinding;
+					camUBOLayoutInfo.pBindings = set0Bindings.data();
 
-					VK_CHECK(vkCreateDescriptorSetLayout(a_logicalDevice->CastVulkan()->GetVkDevice(), &camUBOLayoutInfo, nullptr, &m_cameraDescriptor),
-						"Failed to create Camera UBO descriptor set layout");
+					VK_CHECK(vkCreateDescriptorSetLayout(a_logicalDevice->CastVulkan()->GetVkDevice(), &camUBOLayoutInfo, nullptr, &m_cameraDescriptor), "Failed to create Camera UBO descriptor set layout");
+					#pragma endregion
+
+
 
 					VkDescriptorSetLayoutBinding objUBOLayoutBinding{};
 					objUBOLayoutBinding.binding = 0;

@@ -12,11 +12,6 @@ namespace Engine
 			return ComponentType::MESH;
 		}
 
-		void MeshComponent::Update()
-		{
-			// Do nothing for now.
-		}
-
 		void MeshComponent::Destroy()
 		{
 			// Just set mesh to nullptr, resource manager handle the resource.

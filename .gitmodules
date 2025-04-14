@@ -14,3 +14,9 @@
 [submodule "libs/Refureku"]
 	path = libs/Refureku
 	url = https://github.com/jsoysouvanh/Refureku.git
+[submodule "libs/libs/spir-v"]
+	path = libs/libs/spir-v
+	url = https://github.com/KhronosGroup/SPIRV-Reflect.git
+[submodule "libs/spir-v"]
+	path = libs/spir-v
+	url = https://github.com/KhronosGroup/SPIRV-Reflect.git

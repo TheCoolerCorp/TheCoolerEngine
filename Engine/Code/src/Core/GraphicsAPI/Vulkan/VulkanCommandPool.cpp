@@ -123,8 +123,12 @@ namespace Engine
 				vkCmdSetScissor(a_commandBuffer, 0, 1, &t_scissor);
 
 				const VkDescriptorSet t_cameraDescriptorSet = a_camera->GetDescriptor()->CastVulkan()->GetDescriptorSet();
-				vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, t_layout, 0, 1, &t_cameraDescriptorSet, 0, nullptr);
 
+
+				// TODO : Modif here to add light descriptor
+				//std::array<VkDescriptorSet, 2> test = { t_cameraDescriptorSet };
+				//vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, t_layout, 0, test.size(), test.data(), 0, nullptr);
+				
 				for (int i = 0; i < a_renderObjects.size(); ++i)
 				{
 					if (a_vertexBuffers.at(i)->CastVulkan()->GetBuffer() != nullptr)

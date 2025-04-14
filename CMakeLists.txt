@@ -22,7 +22,7 @@ enable_testing()
 add_subdirectory(libs)
 
 find_package(Vulkan REQUIRED)
-
+#find_package(Vulkan REQUIRED )
 #---------------------------------------#
 #			SUBDIRECTORY				#
 #---------------------------------------#
@@ -38,6 +38,8 @@ target_link_libraries(Engine PUBLIC stb)
 target_link_libraries(Engine PUBLIC assimp::assimp)
 
 target_link_libraries(Engine PUBLIC glfw)
+
+target_compile_definitions(Engine PUBLIC SPIRV_REFLECT_USE_SYSTEM_SPIRV_H)
 
 
 #target_link_directories(Engine PUBLIC "libs/RefurekuGenerator/Bin")

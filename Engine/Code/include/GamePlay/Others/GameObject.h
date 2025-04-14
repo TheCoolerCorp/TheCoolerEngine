@@ -16,7 +16,6 @@
 #include "Math/Transform.h"
 #include "GamePlay/Components/Component.h"
 #include "Ressources/ResourceManager.h"
-#include "Gameplay/Components/ComponentsPool.h"
 
 
 #include "Core/Interfaces/ApiInterface.h"
