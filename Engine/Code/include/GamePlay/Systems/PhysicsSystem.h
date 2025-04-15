@@ -5,6 +5,7 @@
 
 #include "System.h"
 #include "GamePlay/Components/RigidBodyComponent.h"
+#include "Jolt/Core/JobSystemThreadPool.h"
 
 namespace Engine
 {

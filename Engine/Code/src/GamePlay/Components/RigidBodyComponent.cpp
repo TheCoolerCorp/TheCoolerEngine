@@ -24,6 +24,12 @@ namespace Engine
 			m_rigidBody.CreateSphereBody(a_type, a_layer, a_position, a_radius, a_rotation, a_enable);
 		}
 
+		void RigidBodyComponent::CreateCapsuleRigidBody(Physics::BodyType a_type, Physics::CollisionLayer a_layer,
+			Math::vec3 a_position, float a_halfHeight, float a_radius, Math::quat a_rotation, bool a_enable)
+		{
+			m_rigidBody.CreateCapsuleBody(a_type, a_layer, a_position, a_halfHeight, a_radius, a_rotation, a_enable);
+		}
+
 		void RigidBodyComponent::Destroy()
 		{
 			

@@ -39,56 +39,6 @@ using namespace JPH::literals;
 // We're also using STL classes in this example
 using namespace std;
 
-// Callback for traces, connect this to your own trace function if you have one
-static void TraceImpl(const char* inFMT, ...)
-{
-	// Format the message
-	va_list list;
-	va_start(list, inFMT);
-	char buffer[1024];
-	vsnprintf(buffer, sizeof(buffer), inFMT, list);
-	va_end(list);
-
-	// Print to the TTY
-	cout << buffer << endl;
-}
-
-#ifdef JPH_ENABLE_ASSERTS
-
-// Callback for asserts, connect this to your own assert handler if you have one
-static bool AssertFailedImpl(const char* inExpression, const char* inMessage, const char* inFile, uint inLine)
-{
-	// Print to the TTY
-	cout << inFile << ":" << inLine << ": (" << inExpression << ") " << (inMessage != nullptr ? inMessage : "") << endl;
-
-	// Breakpoint
-	return true;
-};
-
-#endif // JPH_ENABLE_ASSERTS
-
-// Layer that objects can be in, determines which other objects it can collide with
-// Typically you at least want to have 1 layer for moving bodies and 1 layer for static bodies, but you can have more
-// layers if you want. E.g. you could have a layer for high detail collision (which is not used by the physics simulation
-// but only if you do collision testing).
-
-
-
-
-// An example activation listener
-class MyBodyActivationListener : public BodyActivationListener
-{
-public:
-	virtual void		OnBodyActivated(const BodyID& inBodyID, uint64 inBodyUserData) override
-	{
-		cout << "A body got activated" << endl;
-	}
-
-	virtual void		OnBodyDeactivated(const BodyID& inBodyID, uint64 inBodyUserData) override
-	{
-		cout << "A body went to sleep" << endl;
-	}
-};
 
 // Program entry point
 int main(int argc, char** argv)
@@ -96,10 +46,6 @@ int main(int argc, char** argv)
 	// Register allocation hook. In this example we'll just let Jolt use malloc / free but you can override these if you want (see Memory.h).
 	// This needs to be done before any other Jolt function is called.
 	RegisterDefaultAllocator();
-
-	// Install trace and assert callbacks
-	/*Trace = TraceImpl;
-	JPH_IF_ENABLE_ASSERTS(AssertFailed = AssertFailedImpl;)*/
 
 		// Create a factory, this class is responsible for creating instances of classes based on their name or hash and is mainly used for deserialization of saved data.
 		// It is not directly used in this example but still required.
@@ -158,12 +104,6 @@ int main(int argc, char** argv)
 	// Now we can create the actual physics system.
 	PhysicsSystem physics_system;
 	physics_system.Init(cMaxBodies, cNumBodyMutexes, cMaxBodyPairs, cMaxContactConstraints, broad_phase_layer_interface, object_vs_broadphase_layer_filter, object_vs_object_layer_filter);
-
-	// A body activation listener gets notified when bodies activate and go to sleep
-	// Note that this is called from a job so whatever you do here needs to be thread safe.
-	// Registering one is entirely optional.
-	MyBodyActivationListener body_activation_listener;
-	physics_system.SetBodyActivationListener(&body_activation_listener);
 
 	// A contact listener gets notified when bodies (are about to) collide, and when they separate again.
 	// Note that this is called from a job so whatever you do here needs to be thread safe.

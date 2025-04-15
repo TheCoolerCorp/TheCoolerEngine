@@ -1,5 +1,7 @@
 #include "GamePlay/Systems/PhysicsSystem.h"
 
+#include "Jolt/RegisterTypes.h"
+
 namespace Engine
 {
 	namespace GamePlay
@@ -10,9 +12,9 @@ namespace Engine
 
 			JPH::Factory::sInstance = new JPH::Factory();
 
-			m_tempAllocator(10 * 1024 * 1024);
+			m_tempAllocator = new JPH::TempAllocatorImpl(10 * 1024 * 1024);
 
-			m_jobSystem(JPH::cMaxPhysicsJobs, JPH::cMaxPhysicsBarriers, std::thread::hardware_concurrency() - 1);
+			m_jobSystem = new JPH::JobSystemThreadPool(JPH::cMaxPhysicsJobs, JPH::cMaxPhysicsBarriers, std::thread::hardware_concurrency() - 1);
 
 			m_physicsSystem.Init(m_maxBodies, m_numBodyMutexes, m_maxBodyPairs, m_maxContactConstraints, m_broadPhaseLayerInterface, m_objectVsBroadphaseLayerFilter, m_objectVsObjectLayerFilter);
 
@@ -40,6 +42,12 @@ namespace Engine
 			m_availableIds.clear();
 
 			JPH::UnregisterTypes();
+
+			delete m_jobSystem;
+			m_jobSystem = nullptr;
+
+			delete m_tempAllocator;
+			m_tempAllocator = nullptr;
 
 			delete JPH::Factory::sInstance;
 			JPH::Factory::sInstance = nullptr;

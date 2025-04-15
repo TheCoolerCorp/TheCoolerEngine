@@ -1,6 +1,14 @@
 #include "Physics/RigidBody.h"
 
+#include <Jolt/Jolt.h>
+#include <Jolt/Core/JobSystemThreadPool.h>
+#include <Jolt/Physics/PhysicsSystem.h>
+#include <Jolt/Physics/Collision/Shape/BoxShape.h>
+#include <Jolt/Physics/Collision/Shape/SphereShape.h>
+#include <Jolt/Physics/Body/BodyCreationSettings.h>
+
 #include "Gameplay/ServiceLocator.h"
+#include "Jolt/Physics/Collision/Shape/CapsuleShape.h"
 
 namespace Engine
 {
@@ -11,37 +19,15 @@ namespace Engine
 		{
 			JPH::BodyInterface* t_bodyInterface = GamePlay::ServiceLocator::GetPhysicsSystem()->GetBodyInterface();
 
-			JPH::Vec3 t_halfExtent = { a_scale.x * 0.5f, a_scale.y * 0.5f, a_scale.z * 0.5f };
-			JPH::Vec3 t_position = { a_position.x, a_position.y, a_position.z };
-			JPH::Quat t_rotation = { a_rotation.x, a_rotation.y, a_rotation.z, a_rotation.w };
-			JPH::EMotionType t_motionType;
-			JPH::ObjectLayer t_layer;
+			const JPH::Vec3 t_halfExtent = { a_scale.x * 0.5f, a_scale.y * 0.5f, a_scale.z * 0.5f };
+			const JPH::Vec3 t_position = { a_position.x, a_position.y, a_position.z };
+			const JPH::Quat t_rotation = { a_rotation.x, a_rotation.y, a_rotation.z, a_rotation.w };
+
+			const JPH::EMotionType t_motionType = BodyTypeToJPHType(a_type);
+			const JPH::ObjectLayer t_layer = CollisionLayerToJPHLayer(a_layer);
 			const JPH::EActivation t_activation = a_enable ? JPH::EActivation::Activate : JPH::EActivation::DontActivate;
 
-			switch (a_type)
-			{
-			case BodyType::STATIC:
-				t_motionType = JPH::EMotionType::Static;
-				break;
-			case BodyType::KINEMATIC:
-				t_motionType = JPH::EMotionType::Kinematic;
-				break;
-			case BodyType::DYNAMIC:
-				t_motionType = JPH::EMotionType::Dynamic;
-				break;
-			}
-
-			switch (a_layer)
-			{
-			case CollisionLayer::MOVING:
-				t_layer = JPH::Layers::MOVING;
-				break;
-			case CollisionLayer::NON_MOVING:
-				t_layer = JPH::Layers::NON_MOVING;
-				break;
-			}
-
-			JPH::BodyCreationSettings t_bodySettings(new JPH::BoxShape(t_halfExtent), t_position, t_rotation, t_motionType, t_layer);
+			const JPH::BodyCreationSettings t_bodySettings(new JPH::BoxShape(t_halfExtent), t_position, t_rotation, t_motionType, t_layer);
 			m_body = t_bodyInterface->CreateBody(t_bodySettings);
 			t_bodyInterface->AddBody(m_body->GetID(), t_activation);
 		}
@@ -51,36 +37,31 @@ namespace Engine
 		{
 			JPH::BodyInterface* t_bodyInterface = GamePlay::ServiceLocator::GetPhysicsSystem()->GetBodyInterface();
 
-			JPH::Vec3 t_position = { a_position.x, a_position.y, a_position.z };
-			JPH::Quat t_rotation = { a_rotation.x, a_rotation.y, a_rotation.z, a_rotation.w };
-			JPH::EMotionType t_motionType;
-			JPH::ObjectLayer t_layer;
+			const JPH::Vec3 t_position = { a_position.x, a_position.y, a_position.z };
+			const JPH::Quat t_rotation = { a_rotation.x, a_rotation.y, a_rotation.z, a_rotation.w };
+
+			const JPH::EMotionType t_motionType = BodyTypeToJPHType(a_type);
+			const JPH::ObjectLayer t_layer = CollisionLayerToJPHLayer(a_layer);
 			const JPH::EActivation t_activation = a_enable ? JPH::EActivation::Activate : JPH::EActivation::DontActivate;
 
-			switch (a_type)
-			{
-			case BodyType::STATIC:
-				t_motionType = JPH::EMotionType::Static;
-				break;
-			case BodyType::KINEMATIC:
-				t_motionType = JPH::EMotionType::Kinematic;
-				break;
-			case BodyType::DYNAMIC:
-				t_motionType = JPH::EMotionType::Dynamic;
-				break;
-			}
+			const JPH::BodyCreationSettings t_bodySettings(new JPH::SphereShape(a_radius), t_position, t_rotation, t_motionType, t_layer);
+			m_body = t_bodyInterface->CreateBody(t_bodySettings);
+			t_bodyInterface->AddBody(m_body->GetID(), t_activation);
+		}
 
-			switch (a_layer)
-			{
-			case CollisionLayer::MOVING:
-				t_layer = JPH::Layers::MOVING;
-				break;
-			case CollisionLayer::NON_MOVING:
-				t_layer = JPH::Layers::NON_MOVING;
-				break;
-			}
+		void RigidBody::CreateCapsuleBody(BodyType a_type, CollisionLayer a_layer, Math::vec3 a_position,
+			float a_halfHeight, float a_radius, Math::quat a_rotation, bool a_enable)
+		{
+			JPH::BodyInterface* t_bodyInterface = GamePlay::ServiceLocator::GetPhysicsSystem()->GetBodyInterface();
 
-			JPH::BodyCreationSettings t_bodySettings(new JPH::SphereShape(a_radius), t_position, t_rotation, t_motionType, t_layer);
+			const JPH::Vec3 t_position = { a_position.x, a_position.y, a_position.z };
+			const JPH::Quat t_rotation = { a_rotation.x, a_rotation.y, a_rotation.z, a_rotation.w };
+
+			const JPH::EMotionType t_motionType = BodyTypeToJPHType(a_type);
+			const JPH::ObjectLayer t_layer = CollisionLayerToJPHLayer(a_layer);
+			const JPH::EActivation t_activation = a_enable ? JPH::EActivation::Activate : JPH::EActivation::DontActivate;
+
+			const JPH::BodyCreationSettings t_bodySettings(new JPH::CapsuleShape(a_halfHeight, a_radius), t_position, t_rotation, t_motionType, t_layer);
 			m_body = t_bodyInterface->CreateBody(t_bodySettings);
 			t_bodyInterface->AddBody(m_body->GetID(), t_activation);
 		}
@@ -105,6 +86,32 @@ namespace Engine
 		{
 			const JPH::BodyInterface* t_bodyInterface = GamePlay::ServiceLocator::GetPhysicsSystem()->GetBodyInterface();
 			return t_bodyInterface->IsActive(m_body->GetID());
+		}
+
+		JPH::EMotionType RigidBody::BodyTypeToJPHType(const BodyType a_type)
+		{
+			switch (a_type)
+			{
+			case BodyType::STATIC:
+				return JPH::EMotionType::Static;
+			case BodyType::KINEMATIC:
+				return JPH::EMotionType::Kinematic;
+			case BodyType::DYNAMIC:
+				return JPH::EMotionType::Dynamic;
+			}
+			return JPH::EMotionType::Dynamic;
+		}
+
+		JPH::ObjectLayer RigidBody::CollisionLayerToJPHLayer(const CollisionLayer a_layer)
+		{
+			switch (a_layer)
+			{
+			case CollisionLayer::MOVING:
+				return JPH::Layers::MOVING;
+			case CollisionLayer::NON_MOVING:
+				return JPH::Layers::NON_MOVING;
+			}
+			return JPH::Layers::MOVING;
 		}
 	}
 }
