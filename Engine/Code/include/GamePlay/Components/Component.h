@@ -17,7 +17,8 @@ namespace Engine
 		{
 			TRANSFORM = 0,
 			MESH = 1,
-			MATERIAL = 2
+			MATERIAL = 2,
+			RIGIDBODY = 3
 		};
 
 		class Component

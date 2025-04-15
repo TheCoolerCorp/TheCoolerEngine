@@ -29,7 +29,6 @@ namespace Engine
 			m_physicsSystem = a_physicsSystem;
 		}
 
-
 		Resource::ResourceManager* ServiceLocator::GetResourceManager()
 		{
 			return m_resourceManager;

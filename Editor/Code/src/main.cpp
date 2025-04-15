@@ -98,8 +98,8 @@ int main(int argc, char** argv)
 	RegisterDefaultAllocator();
 
 	// Install trace and assert callbacks
-	Trace = TraceImpl;
-	JPH_IF_ENABLE_ASSERTS(AssertFailed = AssertFailedImpl;)
+	/*Trace = TraceImpl;
+	JPH_IF_ENABLE_ASSERTS(AssertFailed = AssertFailedImpl;)*/
 
 		// Create a factory, this class is responsible for creating instances of classes based on their name or hash and is mainly used for deserialization of saved data.
 		// It is not directly used in this example but still required.
