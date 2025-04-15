@@ -88,6 +88,20 @@ namespace Engine
 			return t_bodyInterface->IsActive(m_body->GetID());
 		}
 
+		void RigidBody::Remove() const
+		{
+			JPH::BodyInterface* t_bodyInterface = GamePlay::ServiceLocator::GetPhysicsSystem()->GetBodyInterface();
+			t_bodyInterface->RemoveBody(m_body->GetID());
+		}
+
+		void RigidBody::Destroy()
+		{
+			JPH::BodyInterface* t_bodyInterface = GamePlay::ServiceLocator::GetPhysicsSystem()->GetBodyInterface();
+			t_bodyInterface->DestroyBody(m_body->GetID());
+			delete m_body;
+			m_body = nullptr;
+		}
+
 		JPH::EMotionType RigidBody::BodyTypeToJPHType(const BodyType a_type)
 		{
 			switch (a_type)

@@ -10,6 +10,8 @@ namespace Engine
 {
     namespace Math
     {
+        class mat4;
+
         //Class for Vector3
         class vec3
         {
@@ -46,6 +48,8 @@ namespace Engine
             ENGINE_API  static float DotProduct(vec3 a_v1, vec3 a_v2); // returns the dot product of two vectors
             ENGINE_API  static vec3 CrossProduct(vec3 a_v1, vec3 a_v2); // returns the cross product of two vectors
             ENGINE_API static float GetAngle(vec3 a_v1, vec3 a_v2); // returns the angle between two vectors
+            ENGINE_API static vec3 GetPosition(const mat4& a_m);
+            ENGINE_API static vec3 GetScale(const mat4& a_m);
         };
     }
 }

@@ -34,6 +34,8 @@ namespace Engine
 			ENGINE_API void SetActive(bool a_enable) const;
 			ENGINE_API [[nodiscard]] JPH::BodyID GetBodyID() const;
 			ENGINE_API [[nodiscard]] bool IsActive() const;
+			ENGINE_API void Remove() const;
+			ENGINE_API void Destroy();
 
 		private:
 			JPH::Body* m_body = nullptr;

@@ -30,9 +30,24 @@ namespace Engine
 			m_rigidBody.CreateCapsuleBody(a_type, a_layer, a_position, a_halfHeight, a_radius, a_rotation, a_enable);
 		}
 
+		void RigidBodyComponent::UpdateObjectTransform(Math::Transform* a_transform) const
+		{
+			const JPH::BodyInterface* t_bodyInterface = GamePlay::ServiceLocator::GetPhysicsSystem()->GetBodyInterface();
+			const JPH::BodyID t_bodyID = m_rigidBody.GetBodyID();
+			const JPH::Vec3 t_bodyPos = t_bodyInterface->GetCenterOfMassPosition(t_bodyID);
+			const JPH::Quat t_bodyRot = t_bodyInterface->GetRotation(t_bodyID);
+
+			const Math::vec3 t_newPos = { t_bodyPos.GetX(), t_bodyPos.GetY(), t_bodyPos.GetZ() };
+			const Math::quat t_newRot = { t_bodyRot.GetX(), t_bodyRot.GetY(), t_bodyRot.GetZ(), t_bodyRot.GetW() };
+
+			const Math::mat4 t_newTRS = Math::mat4::TRS(t_newPos, t_newRot, a_transform->GetGlobalScale());
+			a_transform->SetMatrix(t_newTRS);
+		}
+
 		void RigidBodyComponent::Destroy()
 		{
-			
+			m_rigidBody.Remove();
+			m_rigidBody.Destroy();
 		}
 	}
 }

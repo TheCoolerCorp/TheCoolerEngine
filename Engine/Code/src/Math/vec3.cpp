@@ -1,4 +1,5 @@
 #include "Math/vec3.h"
+#include "Math/mat4.h"
 
 namespace Engine
 {
@@ -99,6 +100,20 @@ namespace Engine
             const float t_angle = acosf(t_dotProduct / (t_v1Norm * t_v2Norm));
 
             return t_angle;
+        }
+
+        vec3 vec3::GetPosition(const mat4& a_m)
+        {
+            return { a_m.mElements[3], a_m.mElements[7], a_m.mElements[11] };
+        }
+
+        vec3 vec3::GetScale(const mat4& a_m)
+        {
+            vec3 t_scale;
+            t_scale.x = Norm({ a_m.mElements[0], a_m.mElements[4], a_m.mElements[8] });
+            t_scale.y = Norm({ a_m.mElements[1], a_m.mElements[5], a_m.mElements[9] });
+            t_scale.z = Norm({ a_m.mElements[2], a_m.mElements[6], a_m.mElements[10] });
+            return t_scale;
         }
     }
 }

@@ -25,6 +25,9 @@ namespace Engine
 						Math::mat4 newGlobalMatrix = GlobalParentMatrix * newLocalMatrix;
 
 						t_component->GetTransform()->SetMatrix(newGlobalMatrix);
+						t_transform->SetGlobalPositionFromMatrix();
+						t_transform->SetGlobalRotationFromMatrix();
+						t_transform->SetGlobalScaleFromMatrix();
 						
 						continue;
 					}
@@ -34,6 +37,9 @@ namespace Engine
 					Math::vec3 scale = t_transform->GetScale();
 					Math::mat4 t_trs = Math::mat4::TRS(pos, rot, scale);
 					t_transform->SetMatrix(t_trs);
+					t_transform->SetGlobalPositionFromMatrix();
+					t_transform->SetGlobalRotationFromMatrix();
+					t_transform->SetGlobalScaleFromMatrix();
 					t_transform->SetNeedToUpdate(false);
 				}
 			}

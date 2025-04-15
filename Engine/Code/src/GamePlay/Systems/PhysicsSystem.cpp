@@ -14,7 +14,7 @@ namespace Engine
 
 			m_tempAllocator = new JPH::TempAllocatorImpl(10 * 1024 * 1024);
 
-			m_jobSystem = new JPH::JobSystemThreadPool(JPH::cMaxPhysicsJobs, JPH::cMaxPhysicsBarriers, std::thread::hardware_concurrency() - 1);
+			m_jobSystem = new JPH::JobSystemThreadPool(JPH::cMaxPhysicsJobs, JPH::cMaxPhysicsBarriers, std::thread::hardware_concurrency() - 1u);
 
 			m_physicsSystem.Init(m_maxBodies, m_numBodyMutexes, m_maxBodyPairs, m_maxContactConstraints, m_broadPhaseLayerInterface, m_objectVsBroadphaseLayerFilter, m_objectVsObjectLayerFilter);
 
