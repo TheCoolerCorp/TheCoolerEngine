@@ -112,6 +112,7 @@ namespace Engine
 				std::vector<VkSubpassDependency> dependencies;
 				VkExtent2D extent;
 				bool setViewportAndScissor;
+				bool useSwapChainFramebuffers = false;
 			};
 
 			struct AttachmentResource {
@@ -124,10 +125,9 @@ namespace Engine
 			{
 				VkCommandBuffer commandBuffer;
 				uint32_t imageIndex;
-				VkRenderPass renderPass;
 				VulkanSwapchain* swapChain;
-				VulkanGraphicPipeline* graphicPipeline;
-				GamePlay::Camera* camera;
+				const VulkanGraphicPipeline* graphicPipeline;
+				const GamePlay::Camera* camera;
 			};
 
 			class VulkanRenderPass
@@ -169,8 +169,6 @@ namespace Engine
 
 				//function that will be called to draw the renderpass, lambda to allow the user to define it
 				std::function<void(RecordRenderPassinfo, const std::vector<Core::RHI::IRenderObject*>&, const std::vector<Core::RHI::IBuffer*>&, const std::vector<Core::RHI::IBuffer*>&, const std::vector<uint32_t>&)> m_drawFunc;
-
-				VkExtent2D m_extent;
 			};
 		}
 	}

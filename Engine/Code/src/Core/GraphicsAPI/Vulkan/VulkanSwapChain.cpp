@@ -212,8 +212,15 @@ namespace Engine
 					t_commandBuffers.push_back(t_commandBuffer);
 					vkResetCommandBuffer(t_commandBuffer, 0);
 
-					//TODO : Change to use VulkanRenderPass instead of VulkanCommandPool
+					RecordRenderPassinfo info;
+					info.commandBuffer = t_commandBuffer;
+					info.imageIndex = t_imageIndex;
+					info.swapChain = this;
+					info.graphicPipeline = t_pipeline;	
+					info.camera = a_camera;
 
+					//TODO : Change to use VulkanRenderPass instead of VulkanCommandPool
+					a_renderPass->CastVulkan()->RunSceneRenderPass(info, a_renderObjects, a_vertexBuffers, a_indexBuffers, a_nbIndices);
 					//VulkanCommandPool::RecordCommandBuffer(t_commandBuffer, t_imageIndex, t_renderPass, this, t_pipeline, a_renderObjects, a_vertexBuffers, a_indexBuffers, a_nbIndices, a_camera);
 				}
 

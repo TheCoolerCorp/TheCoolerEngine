@@ -89,11 +89,12 @@ namespace Engine
 				// Extent
 				config.extent = extent;
 				config.setViewportAndScissor = true;
+				config.useSwapChainFramebuffers = true;
 
 				m_sceneRenderPass = new VulkanRenderPass(device, a_renderer);
 				
 				m_sceneRenderPass->Create(config);
-				m_sceneRenderPass->SetFramebuffers(m_renderer->GetSwapChain()->CastVulkan()->GetFramebuffers());
+				//m_sceneRenderPass->SetFramebuffers(m_renderer->GetSwapChain()->CastVulkan()->GetFramebuffers());
 
 				m_sceneRenderPass->SetDrawFunc(
 					[this](RecordRenderPassinfo a_info, const std::vector<Core::RHI::IRenderObject*>& a_renderObjects,
@@ -191,13 +192,14 @@ namespace Engine
 						depthRef.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
                     }
 
+					colorAttachmentRefs.push_back(colorRefs);
+
 					VkSubpassDescription subpassDesc{};
 					subpassDesc.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
 					subpassDesc.colorAttachmentCount = static_cast<uint32_t>(colorRefs.size());
-					subpassDesc.pColorAttachments = colorRefs.data();
+					subpassDesc.pColorAttachments = colorAttachmentRefs.back().data();
 					subpassDesc.pDepthStencilAttachment = subpass.depthAttachmentIndex >= 0 ? &depthRef : nullptr;
 
-					colorAttachmentRefs.push_back(colorRefs);
 					if (subpass.depthAttachmentIndex >= 0)
 						depthAttachmentRefs.push_back(depthRef);
 
@@ -332,6 +334,10 @@ namespace Engine
 				const std::vector<Core::RHI::IBuffer*>& a_vertexBuffers,
 				const std::vector<Core::RHI::IBuffer*>& a_indexBuffers, const std::vector<uint32_t>& a_nbIndices)
 			{
+				VkCommandBufferBeginInfo t_beginInfo{};
+				t_beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+
+				VK_CHECK(vkBeginCommandBuffer(a_info.commandBuffer, &t_beginInfo), "failed to begin recording command buffer!");
 				Begin(a_info.commandBuffer, a_info.imageIndex);
 				//Check if the function has been set before calling it
 				if (m_drawFunc == nullptr)
@@ -339,6 +345,7 @@ namespace Engine
 				else
 					m_drawFunc(a_info, a_renderObjects, a_vertexBuffers, a_indexBuffers, a_nbIndices);
 				End(a_info.commandBuffer);
+				VK_CHECK(vkEndCommandBuffer(a_info.commandBuffer), "failed to end command buffer!");
 			}
 
 			void VulkanRenderPass::Begin(VkCommandBuffer cmd, uint32_t imageIndex, VkSubpassContents contents)
@@ -364,7 +371,10 @@ namespace Engine
 				VkRenderPassBeginInfo beginInfo{};
 				beginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
 				beginInfo.renderPass = m_renderPass;
-				beginInfo.framebuffer = m_framebuffers[imageIndex];
+				if (m_config.useSwapChainFramebuffers)
+					beginInfo.framebuffer = m_renderer->GetSwapChain()->CastVulkan()->GetFramebuffers()[imageIndex];
+				else
+					beginInfo.framebuffer = m_framebuffers[imageIndex];
 				beginInfo.renderArea.offset = { 0, 0 };
 				beginInfo.renderArea.extent = t_swapChainExtent;
 				beginInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
@@ -372,13 +382,18 @@ namespace Engine
 
 				vkCmdBeginRenderPass(cmd, &beginInfo, VK_SUBPASS_CONTENTS_INLINE);
 
-				// Optional: set viewport and scissor if configured to do so
+				//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+				//TEMPORARY: MAKE RENDERPASS STORE REFERENCE TO ITS ASSOCIATED PIPELINE LATER
+				//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+				vkCmdBindPipeline(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, m_renderer->GetPipeline()->CastVulkan()->GetPipeline());
+
+				//set viewport and scissor if configured to do so
 				if (m_config.setViewportAndScissor)
 				{
 					VkViewport viewport{};
 					viewport.x = 0.0f;
 					viewport.y = 0.0f;
-					viewport.width = static_cast<float>(m_extent.width);
+					viewport.width = static_cast<float>(t_swapChainExtent.width);
 					viewport.height = static_cast<float>(t_swapChainExtent.height);
 					viewport.minDepth = 0.0f;
 					viewport.maxDepth = 1.0f;
