@@ -18,17 +18,17 @@ namespace Engine
 		{
 			struct VulkanBinding
 			{
-				uint32_t mIndex = 0;
+				uint32_t mIndex = -1;
 				std::string mName = "";
 				VkDescriptorType mType;
 				VkShaderStageFlags mFlags;
-				uint32_t mCount = 0;
+				uint32_t mCount = -1;
 
 			};
 
 			struct VulkanSet
 			{
-				uint32_t mIndex = 0;
+				uint32_t mIndex = -1;
 				std::vector<VulkanBinding> mBindings = std::vector<VulkanBinding>(0);
 			};
 

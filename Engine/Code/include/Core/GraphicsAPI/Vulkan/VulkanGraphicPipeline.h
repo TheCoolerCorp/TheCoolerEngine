@@ -12,6 +12,25 @@ namespace Engine
 	{
 		namespace GraphicsAPI
 		{
+			#define COMMON std::string("per")
+			#define PER std::string("common")
+
+			enum SetLayoutType : int
+			{
+				Common = 0,
+				Per = 1,
+				UNDEFINED = 2
+			};
+
+			struct VulkanSetLayout
+			{
+				uint32_t mIndex = -1;
+
+				SetLayoutType mType = SetLayoutType::Common;
+
+				VkDescriptorSetLayout mLayout;
+			};
+
 			class VulkanGraphicPipeline : public RHI::IGraphicPipeline
 			{
 			public:
@@ -27,12 +46,16 @@ namespace Engine
 				ENGINE_API VkDescriptorSetLayout GetCommontDescriptorSetLayout() const { return m_commonDescriptor; }
 
 			private:
-				VkShaderModule CreateShader(const std::string& a_path, VkDevice a_device);
+				SetLayoutType GetType(std::string a_string);
 
 				VkPipeline m_pipeline = VK_NULL_HANDLE;
 				VkPipelineLayout m_layout = VK_NULL_HANDLE;
 				VkDescriptorSetLayout m_objectDescriptor = VK_NULL_HANDLE;
 				VkDescriptorSetLayout m_commonDescriptor = VK_NULL_HANDLE;
+
+
+				std::vector<VulkanSetLayout> m_setslayouts = std::vector<VulkanSetLayout>();
+				
 			};
 		}
 	}

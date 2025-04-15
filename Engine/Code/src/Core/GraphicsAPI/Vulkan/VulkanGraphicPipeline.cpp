@@ -7,7 +7,7 @@
 #include "Core/Interfaces/IRenderPass.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanShader.h"
 #include "Ressources/Vertex.h"
-
+#include "Core/Logger/Logger.h"
 namespace Engine
 {
 	namespace Core
@@ -133,10 +133,11 @@ namespace Engine
 					}
 				}
 
-
+				m_setslayouts.resize(recordedSets.size());
 				for (int i = 0; i < recordedSets.size(); ++i)
 				{
 					uint32_t setIndex = i;
+					m_setslayouts[i].mIndex = i;
 					std::vector<VkDescriptorSetLayoutBinding> setBindings = std::vector<VkDescriptorSetLayoutBinding>(0);
 
 					for (int j = 0; j < 2; ++j)
@@ -147,6 +148,7 @@ namespace Engine
 							{
 								for (int k = 0; k < set.mBindings.size(); ++k)
 								{
+									m_setslayouts[i].mType = GetType(set.mBindings[k].mName);
 									VkDescriptorSetLayoutBinding setBinding{};
 									setBinding.binding = set.mBindings[k].mIndex;
 									setBinding.descriptorType = set.mBindings[k].mType;
@@ -164,51 +166,15 @@ namespace Engine
 					SetCreateInfo.bindingCount = static_cast<uint32_t>(setBindings.size());
 					SetCreateInfo.pBindings = setBindings.data();
 
-					VK_CHECK(vkCreateDescriptorSetLayout(a_logicalDevice->CastVulkan()->GetVkDevice(), &SetCreateInfo, nullptr, &m_commonDescriptor),"Failed to create descriptor set layout");
+					VK_CHECK(vkCreateDescriptorSetLayout(a_logicalDevice->CastVulkan()->GetVkDevice(), &SetCreateInfo, nullptr, &m_setslayouts[i].mLayout), "Failed to create descriptor set layout");
 				}
 
 
-
-				VkDescriptorSetLayoutBinding camUBOLayoutBinding{};
-				camUBOLayoutBinding.binding = 0;
-				camUBOLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-				camUBOLayoutBinding.descriptorCount = 1;
-				camUBOLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
-				camUBOLayoutBinding.pImmutableSamplers = nullptr;
-
-				VkDescriptorSetLayoutCreateInfo camUBOLayoutInfo{};
-				camUBOLayoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-				camUBOLayoutInfo.bindingCount = 1;
-				camUBOLayoutInfo.pBindings = &camUBOLayoutBinding;
-
-				VK_CHECK(vkCreateDescriptorSetLayout(a_logicalDevice->CastVulkan()->GetVkDevice(), &camUBOLayoutInfo, nullptr, &m_commonDescriptor),
-					"Failed to create Camera UBO descriptor set layout");
-
-				VkDescriptorSetLayoutBinding objUBOLayoutBinding{};
-				objUBOLayoutBinding.binding = 0;
-				objUBOLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-				objUBOLayoutBinding.descriptorCount = 1;
-				objUBOLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
-				objUBOLayoutBinding.pImmutableSamplers = nullptr;
-
-				VkDescriptorSetLayoutBinding samplerLayoutBinding{};
-				samplerLayoutBinding.binding = 1;
-				samplerLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-				samplerLayoutBinding.descriptorCount = 1;
-				samplerLayoutBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
-				samplerLayoutBinding.pImmutableSamplers = nullptr;
-
-				std::array<VkDescriptorSetLayoutBinding, 2> objBindings = { objUBOLayoutBinding, samplerLayoutBinding };
-
-				VkDescriptorSetLayoutCreateInfo objUBOLayoutInfo{};
-				objUBOLayoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
-				objUBOLayoutInfo.bindingCount = static_cast<uint32_t>(objBindings.size());
-				objUBOLayoutInfo.pBindings = objBindings.data();
-
-				VK_CHECK(vkCreateDescriptorSetLayout(a_logicalDevice->CastVulkan()->GetVkDevice(), &objUBOLayoutInfo, nullptr, &m_objectDescriptor),
-					"Failed to create Object UBO + Sampler descriptor set layout");
-
-				std::array<VkDescriptorSetLayout, 2> descriptorSetLayouts = { m_commonDescriptor, m_objectDescriptor };
+				std::vector<VkDescriptorSetLayout> descriptorSetLayouts = std::vector<VkDescriptorSetLayout>(m_setslayouts.size());
+				for (int i = 0; i < m_setslayouts.size(); ++i)
+				{
+					descriptorSetLayouts[i] = m_setslayouts[i].mLayout;
+				}
 
 				VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
 				pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
@@ -238,11 +204,6 @@ namespace Engine
 
 				VK_CHECK(vkCreateGraphicsPipelines(a_logicalDevice->CastVulkan()->GetVkDevice(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_pipeline),
 					"Failed to create graphic pipeline");
-
-
-				// Destroy shader, already load don't need to store them
-				//vkDestroyShaderModule(a_logicalDevice->CastVulkan()->GetVkDevice(), t_vertexShader, nullptr);
-				//vkDestroyShaderModule(a_logicalDevice->CastVulkan()->GetVkDevice(), t_fragmentShader, nullptr);
 			}
 
 			void VulkanGraphicPipeline::Destroy(RHI::ILogicalDevice* a_logicalDevice)
@@ -253,19 +214,19 @@ namespace Engine
 				vkDestroyPipelineLayout(a_logicalDevice->CastVulkan()->GetVkDevice(), m_layout, nullptr);
 			}
 
-			VkShaderModule VulkanGraphicPipeline::CreateShader(const std::string& a_path, VkDevice a_device)
+
+			SetLayoutType VulkanGraphicPipeline::GetType(std::string a_string)
 			{
-				const std::vector<char>& code = Utils::ReadFile(a_path);
-
-				VkShaderModuleCreateInfo createInfo{};
-				createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-				createInfo.codeSize = code.size();
-				createInfo.pCode = reinterpret_cast<const uint32_t*>(code.data());
-
-				VkShaderModule shaderModule;
-				VK_CHECK(vkCreateShaderModule(a_device, &createInfo, nullptr, &shaderModule), "Failed to create shader");
-
-				return shaderModule;
+				if (a_string.find(COMMON))
+				{
+					return Common;
+				}
+				else if (a_string.find(PER))
+				{
+					return Per;
+				}
+				LOG_CRITICAL("Wrong naming convention in your shader for uniform");
+				return UNDEFINED;
 			}
 		}
 	}

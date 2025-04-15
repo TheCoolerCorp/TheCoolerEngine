@@ -12,8 +12,10 @@ namespace Engine
 	{
 		namespace GraphicsAPI
 		{
-			void VulkanRenderObject::Create(RHI::ILogicalDevice* a_logicalDevice, RHI::IPhysicalDevice* a_physicalDevice, RHI::ISurface* a_surface, RHI::ICommandPool* a_commandPool, RHI::IGraphicPipeline* a_graphicPipeline, int a_maxFrame)
+			void VulkanRenderObject::Create(RHI::ILogicalDevice* a_logicalDevice, RHI::IPhysicalDevice* a_physicalDevice, RHI::ISurface* a_surface, RHI::ICommandPool* a_commandPool, RHI::IGraphicPipeline* a_graphicPipeline, int a_maxFrame, RHI::DescriptorSetType a_type)
 			{
+				m_type = a_type;
+
 				// Create vulkan object from rhi object.
 				VkDevice t_logicalDevice = a_logicalDevice->CastVulkan()->GetVkDevice();
 				VkDescriptorSetLayout t_descriptorSetLayout = a_graphicPipeline->CastVulkan()->GetObjectDescriptorSetLayout();

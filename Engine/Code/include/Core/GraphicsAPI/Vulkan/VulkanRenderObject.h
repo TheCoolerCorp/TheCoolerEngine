@@ -24,7 +24,7 @@ namespace Engine
 
 				ENGINE_API VulkanRenderObject* CastVulkan() override { return this; }
 
-				ENGINE_API void Create(RHI::ILogicalDevice* a_logicalDevice, RHI::IPhysicalDevice* a_physicalDevice, RHI::ISurface* a_surface, RHI::ICommandPool* a_commandPool, RHI::IGraphicPipeline* a_graphicPipeline, int a_maxFrame) override;
+				ENGINE_API void Create(RHI::ILogicalDevice* a_logicalDevice, RHI::IPhysicalDevice* a_physicalDevice, RHI::ISurface* a_surface, RHI::ICommandPool* a_commandPool, RHI::IGraphicPipeline* a_graphicPipeline, int a_maxFrame, RHI::DescriptorSetType a_type = RHI::Per) override;
 				ENGINE_API void Destroy(RHI::ILogicalDevice* a_logicalDevice) override;
 
 				ENGINE_API void SetData(RHI::ILogicalDevice* a_logicalDevice, RHI::IPhysicalDevice* a_physicalDevice, RHI::ICommandPool* a_commandPool, RHI::IImage* a_image, void* a_data, int a_maxFrame) override;
@@ -42,6 +42,8 @@ namespace Engine
 
 				void CreatePool(VkDevice a_logicalDevice, int a_maxFrame);
 				void CreateDescriptorSets(VkDevice a_logicalDevice, VkDescriptorSetLayout a_descriptorSetLayout, int a_maxFrame);
+
+				RHI::DescriptorSetType m_type = RHI::UNDEFINED;
 	
 			};
 		}
