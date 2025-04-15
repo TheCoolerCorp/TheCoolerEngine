@@ -26,6 +26,8 @@ namespace Engine
 			private:
 				VulkanBuffer* m_uniform{};
 				VkDescriptorSet m_descriptorSet{};
+
+
 			};
 		}
 	}

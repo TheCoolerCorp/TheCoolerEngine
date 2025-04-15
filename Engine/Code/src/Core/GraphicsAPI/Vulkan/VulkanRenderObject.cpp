@@ -83,7 +83,7 @@ namespace Engine
 				VK_CHECK(vkAllocateDescriptorSets(a_logicalDevice, &allocInfo, m_sets.data()), "Can't allocate descriptor sets");
 			}
 
-			void VulkanRenderObject::SetData(RHI::ILogicalDevice* a_logicalDevice, RHI::IPhysicalDevice* a_physicalDevice, RHI::ICommandPool* a_commandPool, RHI::IImage* a_image, void* a_data, int a_maxFrame)
+			void VulkanRenderObject::SetData(RHI::ILogicalDevice* a_logicalDevice, RHI::IPhysicalDevice* a_physicalDevice, RHI::ICommandPool* a_commandPool, int a_maxFrame, void* a_data, RHI::IImage* a_image)
 			{
 				VkDevice t_logicalDevice = a_logicalDevice->CastVulkan()->GetVkDevice();
 				VkPhysicalDevice t_physicalDevice = a_physicalDevice->CastVulkan()->GetVkPhysicalDevice();
@@ -91,6 +91,9 @@ namespace Engine
 
 				for (size_t i = 0; i < a_maxFrame; i++)
 				{
+					std::vector<VkWriteDescriptorSet> t_descriptorWrites{};
+
+
 					RHI::BufferData t_uniformData;
 					t_uniformData.mUboData = a_data;
 					t_uniformData.mUboSize = 16 * sizeof(float);
@@ -101,30 +104,38 @@ namespace Engine
 					t_bufferInfo.offset = 0;
 					t_bufferInfo.range = 16 * sizeof(float);
 
+					VkWriteDescriptorSet mat;
+					mat.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+					mat.dstSet = m_sets[i];
+					mat.dstBinding = 0;
+					mat.dstArrayElement = 0;
+					mat.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+					mat.descriptorCount = 1;
+					mat.pBufferInfo = &t_bufferInfo;
 
-					VkDescriptorImageInfo t_imageInfo{};
-					t_imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-					t_imageInfo.imageView = a_image->CastVulkan()->GetView();
-					t_imageInfo.sampler = a_image->CastVulkan()->GetSampler();
+					t_descriptorWrites.push_back(mat);
+
+					if (a_image != nullptr)
+					{
+						VkDescriptorImageInfo t_imageInfo{};
+						t_imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+						t_imageInfo.imageView = a_image->CastVulkan()->GetView();
+						t_imageInfo.sampler = a_image->CastVulkan()->GetSampler();
+
+						VkWriteDescriptorSet tex;
+						tex.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+						tex.dstSet = m_sets[i];
+						tex.dstBinding = 1;
+						tex.dstArrayElement = 0;
+						tex.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+						tex.descriptorCount = 1;
+						tex.pImageInfo = &t_imageInfo;
+
+						t_descriptorWrites.push_back(tex);
+					}
 
 
-					std::array<VkWriteDescriptorSet, 2> t_descriptorWrites{};
 
-					t_descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-					t_descriptorWrites[0].dstSet = m_sets[i];
-					t_descriptorWrites[0].dstBinding = 0;
-					t_descriptorWrites[0].dstArrayElement = 0;
-					t_descriptorWrites[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-					t_descriptorWrites[0].descriptorCount = 1;
-					t_descriptorWrites[0].pBufferInfo = &t_bufferInfo;
-									   
-					t_descriptorWrites[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-					t_descriptorWrites[1].dstSet = m_sets[i];
-					t_descriptorWrites[1].dstBinding = 1;
-					t_descriptorWrites[1].dstArrayElement = 0;
-					t_descriptorWrites[1].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-					t_descriptorWrites[1].descriptorCount = 1;
-					t_descriptorWrites[1].pImageInfo = &t_imageInfo;
 						
 					vkUpdateDescriptorSets(t_logicalDevice, static_cast<uint32_t>(t_descriptorWrites.size()), t_descriptorWrites.data(), 0, nullptr);
 				}

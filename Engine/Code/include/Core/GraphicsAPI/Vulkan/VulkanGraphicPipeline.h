@@ -45,6 +45,8 @@ namespace Engine
 				ENGINE_API VkDescriptorSetLayout GetObjectDescriptorSetLayout() const { return m_objectDescriptor; }
 				ENGINE_API VkDescriptorSetLayout GetCommontDescriptorSetLayout() const { return m_commonDescriptor; }
 
+				ENGINE_API std::vector<VulkanSetLayout> GetSetLayouts() const { return m_setslayouts; }
+
 			private:
 				SetLayoutType GetType(std::string a_string);
 

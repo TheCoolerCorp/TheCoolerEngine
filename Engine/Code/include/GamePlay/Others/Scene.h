@@ -8,6 +8,7 @@
 #include "Core/Renderer/Renderer.h"
 #include "Ressources/ResourceManager.h"
 #include "GamePlay/Others/GameObject.h"
+#include "GamePlay/Others/Camera.h"
 
 namespace Engine
 {
@@ -25,8 +26,11 @@ namespace Engine
 
 		private:
 			std::vector<GamePlay::GameObject*> m_objs;
+			Camera* m_mainCamera;
+
 			TransformSystem* m_transformSystem = nullptr;
 			MeshRendererSystem* m_meshRendererSystem = nullptr;
+
 			Resource::ResourceManager* m_resourceManager = nullptr;
 		};
 	}

@@ -20,6 +20,10 @@ namespace Engine
 			ServiceLocator::ProvideTransformSystem(m_transformSystem);
 			ServiceLocator::ProvideRendererSystem(m_meshRendererSystem);
 
+			m_mainCamera = new Camera();
+
+
+			#pragma region ObjectTest
 			Ref<Resource::Mesh> t_mesh = m_resourceManager->CreateResource<Resource::Mesh>("Assets/Meshes/viking_room.obj");
 			Ref<Resource::Texture> t_texture = m_resourceManager->CreateResource<Resource::Texture>("Assets/Textures/viking_room.png");
 			t_mesh->Load(a_renderer);
@@ -56,11 +60,7 @@ namespace Engine
 			t_object3->GetComponent<MeshComponent>()->SetTexture(t_texture);
 
 			m_objs.push_back(t_object3);
-
-			Core::GraphicsAPI::VulkanShader* a_shader = new Core::GraphicsAPI::VulkanShader;
-			std::string path = "Assets/Shaders/litFrag.spv";
-			a_shader->Create(path, a_renderer->GetLogicalDevice());
-
+			#pragma endregion
 		}
 
 		void Scene::Update(Core::Renderer* a_renderer)

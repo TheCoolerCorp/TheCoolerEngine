@@ -102,7 +102,7 @@ namespace Engine
 				t_clearValues[1].depthStencil = { .depth = 1.0f, .stencil = 0 };
 
 				t_renderPassInfo.clearValueCount = static_cast<uint32_t>(t_clearValues.size());
-				t_renderPassInfo.pClearValues = t_clearValues.data();
+				t_renderPassInfo.pClearValues = t_clearValues.data(); 
 
 				vkCmdBeginRenderPass(a_commandBuffer, &t_renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 

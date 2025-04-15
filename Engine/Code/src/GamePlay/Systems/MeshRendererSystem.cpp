@@ -121,12 +121,12 @@ namespace Engine
 			{
 				Core::RHI::IRenderObject* t_newRenderObject = apiInterface->InstantiateRenderObject();
 
-				t_newRenderObject->Create(a_logicalDevice, a_physicalDevice, a_surface, a_commandPool, a_graphicPipeline, a_maxFrame);
+				t_newRenderObject->Create(a_logicalDevice, a_physicalDevice, a_surface, a_commandPool, a_graphicPipeline, a_maxFrame, Core::RHI::Per);
 
 				Core::RHI::IImage* t_newRenderObjectTexture = m_components.at(m_pendingComponents.at(i))->GetTexture()->GetImage();
 				void* t_newRenderObjectMatrixData = a_updatedMatrix.at(m_pendingComponents.at(i)).second.mElements.data();
 
-				t_newRenderObject->SetData(a_logicalDevice, a_physicalDevice, a_commandPool, t_newRenderObjectTexture, t_newRenderObjectMatrixData, a_maxFrame);
+				t_newRenderObject->SetData(a_logicalDevice, a_physicalDevice, a_commandPool, a_maxFrame, t_newRenderObjectMatrixData, t_newRenderObjectTexture);
 
 				if (m_availableIndexes.empty())
 				{
