@@ -140,6 +140,7 @@ namespace Engine
 				ENGINE_API void CreateFramebuffers(const std::vector<std::vector<VkImageView>>& a_views);
 				ENGINE_API void SetFramebuffers(const std::vector<VkFramebuffer>& a_buffers);
 				ENGINE_API void CreateAttachments();
+				
 				ENGINE_API void TransitionImageLayout(VkImageLayout newImageLayout);
 
 				ENGINE_API void RecordRenderPass(RecordRenderPassinfo a_info, const std::vector<Core::RHI::IRenderObject*>& a_renderObjects, const std::vector<Core::RHI::IBuffer*>& a_vertexBuffers, const std::vector<Core::RHI::IBuffer*>& a_indexBuffers, const std::vector<uint32_t>& a_nbIndices);
@@ -162,13 +163,18 @@ namespace Engine
 
 				RenderPassConfig m_config;
 				VkRenderPass m_renderPass;
+				VkPipeline m_pipeline = VK_NULL_HANDLE;
 
 				std::vector<VkFramebuffer> m_framebuffers;
 				//optional, only if writing to image or texture, not swapchain
 				std::vector<AttachmentResource> m_AttachmentResources;
+				AttachmentResource m_depthAttachmentResource; //we only need one depth attachment for now
 
 				//function that will be called to draw the renderpass, lambda to allow the user to define it
 				std::function<void(RecordRenderPassinfo, const std::vector<Core::RHI::IRenderObject*>&, const std::vector<Core::RHI::IBuffer*>&, const std::vector<Core::RHI::IBuffer*>&, const std::vector<uint32_t>&)> m_drawFunc;
+
+				void CreateDepthAttachment(const RenderPassAttachment& a_attachment);
+				void CreateAttachment(const RenderPassAttachment& a_attachment, uint32_t i);
 			};
 		}
 	}

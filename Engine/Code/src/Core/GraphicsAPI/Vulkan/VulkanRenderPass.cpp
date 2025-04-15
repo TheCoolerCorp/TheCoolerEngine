@@ -101,6 +101,12 @@ namespace Engine
 						const std::vector<Core::RHI::IBuffer*>& a_vertexBuffers,
 						const std::vector<Core::RHI::IBuffer*>& a_indexBuffers, const std::vector<uint32_t>& a_nbIndices)
 					{
+						//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//TEMPORARY: MAKE RENDERPASS OPTIONALLY STORE REFERENCE TO ITS ASSOCIATED PIPELINE LATER
+//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+						
+						vkCmdBindPipeline(a_info.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_renderer->GetPipeline()->CastVulkan()->GetPipeline());
+
 						const VkPipelineLayout t_layout = a_info.graphicPipeline->GetLayout();
 
 						const VkDescriptorSet t_cameraDescriptorSet = a_info.camera->GetDescriptor()->CastVulkan()->GetDescriptorSet();
@@ -247,65 +253,20 @@ namespace Engine
 
 				for (size_t i = 0; i < m_config.attachments.size(); ++i)
 				{
-					const auto& info = m_config.attachments[i];
-
-					VkImageCreateInfo imageInfo = {};
-					imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
-					imageInfo.imageType = VK_IMAGE_TYPE_2D;
-					imageInfo.format = info.format;
-					imageInfo.extent.width = m_config.extent.width;
-					imageInfo.extent.height = m_config.extent.height;
-					imageInfo.extent.depth = 1;
-					imageInfo.mipLevels = 1;
-					imageInfo.arrayLayers = 1;
-					imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
-					imageInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
-					imageInfo.usage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
-
+					
+					const RenderPassAttachment& info = m_config.attachments[i];
 					if (info.isDepth)
-						imageInfo.usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
-
-					imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
-					imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-
-					// Create image
-					if (vkCreateImage(m_device, &imageInfo, nullptr, &m_AttachmentResources[i].image) != VK_SUCCESS)
+						CreateDepthAttachment(info);
+					else
 					{
-						throw std::runtime_error("Failed to create attachment image");
+						uint32_t maxFrames = m_renderer->GetSwapChain()->CastVulkan()->GetMaxFrame();
+						m_AttachmentResources.resize(maxFrames);
+						for (uint32_t j = 0; j < maxFrames; ++j)
+						{
+							CreateAttachment(info, j);
+						}
 					}
-
-					// Allocate memory
-					VkMemoryRequirements memRequirements;
-					vkGetImageMemoryRequirements(m_device, m_AttachmentResources[i].image, &memRequirements);
-
-					VkMemoryAllocateInfo allocInfo = {};
-					allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-					allocInfo.allocationSize = memRequirements.size;
-					allocInfo.memoryTypeIndex = VulkanBuffer::FindMemoryType(memRequirements.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, m_renderer->GetPhysicalDevice()->CastVulkan()->GetVkPhysicalDevice()); 
-
-					if (vkAllocateMemory(m_device, &allocInfo, nullptr, &m_AttachmentResources[i].memory) != VK_SUCCESS)
-					{
-						throw std::runtime_error("Failed to allocate image memory");
-					}
-
-					vkBindImageMemory(m_device, m_AttachmentResources[i].image, m_AttachmentResources[i].memory, 0);
-
-					// Create image view
-					VkImageViewCreateInfo viewInfo = {};
-					viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-					viewInfo.image = m_AttachmentResources[i].image;
-					viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
-					viewInfo.format = info.format;
-					viewInfo.subresourceRange.aspectMask = info.aspectMask;
-					viewInfo.subresourceRange.baseMipLevel = 0;
-					viewInfo.subresourceRange.levelCount = 1;
-					viewInfo.subresourceRange.baseArrayLayer = 0;
-					viewInfo.subresourceRange.layerCount = 1;
-
-					if (vkCreateImageView(m_device, &viewInfo, nullptr, &m_AttachmentResources[i].view) != VK_SUCCESS)
-					{
-						throw std::runtime_error("Failed to create image view");
-					}
+					
 				}
 
 			}
@@ -382,11 +343,6 @@ namespace Engine
 
 				vkCmdBeginRenderPass(cmd, &beginInfo, VK_SUBPASS_CONTENTS_INLINE);
 
-				//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-				//TEMPORARY: MAKE RENDERPASS STORE REFERENCE TO ITS ASSOCIATED PIPELINE LATER
-				//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-				vkCmdBindPipeline(cmd, VK_PIPELINE_BIND_POINT_GRAPHICS, m_renderer->GetPipeline()->CastVulkan()->GetPipeline());
-
 				//set viewport and scissor if configured to do so
 				if (m_config.setViewportAndScissor)
 				{
@@ -432,6 +388,128 @@ namespace Engine
 					}
 				}
 				m_AttachmentResources.clear();
+			}
+
+			void VulkanRenderPass::CreateDepthAttachment(const RenderPassAttachment& a_attachment)
+			{
+				VkImageCreateInfo imageInfo = {};
+				imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+				imageInfo.imageType = VK_IMAGE_TYPE_2D;
+				imageInfo.format = a_attachment.format;
+				imageInfo.extent.width = m_config.extent.width;
+				imageInfo.extent.height = m_config.extent.height;
+				imageInfo.extent.depth = 1;
+				imageInfo.mipLevels = 1;
+				imageInfo.arrayLayers = 1;
+				imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
+				imageInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
+				imageInfo.usage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
+
+				if (a_attachment.isDepth)
+					imageInfo.usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
+
+				imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+				imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+
+				// Create image
+				if (vkCreateImage(m_device, &imageInfo, nullptr, &m_depthAttachmentResource.image) != VK_SUCCESS)
+				{
+					throw std::runtime_error("Failed to create attachment image");
+				}
+
+				// Allocate memory
+				VkMemoryRequirements memRequirements;
+				vkGetImageMemoryRequirements(m_device, m_depthAttachmentResource.image, &memRequirements);
+
+				VkMemoryAllocateInfo allocInfo = {};
+				allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+				allocInfo.allocationSize = memRequirements.size;
+				allocInfo.memoryTypeIndex = VulkanBuffer::FindMemoryType(memRequirements.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, m_renderer->GetPhysicalDevice()->CastVulkan()->GetVkPhysicalDevice());
+
+				if (vkAllocateMemory(m_device, &allocInfo, nullptr, &m_depthAttachmentResource.memory) != VK_SUCCESS)
+				{
+					throw std::runtime_error("Failed to allocate image memory");
+				}
+
+				vkBindImageMemory(m_device, m_depthAttachmentResource.image, m_depthAttachmentResource.memory, 0);
+
+				// Create image view
+				VkImageViewCreateInfo viewInfo = {};
+				viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+				viewInfo.image = m_depthAttachmentResource.image;
+				viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+				viewInfo.format = a_attachment.format;
+				viewInfo.subresourceRange.aspectMask = a_attachment.aspectMask;
+				viewInfo.subresourceRange.baseMipLevel = 0;
+				viewInfo.subresourceRange.levelCount = 1;
+				viewInfo.subresourceRange.baseArrayLayer = 0;
+				viewInfo.subresourceRange.layerCount = 1;
+
+				if (vkCreateImageView(m_device, &viewInfo, nullptr, &m_depthAttachmentResource.view) != VK_SUCCESS)
+				{
+					throw std::runtime_error("Failed to create image view");
+				}
+			}
+
+			void VulkanRenderPass::CreateAttachment(const RenderPassAttachment& a_attachment, uint32_t i)
+			{
+				VkImageCreateInfo imageInfo = {};
+				imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+				imageInfo.imageType = VK_IMAGE_TYPE_2D;
+				imageInfo.format = a_attachment.format;
+				imageInfo.extent.width = m_config.extent.width;
+				imageInfo.extent.height = m_config.extent.height;
+				imageInfo.extent.depth = 1;
+				imageInfo.mipLevels = 1;
+				imageInfo.arrayLayers = 1;
+				imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
+				imageInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
+				imageInfo.usage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
+
+				if (a_attachment.isDepth)
+					imageInfo.usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
+
+				imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+				imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+
+				// Create image
+				if (vkCreateImage(m_device, &imageInfo, nullptr, &m_AttachmentResources[i].image) != VK_SUCCESS)
+				{
+					throw std::runtime_error("Failed to create attachment image");
+				}
+
+				// Allocate memory
+				VkMemoryRequirements memRequirements;
+				vkGetImageMemoryRequirements(m_device, m_AttachmentResources[i].image, &memRequirements);
+
+				VkMemoryAllocateInfo allocInfo = {};
+				allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+				allocInfo.allocationSize = memRequirements.size;
+				allocInfo.memoryTypeIndex = VulkanBuffer::FindMemoryType(memRequirements.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, m_renderer->GetPhysicalDevice()->CastVulkan()->GetVkPhysicalDevice());
+
+				if (vkAllocateMemory(m_device, &allocInfo, nullptr, &m_AttachmentResources[i].memory) != VK_SUCCESS)
+				{
+					throw std::runtime_error("Failed to allocate image memory");
+				}
+
+				vkBindImageMemory(m_device, m_AttachmentResources[i].image, m_AttachmentResources[i].memory, 0);
+
+				// Create image view
+				VkImageViewCreateInfo viewInfo = {};
+				viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+				viewInfo.image = m_AttachmentResources[i].image;
+				viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+				viewInfo.format = a_attachment.format;
+				viewInfo.subresourceRange.aspectMask = a_attachment.aspectMask;
+				viewInfo.subresourceRange.baseMipLevel = 0;
+				viewInfo.subresourceRange.levelCount = 1;
+				viewInfo.subresourceRange.baseArrayLayer = 0;
+				viewInfo.subresourceRange.layerCount = 1;
+
+				if (vkCreateImageView(m_device, &viewInfo, nullptr, &m_AttachmentResources[i].view) != VK_SUCCESS)
+				{
+					throw std::runtime_error("Failed to create image view");
+				}
 			}
 		}
 	}

@@ -7,6 +7,8 @@
 #include "GamePlay/Others/Scene.h"
 #include "Math/TheCoolerMath.h"
 
+#include "../Inlude/ImGuiLayer.h"
+
 using namespace Engine::Core;
 using namespace Engine::GamePlay;
 using namespace Engine;
@@ -24,8 +26,13 @@ namespace Editor
 			m_inputHandler->Create(m_mainWindow);
 
 			m_renderer = new Renderer();
-			m_renderer->Init(RendererType::VULKAN, m_mainWindow);
+			m_renderer->Init(RendererType::VULKAN);
 
+			//setup layers here
+			ImGuiLayer* imguiLayer = new ImGuiLayer("ImGui Layer", m_renderer);
+			AddLayer(imguiLayer);
+
+			m_renderer->Create(RendererType::VULKAN, m_mainWindow);
 			m_camera = new Camera(vec3(0.f, 1.f, 0.f), vec3(0.f, 0.f, 0.f),
 			                                        vec3(0.f, 1.f, -3.f), ToRadians(70.f),
 			                                        static_cast<float>(a_width) / static_cast<float>(a_height), 0.1f, 100.f, 10.f, 2.f);
@@ -66,6 +73,21 @@ namespace Editor
 
 			m_mainWindow->Destroy();
 			delete m_mainWindow;
+		}
+
+		void Application::AddLayer(Layer* layer)
+		{
+			layer->OnAttach();
+			m_layers.push_back(layer);
+		}
+
+		void Application::UpdateLayers()
+		{
+			for (Layer* layer : m_layers)
+			{
+				layer->OnUpdate(m_deltaTime);
+				//layer->OnUiRender();
+			}
 		}
 	}
 }
