@@ -98,7 +98,6 @@ namespace Engine
 		{
 			JPH::BodyInterface* t_bodyInterface = GamePlay::ServiceLocator::GetPhysicsSystem()->GetBodyInterface();
 			t_bodyInterface->DestroyBody(m_body->GetID());
-			delete m_body;
 			m_body = nullptr;
 		}
 
