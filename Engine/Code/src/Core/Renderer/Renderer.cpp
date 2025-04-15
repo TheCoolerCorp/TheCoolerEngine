@@ -39,7 +39,21 @@ namespace Engine
 			m_renderPass->Create(m_swapChain, m_physicalDevice, m_logicalDevice);
 
 			m_graphicPipeline = m_interface->InstantiateGraphicPipeline();
-			m_graphicPipeline->Create(m_logicalDevice, m_renderPass);
+
+			RHI::IShader* t_vertexShader = m_interface->InstantiateShader();
+			RHI::IShader* t_fragmentShader = m_interface->InstantiateShader();
+			t_vertexShader->Create(BASEVERTEX, m_logicalDevice);
+			t_fragmentShader->Create(UNLITFRAGMENT, m_logicalDevice);
+			std::array<RHI::IShader*, 2> t_vertAndFrag = { t_vertexShader, t_fragmentShader };
+
+			m_graphicPipeline->Create(m_logicalDevice, m_renderPass, t_vertAndFrag);
+
+			t_vertexShader->Destroy(m_logicalDevice);
+			t_fragmentShader->Destroy(m_logicalDevice);
+			m_interface->DestroyShader(t_vertexShader);
+			m_interface->DestroyShader(t_fragmentShader);
+
+
 
 			m_commandPool = m_interface->InstantiateCommandPool();
 			m_commandPool->Create(m_physicalDevice, m_surface, m_logicalDevice);

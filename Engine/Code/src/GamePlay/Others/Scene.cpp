@@ -3,7 +3,7 @@
 #include "Gameplay/ServiceLocator.h"
 #include "GamePlay/Others/GameObject.h"
 #include "Math/TheCoolerMath.h"
-
+#include "Core/GraphicsAPI/Vulkan/VulkanShader.h"
 namespace Engine
 {
 	namespace GamePlay
@@ -56,6 +56,10 @@ namespace Engine
 			t_object3->GetComponent<MeshComponent>()->SetTexture(t_texture);
 
 			m_objs.push_back(t_object3);
+
+			Core::GraphicsAPI::VulkanShader* a_shader = new Core::GraphicsAPI::VulkanShader;
+			std::string path = "Assets/Shaders/litFrag.spv";
+			a_shader->Create(path, a_renderer->GetLogicalDevice());
 
 		}
 

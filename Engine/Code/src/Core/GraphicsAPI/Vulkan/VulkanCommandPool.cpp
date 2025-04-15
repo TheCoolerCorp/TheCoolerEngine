@@ -94,12 +94,12 @@ namespace Engine
 				t_renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
 				t_renderPassInfo.renderPass = a_renderPass;
 				t_renderPassInfo.framebuffer = a_swapChain->GetFramebuffers()[a_imageIndex];
-				t_renderPassInfo.renderArea.offset = { .x= 0, .y= 0};
+				t_renderPassInfo.renderArea.offset = { .x = 0, .y = 0 };
 				t_renderPassInfo.renderArea.extent = t_swapChainExtent;
 
 				std::array<VkClearValue, 2> t_clearValues{};
 				t_clearValues[0].color = { {0.467f, 0.71f, 1.f, 0.996f} };
-				t_clearValues[1].depthStencil = { .depth= 1.0f, .stencil= 0};
+				t_clearValues[1].depthStencil = { .depth = 1.0f, .stencil = 0 };
 
 				t_renderPassInfo.clearValueCount = static_cast<uint32_t>(t_clearValues.size());
 				t_renderPassInfo.pClearValues = t_clearValues.data();
@@ -118,17 +118,13 @@ namespace Engine
 				vkCmdSetViewport(a_commandBuffer, 0, 1, &t_viewport);
 
 				VkRect2D t_scissor;
-				t_scissor.offset = { .x= 0, .y= 0};
+				t_scissor.offset = { .x = 0, .y = 0 };
 				t_scissor.extent = t_swapChainExtent;
 				vkCmdSetScissor(a_commandBuffer, 0, 1, &t_scissor);
 
 				const VkDescriptorSet t_cameraDescriptorSet = a_camera->GetDescriptor()->CastVulkan()->GetDescriptorSet();
+				vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, t_layout, 0, 1, &t_cameraDescriptorSet, 0, nullptr);
 
-
-				// TODO : Modif here to add light descriptor
-				//std::array<VkDescriptorSet, 2> test = { t_cameraDescriptorSet };
-				//vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, t_layout, 0, test.size(), test.data(), 0, nullptr);
-				
 				for (int i = 0; i < a_renderObjects.size(); ++i)
 				{
 					if (a_vertexBuffers.at(i)->CastVulkan()->GetBuffer() != nullptr)

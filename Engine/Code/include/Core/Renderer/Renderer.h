@@ -20,6 +20,10 @@ namespace Engine
 
 	namespace Core
 	{
+		#define BASEVERTEX std::string("Assets/shaders/baseVert.spv")
+		#define UNLITFRAGMENT std::string("Assets/shaders/unlitFrag.spv")
+		#define LITFRAGMENT std::string("Assets/shaders/litFrag.spv")
+
 		enum class RendererType
 		{
 			VULKAN = 0,
@@ -70,6 +74,8 @@ namespace Engine
 			RHI::IRenderPass* m_renderPass = nullptr;
 			RHI::IGraphicPipeline* m_graphicPipeline = nullptr;
 			RHI::ICommandPool* m_commandPool = nullptr;
+
+			
 			
 		};
 	}

@@ -39,7 +39,7 @@ target_link_libraries(Engine PUBLIC assimp::assimp)
 
 target_link_libraries(Engine PUBLIC glfw)
 
-target_compile_definitions(Engine PUBLIC SPIRV_REFLECT_USE_SYSTEM_SPIRV_H)
+#target_compile_definitions(Engine PUBLIC SPIRV_REFLECT_USE_SYSTEM_SPIRV_H)
 
 
 #target_link_directories(Engine PUBLIC "libs/RefurekuGenerator/Bin")
@@ -68,5 +68,5 @@ message("[${CMAKE_PROJECT_NAME}]: Start generating...")
 message("[${CMAKE_PROJECT_NAME}]: Finish generating")
 
 target_link_libraries(Engine PUBLIC Vulkan::Vulkan)
-
+target_link_libraries(Engine PUBLIC spir-v)
 target_link_libraries(Editor PUBLIC imgui)

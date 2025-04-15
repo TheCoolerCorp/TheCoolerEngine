@@ -20,7 +20,7 @@
 #include "Core/GraphicsAPI/Vulkan/VulkanCameraDescriptor.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanImage.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanRenderObject.h"
-
+#include  "Core/GraphicsAPI/Vulkan/VulkanShader.h"
 namespace Engine
 {
 	namespace Core
@@ -61,6 +61,8 @@ namespace Engine
 				ENGINE_API RHI::IImage* InstantiateImage() override { return new VulkanImage; }
 
 				ENGINE_API RHI::IRenderObject* InstantiateRenderObject() override { return new VulkanRenderObject; }
+
+				ENGINE_API RHI::IShader* InstantiateShader() override { return new VulkanShader; }
 			};
 		}
 	}

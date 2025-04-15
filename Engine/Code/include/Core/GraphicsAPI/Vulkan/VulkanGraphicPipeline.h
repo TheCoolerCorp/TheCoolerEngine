@@ -6,8 +6,6 @@
 #include "Core/GraphicsAPI/Vulkan/VulkanUtils.h"
 #include "Core/Utils.h"
 #include "Core/Interfaces/IGraphicPipeline.h"
-#include "Ressources/Vertex.h"
-#include <array>
 namespace Engine
 {
 	namespace Core
@@ -20,13 +18,13 @@ namespace Engine
 				ENGINE_API ~VulkanGraphicPipeline() override = default;
 				ENGINE_API VulkanGraphicPipeline* CastVulkan() override{ return this; }
 
-				ENGINE_API void Create(RHI::ILogicalDevice* a_logicalDevice, RHI::IRenderPass* a_renderPass) override;
+				ENGINE_API void Create(RHI::ILogicalDevice* a_logicalDevice, RHI::IRenderPass* a_renderPass, std::array<RHI::IShader*, 2> a_vertFragShaders, std::vector<RHI::IShader*> a_additionalShaders = {}) override;
 				ENGINE_API void Destroy(RHI::ILogicalDevice* a_logicalDevice) override;
 
 				ENGINE_API VkPipeline GetPipeline() const { return m_pipeline; }
 				ENGINE_API VkPipelineLayout GetLayout() const { return m_layout; }
 				ENGINE_API VkDescriptorSetLayout GetObjectDescriptorSetLayout() const { return m_objectDescriptor; }
-				ENGINE_API VkDescriptorSetLayout GetCameraDescriptorSetLayout() const { return m_cameraDescriptor; }
+				ENGINE_API VkDescriptorSetLayout GetCommontDescriptorSetLayout() const { return m_commonDescriptor; }
 
 			private:
 				VkShaderModule CreateShader(const std::string& a_path, VkDevice a_device);
@@ -34,7 +32,7 @@ namespace Engine
 				VkPipeline m_pipeline = VK_NULL_HANDLE;
 				VkPipelineLayout m_layout = VK_NULL_HANDLE;
 				VkDescriptorSetLayout m_objectDescriptor = VK_NULL_HANDLE;
-				VkDescriptorSetLayout m_cameraDescriptor = VK_NULL_HANDLE;
+				VkDescriptorSetLayout m_commonDescriptor = VK_NULL_HANDLE;
 			};
 		}
 	}

@@ -1,3 +1,5 @@
+#-----------------LIBS----------------------#
+
 # STB
 add_library(stb INTERFACE)
 target_include_directories(stb INTERFACE "stb/")
@@ -19,5 +21,10 @@ add_library(imgui STATIC ${IMGUI_SOURCES_FILES})
 target_include_directories(imgui PUBLIC ${IMGUI_FILES_LOCATION})
 
 #SPIR-V
-set(SPIR-V_FILES_LOCATION "spir-v")
-file(GLOB SPIR-V_SOURCES_FILES "{SPIR-V_FILES_LOCATION/*.cpp")
+#add_subdirectory(spir-v)
+#set(SPIRV_FILES_LOCATION "spir-v")
+#file(GLOB SPIRV_SOURCES_FILES "{SPIRV_FILES_LOCATION/spirv-reflect.cpp")
+
+set(SPIRV_FILES_LOCATION "spir-v")
+add_library(spir-v STATIC ${SPIRV_FILES_LOCATION}/spirv_reflect.c)
+target_include_directories(spir-v PUBLIC ${SPIRV_FILES_LOCATION})
