@@ -49,5 +49,10 @@ namespace Engine
 			m_rigidBody.Remove();
 			m_rigidBody.Destroy();
 		}
+
+		RigidBodyComponent* RigidBodyComponent::GetComponent(const uint32_t a_id)
+		{
+			return ServiceLocator::GetPhysicsSystem()->GetComponent(a_id);
+		}
 	}
 }

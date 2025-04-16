@@ -1,3 +1,5 @@
+#include <utility>
+
 #include "GamePlay/Others/Scene.h"
 
 #include "Gameplay/ServiceLocator.h"
@@ -14,75 +16,104 @@ namespace Engine
 
 			m_meshRendererSystem = new MeshRendererSystem;
 
+			m_physicsSystem = new PhysicsSystem;
+			m_physicsSystem->Create();
+
 			m_resourceManager = new Resource::ResourceManager;
 
 			ServiceLocator::ProvideResourceManager(m_resourceManager);
 			ServiceLocator::ProvideTransformSystem(m_transformSystem);
 			ServiceLocator::ProvideRendererSystem(m_meshRendererSystem);
+			ServiceLocator::ProvidePhysicsSystem(m_physicsSystem);
 
 			Ref<Resource::Mesh> t_mesh = m_resourceManager->CreateResource<Resource::Mesh>("Assets/Meshes/viking_room.obj");
 			Ref<Resource::Texture> t_texture = m_resourceManager->CreateResource<Resource::Texture>("Assets/Textures/viking_room.png");
 			t_mesh->Load(a_renderer);
 			t_texture->Load(a_renderer);
 
-			GameObject* t_object = new GameObject(Math::vec3(0.f), Math::vec3(0.f, Math::ToRadians(270.f), 0.f), Math::vec3(1.f));
+			GameObject* t_object = new GameObject(Math::vec3(0.f), Math::vec3(0.f, 0.f, 0.f), Math::vec3(1.f));
 			t_object->AddComponent<MeshComponent>();
-
+			t_object->AddComponent<RigidBodyComponent>();
+			RigidBodyComponent* t_rigidBodyComponent = t_object->GetComponent<RigidBodyComponent>();
+			if (t_rigidBodyComponent)
+			{
+				t_rigidBodyComponent->CreateBoxRigidBody(Physics::BodyType::STATIC, Physics::CollisionLayer::NON_MOVING, Math::vec3(0.f), Math::vec3(1.f), Math::quat());
+			}
 
 			t_object->GetComponent<MeshComponent>()->SetMesh(t_mesh);
 			t_object->GetComponent<MeshComponent>()->SetTexture(t_texture);
 
 			m_objs.push_back(t_object);
 
-			Ref<Resource::Mesh> t_mesh2 = m_resourceManager->CreateResource<Resource::Mesh>("Assets/Meshes/FinalBaseMesh.obj");
+			/*Ref<Resource::Mesh> t_mesh2 = m_resourceManager->CreateResource<Resource::Mesh>("Assets/Meshes/FinalBaseMesh.obj");
 			Ref<Resource::Texture> t_texture2 = m_resourceManager->CreateResource<Resource::Texture>("Assets/Textures/viking_room.png");
 			t_mesh2->Load(a_renderer);
 			t_texture2->Load(a_renderer);
 
-			GameObject* t_object2 = new GameObject(Math::vec3(0.f), Math::vec3(0.f, Math::ToRadians(270.f), 0.f), Math::vec3(1.f));
+			GameObject* t_object2 = new GameObject(Math::vec3(0.f, 15.f, 0.f), Math::vec3(0.f, Math::ToRadians(270.f), 0.f), Math::vec3(0.05f));
 			t_object2->AddComponent<MeshComponent>();
+			t_object2->AddComponent<RigidBodyComponent>();
+			RigidBodyComponent* t_rigidBodyComponent2 = t_object->GetComponent<RigidBodyComponent>();
+			if (t_rigidBodyComponent2)
+			{
+				t_rigidBodyComponent2->CreateCapsuleRigidBody(Physics::BodyType::DYNAMIC, Physics::CollisionLayer::MOVING, Math::vec3(0.f, 15.f, 0.f), 0.5f, 1.f, Math::quat());
+			}
 
 
 			t_object2->GetComponent<MeshComponent>()->SetMesh(t_mesh2);
 			t_object2->GetComponent<MeshComponent>()->SetTexture(t_texture2);
 
-			m_objs.push_back(t_object2);
+			m_objs.push_back(t_object2);*/
 
-			GameObject* t_object3 = new GameObject(Math::vec3(0.f), Math::vec3(0.f, Math::ToRadians(270.f), 0.f), Math::vec3(1.f));
+			/*GameObject* t_object3 = new GameObject(Math::vec3(0.f), Math::vec3(0.f, Math::ToRadians(270.f), 0.f), Math::vec3(1.f));
 			t_object3->AddComponent<MeshComponent>();
 
 
 			t_object3->GetComponent<MeshComponent>()->SetMesh(t_mesh);
-			t_object3->GetComponent<MeshComponent>()->SetTexture(t_texture);
+			t_object3->GetComponent<MeshComponent>()->SetTexture(t_texture);*/
 
-			m_objs.push_back(t_object3);
+			//m_objs.push_back(t_object3);
 
 		}
 
-		void Scene::Update(Core::Renderer* a_renderer)
+		void Scene::Update(Core::Renderer* a_renderer, float a_deltaTime)
 		{
-			m_objs[0]->GetComponent<TransformComponent>()->GetTransform()->Rotate(Math::vec3(0.05f, 0.f,0.f));
-			m_objs[1]->GetComponent<TransformComponent>()->GetTransform()->SetScale(Math::vec3(0.05f));
-			m_objs[1]->GetComponent<TransformComponent>()->GetTransform()->SetPosition(Math::vec3(5.f, 0.f, 0.f));
-			m_objs[1]->GetComponent<TransformComponent>()->SetParent(m_objs[0]->GetComponentID<TransformComponent>());
-			m_objs[2]->GetComponent<TransformComponent>()->SetParent(m_objs[1]->GetComponentID<TransformComponent>());
-			m_objs[2]->GetComponent<TransformComponent>()->GetTransform()->Rotate(Math::vec3(0.f, 0.05f, 0.f));
+			//m_objs[0]->GetComponent<TransformComponent>()->GetTransform()->Rotate(Math::vec3(0.05f, 0.f,0.f));
+			//m_objs[1]->GetComponent<TransformComponent>()->GetTransform()->SetScale(Math::vec3(0.05f));
+			//m_objs[1]->GetComponent<TransformComponent>()->GetTransform()->SetPosition(Math::vec3(5.f, 0.f, 0.f));
+			//m_objs[1]->GetComponent<TransformComponent>()->SetParent(m_objs[0]->GetComponentID<TransformComponent>());
+			//m_objs[2]->GetComponent<TransformComponent>()->SetParent(m_objs[1]->GetComponentID<TransformComponent>());
+			//m_objs[2]->GetComponent<TransformComponent>()->GetTransform()->Rotate(Math::vec3(0.f, 0.05f, 0.f));
 			m_transformSystem->Update();
 
-			std::vector<std::pair<int, Math::mat4>> syncro;
+			std::vector<std::pair<int, Math::mat4>> t_syncro;
+			std::vector<Math::Transform*> t_physicsTransforms;
 
-			for (int i = 0; i < m_objs.size(); ++i)
+			for (GameObject* t_obj : m_objs)
 			{
-				uint32_t t_meshId = m_objs[i]->GetComponentID<MeshComponent>();
-				if (t_meshId != -1)
+				const uint32_t t_rigidBodyId = t_obj->GetComponentID<RigidBodyComponent>();
+				if (std::cmp_not_equal(t_rigidBodyId, -1))
 				{
-					Math::mat4 t_matrix = m_objs[i]->GetComponent<TransformComponent>()->GetTransform()->GetTransformMatrix();
-					t_matrix.Transpose(); // transpose ici
-					syncro.push_back({ t_meshId, t_matrix });
+					Math::Transform* t_transform = t_obj->GetComponent<TransformComponent>()->GetTransform();
+					t_physicsTransforms.push_back(t_transform);
 				}
 			}
-			m_meshRendererSystem->Update(a_renderer, syncro);
-			syncro.clear();
+			m_physicsSystem->Update(a_deltaTime, t_physicsTransforms);
+
+			for (GameObject* t_obj : m_objs)
+			{
+				const uint32_t t_meshId = t_obj->GetComponentID<MeshComponent>();
+				if (std::cmp_not_equal(t_meshId, -1))
+				{
+					Math::mat4 t_matrix = t_obj->GetComponent<TransformComponent>()->GetTransform()->GetTransformMatrix();
+					t_matrix.Transpose();
+					t_syncro.emplace_back(t_meshId, t_matrix);
+				}
+			}
+			m_meshRendererSystem->Update(a_renderer, t_syncro);
+
+			t_physicsTransforms.clear();
+			t_syncro.clear();
 		}
 
 		void Scene::Draw(Core::Renderer* a_renderer, Core::Window::IWindow* a_window, Camera* a_camera)
@@ -98,6 +129,9 @@ namespace Engine
 			m_transformSystem->Destroy();
 			delete m_transformSystem;
 
+			m_physicsSystem->Destroy();
+			delete m_physicsSystem;
+			m_physicsSystem = nullptr;
 
 			m_resourceManager->DestroyAll(a_renderer);
 			delete m_resourceManager;

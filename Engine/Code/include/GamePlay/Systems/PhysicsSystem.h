@@ -18,7 +18,7 @@ namespace Engine
 			ENGINE_API ~PhysicsSystem() override = default;
 
 			ENGINE_API void Create();
-			ENGINE_API void Update(const float a_deltaTime);
+			ENGINE_API void Update(const float a_deltaTime, const std::vector<Math::Transform*>& a_transforms);
 			ENGINE_API void Destroy();
 
 			ENGINE_API uint32_t AddComponent(RigidBodyComponent* a_component);

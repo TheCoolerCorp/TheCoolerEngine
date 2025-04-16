@@ -33,6 +33,7 @@ namespace Engine
 			ENGINE_API void Destroy();
 
 			ENGINE_API static ComponentType GetType() { return ComponentType::RIGIDBODY; }
+			ENGINE_API static RigidBodyComponent* GetComponent(uint32_t a_id);
 
 		private:
 			Physics::RigidBody m_rigidBody;

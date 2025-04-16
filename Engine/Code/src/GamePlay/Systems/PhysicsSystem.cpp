@@ -12,23 +12,36 @@ namespace Engine
 
 			JPH::Factory::sInstance = new JPH::Factory();
 
-			m_tempAllocator = new JPH::TempAllocatorImpl(10 * 1024 * 1024);
+			m_tempAllocator = new JPH::TempAllocatorImpl(100 * 1024 * 1024);
 
-			m_jobSystem = new JPH::JobSystemThreadPool(JPH::cMaxPhysicsJobs, JPH::cMaxPhysicsBarriers, std::thread::hardware_concurrency() - 1u);
+			uint32_t t_numThreads = std::max(1u, std::thread::hardware_concurrency() - 1u);
+			m_jobSystem = new JPH::JobSystemThreadPool(JPH::cMaxPhysicsJobs, JPH::cMaxPhysicsBarriers, t_numThreads);
 
 			m_physicsSystem.Init(m_maxBodies, m_numBodyMutexes, m_maxBodyPairs, m_maxContactConstraints, m_broadPhaseLayerInterface, m_objectVsBroadphaseLayerFilter, m_objectVsObjectLayerFilter);
 
 			m_physicsSystem.SetContactListener(&m_contactListener);
 
 			m_bodyInterface = &m_physicsSystem.GetBodyInterface();
+
+			m_physicsSystem.OptimizeBroadPhase();
 		}
 
-		void PhysicsSystem::Update(const float a_deltaTime)
+		void PhysicsSystem::Update(const float a_deltaTime, const std::vector<Math::Transform*>& a_transforms)
 		{
 			constexpr float t_stepSize = 1.0f / 60.0f;
 			const int t_collisionSteps = static_cast<int>(ceil(a_deltaTime / t_stepSize));
 
+			if (t_collisionSteps > 60)
+			{
+				return;
+			}
+
 			m_physicsSystem.Update(a_deltaTime, t_collisionSteps, m_tempAllocator, m_jobSystem);
+
+			for (size_t i = 0; i < m_components.size(); ++i)
+			{
+				m_components[i]->UpdateObjectTransform(a_transforms[i]);
+			}
 		}
 
 		void PhysicsSystem::Destroy()
