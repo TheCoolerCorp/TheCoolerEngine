@@ -55,6 +55,11 @@ namespace Engine
 					uint32_t id = -1;
 					ComponentType t_componentType = t_newComponent->Create(id);
 
+					if (m_compsId.contains(t_componentType))
+					{
+						return;
+					}
+
 					m_compsId.insert({ t_componentType, id });
 				}
 
@@ -67,6 +72,10 @@ namespace Engine
 					static_assert(std::is_invocable<decltype(&ComponentClass::GetComponent), uint32_t>::value);
 						
 					ComponentType t_componentType = ComponentClass::GetType();
+					if (!m_compsId.contains(t_componentType))
+					{
+						return nullptr;
+					}
 					uint32_t t_id = m_compsId.at(t_componentType);
 
 					return ComponentClass::GetComponent(t_id);
@@ -81,6 +90,11 @@ namespace Engine
 
 					ComponentType t_componentType = ComponentClass::GetType();
 
+					if (!m_compsId.contains(t_componentType))
+					{
+						return -1;
+					}
+
 					return m_compsId.at(t_componentType);
 				}
 
@@ -93,6 +107,12 @@ namespace Engine
 					static_assert(std::is_invocable<decltype(&ComponentClass::RemoveComponent), uint32_t>::value);
 
 					ComponentType t_componentType = ComponentClass::GetType();
+
+					if (!m_compsId.contains(t_componentType))
+					{
+						return;
+					}
+
 					uint32_t t_id = m_compsId.at(t_componentType);
 
 					ComponentClass::RemoveComponent(t_id);
