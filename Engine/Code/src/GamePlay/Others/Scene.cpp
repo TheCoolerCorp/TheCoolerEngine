@@ -37,7 +37,7 @@ namespace Engine
 			RigidBodyComponent* t_rigidBodyComponent = t_object->GetComponent<RigidBodyComponent>();
 			if (t_rigidBodyComponent)
 			{
-				t_rigidBodyComponent->CreateBoxRigidBody(Physics::BodyType::STATIC, Physics::CollisionLayer::NON_MOVING, Math::vec3(0.f), Math::vec3(1.f), Math::quat());
+				t_rigidBodyComponent->CreateBoxRigidBody(Physics::BodyType::DYNAMIC, Physics::CollisionLayer::MOVING, Math::vec3(0.f), Math::vec3(1.f), Math::quat());
 			}
 
 			t_object->GetComponent<MeshComponent>()->SetMesh(t_mesh);
