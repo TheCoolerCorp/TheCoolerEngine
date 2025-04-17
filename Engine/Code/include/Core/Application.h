@@ -30,6 +30,8 @@ namespace Engine
 			ENGINE_API Window::IWindow* GetWindow() const { return m_mainWindow; }
 
 		private:
+			void UpdateDeltaTime();
+
 			Window::IWindow* m_mainWindow = nullptr;
 			Window::IInputHandler* m_inputHandler = nullptr;
 			Renderer* m_renderer = nullptr;

@@ -79,6 +79,7 @@ namespace Engine
 				mCommandBuffers.push_back(t_commandBuffers);
 			}
 
+
 			void VulkanCommandPool::RecordCommandBuffer(const VkCommandBuffer a_commandBuffer, const uint32_t a_imageIndex, const VkRenderPass a_renderPass, VulkanSwapchain* a_swapChain, const VulkanGraphicPipeline* a_graphicPipeline, const std::vector<Core::RHI::IRenderObject*>& a_renderObjects, const std::vector<Core::RHI::IBuffer*>& a_vertexBuffers, const std::vector<Core::RHI::IBuffer*>& a_indexBuffers, const std::vector<uint32_t>& a_nbIndices, const GamePlay::Camera* a_camera)
 			{
 				const VkExtent2D t_swapChainExtent = a_swapChain->GetExtent2D();
@@ -107,7 +108,7 @@ namespace Engine
 				vkCmdBeginRenderPass(a_commandBuffer, &t_renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 
 				vkCmdBindPipeline(a_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, t_pipeline);
-
+				
 				VkViewport t_viewport;
 				t_viewport.x = 0.0f;
 				t_viewport.y = 0.0f;

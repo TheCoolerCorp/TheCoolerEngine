@@ -10,7 +10,7 @@ void Engine::Core::GraphicsAPI::VulkanCameraDescriptor::Create(RHI::ILogicalDevi
                                                                RHI::ICommandPool* a_commandPool, Math::mat4 a_vp)
 {
 	const VkDevice t_logicalDevice = a_logicalDevice->CastVulkan()->GetVkDevice();
-	const VkDescriptorSetLayout t_descriptorSetLayout = a_pipeline->CastVulkan()->GetCommontDescriptorSetLayout();
+	const VkDescriptorSetLayout t_descriptorSetLayout = a_pipeline->CastVulkan()->GetCommontDescriptorSetLayout(); // change to common 
 	const VkDescriptorPool t_descriptorPool = a_descriptorPool->CastVulkan()->GetPool();
 
     const std::array<VkDescriptorSetLayout, 1> t_layouts = { t_descriptorSetLayout };

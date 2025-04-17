@@ -18,7 +18,7 @@ namespace Engine
 
 				// Create vulkan object from rhi object.
 				VkDevice t_logicalDevice = a_logicalDevice->CastVulkan()->GetVkDevice();
-				VkDescriptorSetLayout t_descriptorSetLayout = a_graphicPipeline->CastVulkan()->GetObjectDescriptorSetLayout();
+				VkDescriptorSetLayout t_descriptorSetLayout = a_graphicPipeline->CastVulkan()->GetObjectDescriptorSetLayout();// Change to per 
 
 				// Create pool
 				CreatePool(t_logicalDevice, a_maxFrame);
@@ -121,7 +121,7 @@ namespace Engine
 						t_imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 						t_imageInfo.imageView = a_image->CastVulkan()->GetView();
 						t_imageInfo.sampler = a_image->CastVulkan()->GetSampler();
-
+						
 						VkWriteDescriptorSet tex;
 						tex.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 						tex.dstSet = m_sets[i];

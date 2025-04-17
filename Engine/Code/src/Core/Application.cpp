@@ -27,11 +27,27 @@ namespace Engine
 		{
 			while (!m_mainWindow->ShouldClose())
 			{
+				UpdateDeltaTime();
+				// Scene Update
+				
+				// Begin command
+				
+				// Begin renderPass
+				// Bind pipeline
+				
+				// Set Render Buffer
+				 
+				// Draw (draw indexes)
+
+				// End renderpass
+				// End command
+
+				// Submit
+
 				m_currentScene->Update(m_renderer, m_mainWindow, m_inputHandler, m_deltaTime);
 				m_currentScene->Draw(m_renderer, m_mainWindow);
-				auto t_now = std::chrono::high_resolution_clock::now();
-				m_deltaTime = std::chrono::duration<float>(t_now - m_lastTime).count();
-				m_lastTime = t_now;
+
+
 				m_mainWindow->PollEvents();
 			}
 			m_renderer->WaitIdle();
@@ -50,6 +66,13 @@ namespace Engine
 
 			m_mainWindow->Destroy();
 			delete m_mainWindow;
+		}
+
+		void Application::UpdateDeltaTime()
+		{
+			auto t_now = std::chrono::high_resolution_clock::now();
+			m_deltaTime = std::chrono::duration<float>(t_now - m_lastTime).count();
+			m_lastTime = t_now;
 		}
 	}
 }
