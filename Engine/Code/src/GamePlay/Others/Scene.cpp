@@ -21,7 +21,7 @@ namespace Engine
 			ServiceLocator::ProvideRendererSystem(m_meshRendererSystem);
 
 			m_mainCamera = new Camera();
-
+			m_mainCamera->Create(a_renderer);
 
 			#pragma region ObjectTest
 			Ref<Resource::Mesh> t_mesh = m_resourceManager->CreateResource<Resource::Mesh>("Assets/Meshes/viking_room.obj");
@@ -111,6 +111,9 @@ namespace Engine
 				delete m_objs[i];
 			}
 			m_objs.clear();
+
+			m_mainCamera->Destroy(a_renderer);
+			delete m_mainCamera;
 		}
 	}
 }
