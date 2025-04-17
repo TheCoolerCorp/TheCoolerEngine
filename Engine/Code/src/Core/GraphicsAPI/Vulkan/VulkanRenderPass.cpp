@@ -94,7 +94,7 @@ namespace Engine
 				m_sceneRenderPass = new VulkanRenderPass(device, a_renderer);
 				
 				m_sceneRenderPass->Create(config);
-				//m_sceneRenderPass->SetFramebuffers(m_renderer->GetSwapChain()->CastVulkan()->GetFramebuffers());
+				//m_sceneRenderPass->SetFramebsuffers(m_renderer->GetSwapChain()->CastVulkan()->GetFramebuffers());
 
 				m_sceneRenderPass->SetDrawFunc(
 					[this](RecordRenderPassinfo a_info, const std::vector<Core::RHI::IRenderObject*>& a_renderObjects,
@@ -102,8 +102,8 @@ namespace Engine
 						const std::vector<Core::RHI::IBuffer*>& a_indexBuffers, const std::vector<uint32_t>& a_nbIndices)
 					{
 						//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-//TEMPORARY: MAKE RENDERPASS OPTIONALLY STORE REFERENCE TO ITS ASSOCIATED PIPELINE LATER
-//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+						//TEMPORARY: MAKE RENDERPASS OPTIONALLY STORE REFERENCE TO ITS ASSOCIATED PIPELINE LATER
+						//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 						
 						vkCmdBindPipeline(a_info.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_renderer->GetPipeline()->CastVulkan()->GetPipeline());
 
@@ -222,6 +222,13 @@ namespace Engine
 				renderPassInfo.pDependencies = config.dependencies.data();
 
 				VK_CHECK(vkCreateRenderPass(m_device, &renderPassInfo, nullptr, &m_renderPass), "Failed to create render pass!");
+
+				if (!m_config.useSwapChainFramebuffers)
+				{
+					CreateAttachments();
+					CreateFramebuffers();
+				}
+					
 			}
 
 			void VulkanRenderPass::CreateFramebuffers(const std::vector<std::vector<VkImageView>>& a_views)
@@ -241,16 +248,51 @@ namespace Engine
 				}
 			}
 
-			void VulkanRenderPass::SetFramebuffers(const std::vector<VkFramebuffer>& a_buffers)
+			void VulkanRenderPass::CreateFramebuffers()
 			{
-				m_framebuffers = a_buffers;
+				if (m_attachmentResources.empty())
+				{
+					LOG_ERROR("Tried to create framebuffers with no attachments created!");
+					return;
+				}
+				m_framebuffers.resize(m_attachmentResources.size());
+				for (size_t i = 0; i < m_attachmentResources.size(); ++i)
+				{
+					std::vector<VkImageView> attachments;
+					attachments.push_back(m_attachmentResources[i].view);
+
+					if (m_isDepth) //if we have a depth resource, assign it
+						attachments.push_back(m_depthAttachmentResource.view);
+
+					VkFramebufferCreateInfo framebufferInfo{};
+
+					framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+					framebufferInfo.renderPass = m_renderPass;
+					framebufferInfo.attachmentCount = static_cast<uint32_t>(attachments.size());
+					framebufferInfo.pAttachments = attachments.data();
+					framebufferInfo.width = m_config.extent.width;
+					framebufferInfo.height = m_config.extent.height;
+					framebufferInfo.layers = 1;
+
+					VK_CHECK(vkCreateFramebuffer(m_device, &framebufferInfo, nullptr, &m_framebuffers[i]), "Failed to create framebuffer!");
+				}
+
 			}
 
+
+
+			//assumes for now we only really have two attachments, depth and colour, and creates the
+			//Colour attachment with triple buffering in mind
 			void VulkanRenderPass::CreateAttachments()
 			{
 
-				m_AttachmentResources.resize(m_config.attachments.size());
-
+				m_attachmentResources.resize(m_config.attachments.size());
+				bool hasDepthAttachment = false;
+				for (const RenderPassAttachment& attachment : m_config.attachments)
+				{
+					if (attachment.isDepth)
+						hasDepthAttachment = true;
+				}
 				for (size_t i = 0; i < m_config.attachments.size(); ++i)
 				{
 					
@@ -260,7 +302,7 @@ namespace Engine
 					else
 					{
 						uint32_t maxFrames = m_renderer->GetSwapChain()->CastVulkan()->GetMaxFrame();
-						m_AttachmentResources.resize(maxFrames);
+						m_attachmentResources.resize(maxFrames);
 						for (uint32_t j = 0; j < maxFrames; ++j)
 						{
 							CreateAttachment(info, j);
@@ -269,6 +311,10 @@ namespace Engine
 					
 				}
 
+				const VkDevice t_logicalDevice = m_renderer->GetLogicalDevice()->CastVulkan()->GetVkDevice();
+				VkPhysicalDevice t_physicalDevice = m_renderer->GetPhysicalDevice()->CastVulkan()->GetVkPhysicalDevice();
+
+				VulkanImage::CreateSampler(&m_sampler, t_logicalDevice, t_physicalDevice);
 			}
 
 			void VulkanRenderPass::TransitionImageLayout(VkImageLayout newImageLayout)
@@ -276,7 +322,7 @@ namespace Engine
 				VkDevice a_logicalDevice = m_renderer->GetLogicalDevice()->CastVulkan()->GetVkDevice();
 				VkQueue a_queue = m_renderer->GetLogicalDevice()->CastVulkan()->GetGraphicsQueue();
 				VkCommandPool a_commandPool = m_renderer->GetCommandPool()->CastVulkan()->GetVkCommandPool();
-				for (auto& resource : m_AttachmentResources)
+				for (auto& resource : m_attachmentResources)
 				{
 
 					VulkanImage::TransitionImageLayout(
@@ -375,7 +421,7 @@ namespace Engine
 					m_renderPass = VK_NULL_HANDLE;
 				}
 
-				for (auto& res : m_AttachmentResources)
+				for (auto& res : m_attachmentResources)
 				{
 					if (res.view != VK_NULL_HANDLE) {
 						vkDestroyImageView(m_device, res.view, nullptr);
@@ -387,11 +433,13 @@ namespace Engine
 						vkFreeMemory(m_device, res.memory, nullptr);
 					}
 				}
-				m_AttachmentResources.clear();
+				m_attachmentResources.clear();
 			}
 
 			void VulkanRenderPass::CreateDepthAttachment(const RenderPassAttachment& a_attachment)
 			{
+				m_isDepth = true;
+
 				VkImageCreateInfo imageInfo = {};
 				imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
 				imageInfo.imageType = VK_IMAGE_TYPE_2D;
@@ -470,34 +518,29 @@ namespace Engine
 					imageInfo.usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
 
 				imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
-				imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+				imageInfo.initialLayout = a_attachment.initialLayout;
+				
 
 				// Create image
-				if (vkCreateImage(m_device, &imageInfo, nullptr, &m_AttachmentResources[i].image) != VK_SUCCESS)
-				{
-					throw std::runtime_error("Failed to create attachment image");
-				}
+				VK_CHECK(vkCreateImage(m_device, &imageInfo, nullptr, &m_attachmentResources[i].image), "Failed to create attachment image");
 
 				// Allocate memory
 				VkMemoryRequirements memRequirements;
-				vkGetImageMemoryRequirements(m_device, m_AttachmentResources[i].image, &memRequirements);
+				vkGetImageMemoryRequirements(m_device, m_attachmentResources[i].image, &memRequirements);
 
 				VkMemoryAllocateInfo allocInfo = {};
 				allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
 				allocInfo.allocationSize = memRequirements.size;
 				allocInfo.memoryTypeIndex = VulkanBuffer::FindMemoryType(memRequirements.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, m_renderer->GetPhysicalDevice()->CastVulkan()->GetVkPhysicalDevice());
 
-				if (vkAllocateMemory(m_device, &allocInfo, nullptr, &m_AttachmentResources[i].memory) != VK_SUCCESS)
-				{
-					throw std::runtime_error("Failed to allocate image memory");
-				}
+				VK_CHECK(vkAllocateMemory(m_device, &allocInfo, nullptr, &m_attachmentResources[i].memory), "Failed to allocate image memory");
 
-				vkBindImageMemory(m_device, m_AttachmentResources[i].image, m_AttachmentResources[i].memory, 0);
+				vkBindImageMemory(m_device, m_attachmentResources[i].image, m_attachmentResources[i].memory, 0);
 
 				// Create image view
 				VkImageViewCreateInfo viewInfo = {};
 				viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-				viewInfo.image = m_AttachmentResources[i].image;
+				viewInfo.image = m_attachmentResources[i].image;
 				viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
 				viewInfo.format = a_attachment.format;
 				viewInfo.subresourceRange.aspectMask = a_attachment.aspectMask;
@@ -506,10 +549,9 @@ namespace Engine
 				viewInfo.subresourceRange.baseArrayLayer = 0;
 				viewInfo.subresourceRange.layerCount = 1;
 
-				if (vkCreateImageView(m_device, &viewInfo, nullptr, &m_AttachmentResources[i].view) != VK_SUCCESS)
-				{
-					throw std::runtime_error("Failed to create image view");
-				}
+				VK_CHECK(vkCreateImageView(m_device, &viewInfo, nullptr, &m_attachmentResources[i].view), "Failed to create image view");
+
+				
 			}
 		}
 	}

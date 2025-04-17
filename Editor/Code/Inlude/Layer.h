@@ -21,7 +21,7 @@ public:
     virtual ~Layer() = default;
 
     // Called once when the layer is added
-    virtual void OnAttach() {}
+    virtual void OnAttach(Engine::Core::Window::IWindow* window) {}
 
     // Called once when the layer is removed
     virtual void OnDetach() {}

@@ -33,10 +33,9 @@ namespace Engine
 			ENGINE_API Renderer() = default;
 			ENGINE_API ~Renderer() = default;
 
-			//Instantiates all the API objects
 			ENGINE_API void Init(RendererType a_type);
-			//Creates everything each API object needs. Decoupled so that layers can change their behaviour 
 			ENGINE_API void Create(RendererType a_type, Window::IWindow* a_window);
+			ENGINE_API void LateCreate(RendererType a_type, Window::IWindow* a_window);
 			ENGINE_API void Render(Window::IWindow* a_window,
 			                       const std::unordered_map<int, Core::RHI::IRenderObject*>& a_renderObjects,
 			                       const std::vector<int>& a_ids,

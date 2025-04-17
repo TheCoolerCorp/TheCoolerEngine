@@ -7,6 +7,7 @@
 #include "Core/GraphicsAPI/Vulkan/QueueFamilies.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanRenderPass.h"
 #include "Core/Renderer/Renderer.h"
+#include "../Inlude/ImGuiLayer.h"
 
 using namespace Engine::Core;
 using namespace Engine::Core::GraphicsAPI;
@@ -22,7 +23,28 @@ static void check_vk_result(VkResult err)
 
 VulkanImGui::VulkanImGui(Engine::Core::Renderer* renderer): RHIImGui(renderer)
 {
-	GraphicsAPI::VulkanRenderPassManager::AddFlag(GraphicsAPI::FLAG_VK_RHI_OVERRIDE_DEFAULT_RENDERPASS);
+	VulkanRenderPassManager::AddFlag(GraphicsAPI::FLAG_VK_RHI_OVERRIDE_DEFAULT_RENDERPASS);
+}
+
+VulkanImGui::~VulkanImGui()
+{
+	ImGui_ImplVulkan_Shutdown();
+	ImGui_ImplGlfw_Shutdown();
+	ImGui::DestroyContext();
+	if (m_imGuiRenderPass)
+	{
+		m_imGuiRenderPass->Destroy();
+		delete m_imGuiRenderPass;
+	}
+	if (m_imGuiViewportRenderPass)
+	{
+		m_imGuiViewportRenderPass->Destroy();
+		delete m_imGuiViewportRenderPass;
+	}
+	if (m_pool)
+	{
+		vkDestroyDescriptorPool(m_renderer->GetLogicalDevice()->CastVulkan()->GetVkDevice(), m_pool, nullptr);
+	}
 }
 
 void VulkanImGui::Init(Window::IWindow* window, Renderer* renderer)
@@ -38,14 +60,13 @@ void VulkanImGui::Init(Window::IWindow* window, Renderer* renderer)
 	uint32_t g_QueueFamily = indices.GetGraphicsFamily().value();
 	VkQueue g_Queue = renderer->GetLogicalDevice()->CastVulkan()->GetGraphicsQueue();
 	VkPipelineCache g_PipelineCache = VK_NULL_HANDLE;
-	VkRenderPass g_RenderPass = renderer->GetRenderPass()->CastVulkan()->GetSceneRenderPass()->GetRenderPass();
 	GraphicsAPI::VulkanSwapchain* swapChain = renderer->GetSwapChain()->CastVulkan();
 	uint32_t g_MinImageCount = swapChain->GetMaxFrame();
 	uint32_t g_ImageCount = g_MinImageCount;
 	VkAllocationCallbacks* g_Allocator = nullptr;
 
 	
-
+	SetupRenderPasses();
 	CreateDescriptorPool(g_Device);
 
 	IMGUI_CHECKVERSION();
@@ -68,7 +89,7 @@ void VulkanImGui::Init(Window::IWindow* window, Renderer* renderer)
 	init_info.Queue = g_Queue;
 	init_info.PipelineCache = g_PipelineCache;
 	init_info.DescriptorPool = m_pool;
-	init_info.RenderPass = g_RenderPass;
+	init_info.RenderPass = m_imGuiViewportRenderPass->GetRenderPass();
 	init_info.Subpass = 0;
 	init_info.MinImageCount = g_MinImageCount;
 	init_info.ImageCount = g_ImageCount;
@@ -157,10 +178,6 @@ void VulkanImGui::SetupSceneRenderPass()
 			const std::vector<RHI::IBuffer*>& a_vertexBuffers,
 			const std::vector<RHI::IBuffer*>& a_indexBuffers, const std::vector<uint32_t>& a_nbIndices)
 		{
-			//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-			//TEMPORARY: MAKE RENDERPASS OPTIONALLY STORE REFERENCE TO ITS ASSOCIATED PIPELINE LATER
-			//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
 			vkCmdBindPipeline(a_info.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_renderer->GetPipeline()->CastVulkan()->GetPipeline());
 
 			const VkPipelineLayout t_layout = a_info.graphicPipeline->GetLayout();
@@ -188,20 +205,106 @@ void VulkanImGui::SetupSceneRenderPass()
 			}
 		}
 	);
+
+	VulkanRenderPassManager* manager = m_renderer->GetRenderPass()->CastVulkan();
+	manager->SetSceneRenderPass(m_imGuiRenderPass);
 }
 
 void VulkanImGui::SetupImGuiRenderPass()
 {
+	m_imGuiViewportRenderPass = new VulkanRenderPass(m_renderer->GetLogicalDevice()->CastVulkan()->GetVkDevice(), m_renderer);
+	VkExtent2D extent = m_renderer->GetSwapChain()->CastVulkan()->GetExtent2D();
+	VkFormat imageFormat = m_renderer->GetSwapChain()->CastVulkan()->GetImageFormat();
+
+
+	RenderPassConfig config = {};
+	config.attachments.push_back({
+		.format = imageFormat,
+		.initialLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+		.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
+		.loadOp = VK_ATTACHMENT_LOAD_OP_LOAD,
+		.storeOp = VK_ATTACHMENT_STORE_OP_STORE,
+		.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
+		.isDepth = false
+		});
+
+	config.extent = extent;
+
+	VkAttachmentReference colorRef = {};
+	colorRef.attachment = 0;
+	colorRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+
+	SubpassConfig subpassConfig{};
+	subpassConfig.colorAttachmentIndices = { 0 };
+	subpassConfig.depthAttachmentIndex = -1; //no depth
+
+	config.subpasses.push_back(subpassConfig);
+
+	VkSubpassDependency dependency = {};
+	dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
+	dependency.dstSubpass = 0;
+	dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+	dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+	dependency.srcAccessMask = 0;
+	dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+
+	config.dependencies.push_back(dependency);
+	config.useSwapChainFramebuffers = true;
+
+	m_imGuiViewportRenderPass->Create(config);
+	m_imGuiViewportRenderPass->SetDrawFunc([this](RecordRenderPassinfo a_info, const std::vector<RHI::IRenderObject*>& a_renderObjects,
+		const std::vector<RHI::IBuffer*>& a_vertexBuffers,
+		const std::vector<RHI::IBuffer*>& a_indexBuffers, const std::vector<uint32_t>& a_nbIndices)
+		{
+			m_imguiLayer->OnUiRender();
+			ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), a_info.commandBuffer);
+		}
+	);
+	VulkanRenderPassManager* manager = m_renderer->GetRenderPass()->CastVulkan();
+	manager->AddRenderPass(m_imGuiViewportRenderPass, 1);
 }
 
 void VulkanImGui::NewFrame()
 {
+	ImGui_ImplVulkan_NewFrame();
+	ImGui_ImplGlfw_NewFrame();
+	ImGui::NewFrame();
 }
 
 void VulkanImGui::Render()
 {
+	ImGui::Render();
 }
 
 void VulkanImGui::DrawSceneAsImage()
 {
+	VulkanSwapchain* swapchain = m_renderer->GetSwapChain()->CastVulkan();
+	ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
+	ImGui::Image(reinterpret_cast<ImTextureID>(m_Dset[swapchain->GetCurrentFrame()]), ImVec2{ viewportPanelSize.x, viewportPanelSize.y });
+}
+
+void VulkanImGui::CreateDescriptorPool(VkDevice device)
+{
+	VkDescriptorPoolSize pool_sizes[] =
+	{
+		{ VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1000 },
+	};
+	VkDescriptorPoolCreateInfo pool_info = {};
+	pool_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+	pool_info.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
+	pool_info.maxSets = 0;
+	for (VkDescriptorPoolSize& pool_size : pool_sizes)
+		pool_info.maxSets += pool_size.descriptorCount;
+	pool_info.poolSizeCount = (uint32_t)IM_ARRAYSIZE(pool_sizes);
+	pool_info.pPoolSizes = pool_sizes;
+	VK_CHECK(vkCreateDescriptorPool(device, &pool_info, nullptr, &m_pool), "Failed to create descriptor pool!")
+}
+
+void VulkanImGui::CreateSceneImageDescriptorSets()
+{
+	VulkanSwapchain* swapchain = m_renderer->GetSwapChain()->CastVulkan();
+	const std::vector<AttachmentResource>& attachmentResources = m_imGuiRenderPass->GetAttachmentResources();
+	m_Dset.resize(attachmentResources.size());
+	for (uint32_t i = 0; i < attachmentResources.size(); i++)
+		m_Dset[i] = ImGui_ImplVulkan_AddTexture(m_imGuiRenderPass->GetSampler(), attachmentResources[i].view, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 }

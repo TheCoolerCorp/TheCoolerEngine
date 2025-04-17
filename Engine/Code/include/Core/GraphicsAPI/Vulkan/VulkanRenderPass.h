@@ -111,7 +111,7 @@ namespace Engine
 				std::vector<SubpassConfig> subpasses;
 				std::vector<VkSubpassDependency> dependencies;
 				VkExtent2D extent;
-				bool setViewportAndScissor;
+				bool setViewportAndScissor = false;
 				bool useSwapChainFramebuffers = false;
 			};
 
@@ -136,9 +136,15 @@ namespace Engine
 				VulkanRenderPass(VkDevice device, Renderer* renderer);
 				~VulkanRenderPass();
 
+				/**
+				 * Creates the renderpass associated to this VulkanRenderPass and, if necessary,
+				 * the required framebuffers and attachments.
+				 * @param config the renderpass's config.
+				 */
 				ENGINE_API void Create(const RenderPassConfig& config);
 				ENGINE_API void CreateFramebuffers(const std::vector<std::vector<VkImageView>>& a_views);
-				ENGINE_API void SetFramebuffers(const std::vector<VkFramebuffer>& a_buffers);
+				//creates framebuffers with the defined AttachmentResources
+				ENGINE_API void CreateFramebuffers();
 				ENGINE_API void CreateAttachments();
 				
 				ENGINE_API void TransitionImageLayout(VkImageLayout newImageLayout);
@@ -154,8 +160,8 @@ namespace Engine
 				//getters
 				[[nodiscard]] ENGINE_API  VkRenderPass GetRenderPass() const { return m_renderPass; }
 				[[nodiscard]] ENGINE_API const std::vector<VkFramebuffer>& GetFramebuffers() const { return m_framebuffers; }
-				[[nodiscard]] ENGINE_API const std::vector<AttachmentResource>& GetAttachmentResources() const { return m_AttachmentResources; }
-
+				[[nodiscard]] ENGINE_API const std::vector<AttachmentResource>& GetAttachmentResources() const { return m_attachmentResources; }
+				[[nodiscard]] ENGINE_API VkSampler GetSampler() const { return m_sampler; }
 
 			private:
 				VkDevice m_device;
@@ -167,8 +173,10 @@ namespace Engine
 
 				std::vector<VkFramebuffer> m_framebuffers;
 				//optional, only if writing to image or texture, not swapchain
-				std::vector<AttachmentResource> m_AttachmentResources;
+				std::vector<AttachmentResource> m_attachmentResources;
+				VkSampler m_sampler;
 				AttachmentResource m_depthAttachmentResource; //we only need one depth attachment for now
+				bool m_isDepth = false;
 
 				//function that will be called to draw the renderpass, lambda to allow the user to define it
 				std::function<void(RecordRenderPassinfo, const std::vector<Core::RHI::IRenderObject*>&, const std::vector<Core::RHI::IBuffer*>&, const std::vector<Core::RHI::IBuffer*>&, const std::vector<uint32_t>&)> m_drawFunc;

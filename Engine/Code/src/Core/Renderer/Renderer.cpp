@@ -49,14 +49,18 @@ namespace Engine
 			m_renderPass->Create(this);
 			m_renderPass->CastVulkan()->CreateDefaultRenderPass(this);
 			
-			m_graphicPipeline->Create(m_logicalDevice, m_renderPass);
 			
 			m_commandPool->Create(m_physicalDevice, m_surface, m_logicalDevice);
 			m_swapChain->CreateFramebuffers(m_logicalDevice, m_physicalDevice, m_renderPass, m_commandPool);
 
-			m_commandPool->CreateCommandBuffer(m_logicalDevice, m_swapChain, m_renderPass, m_graphicPipeline);
-
+			
 			m_swapChain->CreateSyncObjects(m_logicalDevice);
+		}
+
+		void Renderer::LateCreate(RendererType a_type, Window::IWindow* a_window)
+		{
+			m_graphicPipeline->Create(m_logicalDevice, m_renderPass);
+			m_commandPool->CreateCommandBuffer(m_logicalDevice, m_swapChain, m_renderPass, m_graphicPipeline);
 		}
 
 		void Renderer::Render(Window::IWindow* a_window,

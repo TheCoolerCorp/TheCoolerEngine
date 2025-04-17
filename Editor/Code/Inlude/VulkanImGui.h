@@ -6,6 +6,8 @@
 #include "RHIImGui.h"
 #include "vulkan/vulkan.h"
 
+class ImGuiLayer;
+
 namespace Engine::Core
 {
 	namespace GraphicsAPI
@@ -25,8 +27,9 @@ class VulkanImGui : public RHIImGui
 {
 public:
 	VulkanImGui(Engine::Core::Renderer* renderer);
-	~VulkanImGui() override = default;
+	~VulkanImGui() override;
 	void Init(Engine::Core::Window::IWindow* window, Engine::Core::Renderer* renderer) override;
+
 	void SetupRenderPasses();
 	void SetupSceneRenderPass();
 	void SetupImGuiRenderPass();
@@ -37,10 +40,14 @@ public:
 
 
 	void CreateDescriptorPool(VkDevice device);
+	void CreateSceneImageDescriptorSets();
 private:
+	ImGuiLayer* m_imguiLayer = nullptr;
+
 	Engine::Core::Renderer* m_renderer = nullptr;
 
 	Engine::Core::GraphicsAPI::VulkanRenderPass* m_imGuiRenderPass = nullptr;
+	Engine::Core::GraphicsAPI::VulkanRenderPass* m_imGuiViewportRenderPass = nullptr;
 
 	std::vector<VkDescriptorSet> m_Dset;
 	VkDescriptorPool m_pool;
