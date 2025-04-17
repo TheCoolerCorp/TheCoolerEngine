@@ -34,8 +34,6 @@ namespace Engine
 			Window::IInputHandler* m_inputHandler = nullptr;
 			Renderer* m_renderer = nullptr;
 
-			GamePlay::Camera* m_camera = nullptr;
-
 			GamePlay::Scene* m_currentScene;
 			std::vector<GamePlay::Scene*> m_scenes;
 			std::chrono::high_resolution_clock::time_point m_lastTime = std::chrono::high_resolution_clock::now();

@@ -19,25 +19,19 @@ namespace Engine
 			m_renderer = new Renderer();
 			m_renderer->Init(RendererType::VULKAN, m_mainWindow);
 
-			m_camera = new GamePlay::Camera(Math::vec3(0.f, 1.f, 0.f), Math::vec3(0.f, 0.f, 0.f),
-			                                Math::vec3(0.f, 1.f, -3.f), Math::ToRadians(70.f),
-			                                static_cast<float>(a_width) / static_cast<float>(a_height), 0.1f, 100.f, 10.f, 2.f);
-			m_camera->Create(m_renderer);
-
 			m_currentScene = new GamePlay::Scene();
-			m_currentScene->Create(m_renderer);
+			m_currentScene->Create(m_renderer, a_width, a_height);
 		}
 
 		void Application::Run()
 		{
 			while (!m_mainWindow->ShouldClose())
 			{
-				m_currentScene->Update(m_renderer);
-				m_currentScene->Draw(m_renderer, m_mainWindow, m_camera);
+				m_currentScene->Update(m_renderer, m_mainWindow, m_inputHandler, m_deltaTime);
+				m_currentScene->Draw(m_renderer, m_mainWindow);
 				auto t_now = std::chrono::high_resolution_clock::now();
 				m_deltaTime = std::chrono::duration<float>(t_now - m_lastTime).count();
 				m_lastTime = t_now;
-				m_camera->Update(m_renderer, m_inputHandler, m_mainWindow, m_deltaTime);
 				m_mainWindow->PollEvents();
 			}
 			m_renderer->WaitIdle();
@@ -45,9 +39,6 @@ namespace Engine
 
 		void Application::Destroy()
 		{
-			m_camera->Destroy(m_renderer);
-			delete m_camera;
-
 			m_currentScene->Destroy(m_renderer);
 			delete m_currentScene;
 
