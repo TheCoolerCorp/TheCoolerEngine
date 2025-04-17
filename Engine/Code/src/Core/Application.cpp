@@ -20,7 +20,7 @@ namespace Engine
 			m_renderer->Init(RendererType::VULKAN, m_mainWindow);
 
 			m_camera = new GamePlay::Camera(Math::vec3(0.f, 1.f, 0.f), Math::vec3(0.f, 0.f, 0.f),
-			                                Math::vec3(0.f, 1.f, -3.f), Math::ToRadians(70.f),
+			                                Math::vec3(0.f, 1.f, 3.f), Math::ToRadians(70.f),
 			                                static_cast<float>(a_width) / static_cast<float>(a_height), 0.1f, 100.f, 10.f, 2.f);
 			m_camera->Create(m_renderer);
 

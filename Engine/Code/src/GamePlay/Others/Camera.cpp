@@ -17,7 +17,8 @@ namespace Engine
 			m_baseForward = Math::vec3::Normalize(m_center - m_eye);
 			m_currentForward = m_baseForward;
 			m_right = Math::vec3::Normalize(Math::vec3::CrossProduct(m_currentForward, m_up));
-			const Math::mat4 t_proj = Math::mat4::Perspective(m_fovY, m_aspect, m_near, m_far);
+			Math::mat4 t_proj = Math::mat4::Perspective(m_fovY, m_aspect, m_near, m_far);
+			t_proj.mElements[5] *= -1.f;
 			const Math::mat4 t_view = Math::mat4::View(m_up, m_center, m_eye);
 			m_vp = t_proj * t_view;
 			m_vp.Transpose();
@@ -43,7 +44,8 @@ namespace Engine
 			if (m_needToUpdate || fabsf(t_aspect - m_aspect) > std::numeric_limits<float>::epsilon())
 			{
 				m_aspect = t_aspect;
-				const Math::mat4 t_proj = Math::mat4::Perspective(m_fovY, m_aspect, m_near, m_far);
+				Math::mat4 t_proj = Math::mat4::Perspective(m_fovY, m_aspect, m_near, m_far);
+				t_proj.mElements[5] *= -1.f;
 				const Math::mat4 t_view = Math::mat4::View(m_up, m_center, m_eye);
 				m_vp = t_proj * t_view;
 				m_vp.Transpose();

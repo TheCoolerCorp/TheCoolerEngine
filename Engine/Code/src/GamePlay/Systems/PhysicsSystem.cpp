@@ -12,6 +12,8 @@ namespace Engine
 
 			JPH::Factory::sInstance = new JPH::Factory();
 
+			JPH::RegisterTypes();
+
 			m_tempAllocator = new JPH::TempAllocatorImpl(100 * 1024 * 1024);
 
 			uint32_t t_numThreads = std::max(1u, std::thread::hardware_concurrency() - 1u);
