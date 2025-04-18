@@ -51,7 +51,7 @@ namespace Engine
 				auto& comp = m_components[i];
 				comp->Destroy();
 				m_renderDescriptors[i]->Destroy(a_renderer->GetLogicalDevice());
-				a_renderer->GetInterface()->DestroyRenderObject(m_renderDescriptors[i]);
+				a_renderer->GetInterface()->DestroyObjectDescriptor(m_renderDescriptors[i]);
 				delete comp;
 			}
 			m_components.clear();
@@ -100,9 +100,9 @@ namespace Engine
 		{
 			for (int i = 0; i < m_pendingComponents.size(); ++i)
 			{
-				Core::RHI::IObjectDescriptor* t_newRenderObject = apiInterface->InstantiateRenderObject();
+				Core::RHI::IObjectDescriptor* t_newRenderObject = apiInterface->InstantiateObjectDescriptor();
 
-				t_newRenderObject->Create(a_logicalDevice, a_graphicPipeline, Core::RHI::Per, a_maxFrame, { Core::RHI::DescriptorSetType::DESCRIPTOR_SET_TYPE_UNIFORM_BUFFER, Core::RHI::DescriptorSetType::DESCRIPTOR_SET_TYPE_SAMPLED_IMAGE});
+				t_newRenderObject->Create(a_logicalDevice, a_graphicPipeline, Core::RHI::Per, a_maxFrame, { Core::RHI::DescriptorSetType::DESCRIPTOR_SET_TYPE_COMBINED_IMAGE_SAMPLER, Core::RHI::DescriptorSetType::DESCRIPTOR_SET_TYPE_COMBINED_IMAGE_SAMPLER});
 
 				Core::RHI::IImage* t_newRenderObjectTexture = m_components.at(m_pendingComponents.at(i))->GetTexture()->GetImage();
 				void* t_newRenderObjectMatrixData = a_updatedMatrix.at(m_pendingComponents.at(i)).second.mElements.data();

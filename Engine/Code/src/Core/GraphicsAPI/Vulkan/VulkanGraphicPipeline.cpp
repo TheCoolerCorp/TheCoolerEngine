@@ -209,8 +209,10 @@ namespace Engine
 
 			void VulkanGraphicPipeline::Destroy(RHI::ILogicalDevice* a_logicalDevice)
 			{
-				vkDestroyDescriptorSetLayout(a_logicalDevice->CastVulkan()->GetVkDevice(), m_objectDescriptor, nullptr);
-				vkDestroyDescriptorSetLayout(a_logicalDevice->CastVulkan()->GetVkDevice(), m_commonDescriptor, nullptr);
+				for (int i = 0; i < m_setslayouts.size(); ++i)
+				{
+					vkDestroyDescriptorSetLayout(a_logicalDevice->CastVulkan()->GetVkDevice(), m_setslayouts[i].mLayout, nullptr);
+				}
 				vkDestroyPipeline(a_logicalDevice->CastVulkan()->GetVkDevice(), m_pipeline, nullptr);
 				vkDestroyPipelineLayout(a_logicalDevice->CastVulkan()->GetVkDevice(), m_layout, nullptr);
 			}

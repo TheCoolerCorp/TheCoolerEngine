@@ -31,7 +31,7 @@ namespace Engine
 
 			enum DescriptorSetType : int
 			{
-				DESCRIPTOR_SET_TYPE_SAMPLED_IMAGE = 2,
+				DESCRIPTOR_SET_TYPE_COMBINED_IMAGE_SAMPLER = 1,
 				DESCRIPTOR_SET_TYPE_UNIFORM_BUFFER = 6
 			};
 

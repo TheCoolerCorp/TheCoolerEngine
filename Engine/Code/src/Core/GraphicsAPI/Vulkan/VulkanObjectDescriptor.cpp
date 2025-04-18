@@ -1,5 +1,6 @@
 #include  "Core/GraphicsAPI/Vulkan/VulkanObjectDescriptor.h"
 
+#include "Core/Assertion/Assertion.h"
 #include  "Core/GraphicsAPI/Vulkan/VulkanLogicalDevice.h"
 #include  "Core/GraphicsAPI/Vulkan/VulkanPhysicalDevice.h"
 #include  "Core/GraphicsAPI/Vulkan/VulkanSurface.h"
@@ -42,7 +43,6 @@ namespace Engine
 				// Create vulkan object from rhi object.
 				VkDevice t_logicalDevice = a_logicalDevice->CastVulkan()->GetVkDevice();
 
-				vkFreeDescriptorSets(t_logicalDevice, m_pool, static_cast<uint32_t>(m_sets.size()), m_sets.data());
 				m_sets.clear();
 
 				vkDestroyDescriptorPool(t_logicalDevice, m_pool, nullptr);
@@ -68,10 +68,11 @@ namespace Engine
 
 					VkWriteDescriptorSet texture;
 					texture.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+					texture.pNext = nullptr;
 					texture.dstSet = m_sets[i];
 					texture.dstBinding = a_dstBinding;
 					texture.dstArrayElement = 0;
-					texture.descriptorType = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
+					texture.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
 					texture.descriptorCount = a_count;
 					texture.pImageInfo = &t_textureInfo;
 
@@ -79,7 +80,7 @@ namespace Engine
 				}
 			}
 
-			ENGINE_API void VulkanObjectDescriptor::SetMat(RHI::ILogicalDevice* a_logicalDevice, RHI::IPhysicalDevice* a_physicalDevice, RHI::ICommandPool* a_commandPool, void* a_matData, uint32_t a_dstBinding, uint32_t a_count)
+			void VulkanObjectDescriptor::SetMat(RHI::ILogicalDevice* a_logicalDevice, RHI::IPhysicalDevice* a_physicalDevice, RHI::ICommandPool* a_commandPool, void* a_matData, uint32_t a_dstBinding, uint32_t a_count)
 			{
 				const VkDevice t_device = a_logicalDevice->CastVulkan()->GetVkDevice();
 
@@ -97,10 +98,11 @@ namespace Engine
 
 					VkWriteDescriptorSet mat;
 					mat.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+					mat.pNext = nullptr;
 					mat.dstSet = m_sets[i];
 					mat.dstBinding = a_dstBinding;
 					mat.dstArrayElement = 0;
-					mat.descriptorType = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
+					mat.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 					mat.descriptorCount = a_count;
 					mat.pBufferInfo = &t_bufferInfo;
 
@@ -114,7 +116,7 @@ namespace Engine
 				VkDevice t_logicalDevice = a_logicalDevice->CastVulkan()->GetVkDevice();
 
 				void* t_data;
-				vkMapMemory(a_logicalDevice->CastVulkan()->GetVkDevice(), m_uniforms[a_imageIndex]->GetMemory(), 0, sizeof(VulkanBuffer), 0, &t_data);
+				vkMapMemory(a_logicalDevice->CastVulkan()->GetVkDevice(), m_uniforms[a_imageIndex]->GetMemory(), 0, 16 * sizeof(float), 0, &t_data);
 				memcpy(t_data, a_data, 16 * sizeof(float));
 				vkUnmapMemory(a_logicalDevice->CastVulkan()->GetVkDevice(), m_uniforms[a_imageIndex]->GetMemory());
 			}

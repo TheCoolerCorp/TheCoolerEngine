@@ -26,10 +26,9 @@ namespace Engine
 
 		void Camera::Create(Core::Renderer* a_renderer)
 		{
-			m_descriptorPool = a_renderer->GetInterface()->InstantiateDescriptorPool();
-			m_descriptorPool->Create(a_renderer->GetLogicalDevice(), 1);
-			m_descriptor = a_renderer->GetInterface()->InstantiateCameraDescriptor();
-			m_descriptor->Create(a_renderer->GetLogicalDevice(), a_renderer->GetPhysicalDevice(), a_renderer->GetPipeline(), m_descriptorPool, a_renderer->GetCommandPool(), m_vp);
+			m_descriptor = a_renderer->GetInterface()->InstantiateObjectDescriptor();
+			m_descriptor->Create(a_renderer->GetLogicalDevice(), a_renderer->GetPipeline(), Core::RHI::Common, 1, { Core::RHI::DescriptorSetType::DESCRIPTOR_SET_TYPE_UNIFORM_BUFFER });
+			m_descriptor->SetMat(a_renderer->GetLogicalDevice(), a_renderer->GetPhysicalDevice(), a_renderer->GetCommandPool(), m_vp.mElements.data(), 0, 1);
 		}
 
 		void Camera::Update(Core::Renderer* a_renderer, Core::Window::IInputHandler* a_inputHandler, Core::Window::IWindow* a_window, const float a_deltaTime)
@@ -52,15 +51,13 @@ namespace Engine
 				m_needToUpdate = false;
 			}
 
-			m_descriptor->Update(a_renderer->GetLogicalDevice(), m_vp.mElements.data());
+			m_descriptor->UpdateUniforms(a_renderer->GetLogicalDevice(), m_vp.mElements.data(), 0);
 		}
 
 		void Camera::Destroy(Core::Renderer* a_renderer)
 		{
 			m_descriptor->Destroy(a_renderer->GetLogicalDevice());
-			delete m_descriptor;
-			m_descriptorPool->Destroy(a_renderer->GetLogicalDevice());
-			delete m_descriptorPool;
+			a_renderer->GetInterface()->DestroyObjectDescriptor(m_descriptor);
 		}
 
 		void Camera::ComputeInputs(Core::Window::IInputHandler* a_inputHandler, Core::Window::IWindow* a_window, const float a_deltaTime)

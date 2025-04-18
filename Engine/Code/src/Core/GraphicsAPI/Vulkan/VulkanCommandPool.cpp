@@ -8,7 +8,6 @@
 #include "Core/GraphicsAPI/Vulkan/QueueFamilies.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanBuffer.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanObjectDescriptor.h"
-#include "Core/GraphicsAPI/Vulkan/VulkanCameraDescriptor.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanGraphicPipeline.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanRenderPass.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanSwapChain.h"
@@ -123,7 +122,8 @@ namespace Engine
 				t_scissor.extent = t_swapChainExtent;
 				vkCmdSetScissor(a_commandBuffer, 0, 1, &t_scissor);
 
-				const VkDescriptorSet t_cameraDescriptorSet = a_camera->GetDescriptor()->CastVulkan()->GetDescriptorSet();
+				// Change to common layout
+				const VkDescriptorSet t_cameraDescriptorSet = a_camera->GetDescriptor()->CastVulkan()->GetDescriptorSets()[0];
 				vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, t_layout, 0, 1, &t_cameraDescriptorSet, 0, nullptr);
 
 				for (int i = 0; i < a_renderObjects.size(); ++i)
@@ -140,6 +140,7 @@ namespace Engine
 						vkCmdBindIndexBuffer(a_commandBuffer, a_indexBuffers.at(i)->CastVulkan()->GetBuffer(), 0, VK_INDEX_TYPE_UINT32);
 					}
 
+					// Change to per layout
 					vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, t_layout, 1, 1, &a_renderObjects.at(i)->CastVulkan()->GetDescriptorSets()[a_imageIndex], 0, nullptr);
 
 					vkCmdDrawIndexed(a_commandBuffer, a_nbIndices.at(i), 1, 0, 0, 0);

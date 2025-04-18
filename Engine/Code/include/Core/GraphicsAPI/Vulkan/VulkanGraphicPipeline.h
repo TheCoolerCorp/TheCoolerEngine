@@ -42,8 +42,6 @@ namespace Engine
 
 				ENGINE_API VkPipeline GetPipeline() const { return m_pipeline; }
 				ENGINE_API VkPipelineLayout GetLayout() const { return m_layout; }
-				ENGINE_API VkDescriptorSetLayout GetObjectDescriptorSetLayout() const { return m_objectDescriptor; }
-				ENGINE_API VkDescriptorSetLayout GetCommontDescriptorSetLayout() const { return m_commonDescriptor; }
 
 				ENGINE_API std::vector<VulkanSetLayout> GetSetLayouts() const { return m_setslayouts; }
 
@@ -53,8 +51,6 @@ namespace Engine
 
 				VkPipeline m_pipeline = VK_NULL_HANDLE;
 				VkPipelineLayout m_layout = VK_NULL_HANDLE;
-				VkDescriptorSetLayout m_objectDescriptor = VK_NULL_HANDLE;
-				VkDescriptorSetLayout m_commonDescriptor = VK_NULL_HANDLE;
 
 				std::vector<VulkanSetLayout> m_setslayouts = std::vector<VulkanSetLayout>();
 

@@ -7,6 +7,8 @@
 #include "GamePlay/Components/Meshcomponent.h"
 #include "Core/Renderer/Renderer.h"
 #include "Core/Interfaces/IObjectDescriptor.h"
+#include "Math/mat4.h"
+
 
 namespace Engine
 {
@@ -28,7 +30,7 @@ namespace Engine
 			ENGINE_API void RemoveComponent(uint32_t a_id);
 
 		private:
-			std::vector<MeshComponent*> m_components; // ADD HERE
+			std::vector<MeshComponent*> m_components;
 			std::vector<Core::RHI::IObjectDescriptor*> m_renderDescriptors;
 
 			std::vector<int> m_availableIndexes;
