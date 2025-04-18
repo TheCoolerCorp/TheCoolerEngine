@@ -1,6 +1,8 @@
 #ifndef RHIIMGUI_H
 #define RHIIMGUI_H
 
+class ImGuiLayer;
+
 namespace Engine::Core
 {
 	namespace Window
@@ -21,8 +23,11 @@ public:
 	virtual void NewFrame() = 0;
 	virtual void Render() = 0;
 	virtual void DrawSceneAsImage() = 0;
-private:
+
+	void SetImGuiParent(ImGuiLayer* imguiLayer) { m_imguiLayer = imguiLayer; }
+protected:
 	Engine::Core::Renderer* m_renderer;
+	ImGuiLayer* m_imguiLayer = nullptr;
 };
 
 #endif

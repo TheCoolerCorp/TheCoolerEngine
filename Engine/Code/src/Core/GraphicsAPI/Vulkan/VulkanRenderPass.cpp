@@ -153,9 +153,7 @@ namespace Engine
 
 				for (VulkanRenderPass* pass : sortedPasses)
 				{
-					// Add VkSemaphore wait/signal logic here if needed
 					pass->RecordRenderPass(a_info, a_renderObjects, a_vertexBuffers, a_indexBuffers, a_nbIndices);
-
 				}
 			}
 
@@ -188,7 +186,14 @@ namespace Engine
 					m_sceneRenderPass->Destroy();
 					delete m_sceneRenderPass;
 				}
+				m_sceneRenderPass->SetParent(this);
 				m_sceneRenderPass = renderPass;
+			}
+
+			void VulkanRenderPassManager::AddRenderPass(VulkanRenderPass* renderPass)
+			{
+				renderPass->SetParent(this);
+				m_renderPasses.push_back(renderPass);
 			}
 
 			bool VulkanRenderPassManager::HasFlag(RenderPassFlags a_flag)
@@ -217,7 +222,7 @@ namespace Engine
 			/**
 			 * Inserts a memory barrier to force synchronisation between two render passes.
 			 * Only really suited for letting my imgui ui pass wait on the scene pass, to expand on later
-			 * @param a_pass the previous pass the next pass is gonna depend on
+			 * @param a_pass the previous pass the next pass is going to depend on
 			 * @param a_dependentPass the next pass that is dependent on the previous pass
 			 * @param a_buffer the current command buffer
 			 */
@@ -230,15 +235,17 @@ namespace Engine
 				barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
 				barrier.srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
 				barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+				
 				if (a_pass->GetConfig().dependencyImageLayoutOverride != VK_IMAGE_LAYOUT_UNDEFINED)
 				{
-					barrier.oldLayout = a_pass->GetConfig().dependencyImageLayoutOverride;
+					barrier.oldLayout = a_dependentPass->GetConfig().dependencyImageLayoutOverride;
+					barrier.newLayout = a_dependentPass->GetConfig().dependencyImageLayoutOverride;
 				}
 				else
 				{
 					barrier.oldLayout = a_pass->GetConfig().attachments[0].finalLayout;
+					barrier.newLayout = a_dependentPass->GetConfig().attachments[0].initialLayout;
 				}
-				barrier.newLayout = a_dependentPass->GetConfig().attachments[0].initialLayout;
 				barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
 				barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
 				barrier.image = a_pass->GetAttachmentResources()[currentFrame].image;
@@ -339,7 +346,7 @@ namespace Engine
 
 				VK_CHECK(vkCreateRenderPass(m_device, &renderPassInfo, nullptr, &m_renderPass), "Failed to create render pass!");
 
-				if (!m_config.useSwapChainFramebuffers)
+				if (!m_config.useSwapChainFramebuffers && m_config.createOwnFramebuffers)
 				{
 					CreateAttachments();
 					CreateFramebuffers();
@@ -457,21 +464,23 @@ namespace Engine
 				const std::vector<Core::RHI::IBuffer*>& a_vertexBuffers,
 				const std::vector<Core::RHI::IBuffer*>& a_indexBuffers, const std::vector<uint32_t>& a_nbIndices)
 			{
-				VkCommandBufferBeginInfo t_beginInfo{};
-				t_beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+				
+				if (HasDependency())
+				{
+					//m_parent->InsertPipelineBarrier(m_dependencies[0], this, a_info.commandBuffer);
+				}
 
-				VK_CHECK(vkBeginCommandBuffer(a_info.commandBuffer, &t_beginInfo), "failed to begin recording command buffer!");
-				Begin(a_info.commandBuffer, a_info.imageIndex);
+				Begin(a_info.commandBuffer, a_info.imageIndex, a_info.currentFrame);
 				//Check if the function has been set before calling it
 				if (m_drawFunc == nullptr)
 					LOG_ERROR("Tried to record render pass with no draw function set!");
 				else
 					m_drawFunc(a_info, a_renderObjects, a_vertexBuffers, a_indexBuffers, a_nbIndices);
 				End(a_info.commandBuffer);
-				VK_CHECK(vkEndCommandBuffer(a_info.commandBuffer), "failed to end command buffer!");
+				
 			}
 
-			void VulkanRenderPass::Begin(VkCommandBuffer cmd, uint32_t imageIndex, VkSubpassContents contents)
+			void VulkanRenderPass::Begin(VkCommandBuffer cmd, uint32_t imageIndex, uint32_t currentFrame, VkSubpassContents contents)
 			{
 				const VkExtent2D t_swapChainExtent = m_renderer->GetSwapChain()->CastVulkan()->GetExtent2D();
 				std::vector<VkClearValue> clearValues;
@@ -497,7 +506,7 @@ namespace Engine
 				if (m_config.useSwapChainFramebuffers)
 					beginInfo.framebuffer = m_renderer->GetSwapChain()->CastVulkan()->GetFramebuffers()[imageIndex];
 				else
-					beginInfo.framebuffer = m_framebuffers[imageIndex];
+					beginInfo.framebuffer = m_framebuffers[currentFrame];
 				beginInfo.renderArea.offset = { 0, 0 };
 				beginInfo.renderArea.extent = t_swapChainExtent;
 				beginInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());

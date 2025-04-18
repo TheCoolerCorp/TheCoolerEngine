@@ -65,7 +65,6 @@ void VulkanImGui::Init(Window::IWindow* window, Renderer* renderer)
 	uint32_t g_ImageCount = g_MinImageCount;
 	VkAllocationCallbacks* g_Allocator = nullptr;
 
-	
 	SetupRenderPasses();
 	CreateDescriptorPool(g_Device);
 
@@ -97,6 +96,9 @@ void VulkanImGui::Init(Window::IWindow* window, Renderer* renderer)
 	init_info.Allocator = g_Allocator;
 	init_info.CheckVkResultFn = check_vk_result;
 	ImGui_ImplVulkan_Init(&init_info);
+
+	
+	CreateSceneImageDescriptorSets();
 }
 
 void VulkanImGui::SetupRenderPasses()
@@ -165,12 +167,11 @@ void VulkanImGui::SetupSceneRenderPass()
 	// Extent
 	config.extent = extent;
 	config.setViewportAndScissor = true;
-	config.useSwapChainFramebuffers = true;
+	config.useSwapChainFramebuffers = false;
 
 	m_imGuiRenderPass = new VulkanRenderPass(device, m_renderer);
 
 	m_imGuiRenderPass->Create(config);
-	m_imGuiRenderPass->CreateAttachments();
 	//m_sceneRenderPass->SetFramebuffers(m_renderer->GetSwapChain()->CastVulkan()->GetFramebuffers());
 
 	m_imGuiRenderPass->SetDrawFunc(
@@ -220,9 +221,9 @@ void VulkanImGui::SetupImGuiRenderPass()
 	RenderPassConfig config = {};
 	config.attachments.push_back({
 		.format = imageFormat,
-		.initialLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL,
+		.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED,
 		.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
-		.loadOp = VK_ATTACHMENT_LOAD_OP_LOAD,
+		.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
 		.storeOp = VK_ATTACHMENT_STORE_OP_STORE,
 		.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
 		.isDepth = false
@@ -249,7 +250,8 @@ void VulkanImGui::SetupImGuiRenderPass()
 	dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
 
 	config.dependencies.push_back(dependency);
-	config.useSwapChainFramebuffers = true;
+	config.useSwapChainFramebuffers = false;
+	config.createOwnFramebuffers = false;
 	config.dependencyImageLayoutOverride = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 
 	m_imGuiViewportRenderPass->Create(config);
@@ -262,7 +264,13 @@ void VulkanImGui::SetupImGuiRenderPass()
 		}
 	);
 	m_imGuiViewportRenderPass->AddDependency(m_imGuiRenderPass);
-
+	std::vector<VkImageView> t_imageViews = m_renderer->GetSwapChain()->CastVulkan()->GetImageViews();
+	std::vector<std::vector<VkImageView>> t_imageViews2;
+	for (int a = 0; a < t_imageViews.size(); a++)
+	{
+		t_imageViews2.push_back({ t_imageViews[a] });
+	}
+	m_imGuiViewportRenderPass->CreateFramebuffers(t_imageViews2);
 	VulkanRenderPassManager* manager = m_renderer->GetRenderPass()->CastVulkan();
 	manager->AddRenderPass(m_imGuiViewportRenderPass);
 }
@@ -305,7 +313,6 @@ void VulkanImGui::CreateDescriptorPool(VkDevice device)
 
 void VulkanImGui::CreateSceneImageDescriptorSets()
 {
-	VulkanSwapchain* swapchain = m_renderer->GetSwapChain()->CastVulkan();
 	const std::vector<AttachmentResource>& attachmentResources = m_imGuiRenderPass->GetAttachmentResources();
 	m_Dset.resize(attachmentResources.size());
 	for (uint32_t i = 0; i < attachmentResources.size(); i++)

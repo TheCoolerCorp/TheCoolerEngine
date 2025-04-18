@@ -207,7 +207,6 @@ namespace Engine
 				for (int i = 0; i < static_cast<int>(t_commandPool->mCommandBuffers.size()); ++i) 
 				{
 					const VkCommandBuffer t_commandBuffer = std::get<VkCommandBuffer>(t_commandPool->mCommandBuffers[i][m_currentFrame]);
-					const VkRenderPass t_renderPass = std::get<VkRenderPass>(t_commandPool->mCommandBuffers[i][m_currentFrame]);
 					const VulkanGraphicPipeline* t_pipeline = std::get<VulkanGraphicPipeline*>(t_commandPool->mCommandBuffers[i][m_currentFrame]);
 					t_commandBuffers.push_back(t_commandBuffer);
 					vkResetCommandBuffer(t_commandBuffer, 0);
@@ -215,13 +214,17 @@ namespace Engine
 					RecordRenderPassinfo info;
 					info.commandBuffer = t_commandBuffer;
 					info.imageIndex = t_imageIndex;
+					info.currentFrame = m_currentFrame;
 					info.swapChain = this;
 					info.graphicPipeline = t_pipeline;	
 					info.camera = a_camera;
 
-					//TODO : Change to use VulkanRenderPass instead of VulkanCommandPool
-					a_renderPass->CastVulkan()->RunSceneRenderPass(info, a_renderObjects, a_vertexBuffers, a_indexBuffers, a_nbIndices);
-					//VulkanCommandPool::RecordCommandBuffer(t_commandBuffer, t_imageIndex, t_renderPass, this, t_pipeline, a_renderObjects, a_vertexBuffers, a_indexBuffers, a_nbIndices, a_camera);
+					VkCommandBufferBeginInfo t_beginInfo{};
+					t_beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+
+					VK_CHECK(vkBeginCommandBuffer(t_commandBuffer, &t_beginInfo), "failed to begin recording command buffer!");
+					a_renderPass->CastVulkan()->RecordRenderPasses(info, a_renderObjects, a_vertexBuffers, a_indexBuffers, a_nbIndices);
+					VK_CHECK(vkEndCommandBuffer(t_commandBuffer), "failed to end command buffer!");
 				}
 
 				VkSubmitInfo t_submitInfo{};
@@ -317,7 +320,7 @@ namespace Engine
 
 			VkPresentModeKHR VulkanSwapchain::ChooseSurfacePresentMode(const std::vector<VkPresentModeKHR>& a_availablePresentModes)
 			{
-				return VK_PRESENT_MODE_FIFO_KHR; // TODO : clean this
+				return VK_PRESENT_MODE_MAILBOX_KHR; // TODO : clean this
 				for (const auto& t_availablePresentMode : a_availablePresentModes)
 				{
 					if (t_availablePresentMode == VK_PRESENT_MODE_MAILBOX_KHR) 

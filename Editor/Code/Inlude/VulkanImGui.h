@@ -42,8 +42,6 @@ public:
 	void CreateDescriptorPool(VkDevice device);
 	void CreateSceneImageDescriptorSets();
 private:
-	ImGuiLayer* m_imguiLayer = nullptr;
-
 	Engine::Core::Renderer* m_renderer = nullptr;
 
 	Engine::Core::GraphicsAPI::VulkanRenderPass* m_imGuiRenderPass = nullptr;

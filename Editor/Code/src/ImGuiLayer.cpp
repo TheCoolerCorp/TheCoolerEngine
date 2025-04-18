@@ -10,6 +10,7 @@ void ImGuiLayer::OnAttach(Engine::Core::Window::IWindow* window)
 {
 	Layer::OnAttach(window);
 	m_imGui = new VulkanImGui(m_renderer);
+	m_imGui->SetImGuiParent(this);
 	m_imGui->Init(window, m_renderer);
 }
 

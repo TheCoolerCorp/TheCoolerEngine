@@ -30,6 +30,7 @@ namespace Engine
 			{
 				VkCommandBuffer commandBuffer;
 				uint32_t imageIndex;
+				uint32_t currentFrame;
 				VulkanSwapchain* swapChain;
 				const VulkanGraphicPipeline* graphicPipeline;
 				const GamePlay::Camera* camera;
@@ -70,7 +71,7 @@ namespace Engine
 
 				// --- Setters ---
 				ENGINE_API void SetSceneRenderPass(VulkanRenderPass* renderPass);
-				ENGINE_API void AddRenderPass(VulkanRenderPass* renderPass) { m_renderPasses.push_back(renderPass); }
+				ENGINE_API void AddRenderPass(VulkanRenderPass* renderPass);
 
 				// --- Getters ---
 				[[nodiscard]] ENGINE_API VulkanRenderPass* GetSceneRenderPass() const { return m_sceneRenderPass; }
@@ -80,6 +81,7 @@ namespace Engine
 				ENGINE_API static void AddFlag(RenderPassFlags a_flag);
 				ENGINE_API static void RemoveFlag(RenderPassFlags a_flag);
 
+				void InsertPipelineBarrier(const VulkanRenderPass* a_pass, const VulkanRenderPass* a_dependentPass, VkCommandBuffer a_buffer) const;
 			private:
 				Renderer* m_renderer = nullptr;
 				VulkanRenderPass* m_sceneRenderPass = nullptr;
@@ -87,8 +89,6 @@ namespace Engine
 
 				// Static configuration flags (used globally)
 				static std::vector<RenderPassFlags> m_renderPassFlags;
-
-				void InsertPipelineBarrier(const VulkanRenderPass* a_pass, const VulkanRenderPass* a_dependentPass, VkCommandBuffer a_buffer) const;
 			};
 
 			struct RenderPassAttachment
@@ -117,6 +117,7 @@ namespace Engine
 				VkExtent2D extent;
 				bool setViewportAndScissor = false;
 				bool useSwapChainFramebuffers = false;
+				bool createOwnFramebuffers = true;
 			};
 
 			struct AttachmentResource {
@@ -125,8 +126,11 @@ namespace Engine
 				VkImageView view;
 			};
 
-			
-
+			/**
+			* @brief VulkanRenderPass is a wrapper around the Vulkan render pass object.
+			* It handles the creation and destruction of a render pass, as well as the
+			* framebuffers and attachments.
+			*/
 			class VulkanRenderPass
 			{
 			public:
@@ -138,6 +142,7 @@ namespace Engine
 				ENGINE_API void CreateAttachments();
 				ENGINE_API void CreateFramebuffers(); // Uses internally defined attachments
 				ENGINE_API void CreateFramebuffers(const std::vector<std::vector<VkImageView>>& views); // Uses provided views
+				ENGINE_API void SetParent(VulkanRenderPassManager* a_parent) { m_parent = a_parent; }
 
 				// --- Lifecycle ---
 				ENGINE_API void Destroy();
@@ -149,7 +154,7 @@ namespace Engine
 					const std::vector<Core::RHI::IBuffer*>& indexBuffers,
 					const std::vector<uint32_t>& nbIndices);
 
-				ENGINE_API void Begin(VkCommandBuffer cmd, uint32_t imageIndex, VkSubpassContents contents = VK_SUBPASS_CONTENTS_INLINE);
+				ENGINE_API void Begin(VkCommandBuffer cmd, uint32_t imageIndex, uint32_t currentFrame, VkSubpassContents contents = VK_SUBPASS_CONTENTS_INLINE);
 				ENGINE_API void End(VkCommandBuffer cmd);
 
 				// --- Draw Control ---
@@ -162,6 +167,7 @@ namespace Engine
 				// --- Dependencies ---
 				ENGINE_API void AddDependency(VulkanRenderPass* dependency) { m_dependencies.push_back(dependency); }
 				[[nodiscard]] ENGINE_API const std::vector<VulkanRenderPass*>& GetDependencies() { return m_dependencies; }
+				[[nodiscard]] ENGINE_API bool HasDependency() const { return !m_dependencies.empty(); }
 
 				// --- State Transition ---
 				ENGINE_API void TransitionImageLayout(VkImageLayout newImageLayout);
@@ -176,6 +182,7 @@ namespace Engine
 				// --- Vulkan handles and references ---
 				VkDevice m_device;
 				Renderer* m_renderer;
+				VulkanRenderPassManager* m_parent;
 
 				// --- Configuration and pipeline ---
 				RenderPassConfig m_config;
