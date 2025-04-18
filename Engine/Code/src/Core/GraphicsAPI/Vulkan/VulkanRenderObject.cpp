@@ -128,6 +128,7 @@ namespace Engine
 						return a_layouts[i].mLayout;
 					}
 				}
+				return VK_NULL_HANDLE;
 			}
 
 			void VulkanRenderObject::CreatePool(VkDevice a_logicalDevice, uint32_t a_count, std::vector<VkDescriptorType> a_types)

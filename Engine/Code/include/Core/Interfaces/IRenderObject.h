@@ -44,14 +44,10 @@ namespace Engine
 
 				ENGINE_API virtual void Create(ILogicalDevice* a_logicalDevice, IGraphicPipeline* a_graphicPipeline, DescriptorSetTarget a_type, int a_count, std::vector<DescriptorSetType> a_types = std::vector<DescriptorSetType>(0)) = 0;
 
-				//ENGINE_API virtual void Create(ILogicalDevice* a_logicalDevice, ISurface* a_surface, ICommandPool* a_commandPool, IGraphicPipeline* a_graphicPipeline, int a_maxFrame, DescriptorSetType a_type = Per) = 0;
 				ENGINE_API virtual void Destroy(ILogicalDevice* a_logicalDevice) = 0;
 
 				ENGINE_API virtual void SetTexture(RHI::ILogicalDevice* a_logicalDevice, RHI::IImage* a_image, uint32_t a_dstBinding, uint32_t a_count) = 0;
 				ENGINE_API virtual void SetMat(RHI::ILogicalDevice* a_logicalDevice, RHI::IPhysicalDevice* a_physicalDevice, RHI::ICommandPool* a_commandPool,void* a_matData, uint32_t a_dstBinding, uint32_t a_count) = 0;
-
-
-				ENGINE_API virtual void SetData(RHI::ILogicalDevice* a_logicalDevice, RHI::IPhysicalDevice* a_physicalDevice, RHI::ICommandPool* a_commandPool, int a_maxFrame, void* a_data, RHI::IImage* a_image = nullptr) = 0;
 
 				ENGINE_API virtual void UpdateUniforms(ILogicalDevice* a_logicalDevice, void* a_data, int a_imageIndex) = 0;
 
