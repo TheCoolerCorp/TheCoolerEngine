@@ -3,6 +3,8 @@
 
 #include "EngineExport.h"
 
+#include "Core/Interfaces/IGraphicPipeline.h"
+
 namespace Engine
 {
 	namespace Core
@@ -20,11 +22,17 @@ namespace Engine
 			class IGraphicPipeline;
 			class IImage;
 
-			enum DescriptorSetType : int
+			enum DescriptorSetTarget : int
 			{
 				Common = 0,
 				Per = 1,
 				UNDEFINED = 2
+			};
+
+			enum DescriptorSetType : int
+			{
+				DESCRIPTOR_SET_TYPE_SAMPLED_IMAGE = 2,
+				DESCRIPTOR_SET_TYPE_UNIFORM_BUFFER = 6
 			};
 
 			class IRenderObject
@@ -34,8 +42,14 @@ namespace Engine
 
 				ENGINE_API virtual GraphicsAPI::VulkanRenderObject* CastVulkan() { return nullptr; }
 
-				ENGINE_API virtual void Create(ILogicalDevice* a_logicalDevice, IPhysicalDevice* a_physicalDevice, ISurface* a_surface, ICommandPool* a_commandPool, IGraphicPipeline* a_graphicPipeline, int a_maxFrame, DescriptorSetType a_type = Per) = 0;
+				ENGINE_API virtual void Create(ILogicalDevice* a_logicalDevice, IGraphicPipeline* a_graphicPipeline, DescriptorSetTarget a_type, int a_count, std::vector<DescriptorSetType> a_types = std::vector<DescriptorSetType>(0)) = 0;
+
+				//ENGINE_API virtual void Create(ILogicalDevice* a_logicalDevice, ISurface* a_surface, ICommandPool* a_commandPool, IGraphicPipeline* a_graphicPipeline, int a_maxFrame, DescriptorSetType a_type = Per) = 0;
 				ENGINE_API virtual void Destroy(ILogicalDevice* a_logicalDevice) = 0;
+
+				ENGINE_API virtual void SetTexture(RHI::ILogicalDevice* a_logicalDevice, RHI::IImage* a_image, uint32_t a_dstBinding, uint32_t a_count) = 0;
+				ENGINE_API virtual void SetMat(RHI::ILogicalDevice* a_logicalDevice, RHI::IPhysicalDevice* a_physicalDevice, RHI::ICommandPool* a_commandPool,void* a_matData, uint32_t a_dstBinding, uint32_t a_count) = 0;
+
 
 				ENGINE_API virtual void SetData(RHI::ILogicalDevice* a_logicalDevice, RHI::IPhysicalDevice* a_physicalDevice, RHI::ICommandPool* a_commandPool, int a_maxFrame, void* a_data, RHI::IImage* a_image = nullptr) = 0;
 

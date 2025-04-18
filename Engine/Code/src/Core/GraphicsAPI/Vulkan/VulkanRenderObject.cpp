@@ -4,7 +4,6 @@
 #include  "Core/GraphicsAPI/Vulkan/VulkanPhysicalDevice.h"
 #include  "Core/GraphicsAPI/Vulkan/VulkanSurface.h"
 #include  "Core/GraphicsAPI/Vulkan/VulkanCommandPool.h"
-#include  "Core/GraphicsAPI/Vulkan/VulkanGraphicPipeline.h"
 
 namespace Engine
 {
@@ -12,27 +11,30 @@ namespace Engine
 	{
 		namespace GraphicsAPI
 		{
-			void VulkanRenderObject::Create(RHI::ILogicalDevice* a_logicalDevice, RHI::IPhysicalDevice* a_physicalDevice, RHI::ISurface* a_surface, RHI::ICommandPool* a_commandPool, RHI::IGraphicPipeline* a_graphicPipeline, int a_maxFrame, RHI::DescriptorSetType a_type)
+
+			void VulkanRenderObject::Create(RHI::ILogicalDevice* a_logicalDevice, RHI::IGraphicPipeline* a_graphicPipeline, RHI::DescriptorSetTarget a_type, int a_count, std::vector<RHI::DescriptorSetType> a_types)
 			{
+				// Type : Common to all object in shader or per object.
 				m_type = a_type;
 
-				// Create vulkan object from rhi object.
-				VkDevice t_logicalDevice = a_logicalDevice->CastVulkan()->GetVkDevice();
-				VkDescriptorSetLayout t_descriptorSetLayout = a_graphicPipeline->CastVulkan()->GetObjectDescriptorSetLayout();// Change to per 
+				const VkDevice t_device = a_logicalDevice->CastVulkan()->GetVkDevice();
 
-				// Create pool
-				CreatePool(t_logicalDevice, a_maxFrame);
+				// Choose the right layout
+				const VkDescriptorSetLayout t_layout = ChooseLayout(a_graphicPipeline->CastVulkan()->GetSetLayouts(), a_type);
 
-				// Create descriptorSets.
-				CreateDescriptorSets(t_logicalDevice, t_descriptorSetLayout, a_maxFrame);
 
-				// Create empty uniform buffers.
-				m_uniforms.resize(a_maxFrame);
-
-				for (int i = 0; i < m_uniforms.size(); ++i)
+				// Create the pool
+				std::vector<VkDescriptorType> t_types = std::vector<VkDescriptorType>(a_types.size());
+				for (int i = 0; i < t_types.size(); ++i)
 				{
-					m_uniforms[i] = new VulkanBuffer;
+					t_types[i] = static_cast<VkDescriptorType>(static_cast<int>(a_types[i]));
 				}
+				CreatePool(t_device, a_count, t_types);
+				t_types.clear();
+
+				// Create the descriptors
+				CreateDescriptorSets(t_device, t_layout, a_count);
+				CreateBuffers(a_count);
 			}
 
 			void VulkanRenderObject::Destroy(RHI::ILogicalDevice* a_logicalDevice)
@@ -40,7 +42,7 @@ namespace Engine
 				// Create vulkan object from rhi object.
 				VkDevice t_logicalDevice = a_logicalDevice->CastVulkan()->GetVkDevice();
 
-				//vkFreeDescriptorSets(t_logicalDevice, m_pool, static_cast<uint32_t>(m_sets.size()), m_sets.data());
+				vkFreeDescriptorSets(t_logicalDevice, m_pool, static_cast<uint32_t>(m_sets.size()), m_sets.data());
 				m_sets.clear();
 
 				vkDestroyDescriptorPool(t_logicalDevice, m_pool, nullptr);
@@ -48,56 +50,45 @@ namespace Engine
 				for (int i = 0; i < m_uniforms.size(); ++i)
 				{
 					m_uniforms[i]->Destroy(a_logicalDevice);
-					delete m_uniforms[i];
+				}
+				DestroyBuffers();
+
+			}
+
+			void VulkanRenderObject::SetTexture(RHI::ILogicalDevice* a_logicalDevice, RHI::IImage* a_image, uint32_t a_dstBinding, uint32_t a_count)
+			{
+				const VkDevice t_device = a_logicalDevice->CastVulkan()->GetVkDevice();
+
+				for (int i = 0; i < m_sets.size(); ++i)
+				{
+					VkDescriptorImageInfo t_textureInfo{};
+					t_textureInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+					t_textureInfo.imageView = a_image->CastVulkan()->GetView();
+					t_textureInfo.sampler = a_image->CastVulkan()->GetSampler();
+
+					VkWriteDescriptorSet texture;
+					texture.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+					texture.dstSet = m_sets[i];
+					texture.dstBinding = a_dstBinding;
+					texture.dstArrayElement = 0;
+					texture.descriptorType = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
+					texture.descriptorCount = a_count;
+					texture.pImageInfo = &t_textureInfo;
+
+					vkUpdateDescriptorSets(t_device, 1, &texture, 0, nullptr);
 				}
 			}
 
-			void VulkanRenderObject::CreatePool(VkDevice a_logicalDevice, int a_maxFrame)
+			ENGINE_API void VulkanRenderObject::SetMat(RHI::ILogicalDevice* a_logicalDevice, RHI::IPhysicalDevice* a_physicalDevice, RHI::ICommandPool* a_commandPool, void* a_matData, uint32_t a_dstBinding, uint32_t a_count)
 			{
-				std::array<VkDescriptorPoolSize, 2> t_poolSizes{};
-				t_poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-				t_poolSizes[0].descriptorCount = static_cast<uint32_t>(a_maxFrame);
-				t_poolSizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-				t_poolSizes[1].descriptorCount = static_cast<uint32_t>(a_maxFrame);
+				const VkDevice t_device = a_logicalDevice->CastVulkan()->GetVkDevice();
 
-				VkDescriptorPoolCreateInfo t_poolInfo{};
-				t_poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-				t_poolInfo.poolSizeCount = static_cast<uint32_t>(t_poolSizes.size());
-				t_poolInfo.pPoolSizes = t_poolSizes.data();
-				t_poolInfo.maxSets = static_cast<uint32_t>(a_maxFrame);
-
-				VK_CHECK(vkCreateDescriptorPool(a_logicalDevice, &t_poolInfo, nullptr, &m_pool), "failed to create descriptorPool");
-			}
-
-			void VulkanRenderObject::CreateDescriptorSets(VkDevice a_logicalDevice, VkDescriptorSetLayout a_descriptorSetLayout, int a_maxFrame)
-			{
-				std::vector<VkDescriptorSetLayout> layouts(a_maxFrame, a_descriptorSetLayout);
-				VkDescriptorSetAllocateInfo allocInfo{};
-				allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-				allocInfo.descriptorPool = m_pool;
-				allocInfo.descriptorSetCount = static_cast<uint32_t>(a_maxFrame);
-				allocInfo.pSetLayouts = layouts.data();
-
-				m_sets.resize(a_maxFrame);
-
-				VK_CHECK(vkAllocateDescriptorSets(a_logicalDevice, &allocInfo, m_sets.data()), "Can't allocate descriptor sets");
-			}
-
-			void VulkanRenderObject::SetData(RHI::ILogicalDevice* a_logicalDevice, RHI::IPhysicalDevice* a_physicalDevice, RHI::ICommandPool* a_commandPool, int a_maxFrame, void* a_data, RHI::IImage* a_image)
-			{
-				VkDevice t_logicalDevice = a_logicalDevice->CastVulkan()->GetVkDevice();
-				VkPhysicalDevice t_physicalDevice = a_physicalDevice->CastVulkan()->GetVkPhysicalDevice();
-				VkCommandPool t_commandPool = a_commandPool->CastVulkan()->GetVkCommandPool();
-
-				for (size_t i = 0; i < a_maxFrame; i++)
+				for (int i = 0; i < m_sets.size(); ++i)
 				{
-					std::vector<VkWriteDescriptorSet> t_descriptorWrites{};
-
-
-					RHI::BufferData t_uniformData;
-					t_uniformData.mUboData = a_data;
-					t_uniformData.mUboSize = 16 * sizeof(float);
-					m_uniforms[i]->Create(RHI::BufferType::UBO, t_uniformData, a_physicalDevice, a_logicalDevice, a_commandPool);
+					RHI::BufferData t_matInfo;
+					t_matInfo.mUboData = a_matData;
+					t_matInfo.mUboSize = 16 * sizeof(float);
+					m_uniforms[i]->Create(RHI::BufferType::UBO, t_matInfo, a_physicalDevice, a_logicalDevice, a_commandPool);
 
 					VkDescriptorBufferInfo t_bufferInfo{};
 					t_bufferInfo.buffer = m_uniforms[i]->GetBuffer();
@@ -107,68 +98,19 @@ namespace Engine
 					VkWriteDescriptorSet mat;
 					mat.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 					mat.dstSet = m_sets[i];
-					mat.dstBinding = 0;
+					mat.dstBinding = a_dstBinding;
 					mat.dstArrayElement = 0;
-					mat.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-					mat.descriptorCount = 1;
+					mat.descriptorType = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
+					mat.descriptorCount = a_count;
 					mat.pBufferInfo = &t_bufferInfo;
 
-					t_descriptorWrites.push_back(mat);
-
-					if (a_image != nullptr)
-					{
-						VkDescriptorImageInfo t_imageInfo{};
-						t_imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-						t_imageInfo.imageView = a_image->CastVulkan()->GetView();
-						t_imageInfo.sampler = a_image->CastVulkan()->GetSampler();
-						
-						VkWriteDescriptorSet tex;
-						tex.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-						tex.dstSet = m_sets[i];
-						tex.dstBinding = 1;
-						tex.dstArrayElement = 0;
-						tex.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-						tex.descriptorCount = 1;
-						tex.pImageInfo = &t_imageInfo;
-
-						t_descriptorWrites.push_back(tex);
-					}
-
-
-
-						
-					vkUpdateDescriptorSets(t_logicalDevice, static_cast<uint32_t>(t_descriptorWrites.size()), t_descriptorWrites.data(), 0, nullptr);
+					vkUpdateDescriptorSets(t_device, 1, &mat, 0, nullptr);
 				}
+				
 			}
-
-			//void VulkanRenderObject::SetTexture(RHI::ILogicalDevice* a_logicalDevice, RHI::IImage* a_image, int a_maxFrame)
-			//{
-			//	/*VkDevice t_logicalDevice = a_logicalDevice->CastVulkan()->GetVkDevice();
-
-			//	for (size_t i = 0; i < a_maxFrame; i++)
-			//	{
-			//		VkDescriptorImageInfo t_imageInfo{};
-			//		t_imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-			//		t_imageInfo.imageView = a_image->CastVulkan()->GetView();
-			//		t_imageInfo.sampler = a_image->CastVulkan()->GetSampler();
-
-			//		VkWriteDescriptorSet m_ImageDescriptor{};
-
-			//		m_ImageDescriptor.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-			//		m_ImageDescriptor.dstSet = m_sets[i];
-			//		m_ImageDescriptor.dstBinding = 1;
-			//		m_ImageDescriptor.dstArrayElement = 0;
-			//		m_ImageDescriptor.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-			//		m_ImageDescriptor.descriptorCount = 1;
-			//		m_ImageDescriptor.pImageInfo = &t_imageInfo;
-
-			//		vkUpdateDescriptorSets(t_logicalDevice, static_cast<uint32_t>(m_sets.size()), &m_ImageDescriptor, 0, nullptr);
-			//	}*/
-			//}
 
 			void VulkanRenderObject::UpdateUniforms(RHI::ILogicalDevice* a_logicalDevice, void* a_data, int a_imageIndex)
 			{
-				// Create vulkan object from rhi object.
 				VkDevice t_logicalDevice = a_logicalDevice->CastVulkan()->GetVkDevice();
 
 				void* t_data;
@@ -176,6 +118,70 @@ namespace Engine
 				memcpy(t_data, a_data, 16 * sizeof(float));
 				vkUnmapMemory(a_logicalDevice->CastVulkan()->GetVkDevice(), m_uniforms[a_imageIndex]->GetMemory());
 			}
+
+			VkDescriptorSetLayout VulkanRenderObject::ChooseLayout(std::vector<VulkanSetLayout> a_layouts, RHI::DescriptorSetTarget a_type)
+			{
+				for (int i = 0; i < a_layouts.size(); ++i)
+				{
+					if (static_cast<int>(a_layouts[i].mType) == static_cast<int>(a_type))
+					{
+						return a_layouts[i].mLayout;
+					}
+				}
+			}
+
+			void VulkanRenderObject::CreatePool(VkDevice a_logicalDevice, uint32_t a_count, std::vector<VkDescriptorType> a_types)
+			{
+				std::vector<VkDescriptorPoolSize> t_poolSizes = std::vector<VkDescriptorPoolSize>(a_types.size());
+
+				for (int i = 0; i < t_poolSizes.size(); ++i)
+				{
+					VkDescriptorPoolSize t_poolSize = {};
+					t_poolSize.type = a_types[i];
+					t_poolSize.descriptorCount = a_count;
+					t_poolSizes[i] = t_poolSize;
+				}
+				VkDescriptorPoolCreateInfo t_poolInfo{};
+				t_poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+				t_poolInfo.poolSizeCount = static_cast<uint32_t>(t_poolSizes.size());
+				t_poolInfo.pPoolSizes = t_poolSizes.data();
+				t_poolInfo.maxSets = a_count;
+
+				VK_CHECK(vkCreateDescriptorPool(a_logicalDevice, &t_poolInfo, nullptr, &m_pool), "failed to create descriptorPool");
+			}
+
+			void VulkanRenderObject::CreateDescriptorSets(VkDevice a_logicalDevice, VkDescriptorSetLayout a_descriptorSetLayout, uint32_t a_count)
+			{
+				std::vector<VkDescriptorSetLayout> layouts(a_count, a_descriptorSetLayout);
+				VkDescriptorSetAllocateInfo allocInfo{};
+				allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+				allocInfo.descriptorPool = m_pool;
+				allocInfo.descriptorSetCount = a_count;
+				allocInfo.pSetLayouts = layouts.data();
+
+				m_sets.resize(a_count);
+
+				VK_CHECK(vkAllocateDescriptorSets(a_logicalDevice, &allocInfo, m_sets.data()), "Can't allocate descriptor sets");
+			}
+
+			void VulkanRenderObject::CreateBuffers(uint32_t a_count)
+			{
+				m_uniforms.resize(a_count);
+				for (auto& t_uniform : m_uniforms)
+				{
+					t_uniform = new VulkanBuffer;
+				}
+			}
+
+			void VulkanRenderObject::DestroyBuffers()
+			{
+				for (auto& t_uniform : m_uniforms)
+				{
+					delete t_uniform;
+				}
+			}
+
+
 		}
 	}
 }

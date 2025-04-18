@@ -14,8 +14,10 @@ namespace Engine
 	{
 		namespace GraphicsAPI
 		{
-			void VulkanGraphicPipeline::Create(RHI::ILogicalDevice* a_logicalDevice, RHI::IRenderPass* a_renderPass, std::array<RHI::IShader*, 2> a_vertFragShaders, std::vector<RHI::IShader*> a_additionalShaders)
+			void VulkanGraphicPipeline::Create(RHI::ILogicalDevice* a_logicalDevice, RHI::IRenderPass* a_renderPass, RHI::PipelineType a_type, std::array<RHI::IShader*, 2> a_vertFragShaders, std::vector<RHI::IShader*> a_additionalShaders)
 			{
+				m_type = a_type;
+
 				#pragma region Shader
 				std::vector<VkPipelineShaderStageCreateInfo> shaderStages = std::vector<VkPipelineShaderStageCreateInfo>(2 + a_additionalShaders.size());
 				// Vertex and fragment shaders
@@ -168,7 +170,7 @@ namespace Engine
 
 					VK_CHECK(vkCreateDescriptorSetLayout(a_logicalDevice->CastVulkan()->GetVkDevice(), &SetCreateInfo, nullptr, &m_setslayouts[i].mLayout), "Failed to create descriptor set layout");
 				}
-
+				
 
 				std::vector<VkDescriptorSetLayout> descriptorSetLayouts = std::vector<VkDescriptorSetLayout>(m_setslayouts.size());
 				for (int i = 0; i < m_setslayouts.size(); ++i)
@@ -202,8 +204,7 @@ namespace Engine
 				pipelineInfo.basePipelineIndex = -1;
 				pipelineInfo.pDepthStencilState = &depthStencil;
 
-				VK_CHECK(vkCreateGraphicsPipelines(a_logicalDevice->CastVulkan()->GetVkDevice(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_pipeline),
-					"Failed to create graphic pipeline");
+				VK_CHECK(vkCreateGraphicsPipelines(a_logicalDevice->CastVulkan()->GetVkDevice(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_pipeline), "Failed to create graphic pipeline");
 			}
 
 			void VulkanGraphicPipeline::Destroy(RHI::ILogicalDevice* a_logicalDevice)

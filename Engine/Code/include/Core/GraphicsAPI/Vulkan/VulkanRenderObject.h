@@ -7,6 +7,7 @@
 #include "Core/GraphicsAPI/Vulkan/VulkanUtils.h"
 #include  "Core/GraphicsAPI/Vulkan/VulkanBuffer.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanImage.h"
+#include  "Core/GraphicsAPI/Vulkan/VulkanGraphicPipeline.h"
 
 #include <vector>
 #include <array>
@@ -24,12 +25,15 @@ namespace Engine
 
 				ENGINE_API VulkanRenderObject* CastVulkan() override { return this; }
 
-				ENGINE_API void Create(RHI::ILogicalDevice* a_logicalDevice, RHI::IPhysicalDevice* a_physicalDevice, RHI::ISurface* a_surface, RHI::ICommandPool* a_commandPool, RHI::IGraphicPipeline* a_graphicPipeline, int a_maxFrame, RHI::DescriptorSetType a_type = RHI::Per) override;
+				ENGINE_API void Create(RHI::ILogicalDevice* a_logicalDevice, RHI::IGraphicPipeline* a_graphicPipeline, RHI::DescriptorSetTarget a_type, int a_count, std::vector<RHI::DescriptorSetType> a_types = std::vector<RHI::DescriptorSetType>(0)) override;
+
 				ENGINE_API void Destroy(RHI::ILogicalDevice* a_logicalDevice) override;
 
-				ENGINE_API void SetData(RHI::ILogicalDevice* a_logicalDevice, RHI::IPhysicalDevice* a_physicalDevice, RHI::ICommandPool* a_commandPool, int a_maxFrame, void* a_data, RHI::IImage* a_image = nullptr) override;
+				ENGINE_API void SetTexture(RHI::ILogicalDevice* a_logicalDevice, RHI::IImage* a_image, uint32_t a_dstBinding, uint32_t a_count) override;
+				ENGINE_API void SetMat(RHI::ILogicalDevice* a_logicalDevice, RHI::IPhysicalDevice* a_physicalDevice, RHI::ICommandPool* a_commandPool, void* a_matData, uint32_t a_dstBinding, uint32_t a_count) override;
 
 				ENGINE_API void UpdateUniforms(RHI::ILogicalDevice* a_logicalDevice, void* a_data, int a_imageIndex) override;
+
 
 				ENGINE_API std::vector<VkDescriptorSet> GetDescriptorSets() const { return m_sets; }
 
@@ -37,14 +41,20 @@ namespace Engine
 			private:
 				std::vector<VkDescriptorSet> m_sets;
 				VkDescriptorPool m_pool = VK_NULL_HANDLE;
+
 				std::vector<VulkanBuffer*> m_uniforms;
+
 				bool m_Updated = false;
+				RHI::DescriptorSetTarget m_type = RHI::UNDEFINED;
 
-				void CreatePool(VkDevice a_logicalDevice, int a_maxFrame);
-				void CreateDescriptorSets(VkDevice a_logicalDevice, VkDescriptorSetLayout a_descriptorSetLayout, int a_maxFrame);
+				std::vector<VkWriteDescriptorSet> t_descriptorWrites{};
 
-				RHI::DescriptorSetType m_type = RHI::UNDEFINED;
-	
+				VkDescriptorSetLayout ChooseLayout(std::vector<VulkanSetLayout> a_layouts, RHI::DescriptorSetTarget a_type);
+				void CreatePool(VkDevice a_logicalDevice, uint32_t a_count, std::vector<VkDescriptorType> a_types = std::vector<VkDescriptorType>(0));
+				void CreateDescriptorSets(VkDevice a_logicalDevice, VkDescriptorSetLayout a_descriptorSetLayout, uint32_t a_count);
+
+				void CreateBuffers(uint32_t a_count);
+				void DestroyBuffers();
 			};
 		}
 	}

@@ -37,7 +37,7 @@ namespace Engine
 				ENGINE_API ~VulkanGraphicPipeline() override = default;
 				ENGINE_API VulkanGraphicPipeline* CastVulkan() override{ return this; }
 
-				ENGINE_API void Create(RHI::ILogicalDevice* a_logicalDevice, RHI::IRenderPass* a_renderPass, std::array<RHI::IShader*, 2> a_vertFragShaders, std::vector<RHI::IShader*> a_additionalShaders = {}) override;
+				ENGINE_API void Create(RHI::ILogicalDevice* a_logicalDevice, RHI::IRenderPass* a_renderPass, RHI::PipelineType a_type, std::array<RHI::IShader*, 2> a_vertFragShaders, std::vector<RHI::IShader*> a_additionalShaders = {}) override;
 				ENGINE_API void Destroy(RHI::ILogicalDevice* a_logicalDevice) override;
 
 				ENGINE_API VkPipeline GetPipeline() const { return m_pipeline; }
@@ -47,6 +47,7 @@ namespace Engine
 
 				ENGINE_API std::vector<VulkanSetLayout> GetSetLayouts() const { return m_setslayouts; }
 
+				ENGINE_API RHI::PipelineType GetType() { return m_type; }
 			private:
 				SetLayoutType GetType(std::string a_string);
 
@@ -55,9 +56,9 @@ namespace Engine
 				VkDescriptorSetLayout m_objectDescriptor = VK_NULL_HANDLE;
 				VkDescriptorSetLayout m_commonDescriptor = VK_NULL_HANDLE;
 
-
 				std::vector<VulkanSetLayout> m_setslayouts = std::vector<VulkanSetLayout>();
-				
+
+				RHI::PipelineType m_type = RHI::Unlit;
 			};
 		}
 	}
