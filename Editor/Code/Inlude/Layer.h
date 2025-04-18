@@ -5,6 +5,11 @@
 
 namespace Engine::Core
 {
+	namespace Window
+	{
+		class IWindow;
+	}
+
 	class Renderer;
 }
 
@@ -17,7 +22,7 @@ namespace Engine::Core
 */
 class Layer {
 public:
-    Layer(const std::string& name = "UnnamedLayer", Engine::Core::Renderer* renderer) : m_name(name) {}
+    Layer(Engine::Core::Renderer* renderer, const std::string& name = "UnnamedLayer") : m_name(name) {}
     virtual ~Layer() = default;
 
     // Called once when the layer is added

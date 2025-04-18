@@ -7,8 +7,13 @@
 class ImGuiLayer : public Layer
 {
 public:
-	ImGuiLayer(const std::string& name = "ImGui Layer", Engine::Core::Renderer* renderer) { m_name = name; m_renderer = renderer; }
-	~ImGuiLayer() override;
+	ImGuiLayer(Engine::Core::Renderer* renderer, const std::string& name = "ImGui Layer"): Layer(renderer)
+	{
+		m_name = name;
+		m_renderer = renderer;
+	}
+
+	~ImGuiLayer() override = default;
 	void OnAttach(Engine::Core::Window::IWindow* window) override;
 	void OnDetach() override;
 	void OnUpdate(float deltaTime) override;

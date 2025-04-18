@@ -250,6 +250,7 @@ void VulkanImGui::SetupImGuiRenderPass()
 
 	config.dependencies.push_back(dependency);
 	config.useSwapChainFramebuffers = true;
+	config.dependencyImageLayoutOverride = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 
 	m_imGuiViewportRenderPass->Create(config);
 	m_imGuiViewportRenderPass->SetDrawFunc([this](RecordRenderPassinfo a_info, const std::vector<RHI::IRenderObject*>& a_renderObjects,
@@ -260,8 +261,10 @@ void VulkanImGui::SetupImGuiRenderPass()
 			ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), a_info.commandBuffer);
 		}
 	);
+	m_imGuiViewportRenderPass->AddDependency(m_imGuiRenderPass);
+
 	VulkanRenderPassManager* manager = m_renderer->GetRenderPass()->CastVulkan();
-	manager->AddRenderPass(m_imGuiViewportRenderPass, 1);
+	manager->AddRenderPass(m_imGuiViewportRenderPass);
 }
 
 void VulkanImGui::NewFrame()

@@ -1,3 +1,5 @@
+#include <utility>
+
 #include "Core/GraphicsAPI/Vulkan/VulkanRenderPass.h"
 
 #include "Core/GraphicsAPI/Vulkan/VulkanBuffer.h"
@@ -29,6 +31,11 @@ namespace Engine
 			{
 				m_sceneRenderPass->Destroy();
 				delete m_sceneRenderPass;
+				for (VulkanRenderPass* renderPass : m_renderPasses)
+				{
+					renderPass->Destroy();
+					delete renderPass;
+				}
 			}
 
 			void VulkanRenderPassManager::CreateDefaultRenderPass(Renderer* a_renderer)
@@ -94,10 +101,9 @@ namespace Engine
 				m_sceneRenderPass = new VulkanRenderPass(device, a_renderer);
 				
 				m_sceneRenderPass->Create(config);
-				//m_sceneRenderPass->SetFramebsuffers(m_renderer->GetSwapChain()->CastVulkan()->GetFramebuffers());
-
+				
 				m_sceneRenderPass->SetDrawFunc(
-					[this](RecordRenderPassinfo a_info, const std::vector<Core::RHI::IRenderObject*>& a_renderObjects,
+					[this](const RecordRenderPassinfo& a_info, const std::vector<Core::RHI::IRenderObject*>& a_renderObjects,
 						const std::vector<Core::RHI::IBuffer*>& a_vertexBuffers,
 						const std::vector<Core::RHI::IBuffer*>& a_indexBuffers, const std::vector<uint32_t>& a_nbIndices)
 					{
@@ -134,12 +140,122 @@ namespace Engine
 				);
 			}
 
-			void VulkanRenderPassManager::RunSceneRenderPass(RecordRenderPassinfo a_info,
+			void VulkanRenderPassManager::RecordRenderPasses(const RecordRenderPassinfo& a_info, const std::vector<Core::RHI::IRenderObject*>& a_renderObjects, const std::vector<Core::RHI::IBuffer*>& a_vertexBuffers, const std::vector<Core::RHI::IBuffer*>& a_indexBuffers, const std::vector<uint32_t>& a_nbIndices)
+			{
+				std::set<VulkanRenderPass*> visited;
+				std::vector<VulkanRenderPass*> sortedPasses;
+
+				ResolveDependencies(m_sceneRenderPass, visited, sortedPasses);
+				for (VulkanRenderPass* pass : m_renderPasses)
+				{
+					ResolveDependencies(pass, visited, sortedPasses);
+				}
+
+				for (VulkanRenderPass* pass : sortedPasses)
+				{
+					// Add VkSemaphore wait/signal logic here if needed
+					pass->RecordRenderPass(a_info, a_renderObjects, a_vertexBuffers, a_indexBuffers, a_nbIndices);
+
+				}
+			}
+
+			void VulkanRenderPassManager::RunSceneRenderPass(const RecordRenderPassinfo& a_info,
 				const std::vector<Core::RHI::IRenderObject*>& a_renderObjects,
 				const std::vector<Core::RHI::IBuffer*>& a_vertexBuffers,
 				const std::vector<Core::RHI::IBuffer*>& a_indexBuffers, const std::vector<uint32_t>& a_nbIndices)
 			{
 				m_sceneRenderPass->RecordRenderPass(a_info, a_renderObjects, a_vertexBuffers, a_indexBuffers, a_nbIndices);
+			}
+
+			void VulkanRenderPassManager::ResolveDependencies(VulkanRenderPass* pass,
+				std::set<VulkanRenderPass*>& visited, std::vector<VulkanRenderPass*>& sorted)
+			{
+				if (visited.contains(pass)) return;
+
+				for (VulkanRenderPass* dep : pass->GetDependencies())
+				{
+					ResolveDependencies(dep, visited, sorted);
+				}
+
+				visited.insert(pass);
+				sorted.push_back(pass);
+			}
+
+			void VulkanRenderPassManager::SetSceneRenderPass(VulkanRenderPass* renderPass)
+			{
+				if (m_sceneRenderPass)
+				{
+					m_sceneRenderPass->Destroy();
+					delete m_sceneRenderPass;
+				}
+				m_sceneRenderPass = renderPass;
+			}
+
+			bool VulkanRenderPassManager::HasFlag(RenderPassFlags a_flag)
+			{
+				return std::ranges::find(m_renderPassFlags, a_flag) != m_renderPassFlags.end();
+			}
+
+			void VulkanRenderPassManager::AddFlag(RenderPassFlags flag)
+			{
+				if (!HasFlag(flag))
+				{
+					m_renderPassFlags.push_back(flag);
+				}
+			}
+
+			void VulkanRenderPassManager::RemoveFlag(RenderPassFlags flag)
+			{
+				auto it = std::ranges::find(m_renderPassFlags, flag);
+				if (it != m_renderPassFlags.end())
+				{
+					m_renderPassFlags.erase(it);
+				}
+			}
+
+
+			/**
+			 * Inserts a memory barrier to force synchronisation between two render passes.
+			 * Only really suited for letting my imgui ui pass wait on the scene pass, to expand on later
+			 * @param a_pass the previous pass the next pass is gonna depend on
+			 * @param a_dependentPass the next pass that is dependent on the previous pass
+			 * @param a_buffer the current command buffer
+			 */
+			void VulkanRenderPassManager::InsertPipelineBarrier(const VulkanRenderPass* a_pass,
+				const VulkanRenderPass* a_dependentPass, const VkCommandBuffer a_buffer) const
+			{
+				uint32_t currentFrame = m_renderer->GetSwapChain()->GetCurrentFrame();
+
+				VkImageMemoryBarrier barrier{};
+				barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+				barrier.srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+				barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+				if (a_pass->GetConfig().dependencyImageLayoutOverride != VK_IMAGE_LAYOUT_UNDEFINED)
+				{
+					barrier.oldLayout = a_pass->GetConfig().dependencyImageLayoutOverride;
+				}
+				else
+				{
+					barrier.oldLayout = a_pass->GetConfig().attachments[0].finalLayout;
+				}
+				barrier.newLayout = a_dependentPass->GetConfig().attachments[0].initialLayout;
+				barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+				barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+				barrier.image = a_pass->GetAttachmentResources()[currentFrame].image;
+				barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+				barrier.subresourceRange.baseMipLevel = 0;
+				barrier.subresourceRange.levelCount = 1;
+				barrier.subresourceRange.baseArrayLayer = 0;
+				barrier.subresourceRange.layerCount = 1;
+
+				vkCmdPipelineBarrier(
+					a_buffer,
+					VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT,
+					VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
+					0,
+					0, nullptr,
+					0, nullptr,
+					1, &barrier);
 			}
 
 			VulkanRenderPass::VulkanRenderPass(VkDevice device, Renderer* renderer)
@@ -411,6 +527,14 @@ namespace Engine
 			void VulkanRenderPass::End(VkCommandBuffer cmd)
 			{
 				vkCmdEndRenderPass(cmd);
+			}
+
+			void VulkanRenderPass::SetDrawFunc(
+				std::function<void(RecordRenderPassinfo, const std::vector<Core::RHI::IRenderObject*>&, const std::
+				vector<Core::RHI::IBuffer*>&, const std::vector<Core::RHI::IBuffer*>&, const std::vector<uint32_t>&)>
+				a_func)
+			{
+				m_drawFunc = std::move(a_func);
 			}
 
 			void VulkanRenderPass::Destroy()

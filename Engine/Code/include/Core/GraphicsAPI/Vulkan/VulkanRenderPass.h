@@ -3,6 +3,7 @@
 
 #include <functional>
 #include <map>
+#include <set>
 #include <utility>
 
 #include "EngineExport.h"
@@ -24,8 +25,15 @@ namespace Engine
 		namespace GraphicsAPI
 		{
 			class VulkanRenderPass;
-			struct RecordRenderPassinfo;
 
+			struct RecordRenderPassinfo
+			{
+				VkCommandBuffer commandBuffer;
+				uint32_t imageIndex;
+				VulkanSwapchain* swapChain;
+				const VulkanGraphicPipeline* graphicPipeline;
+				const GamePlay::Camera* camera;
+			};
 			enum RenderPassFlags : std::uint8_t
 			{
 				FLAG_VK_RHI_OVERRIDE_DEFAULT_RENDERPASS = 0,
@@ -37,55 +45,50 @@ namespace Engine
 				ENGINE_API ~VulkanRenderPassManager() override = default;
 				ENGINE_API VulkanRenderPassManager* CastVulkan() override { return this; }
 
+				// --- Initialization ---
 				ENGINE_API void Create(Renderer* renderer) override;
-				ENGINE_API void Destroy(RHI::ILogicalDevice* a_logicalDevice) override;
+				ENGINE_API void CreateDefaultRenderPass(Renderer* renderer);
+				ENGINE_API void Destroy(RHI::ILogicalDevice* logicalDevice) override;
 
-				ENGINE_API void CreateDefaultRenderPass(Renderer* a_renderer);
+				// --- Recording ---
+				ENGINE_API void RecordRenderPasses(const RecordRenderPassinfo& a_info,
+					const std::vector<Core::RHI::IRenderObject*>& a_renderObjects,
+					const std::vector<Core::RHI::IBuffer*>& a_vertexBuffers,
+					const std::vector<Core::RHI::IBuffer*>& a_indexBuffers,
+					const std::vector<uint32_t>& a_nbIndices);
 
-				ENGINE_API void RunSceneRenderPass(RecordRenderPassinfo a_info, const std::vector<Core::RHI::IRenderObject*>& a_renderObjects, const std::vector<Core::RHI::IBuffer*>& a_vertexBuffers, const std::vector<Core::RHI::IBuffer*>& a_indexBuffers, const std::vector<uint32_t>& a_nbIndices);
+				ENGINE_API void RunSceneRenderPass(const RecordRenderPassinfo& a_info,
+					const std::vector<Core::RHI::IRenderObject*>& a_renderObjects,
+					const std::vector<Core::RHI::IBuffer*>& a_vertexBuffers,
+					const std::vector<Core::RHI::IBuffer*>& a_indexBuffers,
+					const std::vector<uint32_t>& a_nbIndices);
 
-				//getters
+				// --- Dependency Resolution ---
+				ENGINE_API void ResolveDependencies(VulkanRenderPass* pass,
+					std::set<VulkanRenderPass*>& visited,
+					std::vector<VulkanRenderPass*>& sorted);
+
+				// --- Setters ---
+				ENGINE_API void SetSceneRenderPass(VulkanRenderPass* renderPass);
+				ENGINE_API void AddRenderPass(VulkanRenderPass* renderPass) { m_renderPasses.push_back(renderPass); }
+
+				// --- Getters ---
 				[[nodiscard]] ENGINE_API VulkanRenderPass* GetSceneRenderPass() const { return m_sceneRenderPass; }
 
-				//setters
-				ENGINE_API void SetSceneRenderPass(VulkanRenderPass* a_renderPass) { m_sceneRenderPass = a_renderPass; }
-				ENGINE_API void AddRenderPass(VulkanRenderPass* a_renderPass, int a_index) { m_renderPasses[a_index].push_back(a_renderPass); }
+				// --- Static Flags ---
+				ENGINE_API static bool HasFlag(RenderPassFlags a_flag);
+				ENGINE_API static void AddFlag(RenderPassFlags a_flag);
+				ENGINE_API static void RemoveFlag(RenderPassFlags a_flag);
 
-				ENGINE_API static bool HasFlag(RenderPassFlags a_flag)
-				{
-					for (const RenderPassFlags flag : m_renderPassFlags)
-					{
-						if (flag == a_flag)
-							return true;
-					}
-					return false;
-				}
-				ENGINE_API static void AddFlag(RenderPassFlags a_flag)
-				{
-					if (HasFlag(a_flag))
-						return;
-					m_renderPassFlags.push_back(a_flag);
-				}
-				ENGINE_API static void RemoveFlag(RenderPassFlags a_flag)
-				{
-					for (auto it = m_renderPassFlags.begin(); it != m_renderPassFlags.end(); ++it)
-					{
-						if (*it == a_flag)
-						{
-							m_renderPassFlags.erase(it);
-							return;
-						}
-					}
-				}
 			private:
-				Renderer* m_renderer;
+				Renderer* m_renderer = nullptr;
+				VulkanRenderPass* m_sceneRenderPass = nullptr;
+				std::vector<VulkanRenderPass*> m_renderPasses;
 
-				VulkanRenderPass* m_sceneRenderPass;
-				std::map<int, std::vector<VulkanRenderPass*>> m_renderPasses;
-
-				//static vector allows us to add/remove flags before the manager is even initialised,
-				//allowing us to better control its behaviour (like preventing default renderpass creation because we are making our own)
+				// Static configuration flags (used globally)
 				static std::vector<RenderPassFlags> m_renderPassFlags;
+
+				void InsertPipelineBarrier(const VulkanRenderPass* a_pass, const VulkanRenderPass* a_dependentPass, VkCommandBuffer a_buffer) const;
 			};
 
 			struct RenderPassAttachment
@@ -110,6 +113,7 @@ namespace Engine
 				std::vector<RenderPassAttachment> attachments;
 				std::vector<SubpassConfig> subpasses;
 				std::vector<VkSubpassDependency> dependencies;
+				VkImageLayout dependencyImageLayoutOverride = VK_IMAGE_LAYOUT_UNDEFINED;
 				VkExtent2D extent;
 				bool setViewportAndScissor = false;
 				bool useSwapChainFramebuffers = false;
@@ -121,68 +125,83 @@ namespace Engine
 				VkImageView view;
 			};
 
-			struct RecordRenderPassinfo
-			{
-				VkCommandBuffer commandBuffer;
-				uint32_t imageIndex;
-				VulkanSwapchain* swapChain;
-				const VulkanGraphicPipeline* graphicPipeline;
-				const GamePlay::Camera* camera;
-			};
+			
 
 			class VulkanRenderPass
 			{
 			public:
-				VulkanRenderPass(VkDevice device, Renderer* renderer);
-				~VulkanRenderPass();
+				ENGINE_API VulkanRenderPass(VkDevice device, Renderer* renderer);
+				ENGINE_API ~VulkanRenderPass();
 
-				/**
-				 * Creates the renderpass associated to this VulkanRenderPass and, if necessary,
-				 * the required framebuffers and attachments.
-				 * @param config the renderpass's config.
-				 */
+				// --- Creation ---
 				ENGINE_API void Create(const RenderPassConfig& config);
-				ENGINE_API void CreateFramebuffers(const std::vector<std::vector<VkImageView>>& a_views);
-				//creates framebuffers with the defined AttachmentResources
-				ENGINE_API void CreateFramebuffers();
 				ENGINE_API void CreateAttachments();
-				
-				ENGINE_API void TransitionImageLayout(VkImageLayout newImageLayout);
+				ENGINE_API void CreateFramebuffers(); // Uses internally defined attachments
+				ENGINE_API void CreateFramebuffers(const std::vector<std::vector<VkImageView>>& views); // Uses provided views
 
-				ENGINE_API void RecordRenderPass(RecordRenderPassinfo a_info, const std::vector<Core::RHI::IRenderObject*>& a_renderObjects, const std::vector<Core::RHI::IBuffer*>& a_vertexBuffers, const std::vector<Core::RHI::IBuffer*>& a_indexBuffers, const std::vector<uint32_t>& a_nbIndices);
+				// --- Lifecycle ---
+				ENGINE_API void Destroy();
+
+				// --- Recording ---
+				ENGINE_API void RecordRenderPass(RecordRenderPassinfo info,
+					const std::vector<Core::RHI::IRenderObject*>& renderObjects,
+					const std::vector<Core::RHI::IBuffer*>& vertexBuffers,
+					const std::vector<Core::RHI::IBuffer*>& indexBuffers,
+					const std::vector<uint32_t>& nbIndices);
+
 				ENGINE_API void Begin(VkCommandBuffer cmd, uint32_t imageIndex, VkSubpassContents contents = VK_SUBPASS_CONTENTS_INLINE);
 				ENGINE_API void End(VkCommandBuffer cmd);
 
-				ENGINE_API void SetDrawFunc(std::function<void(RecordRenderPassinfo, const std::vector<Core::RHI::IRenderObject*>&, const std::vector<Core::RHI::IBuffer*>&, const std::vector<Core::RHI::IBuffer*>&, const std::vector<uint32_t>&)> a_func) { m_drawFunc = std::move(a_func); }
+				// --- Draw Control ---
+				ENGINE_API void SetDrawFunc(std::function<void(RecordRenderPassinfo,
+					const std::vector<Core::RHI::IRenderObject*>&,
+					const std::vector<Core::RHI::IBuffer*>&,
+					const std::vector<Core::RHI::IBuffer*>&,
+					const std::vector<uint32_t>&)> a_func);
 
-				ENGINE_API void Destroy();
+				// --- Dependencies ---
+				ENGINE_API void AddDependency(VulkanRenderPass* dependency) { m_dependencies.push_back(dependency); }
+				[[nodiscard]] ENGINE_API const std::vector<VulkanRenderPass*>& GetDependencies() { return m_dependencies; }
 
-				//getters
-				[[nodiscard]] ENGINE_API  VkRenderPass GetRenderPass() const { return m_renderPass; }
+				// --- State Transition ---
+				ENGINE_API void TransitionImageLayout(VkImageLayout newImageLayout);
+
+				// --- Getters ---
+				[[nodiscard]] ENGINE_API VkRenderPass GetRenderPass() const { return m_renderPass; }
 				[[nodiscard]] ENGINE_API const std::vector<VkFramebuffer>& GetFramebuffers() const { return m_framebuffers; }
 				[[nodiscard]] ENGINE_API const std::vector<AttachmentResource>& GetAttachmentResources() const { return m_attachmentResources; }
 				[[nodiscard]] ENGINE_API VkSampler GetSampler() const { return m_sampler; }
-
+				[[nodiscard]] ENGINE_API const RenderPassConfig& GetConfig() const { return m_config; }
 			private:
+				// --- Vulkan handles and references ---
 				VkDevice m_device;
 				Renderer* m_renderer;
 
+				// --- Configuration and pipeline ---
 				RenderPassConfig m_config;
-				VkRenderPass m_renderPass;
+				VkRenderPass m_renderPass = VK_NULL_HANDLE;
 				VkPipeline m_pipeline = VK_NULL_HANDLE;
 
-				std::vector<VkFramebuffer> m_framebuffers;
-				//optional, only if writing to image or texture, not swapchain
+				// --- Attachments ---
 				std::vector<AttachmentResource> m_attachmentResources;
-				VkSampler m_sampler;
-				AttachmentResource m_depthAttachmentResource; //we only need one depth attachment for now
+				AttachmentResource m_depthAttachmentResource;
 				bool m_isDepth = false;
+				VkSampler m_sampler = VK_NULL_HANDLE;
+				std::vector<VkFramebuffer> m_framebuffers;
 
-				//function that will be called to draw the renderpass, lambda to allow the user to define it
-				std::function<void(RecordRenderPassinfo, const std::vector<Core::RHI::IRenderObject*>&, const std::vector<Core::RHI::IBuffer*>&, const std::vector<Core::RHI::IBuffer*>&, const std::vector<uint32_t>&)> m_drawFunc;
+				// --- Rendering logic ---
+				std::function<void(RecordRenderPassinfo,
+					const std::vector<Core::RHI::IRenderObject*>&,
+					const std::vector<Core::RHI::IBuffer*>&,
+					const std::vector<Core::RHI::IBuffer*>&,
+					const std::vector<uint32_t>&)> m_drawFunc;
 
-				void CreateDepthAttachment(const RenderPassAttachment& a_attachment);
-				void CreateAttachment(const RenderPassAttachment& a_attachment, uint32_t i);
+				// --- Dependencies ---
+				std::vector<VulkanRenderPass*> m_dependencies;
+
+				// --- Helpers ---
+				void CreateDepthAttachment(const RenderPassAttachment& attachment);
+				void CreateAttachment(const RenderPassAttachment& attachment, uint32_t index);
 			};
 		}
 	}

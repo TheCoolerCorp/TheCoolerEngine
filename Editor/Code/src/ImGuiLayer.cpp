@@ -8,7 +8,7 @@
 
 void ImGuiLayer::OnAttach(Engine::Core::Window::IWindow* window)
 {
-	Layer::OnAttach();
+	Layer::OnAttach(window);
 	m_imGui = new VulkanImGui(m_renderer);
 	m_imGui->Init(window, m_renderer);
 }
