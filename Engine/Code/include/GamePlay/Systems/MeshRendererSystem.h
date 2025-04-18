@@ -6,7 +6,7 @@
 #include "System.h"
 #include "GamePlay/Components/Meshcomponent.h"
 #include "Core/Renderer/Renderer.h"
-#include "Core/Interfaces/IRenderObject.h"
+#include "Core/Interfaces/IObjectDescriptor.h"
 
 namespace Engine
 {
@@ -29,7 +29,7 @@ namespace Engine
 
 		private:
 			std::vector<MeshComponent*> m_components; // ADD HERE
-			std::vector<Core::RHI::IRenderObject*> m_renderDescriptors;
+			std::vector<Core::RHI::IObjectDescriptor*> m_renderDescriptors;
 
 			std::vector<int> m_availableIndexes;
 

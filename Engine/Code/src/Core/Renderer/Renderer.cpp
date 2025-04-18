@@ -66,7 +66,7 @@ namespace Engine
 		}
 
 		void Renderer::Render(Window::IWindow* a_window,
-		                      const std::unordered_map<int, Core::RHI::IRenderObject*>& a_renderObjects,
+		                      const std::unordered_map<int, Core::RHI::IObjectDescriptor*>& a_renderObjects,
 		                      const std::vector<int>& a_ids, const std::unordered_map<int, Core::RHI::IBuffer*>& a_vertexBuffers,
 		                      const std::unordered_map<int, Core::RHI::IBuffer*>& a_indexBuffers, const std::unordered_map<int, uint32_t>& a_nbIndices,
 		                      GamePlay::Camera* camera) const

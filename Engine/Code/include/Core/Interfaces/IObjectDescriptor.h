@@ -1,5 +1,5 @@
-#ifndef IRENDEROBJECT_H
-#define IRENDEROBJECT_H
+#ifndef IOBJECTDESCRIPTOR_H
+#define IOBJECTDESCRIPTOR_H
 
 #include "EngineExport.h"
 
@@ -11,7 +11,7 @@ namespace Engine
 	{
 		namespace GraphicsAPI
 		{
-			class VulkanRenderObject;
+			class VulkanObjectDescriptor;
 		}
 		namespace RHI
 		{
@@ -35,12 +35,12 @@ namespace Engine
 				DESCRIPTOR_SET_TYPE_UNIFORM_BUFFER = 6
 			};
 
-			class IRenderObject
+			class IObjectDescriptor
 			{
 			public:
-				ENGINE_API virtual ~IRenderObject() = default;
+				ENGINE_API virtual ~IObjectDescriptor() = default;
 
-				ENGINE_API virtual GraphicsAPI::VulkanRenderObject* CastVulkan() { return nullptr; }
+				ENGINE_API virtual GraphicsAPI::VulkanObjectDescriptor* CastVulkan() { return nullptr; }
 
 				ENGINE_API virtual void Create(ILogicalDevice* a_logicalDevice, IGraphicPipeline* a_graphicPipeline, DescriptorSetTarget a_type, int a_count, std::vector<DescriptorSetType> a_types = std::vector<DescriptorSetType>(0)) = 0;
 

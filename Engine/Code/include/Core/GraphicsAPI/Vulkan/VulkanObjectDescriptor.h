@@ -3,7 +3,7 @@
 
 #include "EngineExport.h"
 
-#include "Core/Interfaces/IRenderObject.h"
+#include "Core/Interfaces/IObjectDescriptor.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanUtils.h"
 #include  "Core/GraphicsAPI/Vulkan/VulkanBuffer.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanImage.h"
@@ -18,12 +18,12 @@ namespace Engine
 	{
 		namespace GraphicsAPI
 		{
-			class VulkanRenderObject : public RHI::IRenderObject
+			class VulkanObjectDescriptor : public RHI::IObjectDescriptor
 			{
 			public:
-				ENGINE_API ~VulkanRenderObject() override = default;
+				ENGINE_API ~VulkanObjectDescriptor() override = default;
 
-				ENGINE_API VulkanRenderObject* CastVulkan() override { return this; }
+				ENGINE_API VulkanObjectDescriptor* CastVulkan() override { return this; }
 
 				ENGINE_API void Create(RHI::ILogicalDevice* a_logicalDevice, RHI::IGraphicPipeline* a_graphicPipeline, RHI::DescriptorSetTarget a_type, int a_count, std::vector<RHI::DescriptorSetType> a_types = std::vector<RHI::DescriptorSetType>(0)) override;
 

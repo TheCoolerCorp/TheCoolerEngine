@@ -1,4 +1,4 @@
-#include  "Core/GraphicsAPI/Vulkan/VulkanRenderObject.h"
+#include  "Core/GraphicsAPI/Vulkan/VulkanObjectDescriptor.h"
 
 #include  "Core/GraphicsAPI/Vulkan/VulkanLogicalDevice.h"
 #include  "Core/GraphicsAPI/Vulkan/VulkanPhysicalDevice.h"
@@ -12,7 +12,7 @@ namespace Engine
 		namespace GraphicsAPI
 		{
 
-			void VulkanRenderObject::Create(RHI::ILogicalDevice* a_logicalDevice, RHI::IGraphicPipeline* a_graphicPipeline, RHI::DescriptorSetTarget a_type, int a_count, std::vector<RHI::DescriptorSetType> a_types)
+			void VulkanObjectDescriptor::Create(RHI::ILogicalDevice* a_logicalDevice, RHI::IGraphicPipeline* a_graphicPipeline, RHI::DescriptorSetTarget a_type, int a_count, std::vector<RHI::DescriptorSetType> a_types)
 			{
 				// Type : Common to all object in shader or per object.
 				m_type = a_type;
@@ -37,7 +37,7 @@ namespace Engine
 				CreateBuffers(a_count);
 			}
 
-			void VulkanRenderObject::Destroy(RHI::ILogicalDevice* a_logicalDevice)
+			void VulkanObjectDescriptor::Destroy(RHI::ILogicalDevice* a_logicalDevice)
 			{
 				// Create vulkan object from rhi object.
 				VkDevice t_logicalDevice = a_logicalDevice->CastVulkan()->GetVkDevice();
@@ -55,7 +55,7 @@ namespace Engine
 
 			}
 
-			void VulkanRenderObject::SetTexture(RHI::ILogicalDevice* a_logicalDevice, RHI::IImage* a_image, uint32_t a_dstBinding, uint32_t a_count)
+			void VulkanObjectDescriptor::SetTexture(RHI::ILogicalDevice* a_logicalDevice, RHI::IImage* a_image, uint32_t a_dstBinding, uint32_t a_count)
 			{
 				const VkDevice t_device = a_logicalDevice->CastVulkan()->GetVkDevice();
 
@@ -79,7 +79,7 @@ namespace Engine
 				}
 			}
 
-			ENGINE_API void VulkanRenderObject::SetMat(RHI::ILogicalDevice* a_logicalDevice, RHI::IPhysicalDevice* a_physicalDevice, RHI::ICommandPool* a_commandPool, void* a_matData, uint32_t a_dstBinding, uint32_t a_count)
+			ENGINE_API void VulkanObjectDescriptor::SetMat(RHI::ILogicalDevice* a_logicalDevice, RHI::IPhysicalDevice* a_physicalDevice, RHI::ICommandPool* a_commandPool, void* a_matData, uint32_t a_dstBinding, uint32_t a_count)
 			{
 				const VkDevice t_device = a_logicalDevice->CastVulkan()->GetVkDevice();
 
@@ -109,7 +109,7 @@ namespace Engine
 				
 			}
 
-			void VulkanRenderObject::UpdateUniforms(RHI::ILogicalDevice* a_logicalDevice, void* a_data, int a_imageIndex)
+			void VulkanObjectDescriptor::UpdateUniforms(RHI::ILogicalDevice* a_logicalDevice, void* a_data, int a_imageIndex)
 			{
 				VkDevice t_logicalDevice = a_logicalDevice->CastVulkan()->GetVkDevice();
 
@@ -119,7 +119,7 @@ namespace Engine
 				vkUnmapMemory(a_logicalDevice->CastVulkan()->GetVkDevice(), m_uniforms[a_imageIndex]->GetMemory());
 			}
 
-			VkDescriptorSetLayout VulkanRenderObject::ChooseLayout(std::vector<VulkanSetLayout> a_layouts, RHI::DescriptorSetTarget a_type)
+			VkDescriptorSetLayout VulkanObjectDescriptor::ChooseLayout(std::vector<VulkanSetLayout> a_layouts, RHI::DescriptorSetTarget a_type)
 			{
 				for (int i = 0; i < a_layouts.size(); ++i)
 				{
@@ -131,7 +131,7 @@ namespace Engine
 				return VK_NULL_HANDLE;
 			}
 
-			void VulkanRenderObject::CreatePool(VkDevice a_logicalDevice, uint32_t a_count, std::vector<VkDescriptorType> a_types)
+			void VulkanObjectDescriptor::CreatePool(VkDevice a_logicalDevice, uint32_t a_count, std::vector<VkDescriptorType> a_types)
 			{
 				std::vector<VkDescriptorPoolSize> t_poolSizes = std::vector<VkDescriptorPoolSize>(a_types.size());
 
@@ -151,7 +151,7 @@ namespace Engine
 				VK_CHECK(vkCreateDescriptorPool(a_logicalDevice, &t_poolInfo, nullptr, &m_pool), "failed to create descriptorPool");
 			}
 
-			void VulkanRenderObject::CreateDescriptorSets(VkDevice a_logicalDevice, VkDescriptorSetLayout a_descriptorSetLayout, uint32_t a_count)
+			void VulkanObjectDescriptor::CreateDescriptorSets(VkDevice a_logicalDevice, VkDescriptorSetLayout a_descriptorSetLayout, uint32_t a_count)
 			{
 				std::vector<VkDescriptorSetLayout> layouts(a_count, a_descriptorSetLayout);
 				VkDescriptorSetAllocateInfo allocInfo{};
@@ -165,7 +165,7 @@ namespace Engine
 				VK_CHECK(vkAllocateDescriptorSets(a_logicalDevice, &allocInfo, m_sets.data()), "Can't allocate descriptor sets");
 			}
 
-			void VulkanRenderObject::CreateBuffers(uint32_t a_count)
+			void VulkanObjectDescriptor::CreateBuffers(uint32_t a_count)
 			{
 				m_uniforms.resize(a_count);
 				for (auto& t_uniform : m_uniforms)
@@ -174,7 +174,7 @@ namespace Engine
 				}
 			}
 
-			void VulkanRenderObject::DestroyBuffers()
+			void VulkanObjectDescriptor::DestroyBuffers()
 			{
 				for (auto& t_uniform : m_uniforms)
 				{

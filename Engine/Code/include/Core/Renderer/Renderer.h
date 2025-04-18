@@ -39,7 +39,7 @@ namespace Engine
 
 			ENGINE_API void Init(RendererType a_type, Window::IWindow* a_window);
 			ENGINE_API void Render(Window::IWindow* a_window,
-			                       const std::unordered_map<int, Core::RHI::IRenderObject*>& a_renderObjects,
+			                       const std::unordered_map<int, Core::RHI::IObjectDescriptor*>& a_renderObjects,
 			                       const std::vector<int>& a_ids,
 			                       const std::unordered_map<int, Core::RHI::IBuffer*>& a_vertexBuffers,
 			                       const std::unordered_map<int, Core::RHI::IBuffer*>& a_indexBuffers,

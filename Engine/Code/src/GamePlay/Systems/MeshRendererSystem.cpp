@@ -100,7 +100,7 @@ namespace Engine
 		{
 			for (int i = 0; i < m_pendingComponents.size(); ++i)
 			{
-				Core::RHI::IRenderObject* t_newRenderObject = apiInterface->InstantiateRenderObject();
+				Core::RHI::IObjectDescriptor* t_newRenderObject = apiInterface->InstantiateRenderObject();
 
 				t_newRenderObject->Create(a_logicalDevice, a_graphicPipeline, Core::RHI::Per, a_maxFrame, { Core::RHI::DescriptorSetType::DESCRIPTOR_SET_TYPE_UNIFORM_BUFFER, Core::RHI::DescriptorSetType::DESCRIPTOR_SET_TYPE_SAMPLED_IMAGE});
 
