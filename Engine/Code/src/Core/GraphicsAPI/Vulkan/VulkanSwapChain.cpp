@@ -193,14 +193,6 @@ namespace Engine
 				uint32_t t_imageIndex;
 				VkResult t_result = vkAcquireNextImageKHR(t_device, m_swapChain, UINT64_MAX, m_imageAvailableSemaphores[m_currentFrame], VK_NULL_HANDLE, &t_imageIndex);
 
-				if (t_result == VK_ERROR_OUT_OF_DATE_KHR) {
-					RecreateSwapChain(a_window, a_logicalDevice, a_surface, a_physicalDevice, a_renderPass, a_commandPool);
-					return;
-				}
-				if (t_result != VK_SUCCESS && t_result != VK_SUBOPTIMAL_KHR) {
-					throw std::runtime_error("failed to acquire swap chain image!");
-				}
-
 				vkResetFences(t_device, 1, &m_inFlightFences[m_currentFrame]);
 
 				std::vector<VkCommandBuffer> t_commandBuffers;
@@ -214,8 +206,7 @@ namespace Engine
 					VulkanCommandPool::RecordCommandBuffer(t_commandBuffer, t_imageIndex, t_renderPass, this, t_pipeline, a_renderObjects, a_vertexBuffers, a_indexBuffers, a_nbIndices, a_camera);
 				}
 
-				VkSubmitInfo t_submitInfo{};
-				t_submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+				VkSubmitInfo t_submitInfo{ VK_STRUCTURE_TYPE_SUBMIT_INFO };
 
 				const VkSemaphore t_waitSemaphores[] = { m_imageAvailableSemaphores[m_currentFrame] };
 				constexpr VkPipelineStageFlags t_waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
@@ -272,6 +263,16 @@ namespace Engine
 				m_renderFinishedSemaphores.clear();
 				m_imageAvailableSemaphores.clear();
 				m_inFlightFences.clear();
+			}
+
+			void VulkanSwapchain::BeginFrame(RHI::ILogicalDevice* a_logicalDevice, uint32_t* outImageIndex)
+			{
+				const VkDevice t_device = a_logicalDevice->CastVulkan()->GetVkDevice();
+
+				vkWaitForFences(t_device, 1, &m_inFlightFences[m_currentFrame], VK_TRUE, UINT64_MAX);
+
+				VK_CHECK(vkAcquireNextImageKHR(t_device, m_swapChain, UINT64_MAX, m_imageAvailableSemaphores[m_currentFrame], VK_NULL_HANDLE, outImageIndex), "Can't acquire nex image in swapchain");
+				vkResetFences(t_device, 1, &m_inFlightFences[m_currentFrame]);
 			}
 
 			void VulkanSwapchain::CleanupSwapChain(const VkDevice a_device) const

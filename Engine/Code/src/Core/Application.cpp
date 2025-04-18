@@ -28,23 +28,28 @@ namespace Engine
 			while (!m_mainWindow->ShouldClose())
 			{
 				UpdateDeltaTime();
-				// Scene Update
-				
-				// Begin command
-				
-				// Begin renderPass
-				// Bind pipeline
-				
-				// Set Render Buffer
-				 
-				// Draw (draw indexes)
+				m_currentScene->Update(m_renderer, m_mainWindow, m_inputHandler, m_deltaTime);
+
+				uint32_t t_imageIndex = 0;
+				// Get Data (buffer, descriptors, etc...)
+
+				m_renderer->GetSwapChain()->BeginFrame(m_renderer->GetLogicalDevice(), &t_imageIndex);
+
+				// Begin Command
+
+				// Begin renderpass
+				// bind pipeline unlit
+
+				// Record command Buffer
 
 				// End renderpass
-				// End command
 
-				// Submit
+				// End Command 
 
-				m_currentScene->Update(m_renderer, m_mainWindow, m_inputHandler, m_deltaTime);
+				// SwapChain End Frame (submit, etc..)
+
+
+
 				m_currentScene->Draw(m_renderer, m_mainWindow);
 
 
