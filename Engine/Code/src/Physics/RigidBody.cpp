@@ -17,6 +17,9 @@ namespace Engine
 		void RigidBody::CreateBoxBody(const BodyType a_type, const CollisionLayer a_layer, const Math::vec3 a_position,
 			const Math::vec3 a_scale, const Math::quat a_rotation, const bool a_enable)
 		{
+			m_scale = a_scale;
+			m_type = ColliderType::BOX;
+
 			JPH::BodyInterface* t_bodyInterface = GamePlay::ServiceLocator::GetPhysicsSystem()->GetBodyInterface();
 
 			const JPH::Vec3 t_halfExtent = { a_scale.x * 0.5f, a_scale.y * 0.5f, a_scale.z * 0.5f };
@@ -35,6 +38,9 @@ namespace Engine
 		void RigidBody::CreateSphereBody(BodyType a_type, CollisionLayer a_layer, Math::vec3 a_position, float a_radius,
 			Math::quat a_rotation, bool a_enable)
 		{
+			m_radius = a_radius;
+			m_type = ColliderType::SPHERE;
+
 			JPH::BodyInterface* t_bodyInterface = GamePlay::ServiceLocator::GetPhysicsSystem()->GetBodyInterface();
 
 			const JPH::Vec3 t_position = { a_position.x, a_position.y, a_position.z };
@@ -52,6 +58,10 @@ namespace Engine
 		void RigidBody::CreateCapsuleBody(BodyType a_type, CollisionLayer a_layer, Math::vec3 a_position,
 			float a_halfHeight, float a_radius, Math::quat a_rotation, bool a_enable)
 		{
+			m_halfHeight = a_halfHeight;
+			m_radius = a_radius;
+			m_type = ColliderType::CAPSULE;
+
 			JPH::BodyInterface* t_bodyInterface = GamePlay::ServiceLocator::GetPhysicsSystem()->GetBodyInterface();
 
 			const JPH::Vec3 t_position = { a_position.x, a_position.y, a_position.z };
@@ -61,7 +71,7 @@ namespace Engine
 			const JPH::ObjectLayer t_layer = CollisionLayerToJPHLayer(a_layer);
 			const JPH::EActivation t_activation = a_enable ? JPH::EActivation::Activate : JPH::EActivation::DontActivate;
 
-			const JPH::BodyCreationSettings t_bodySettings(new JPH::CapsuleShape(a_halfHeight, a_radius), t_position, t_rotation, t_motionType, t_layer);
+			const JPH::BodyCreationSettings t_bodySettings(new JPH::CapsuleShape(m_halfHeight, a_radius), t_position, t_rotation, t_motionType, t_layer);
 			m_body = t_bodyInterface->CreateBody(t_bodySettings);
 			t_bodyInterface->AddBody(m_body->GetID(), t_activation);
 		}

@@ -6,7 +6,7 @@ namespace Engine
 {
 	namespace GamePlay
 	{
-		ComponentType TransformComponent::Create(uint32_t& a_outId)
+		ComponentType TransformComponent::Create(uint32_t& a_outId, bool a_colliderMesh)
 		{
 			m_transform = new Math::Transform();
 			a_outId = ServiceLocator::GetTransformSystem()->AddComponent(this);

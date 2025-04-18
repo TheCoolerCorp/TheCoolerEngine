@@ -16,7 +16,7 @@ namespace Engine
 			TransformComponent() = default;
 			~TransformComponent() override = default;
 
-			ENGINE_API ComponentType Create(uint32_t& a_outId);
+			ENGINE_API ComponentType Create(uint32_t& a_outId, bool a_colliderMesh = false);
 
 			ENGINE_API void Destroy();
 
@@ -36,7 +36,7 @@ namespace Engine
 			
 			ENGINE_API uint32_t GetParentID() const  { return m_parentId; }
 
-			ENGINE_API static ComponentType GetType() { return ComponentType::TRANSFORM; }
+			ENGINE_API static ComponentType GetType(bool a_colliderMesh = false) { return ComponentType::TRANSFORM; }
 
 		private:
 			Math::Transform* m_transform = nullptr;

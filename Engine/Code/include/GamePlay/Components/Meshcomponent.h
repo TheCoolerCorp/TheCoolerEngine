@@ -18,7 +18,7 @@ namespace Engine
 			MeshComponent() = default;
 			~MeshComponent() override = default;
 
-			ENGINE_API ComponentType Create(uint32_t& a_outId);
+			ENGINE_API ComponentType Create(uint32_t& a_outId, bool a_colliderMesh = false);
 
 			ENGINE_API void Update();
 
@@ -28,7 +28,7 @@ namespace Engine
 
 			ENGINE_API void SetTexture(Ref<Resource::Texture> a_texture);
 
-			ENGINE_API static ComponentType GetType() { return ComponentType::MESH; }
+			ENGINE_API static ComponentType GetType(bool a_colliderMesh = false) { return a_colliderMesh ? ComponentType::COLLIDERMESH : ComponentType::MESH; }
 
 			ENGINE_API static MeshComponent* GetComponent(uint32_t a_id);
 

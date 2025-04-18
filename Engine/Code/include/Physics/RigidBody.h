@@ -24,6 +24,13 @@ namespace Engine
 			MOVING
 		};
 
+		enum class ColliderType
+		{
+			BOX = 0,
+			SPHERE,
+			CAPSULE
+		};
+
 		class RigidBody
 		{
 		public:
@@ -34,11 +41,20 @@ namespace Engine
 			ENGINE_API void SetActive(bool a_enable) const;
 			ENGINE_API [[nodiscard]] JPH::BodyID GetBodyID() const;
 			ENGINE_API [[nodiscard]] bool IsActive() const;
+			ENGINE_API [[nodiscard]] ColliderType GetType() const { return m_type; }
+			ENGINE_API [[nodiscard]] Math::vec3 GetScale() const { return m_scale; }
+			ENGINE_API [[nodiscard]] float GetRadius() const { return m_radius; }
+			ENGINE_API [[nodiscard]] float GetHalfHeight() const { return m_halfHeight; }
 			ENGINE_API void Remove() const;
 			ENGINE_API void Destroy();
 
 		private:
 			JPH::Body* m_body = nullptr;
+
+			Math::vec3 m_scale;
+			float m_radius, m_halfHeight;
+
+			ColliderType m_type;
 
 			static JPH::EMotionType BodyTypeToJPHType(BodyType a_type);
 			static JPH::ObjectLayer CollisionLayerToJPHLayer(CollisionLayer a_layer);

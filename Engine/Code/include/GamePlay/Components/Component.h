@@ -13,12 +13,13 @@ namespace Engine
 {
 	namespace GamePlay
 	{
-		enum class ComponentType
+		enum class ComponentType : uint8_t
 		{
 			TRANSFORM = 0,
 			MESH = 1,
 			MATERIAL = 2,
-			RIGIDBODY = 3
+			RIGIDBODY = 3,
+			COLLIDERMESH = 4
 		};
 
 		class Component

@@ -6,7 +6,7 @@ namespace Engine
 {
 	namespace GamePlay
 	{
-		ComponentType RigidBodyComponent::Create(uint32_t& a_outId)
+		ComponentType RigidBodyComponent::Create(uint32_t& a_outId, bool a_colliderMesh)
 		{
 			a_outId = ServiceLocator::GetPhysicsSystem()->AddComponent(this);
 			return ComponentType::RIGIDBODY;
