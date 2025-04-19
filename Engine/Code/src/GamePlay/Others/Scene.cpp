@@ -59,14 +59,14 @@ namespace Engine
 
 		}
 
-		void Scene::Update(Core::Renderer* a_renderer)
+		void Scene::Update(Core::Renderer* a_renderer, float a_deltaTime)
 		{
-			m_objs[0]->GetComponent<TransformComponent>()->GetTransform()->Rotate(Math::vec3(0.05f, 0.f,0.f));
+			m_objs[0]->GetComponent<TransformComponent>()->GetTransform()->Rotate(Math::vec3(0.05f, 0.f,0.f) * a_deltaTime);
 			m_objs[1]->GetComponent<TransformComponent>()->GetTransform()->SetScale(Math::vec3(0.05f));
 			m_objs[1]->GetComponent<TransformComponent>()->GetTransform()->SetPosition(Math::vec3(5.f, 0.f, 0.f));
 			m_objs[1]->GetComponent<TransformComponent>()->SetParent(m_objs[0]->GetComponentID<TransformComponent>());
 			m_objs[2]->GetComponent<TransformComponent>()->SetParent(m_objs[1]->GetComponentID<TransformComponent>());
-			m_objs[2]->GetComponent<TransformComponent>()->GetTransform()->Rotate(Math::vec3(0.f, 0.05f, 0.f));
+			m_objs[2]->GetComponent<TransformComponent>()->GetTransform()->Rotate(Math::vec3(0.f, 0.05f, 0.f) * a_deltaTime);
 			m_transformSystem->Update();
 
 			std::vector<std::pair<int, Math::mat4>> syncro;
