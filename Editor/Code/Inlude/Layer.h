@@ -35,6 +35,8 @@ public:
     virtual void OnUpdate(float deltaTime) {}
     virtual void OnUiRender() {}
 
+    virtual void Delete() = 0;
+
     //possible event handling later,,,, maybe
     //virtual void OnEvent(class Event& event) {}
 

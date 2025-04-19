@@ -18,6 +18,7 @@ public:
 	void OnDetach() override;
 	void OnUpdate(float deltaTime) override;
 	void OnUiRender() override;
+	void Delete() override;
 
 private:
 	RHIImGui* m_imGui = nullptr;

@@ -38,6 +38,7 @@ public:
 	void Render() override;
 	void DrawSceneAsImage() override;
 
+	void Cleanup() override;
 
 	void CreateDescriptorPool(VkDevice device);
 	void CreateSceneImageDescriptorSets();

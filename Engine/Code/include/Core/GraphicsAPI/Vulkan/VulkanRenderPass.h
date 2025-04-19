@@ -121,9 +121,9 @@ namespace Engine
 			};
 
 			struct AttachmentResource {
-				VkImage image;
-				VkDeviceMemory memory;
-				VkImageView view;
+				VkImage image = VK_NULL_HANDLE;
+				VkDeviceMemory memory = VK_NULL_HANDLE;
+				VkImageView view = VK_NULL_HANDLE;
 			};
 
 			/**
@@ -187,7 +187,6 @@ namespace Engine
 				// --- Configuration and pipeline ---
 				RenderPassConfig m_config;
 				VkRenderPass m_renderPass = VK_NULL_HANDLE;
-				VkPipeline m_pipeline = VK_NULL_HANDLE;
 
 				// --- Attachments ---
 				std::vector<AttachmentResource> m_attachmentResources;

@@ -33,6 +33,7 @@ namespace Editor
 
 			void AddLayer(Layer* layer);
 			void UpdateLayers();
+			void CleanupLayers();
 
 		private:
 			Engine::Core::Window::IWindow* m_mainWindow = nullptr;

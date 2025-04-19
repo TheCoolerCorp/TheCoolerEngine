@@ -23,28 +23,23 @@ static void check_vk_result(VkResult err)
 
 VulkanImGui::VulkanImGui(Engine::Core::Renderer* renderer): RHIImGui(renderer)
 {
-	VulkanRenderPassManager::AddFlag(GraphicsAPI::FLAG_VK_RHI_OVERRIDE_DEFAULT_RENDERPASS);
+	
 }
 
 VulkanImGui::~VulkanImGui()
 {
+	for (VkDescriptorSet& dset : m_Dset)
+	{
+		ImGui_ImplVulkan_RemoveTexture(dset);
+	}
 	ImGui_ImplVulkan_Shutdown();
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
-	if (m_imGuiRenderPass)
-	{
-		m_imGuiRenderPass->Destroy();
-		delete m_imGuiRenderPass;
-	}
-	if (m_imGuiViewportRenderPass)
-	{
-		m_imGuiViewportRenderPass->Destroy();
-		delete m_imGuiViewportRenderPass;
-	}
 	if (m_pool)
 	{
 		vkDestroyDescriptorPool(m_renderer->GetLogicalDevice()->CastVulkan()->GetVkDevice(), m_pool, nullptr);
 	}
+	
 }
 
 void VulkanImGui::Init(Window::IWindow* window, Renderer* renderer)
@@ -292,6 +287,10 @@ void VulkanImGui::DrawSceneAsImage()
 	VulkanSwapchain* swapchain = m_renderer->GetSwapChain()->CastVulkan();
 	ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
 	ImGui::Image(reinterpret_cast<ImTextureID>(m_Dset[swapchain->GetCurrentFrame()]), ImVec2{ viewportPanelSize.x, viewportPanelSize.y });
+}
+
+void VulkanImGui::Cleanup()
+{
 }
 
 void VulkanImGui::CreateDescriptorPool(VkDevice device)

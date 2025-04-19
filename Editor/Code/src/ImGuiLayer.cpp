@@ -16,11 +16,7 @@ void ImGuiLayer::OnAttach(Engine::Core::Window::IWindow* window)
 
 void ImGuiLayer::OnDetach()
 {
-	if (m_imGui)
-	{
-		delete m_imGui;
-		m_imGui = nullptr;
-	}
+
 	Layer::OnDetach();
 }
 
@@ -39,4 +35,16 @@ void ImGuiLayer::OnUiRender()
 	ImGui::End();
 	m_imGui->Render();
 
+}
+
+void ImGuiLayer::Delete()
+{
+	if (m_imGui)
+	{
+		//m_imGui->Cleanup();
+		delete m_imGui;
+		m_imGui = nullptr;
+	}
+
+	Layer::OnDetach();
 }

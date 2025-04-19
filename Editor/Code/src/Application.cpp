@@ -20,6 +20,8 @@ namespace Editor
 	{
 		void Application::Create(const int a_width, const int a_height)
 		{
+			GraphicsAPI::VulkanRenderPassManager::AddFlag(GraphicsAPI::FLAG_VK_RHI_OVERRIDE_DEFAULT_RENDERPASS);
+
 			m_mainWindow = new Window::GLwindow();
 			m_mainWindow->Create(a_width, a_height);
 			m_inputHandler = new Window::GLInputHandler();
@@ -60,6 +62,8 @@ namespace Editor
 
 		void Application::Destroy()
 		{
+			CleanupLayers();
+
 			m_camera->Destroy(m_renderer);
 			delete m_camera;
 
@@ -89,6 +93,16 @@ namespace Editor
 				layer->OnUpdate(m_deltaTime);
 				//layer->OnUiRender();
 			}
+		}
+
+		void Application::CleanupLayers()
+		{
+			for (Layer* layer : m_layers)
+			{
+				layer->Delete();
+				delete layer;
+			}
+			m_layers.clear();
 		}
 	}
 }

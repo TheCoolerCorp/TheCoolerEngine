@@ -29,11 +29,11 @@ namespace Engine
 
 			void VulkanRenderPassManager::Destroy(RHI::ILogicalDevice* a_logicalDevice)
 			{
-				m_sceneRenderPass->Destroy();
+				//m_sceneRenderPass->Destroy();
 				delete m_sceneRenderPass;
 				for (VulkanRenderPass* renderPass : m_renderPasses)
 				{
-					renderPass->Destroy();
+					//renderPass->Destroy();
 					delete renderPass;
 				}
 			}
@@ -97,6 +97,7 @@ namespace Engine
 				config.extent = extent;
 				config.setViewportAndScissor = true;
 				config.useSwapChainFramebuffers = true;
+				config.createOwnFramebuffers = false;
 
 				m_sceneRenderPass = new VulkanRenderPass(device, a_renderer);
 				
@@ -183,7 +184,7 @@ namespace Engine
 			{
 				if (m_sceneRenderPass)
 				{
-					m_sceneRenderPass->Destroy();
+					//m_sceneRenderPass->Destroy();
 					delete m_sceneRenderPass;
 				}
 				m_sceneRenderPass->SetParent(this);
@@ -558,13 +559,48 @@ namespace Engine
 				{
 					if (res.view != VK_NULL_HANDLE) {
 						vkDestroyImageView(m_device, res.view, nullptr);
+						res.view = VK_NULL_HANDLE;
 					}
 					if (res.image != VK_NULL_HANDLE) {
 						vkDestroyImage(m_device, res.image, nullptr);
+						res.image = VK_NULL_HANDLE;
 					}
 					if (res.memory != VK_NULL_HANDLE) {
 						vkFreeMemory(m_device, res.memory, nullptr);
+						res.memory = VK_NULL_HANDLE;
 					}
+				}
+				//cleanup framebuffer
+				for (auto& framebuffer : m_framebuffers)
+				{
+					if (framebuffer != VK_NULL_HANDLE)
+					{
+						vkDestroyFramebuffer(m_device, framebuffer, nullptr);
+						framebuffer = VK_NULL_HANDLE;
+					}
+				}
+				//cleanup depth attachment
+				if (m_depthAttachmentResource.view != VK_NULL_HANDLE)
+				{
+					vkDestroyImageView(m_device, m_depthAttachmentResource.view, nullptr);
+					m_depthAttachmentResource.view = VK_NULL_HANDLE;
+					
+				}
+				if (m_depthAttachmentResource.image != VK_NULL_HANDLE)
+				{
+					vkDestroyImage(m_device, m_depthAttachmentResource.image, nullptr);
+					m_depthAttachmentResource.image = VK_NULL_HANDLE;
+				}
+				if (m_depthAttachmentResource.memory != VK_NULL_HANDLE)
+				{
+					vkFreeMemory(m_device, m_depthAttachmentResource.memory, nullptr);
+					m_depthAttachmentResource.memory = VK_NULL_HANDLE;
+				}
+				//destroy sampler
+				if (m_sampler != VK_NULL_HANDLE)
+				{
+					vkDestroySampler(m_device, m_sampler, nullptr);
+					m_sampler = VK_NULL_HANDLE;
 				}
 				m_attachmentResources.clear();
 			}

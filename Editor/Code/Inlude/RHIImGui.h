@@ -24,6 +24,9 @@ public:
 	virtual void Render() = 0;
 	virtual void DrawSceneAsImage() = 0;
 
+
+	virtual void Cleanup() = 0;
+
 	void SetImGuiParent(ImGuiLayer* imguiLayer) { m_imguiLayer = imguiLayer; }
 protected:
 	Engine::Core::Renderer* m_renderer;
