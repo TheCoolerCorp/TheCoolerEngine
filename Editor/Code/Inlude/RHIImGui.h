@@ -1,7 +1,10 @@
 #ifndef RHIIMGUI_H
 #define RHIIMGUI_H
 
-class ImGuiLayer;
+namespace Editor::EditorLayer::Ui
+{
+	class ImGuiLayer;
+}
 
 namespace Engine::Core
 {
@@ -11,26 +14,28 @@ namespace Engine::Core
 	}
 	class Renderer;
 }
-
-class RHIImGui
+namespace Editor::EditorLayer::Ui
 {
-public:
-	RHIImGui(Engine::Core::Renderer* renderer) { m_renderer = renderer;  }
-	virtual ~RHIImGui() = default;
+	class RHIImGui
+	{
+	public:
+		RHIImGui(Engine::Core::Renderer* a_renderer) { m_renderer = a_renderer;  }
+		virtual ~RHIImGui() = default;
 
-	virtual void Init(Engine::Core::Window::IWindow* window, Engine::Core::Renderer* renderer) = 0;
+		virtual void Init(Engine::Core::Window::IWindow* a_window, Engine::Core::Renderer* a_renderer) = 0;
 
-	virtual void NewFrame() = 0;
-	virtual void Render() = 0;
-	virtual void DrawSceneAsImage() = 0;
+		virtual void NewFrame() = 0;
+		virtual void Render() = 0;
+		virtual void DrawSceneAsImage() = 0;
 
 
-	virtual void Cleanup() = 0;
+		virtual void Cleanup() = 0;
 
-	void SetImGuiParent(ImGuiLayer* imguiLayer) { m_imguiLayer = imguiLayer; }
-protected:
-	Engine::Core::Renderer* m_renderer;
-	ImGuiLayer* m_imguiLayer = nullptr;
-};
+		void SetImGuiParent(ImGuiLayer* a_imguiLayer) { m_imguiLayer = a_imguiLayer; }
+	protected:
+		Engine::Core::Renderer* m_renderer = nullptr;
+		ImGuiLayer* m_imguiLayer = nullptr;
+	};
+}
 
 #endif

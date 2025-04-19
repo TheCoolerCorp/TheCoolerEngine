@@ -6,45 +6,48 @@
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_vulkan.h"
 
-void ImGuiLayer::OnAttach(Engine::Core::Window::IWindow* window)
+namespace Editor::EditorLayer::Ui
 {
-	Layer::OnAttach(window);
-	m_imGui = new VulkanImGui(m_renderer);
-	m_imGui->SetImGuiParent(this);
-	m_imGui->Init(window, m_renderer);
-}
-
-void ImGuiLayer::OnDetach()
-{
-
-	Layer::OnDetach();
-}
-
-void ImGuiLayer::OnUpdate(float deltaTime)
-{
-	Layer::OnUpdate(deltaTime);
-}
-
-void ImGuiLayer::OnUiRender()
-{
-	Layer::OnUiRender();
-	m_imGui->NewFrame();
-	ImGui::ShowDemoWindow();
-	ImGui::Begin("Viewport");
-	m_imGui->DrawSceneAsImage();
-	ImGui::End();
-	m_imGui->Render();
-
-}
-
-void ImGuiLayer::Delete()
-{
-	if (m_imGui)
+	void ImGuiLayer::OnAttach(Engine::Core::Window::IWindow* a_window)
 	{
-		//m_imGui->Cleanup();
-		delete m_imGui;
-		m_imGui = nullptr;
+		Layer::OnAttach(a_window);
+		m_imGui = new VulkanImGui(m_renderer);
+		m_imGui->SetImGuiParent(this);
+		m_imGui->Init(a_window, m_renderer);
 	}
 
-	Layer::OnDetach();
+	void ImGuiLayer::OnDetach()
+	{
+
+		Layer::OnDetach();
+	}
+
+	void ImGuiLayer::OnUpdate(float a_deltaTime)
+	{
+		Layer::OnUpdate(a_deltaTime);
+	}
+
+	void ImGuiLayer::OnUiRender()
+	{
+		Layer::OnUiRender();
+		m_imGui->NewFrame();
+		ImGui::ShowDemoWindow();
+		ImGui::Begin("Viewport");
+		m_imGui->DrawSceneAsImage();
+		ImGui::End();
+		m_imGui->Render();
+
+	}
+
+	void ImGuiLayer::Delete()
+	{
+		if (m_imGui)
+		{
+			//m_imGui->Cleanup();
+			delete m_imGui;
+			m_imGui = nullptr;
+		}
+
+		Layer::OnDetach();
+	}
 }

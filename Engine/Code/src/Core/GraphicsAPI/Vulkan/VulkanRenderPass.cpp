@@ -17,12 +17,12 @@ namespace Engine
 		{
 			std::vector<RenderPassFlags> VulkanRenderPassManager::m_renderPassFlags = std::vector<RenderPassFlags>();
 
-			void VulkanRenderPassManager::Create(Renderer* renderer)
+			void VulkanRenderPassManager::Create(Renderer* a_renderer)
 			{
-				m_renderer = renderer;
+				m_renderer = a_renderer;
 				if (!HasFlag(FLAG_VK_RHI_OVERRIDE_DEFAULT_RENDERPASS))
 				{
-					CreateDefaultRenderPass(renderer);
+					CreateDefaultRenderPass(a_renderer);
 				}
 			}
 
@@ -40,49 +40,49 @@ namespace Engine
 
 			void VulkanRenderPassManager::CreateDefaultRenderPass(Renderer* a_renderer)
 			{
-				VkFormat imageFormat = a_renderer->GetSwapChain()->CastVulkan()->GetImageFormat();
-				VkExtent2D extent = a_renderer->GetSwapChain()->CastVulkan()->GetExtent2D();
-				VkDevice device = a_renderer->GetLogicalDevice()->CastVulkan()->GetVkDevice();
+				VkFormat t_imageFormat = a_renderer->GetSwapChain()->CastVulkan()->GetImageFormat();
+				VkExtent2D t_extent = a_renderer->GetSwapChain()->CastVulkan()->GetExtent2D();
+				VkDevice t_device = a_renderer->GetLogicalDevice()->CastVulkan()->GetVkDevice();
 
 				RenderPassConfig config{};
 
 				// Color attachment setup
-				RenderPassAttachment colorAttachment{};
-				colorAttachment.format = imageFormat;
-				colorAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-				colorAttachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
-				colorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-				colorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
-				colorAttachment.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-				colorAttachment.isDepth = false;
+				RenderPassAttachment t_colorAttachment;
+				t_colorAttachment.format = t_imageFormat;
+				t_colorAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+				t_colorAttachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+				t_colorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+				t_colorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+				t_colorAttachment.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+				t_colorAttachment.isDepth = false;
 
 				// Depth attachment setup
-				RenderPassAttachment depthAttachment{};
-				depthAttachment.format = a_renderer->GetPhysicalDevice()->CastVulkan()->FindSupportedFormat(
+				RenderPassAttachment t_depthAttachment;
+				t_depthAttachment.format = a_renderer->GetPhysicalDevice()->CastVulkan()->FindSupportedFormat(
 					{ VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT },
 					VK_IMAGE_TILING_OPTIMAL,
 					VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT
 				);
-				depthAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
-				depthAttachment.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
-				depthAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-				depthAttachment.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-				depthAttachment.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
-				depthAttachment.isDepth = true;
+				t_depthAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+				t_depthAttachment.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+				t_depthAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+				t_depthAttachment.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+				t_depthAttachment.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
+				t_depthAttachment.isDepth = true;
 
 				// Add attachments to config
-				config.attachments.push_back(colorAttachment); // index 0
-				config.attachments.push_back(depthAttachment); // index 1
+				config.attachments.push_back(t_colorAttachment); // index 0
+				config.attachments.push_back(t_depthAttachment); // index 1
 
 				// Subpass setup
-				SubpassConfig subpass{};
-				subpass.colorAttachmentIndices = { 0 };
-				subpass.depthAttachmentIndex = 1;
+				SubpassConfig t_subpass{};
+				t_subpass.colorAttachmentIndices = { 0 };
+				t_subpass.depthAttachmentIndex = 1;
 
-				config.subpasses.push_back(subpass);
+				config.subpasses.push_back(t_subpass);
 
 				// Dependency
-				VkSubpassDependency dependency{};
+				VkSubpassDependency dependency;
 				dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
 				dependency.dstSubpass = 0;
 				dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
@@ -94,12 +94,12 @@ namespace Engine
 				config.dependencies.push_back(dependency);
 
 				// Extent
-				config.extent = extent;
+				config.extent = t_extent;
 				config.setViewportAndScissor = true;
 				config.useSwapChainFramebuffers = true;
 				config.createOwnFramebuffers = false;
 
-				m_sceneRenderPass = new VulkanRenderPass(device, a_renderer);
+				m_sceneRenderPass = new VulkanRenderPass(t_device, a_renderer);
 				
 				m_sceneRenderPass->Create(config);
 				
@@ -143,18 +143,19 @@ namespace Engine
 
 			void VulkanRenderPassManager::RecordRenderPasses(const RecordRenderPassinfo& a_info, const std::vector<Core::RHI::IRenderObject*>& a_renderObjects, const std::vector<Core::RHI::IBuffer*>& a_vertexBuffers, const std::vector<Core::RHI::IBuffer*>& a_indexBuffers, const std::vector<uint32_t>& a_nbIndices)
 			{
-				std::set<VulkanRenderPass*> visited;
-				std::vector<VulkanRenderPass*> sortedPasses;
+				std::set<VulkanRenderPass*> t_visited;
+				std::vector<VulkanRenderPass*> t_sortedPasses;
 
-				ResolveDependencies(m_sceneRenderPass, visited, sortedPasses);
-				for (VulkanRenderPass* pass : m_renderPasses)
+				//the whole resolving this is kind of pointless atm, maybe usefull in the future
+				ResolveDependencies(m_sceneRenderPass, t_visited, t_sortedPasses);
+				for (VulkanRenderPass* t_pass : m_renderPasses)
 				{
-					ResolveDependencies(pass, visited, sortedPasses);
+					ResolveDependencies(t_pass, t_visited, t_sortedPasses);
 				}
 
-				for (VulkanRenderPass* pass : sortedPasses)
+				for (VulkanRenderPass* t_pass : t_sortedPasses)
 				{
-					pass->RecordRenderPass(a_info, a_renderObjects, a_vertexBuffers, a_indexBuffers, a_nbIndices);
+					t_pass->RecordRenderPass(a_info, a_renderObjects, a_vertexBuffers, a_indexBuffers, a_nbIndices);
 				}
 			}
 
@@ -166,35 +167,34 @@ namespace Engine
 				m_sceneRenderPass->RecordRenderPass(a_info, a_renderObjects, a_vertexBuffers, a_indexBuffers, a_nbIndices);
 			}
 
-			void VulkanRenderPassManager::ResolveDependencies(VulkanRenderPass* pass,
-				std::set<VulkanRenderPass*>& visited, std::vector<VulkanRenderPass*>& sorted)
+			void VulkanRenderPassManager::ResolveDependencies(VulkanRenderPass* a_pass,
+				std::set<VulkanRenderPass*>& a_visited, std::vector<VulkanRenderPass*>& a_sorted)
 			{
-				if (visited.contains(pass)) return;
+				if (a_visited.contains(a_pass)) return;
 
-				for (VulkanRenderPass* dep : pass->GetDependencies())
+				for (VulkanRenderPass* t_dep : a_pass->GetDependencies())
 				{
-					ResolveDependencies(dep, visited, sorted);
+					ResolveDependencies(t_dep, a_visited, a_sorted);
 				}
 
-				visited.insert(pass);
-				sorted.push_back(pass);
+				a_visited.insert(a_pass);
+				a_sorted.push_back(a_pass);
 			}
 
-			void VulkanRenderPassManager::SetSceneRenderPass(VulkanRenderPass* renderPass)
+			void VulkanRenderPassManager::SetSceneRenderPass(VulkanRenderPass* a_renderPass)
 			{
 				if (m_sceneRenderPass)
 				{
-					//m_sceneRenderPass->Destroy();
 					delete m_sceneRenderPass;
 				}
 				m_sceneRenderPass->SetParent(this);
-				m_sceneRenderPass = renderPass;
+				m_sceneRenderPass = a_renderPass;
 			}
 
-			void VulkanRenderPassManager::AddRenderPass(VulkanRenderPass* renderPass)
+			void VulkanRenderPassManager::AddRenderPass(VulkanRenderPass* a_renderPass)
 			{
-				renderPass->SetParent(this);
-				m_renderPasses.push_back(renderPass);
+				a_renderPass->SetParent(this);
+				m_renderPasses.push_back(a_renderPass);
 			}
 
 			bool VulkanRenderPassManager::HasFlag(RenderPassFlags a_flag)
@@ -202,20 +202,19 @@ namespace Engine
 				return std::ranges::find(m_renderPassFlags, a_flag) != m_renderPassFlags.end();
 			}
 
-			void VulkanRenderPassManager::AddFlag(RenderPassFlags flag)
+			void VulkanRenderPassManager::AddFlag(RenderPassFlags a_flag)
 			{
-				if (!HasFlag(flag))
+				if (!HasFlag(a_flag))
 				{
-					m_renderPassFlags.push_back(flag);
+					m_renderPassFlags.push_back(a_flag);
 				}
 			}
 
-			void VulkanRenderPassManager::RemoveFlag(RenderPassFlags flag)
+			void VulkanRenderPassManager::RemoveFlag(RenderPassFlags a_flag)
 			{
-				auto it = std::ranges::find(m_renderPassFlags, flag);
-				if (it != m_renderPassFlags.end())
+				if (auto t_it = std::ranges::find(m_renderPassFlags, a_flag); t_it != m_renderPassFlags.end())
 				{
-					m_renderPassFlags.erase(it);
+					m_renderPassFlags.erase(t_it);
 				}
 			}
 
@@ -230,31 +229,31 @@ namespace Engine
 			void VulkanRenderPassManager::InsertPipelineBarrier(const VulkanRenderPass* a_pass,
 				const VulkanRenderPass* a_dependentPass, const VkCommandBuffer a_buffer) const
 			{
-				uint32_t currentFrame = m_renderer->GetSwapChain()->GetCurrentFrame();
+				const uint32_t t_currentFrame = m_renderer->GetSwapChain()->GetCurrentFrame();
 
-				VkImageMemoryBarrier barrier{};
-				barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-				barrier.srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
-				barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+				VkImageMemoryBarrier t_barrier{};
+				t_barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
+				t_barrier.srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+				t_barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
 				
 				if (a_pass->GetConfig().dependencyImageLayoutOverride != VK_IMAGE_LAYOUT_UNDEFINED)
 				{
-					barrier.oldLayout = a_dependentPass->GetConfig().dependencyImageLayoutOverride;
-					barrier.newLayout = a_dependentPass->GetConfig().dependencyImageLayoutOverride;
+					t_barrier.oldLayout = a_dependentPass->GetConfig().dependencyImageLayoutOverride;
+					t_barrier.newLayout = a_dependentPass->GetConfig().dependencyImageLayoutOverride;
 				}
 				else
 				{
-					barrier.oldLayout = a_pass->GetConfig().attachments[0].finalLayout;
-					barrier.newLayout = a_dependentPass->GetConfig().attachments[0].initialLayout;
+					t_barrier.oldLayout = a_pass->GetConfig().attachments[0].finalLayout;
+					t_barrier.newLayout = a_dependentPass->GetConfig().attachments[0].initialLayout;
 				}
-				barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-				barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-				barrier.image = a_pass->GetAttachmentResources()[currentFrame].image;
-				barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-				barrier.subresourceRange.baseMipLevel = 0;
-				barrier.subresourceRange.levelCount = 1;
-				barrier.subresourceRange.baseArrayLayer = 0;
-				barrier.subresourceRange.layerCount = 1;
+				t_barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+				t_barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
+				t_barrier.image = a_pass->GetAttachmentResources()[t_currentFrame].image;
+				t_barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+				t_barrier.subresourceRange.baseMipLevel = 0;
+				t_barrier.subresourceRange.levelCount = 1;
+				t_barrier.subresourceRange.baseArrayLayer = 0;
+				t_barrier.subresourceRange.layerCount = 1;
 
 				vkCmdPipelineBarrier(
 					a_buffer,
@@ -263,13 +262,13 @@ namespace Engine
 					0,
 					0, nullptr,
 					0, nullptr,
-					1, &barrier);
+					1, &t_barrier);
 			}
 
-			VulkanRenderPass::VulkanRenderPass(VkDevice device, Renderer* renderer)
+			VulkanRenderPass::VulkanRenderPass(const VkDevice a_device, Renderer* a_renderer)
 			{
-				m_device = device;
-				m_renderer = renderer;
+				m_device = a_device;
+				m_renderer = a_renderer;
 			}
 
 			VulkanRenderPass::~VulkanRenderPass()
@@ -277,75 +276,75 @@ namespace Engine
 				Destroy();
 			}
 
-			void VulkanRenderPass::Create(const RenderPassConfig& config)
+			void VulkanRenderPass::Create(const RenderPassConfig& a_config)
 			{
-				m_config = config;
+				m_config = a_config;
 
-				std::vector<VkAttachmentDescription> vkAttachments;
-                vkAttachments.reserve(config.attachments.size());
+				std::vector<VkAttachmentDescription> t_vkAttachments;
+                t_vkAttachments.reserve(a_config.attachments.size());
 
-                for (const auto& attachment : config.attachments)
+                for (const auto& attachment : a_config.attachments)
                 {
-					VkAttachmentDescription desc{};
-					desc.format = attachment.format;
-					desc.samples = VK_SAMPLE_COUNT_1_BIT;
-					desc.loadOp = attachment.loadOp;
-					desc.storeOp = attachment.storeOp;
-					desc.stencilLoadOp = attachment.isDepth ? VK_ATTACHMENT_LOAD_OP_CLEAR : VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-					desc.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-					desc.initialLayout = attachment.initialLayout;
-					desc.finalLayout = attachment.finalLayout;
+					VkAttachmentDescription t_desc{};
+					t_desc.format = attachment.format;
+					t_desc.samples = VK_SAMPLE_COUNT_1_BIT;
+					t_desc.loadOp = attachment.loadOp;
+					t_desc.storeOp = attachment.storeOp;
+					t_desc.stencilLoadOp = attachment.isDepth ? VK_ATTACHMENT_LOAD_OP_CLEAR : VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+					t_desc.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+					t_desc.initialLayout = attachment.initialLayout;
+					t_desc.finalLayout = attachment.finalLayout;
 
-                    vkAttachments.push_back(desc);
+                    t_vkAttachments.push_back(t_desc);
                 }
 
 				//prepare subpass descriptions
-				std::vector<VkSubpassDescription> vkSubpasses;
-				std::vector<std::vector<VkAttachmentReference>> colorAttachmentRefs;
-				std::vector<VkAttachmentReference> depthAttachmentRefs;
+				std::vector<VkSubpassDescription> t_vkSubpasses;
+				std::vector<std::vector<VkAttachmentReference>> t_colorAttachmentRefs;
+				std::vector<VkAttachmentReference> t_depthAttachmentRefs;
 
-                for (const auto& subpass : config.subpasses)
+                for (const auto& t_subpass : a_config.subpasses)
                 {
 					std::vector<VkAttachmentReference> colorRefs;
-                    for (uint32_t idx : subpass.colorAttachmentIndices)
+                    for (uint32_t t_idx : t_subpass.colorAttachmentIndices)
                     {
-						VkAttachmentReference ref{};
-						ref.attachment = idx;
-						ref.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-						colorRefs.push_back(ref);
+						VkAttachmentReference t_ref{};
+						t_ref.attachment = t_idx;
+						t_ref.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+						colorRefs.push_back(t_ref);
                     }
 
-					VkAttachmentReference depthRef{};
-                    if (subpass.depthAttachmentIndex >= 0)
+					VkAttachmentReference t_depthRef{};
+                    if (t_subpass.depthAttachmentIndex >= 0)
                     {
-						depthRef.attachment = subpass.depthAttachmentIndex;
-						depthRef.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+						t_depthRef.attachment = t_subpass.depthAttachmentIndex;
+						t_depthRef.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
                     }
 
-					colorAttachmentRefs.push_back(colorRefs);
+					t_colorAttachmentRefs.push_back(colorRefs);
 
 					VkSubpassDescription subpassDesc{};
 					subpassDesc.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
 					subpassDesc.colorAttachmentCount = static_cast<uint32_t>(colorRefs.size());
-					subpassDesc.pColorAttachments = colorAttachmentRefs.back().data();
-					subpassDesc.pDepthStencilAttachment = subpass.depthAttachmentIndex >= 0 ? &depthRef : nullptr;
+					subpassDesc.pColorAttachments = t_colorAttachmentRefs.back().data();
+					subpassDesc.pDepthStencilAttachment = t_subpass.depthAttachmentIndex >= 0 ? &t_depthRef : nullptr;
 
-					if (subpass.depthAttachmentIndex >= 0)
-						depthAttachmentRefs.push_back(depthRef);
+					if (t_subpass.depthAttachmentIndex >= 0)
+						t_depthAttachmentRefs.push_back(t_depthRef);
 
-					vkSubpasses.push_back(subpassDesc);
+					t_vkSubpasses.push_back(subpassDesc);
                 }
 
-				VkRenderPassCreateInfo renderPassInfo{};
-				renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
-				renderPassInfo.attachmentCount = static_cast<uint32_t>(vkAttachments.size());
-				renderPassInfo.pAttachments = vkAttachments.data();
-				renderPassInfo.subpassCount = static_cast<uint32_t>(vkSubpasses.size());
-				renderPassInfo.pSubpasses = vkSubpasses.data();
-				renderPassInfo.dependencyCount = static_cast<uint32_t>(config.dependencies.size());
-				renderPassInfo.pDependencies = config.dependencies.data();
+				VkRenderPassCreateInfo t_renderPassInfo{};
+				t_renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
+				t_renderPassInfo.attachmentCount = static_cast<uint32_t>(t_vkAttachments.size());
+				t_renderPassInfo.pAttachments = t_vkAttachments.data();
+				t_renderPassInfo.subpassCount = static_cast<uint32_t>(t_vkSubpasses.size());
+				t_renderPassInfo.pSubpasses = t_vkSubpasses.data();
+				t_renderPassInfo.dependencyCount = static_cast<uint32_t>(a_config.dependencies.size());
+				t_renderPassInfo.pDependencies = a_config.dependencies.data();
 
-				VK_CHECK(vkCreateRenderPass(m_device, &renderPassInfo, nullptr, &m_renderPass), "Failed to create render pass!");
+				VK_CHECK(vkCreateRenderPass(m_device, &t_renderPassInfo, nullptr, &m_renderPass), "Failed to create render pass!");
 
 				if (!m_config.useSwapChainFramebuffers && m_config.createOwnFramebuffers)
 				{
@@ -382,23 +381,23 @@ namespace Engine
 				m_framebuffers.resize(m_attachmentResources.size());
 				for (size_t i = 0; i < m_attachmentResources.size(); ++i)
 				{
-					std::vector<VkImageView> attachments;
-					attachments.push_back(m_attachmentResources[i].view);
+					std::vector<VkImageView> t_attachments;
+					t_attachments.push_back(m_attachmentResources[i].view);
 
 					if (m_isDepth) //if we have a depth resource, assign it
-						attachments.push_back(m_depthAttachmentResource.view);
+						t_attachments.push_back(m_depthAttachmentResource.view);
 
-					VkFramebufferCreateInfo framebufferInfo{};
+					VkFramebufferCreateInfo t_framebufferInfo{};
 
-					framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-					framebufferInfo.renderPass = m_renderPass;
-					framebufferInfo.attachmentCount = static_cast<uint32_t>(attachments.size());
-					framebufferInfo.pAttachments = attachments.data();
-					framebufferInfo.width = m_config.extent.width;
-					framebufferInfo.height = m_config.extent.height;
-					framebufferInfo.layers = 1;
+					t_framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+					t_framebufferInfo.renderPass = m_renderPass;
+					t_framebufferInfo.attachmentCount = static_cast<uint32_t>(t_attachments.size());
+					t_framebufferInfo.pAttachments = t_attachments.data();
+					t_framebufferInfo.width = m_config.extent.width;
+					t_framebufferInfo.height = m_config.extent.height;
+					t_framebufferInfo.layers = 1;
 
-					VK_CHECK(vkCreateFramebuffer(m_device, &framebufferInfo, nullptr, &m_framebuffers[i]), "Failed to create framebuffer!");
+					VK_CHECK(vkCreateFramebuffer(m_device, &t_framebufferInfo, nullptr, &m_framebuffers[i]), "Failed to create framebuffer!");
 				}
 
 			}
@@ -411,25 +410,17 @@ namespace Engine
 			{
 
 				m_attachmentResources.resize(m_config.attachments.size());
-				bool hasDepthAttachment = false;
-				for (const RenderPassAttachment& attachment : m_config.attachments)
-				{
-					if (attachment.isDepth)
-						hasDepthAttachment = true;
-				}
 				for (size_t i = 0; i < m_config.attachments.size(); ++i)
 				{
-					
-					const RenderPassAttachment& info = m_config.attachments[i];
-					if (info.isDepth)
-						CreateDepthAttachment(info);
+					if (const RenderPassAttachment& t_info = m_config.attachments[i]; t_info.isDepth)
+						CreateDepthAttachment(t_info);
 					else
 					{
 						uint32_t maxFrames = m_renderer->GetSwapChain()->CastVulkan()->GetMaxFrame();
 						m_attachmentResources.resize(maxFrames);
 						for (uint32_t j = 0; j < maxFrames; ++j)
 						{
-							CreateAttachment(info, j);
+							CreateAttachment(t_info, j);
 						}
 					}
 					
@@ -441,36 +432,11 @@ namespace Engine
 				VulkanImage::CreateSampler(&m_sampler, t_logicalDevice, t_physicalDevice);
 			}
 
-			void VulkanRenderPass::TransitionImageLayout(VkImageLayout newImageLayout)
-			{
-				VkDevice a_logicalDevice = m_renderer->GetLogicalDevice()->CastVulkan()->GetVkDevice();
-				VkQueue a_queue = m_renderer->GetLogicalDevice()->CastVulkan()->GetGraphicsQueue();
-				VkCommandPool a_commandPool = m_renderer->GetCommandPool()->CastVulkan()->GetVkCommandPool();
-				for (auto& resource : m_attachmentResources)
-				{
-
-					VulkanImage::TransitionImageLayout(
-						resource.image,
-						a_logicalDevice,
-						a_queue,
-						a_commandPool,
-						VK_FORMAT_B8G8R8A8_SRGB,
-						VK_IMAGE_LAYOUT_UNDEFINED,
-						newImageLayout);
-				}
-			}
-
-			void VulkanRenderPass::RecordRenderPass(RecordRenderPassinfo a_info,
+			void VulkanRenderPass::RecordRenderPass(const RecordRenderPassinfo& a_info,
 				const std::vector<Core::RHI::IRenderObject*>& a_renderObjects,
 				const std::vector<Core::RHI::IBuffer*>& a_vertexBuffers,
 				const std::vector<Core::RHI::IBuffer*>& a_indexBuffers, const std::vector<uint32_t>& a_nbIndices)
 			{
-				
-				if (HasDependency())
-				{
-					//m_parent->InsertPipelineBarrier(m_dependencies[0], this, a_info.commandBuffer);
-				}
-
 				Begin(a_info.commandBuffer, a_info.imageIndex, a_info.currentFrame);
 				//Check if the function has been set before calling it
 				if (m_drawFunc == nullptr)
@@ -481,39 +447,39 @@ namespace Engine
 				
 			}
 
-			void VulkanRenderPass::Begin(VkCommandBuffer cmd, uint32_t imageIndex, uint32_t currentFrame, VkSubpassContents contents)
+			void VulkanRenderPass::Begin(const VkCommandBuffer a_cmd, const uint32_t a_imageIndex, const uint32_t a_currentFrame, VkSubpassContents a_contents) const
 			{
 				const VkExtent2D t_swapChainExtent = m_renderer->GetSwapChain()->CastVulkan()->GetExtent2D();
-				std::vector<VkClearValue> clearValues;
-				clearValues.resize(m_config.attachments.size());
+				std::vector<VkClearValue> t_clearValues;
+				t_clearValues.resize(m_config.attachments.size());
 
 				for (size_t i = 0; i < m_config.attachments.size(); ++i)
 				{
-					const auto& info = m_config.attachments[i];
+					const auto& t_info = m_config.attachments[i];
 
-					if (info.aspectMask & VK_IMAGE_ASPECT_COLOR_BIT)
+					if (t_info.aspectMask & VK_IMAGE_ASPECT_COLOR_BIT)
 					{
-						clearValues[i].color = { {0.467f, 0.71f, 1.f, 0.996f} };
+						t_clearValues[i].color = { {0.467f, 0.71f, 1.f, 0.996f} };
 					}
-					else if (info.aspectMask & VK_IMAGE_ASPECT_DEPTH_BIT)
+					else if (t_info.aspectMask & VK_IMAGE_ASPECT_DEPTH_BIT)
 					{
-						clearValues[i].depthStencil = { .depth = 1.0f, .stencil = 0 };
+						t_clearValues[i].depthStencil = { .depth = 1.0f, .stencil = 0 };
 					}
 				}
 
-				VkRenderPassBeginInfo beginInfo{};
-				beginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-				beginInfo.renderPass = m_renderPass;
+				VkRenderPassBeginInfo t_beginInfo{};
+				t_beginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+				t_beginInfo.renderPass = m_renderPass;
 				if (m_config.useSwapChainFramebuffers)
-					beginInfo.framebuffer = m_renderer->GetSwapChain()->CastVulkan()->GetFramebuffers()[imageIndex];
+					t_beginInfo.framebuffer = m_renderer->GetSwapChain()->CastVulkan()->GetFramebuffers()[a_imageIndex];
 				else
-					beginInfo.framebuffer = m_framebuffers[currentFrame];
-				beginInfo.renderArea.offset = { 0, 0 };
-				beginInfo.renderArea.extent = t_swapChainExtent;
-				beginInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
-				beginInfo.pClearValues = clearValues.data();
+					t_beginInfo.framebuffer = m_framebuffers[a_currentFrame];
+				t_beginInfo.renderArea.offset = { 0, 0 };
+				t_beginInfo.renderArea.extent = t_swapChainExtent;
+				t_beginInfo.clearValueCount = static_cast<uint32_t>(t_clearValues.size());
+				t_beginInfo.pClearValues = t_clearValues.data();
 
-				vkCmdBeginRenderPass(cmd, &beginInfo, VK_SUBPASS_CONTENTS_INLINE);
+				vkCmdBeginRenderPass(a_cmd, &t_beginInfo, VK_SUBPASS_CONTENTS_INLINE);
 
 				//set viewport and scissor if configured to do so
 				if (m_config.setViewportAndScissor)
@@ -525,18 +491,18 @@ namespace Engine
 					viewport.height = static_cast<float>(t_swapChainExtent.height);
 					viewport.minDepth = 0.0f;
 					viewport.maxDepth = 1.0f;
-					vkCmdSetViewport(cmd, 0, 1, &viewport);
+					vkCmdSetViewport(a_cmd, 0, 1, &viewport);
 
 					VkRect2D scissor{};
 					scissor.offset = { 0, 0 };
 					scissor.extent = t_swapChainExtent;
-					vkCmdSetScissor(cmd, 0, 1, &scissor);
+					vkCmdSetScissor(a_cmd, 0, 1, &scissor);
 				}
 			}
 
-			void VulkanRenderPass::End(VkCommandBuffer cmd)
+			void VulkanRenderPass::End(const VkCommandBuffer a_cmd)
 			{
-				vkCmdEndRenderPass(cmd);
+				vkCmdEndRenderPass(a_cmd);
 			}
 
 			void VulkanRenderPass::SetDrawFunc(
@@ -555,28 +521,28 @@ namespace Engine
 					m_renderPass = VK_NULL_HANDLE;
 				}
 
-				for (auto& res : m_attachmentResources)
+				for (auto& t_res : m_attachmentResources)
 				{
-					if (res.view != VK_NULL_HANDLE) {
-						vkDestroyImageView(m_device, res.view, nullptr);
-						res.view = VK_NULL_HANDLE;
+					if (t_res.view != VK_NULL_HANDLE) {
+						vkDestroyImageView(m_device, t_res.view, nullptr);
+						t_res.view = VK_NULL_HANDLE;
 					}
-					if (res.image != VK_NULL_HANDLE) {
-						vkDestroyImage(m_device, res.image, nullptr);
-						res.image = VK_NULL_HANDLE;
+					if (t_res.image != VK_NULL_HANDLE) {
+						vkDestroyImage(m_device, t_res.image, nullptr);
+						t_res.image = VK_NULL_HANDLE;
 					}
-					if (res.memory != VK_NULL_HANDLE) {
-						vkFreeMemory(m_device, res.memory, nullptr);
-						res.memory = VK_NULL_HANDLE;
+					if (t_res.memory != VK_NULL_HANDLE) {
+						vkFreeMemory(m_device, t_res.memory, nullptr);
+						t_res.memory = VK_NULL_HANDLE;
 					}
 				}
 				//cleanup framebuffer
-				for (auto& framebuffer : m_framebuffers)
+				for (auto& t_framebuffer : m_framebuffers)
 				{
-					if (framebuffer != VK_NULL_HANDLE)
+					if (t_framebuffer != VK_NULL_HANDLE)
 					{
-						vkDestroyFramebuffer(m_device, framebuffer, nullptr);
-						framebuffer = VK_NULL_HANDLE;
+						vkDestroyFramebuffer(m_device, t_framebuffer, nullptr);
+						t_framebuffer = VK_NULL_HANDLE;
 					}
 				}
 				//cleanup depth attachment
@@ -609,41 +575,41 @@ namespace Engine
 			{
 				m_isDepth = true;
 
-				VkImageCreateInfo imageInfo = {};
-				imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
-				imageInfo.imageType = VK_IMAGE_TYPE_2D;
-				imageInfo.format = a_attachment.format;
-				imageInfo.extent.width = m_config.extent.width;
-				imageInfo.extent.height = m_config.extent.height;
-				imageInfo.extent.depth = 1;
-				imageInfo.mipLevels = 1;
-				imageInfo.arrayLayers = 1;
-				imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
-				imageInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
-				imageInfo.usage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
+				VkImageCreateInfo t_imageInfo = {};
+				t_imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+				t_imageInfo.imageType = VK_IMAGE_TYPE_2D;
+				t_imageInfo.format = a_attachment.format;
+				t_imageInfo.extent.width = m_config.extent.width;
+				t_imageInfo.extent.height = m_config.extent.height;
+				t_imageInfo.extent.depth = 1;
+				t_imageInfo.mipLevels = 1;
+				t_imageInfo.arrayLayers = 1;
+				t_imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
+				t_imageInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
+				t_imageInfo.usage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
 
 				if (a_attachment.isDepth)
-					imageInfo.usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
+					t_imageInfo.usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
 
-				imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
-				imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+				t_imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+				t_imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 
 				// Create image
-				if (vkCreateImage(m_device, &imageInfo, nullptr, &m_depthAttachmentResource.image) != VK_SUCCESS)
+				if (vkCreateImage(m_device, &t_imageInfo, nullptr, &m_depthAttachmentResource.image) != VK_SUCCESS)
 				{
 					throw std::runtime_error("Failed to create attachment image");
 				}
 
 				// Allocate memory
-				VkMemoryRequirements memRequirements;
-				vkGetImageMemoryRequirements(m_device, m_depthAttachmentResource.image, &memRequirements);
+				VkMemoryRequirements t_memRequirements;
+				vkGetImageMemoryRequirements(m_device, m_depthAttachmentResource.image, &t_memRequirements);
 
-				VkMemoryAllocateInfo allocInfo = {};
-				allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-				allocInfo.allocationSize = memRequirements.size;
-				allocInfo.memoryTypeIndex = VulkanBuffer::FindMemoryType(memRequirements.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, m_renderer->GetPhysicalDevice()->CastVulkan()->GetVkPhysicalDevice());
+				VkMemoryAllocateInfo t_allocInfo = {};
+				t_allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+				t_allocInfo.allocationSize = t_memRequirements.size;
+				t_allocInfo.memoryTypeIndex = VulkanBuffer::FindMemoryType(t_memRequirements.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, m_renderer->GetPhysicalDevice()->CastVulkan()->GetVkPhysicalDevice());
 
-				if (vkAllocateMemory(m_device, &allocInfo, nullptr, &m_depthAttachmentResource.memory) != VK_SUCCESS)
+				if (vkAllocateMemory(m_device, &t_allocInfo, nullptr, &m_depthAttachmentResource.memory) != VK_SUCCESS)
 				{
 					throw std::runtime_error("Failed to allocate image memory");
 				}
@@ -651,18 +617,18 @@ namespace Engine
 				vkBindImageMemory(m_device, m_depthAttachmentResource.image, m_depthAttachmentResource.memory, 0);
 
 				// Create image view
-				VkImageViewCreateInfo viewInfo = {};
-				viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-				viewInfo.image = m_depthAttachmentResource.image;
-				viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
-				viewInfo.format = a_attachment.format;
-				viewInfo.subresourceRange.aspectMask = a_attachment.aspectMask;
-				viewInfo.subresourceRange.baseMipLevel = 0;
-				viewInfo.subresourceRange.levelCount = 1;
-				viewInfo.subresourceRange.baseArrayLayer = 0;
-				viewInfo.subresourceRange.layerCount = 1;
+				VkImageViewCreateInfo t_viewInfo = {};
+				t_viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+				t_viewInfo.image = m_depthAttachmentResource.image;
+				t_viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+				t_viewInfo.format = a_attachment.format;
+				t_viewInfo.subresourceRange.aspectMask = a_attachment.aspectMask;
+				t_viewInfo.subresourceRange.baseMipLevel = 0;
+				t_viewInfo.subresourceRange.levelCount = 1;
+				t_viewInfo.subresourceRange.baseArrayLayer = 0;
+				t_viewInfo.subresourceRange.layerCount = 1;
 
-				if (vkCreateImageView(m_device, &viewInfo, nullptr, &m_depthAttachmentResource.view) != VK_SUCCESS)
+				if (vkCreateImageView(m_device, &t_viewInfo, nullptr, &m_depthAttachmentResource.view) != VK_SUCCESS)
 				{
 					throw std::runtime_error("Failed to create image view");
 				}
@@ -670,55 +636,55 @@ namespace Engine
 
 			void VulkanRenderPass::CreateAttachment(const RenderPassAttachment& a_attachment, uint32_t i)
 			{
-				VkImageCreateInfo imageInfo = {};
-				imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
-				imageInfo.imageType = VK_IMAGE_TYPE_2D;
-				imageInfo.format = a_attachment.format;
-				imageInfo.extent.width = m_config.extent.width;
-				imageInfo.extent.height = m_config.extent.height;
-				imageInfo.extent.depth = 1;
-				imageInfo.mipLevels = 1;
-				imageInfo.arrayLayers = 1;
-				imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
-				imageInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
-				imageInfo.usage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
+				VkImageCreateInfo t_imageInfo = {};
+				t_imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+				t_imageInfo.imageType = VK_IMAGE_TYPE_2D;
+				t_imageInfo.format = a_attachment.format;
+				t_imageInfo.extent.width = m_config.extent.width;
+				t_imageInfo.extent.height = m_config.extent.height;
+				t_imageInfo.extent.depth = 1;
+				t_imageInfo.mipLevels = 1;
+				t_imageInfo.arrayLayers = 1;
+				t_imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
+				t_imageInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
+				t_imageInfo.usage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
 
 				if (a_attachment.isDepth)
-					imageInfo.usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
+					t_imageInfo.usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
 
-				imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
-				imageInfo.initialLayout = a_attachment.initialLayout;
+				t_imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+				t_imageInfo.initialLayout = a_attachment.initialLayout;
 				
 
 				// Create image
-				VK_CHECK(vkCreateImage(m_device, &imageInfo, nullptr, &m_attachmentResources[i].image), "Failed to create attachment image");
+				VK_CHECK(vkCreateImage(m_device, &t_imageInfo, nullptr, &m_attachmentResources[i].image), "Failed to create attachment image");
 
 				// Allocate memory
-				VkMemoryRequirements memRequirements;
-				vkGetImageMemoryRequirements(m_device, m_attachmentResources[i].image, &memRequirements);
+				VkMemoryRequirements t_memRequirements;
+				vkGetImageMemoryRequirements(m_device, m_attachmentResources[i].image, &t_memRequirements);
 
-				VkMemoryAllocateInfo allocInfo = {};
-				allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-				allocInfo.allocationSize = memRequirements.size;
-				allocInfo.memoryTypeIndex = VulkanBuffer::FindMemoryType(memRequirements.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, m_renderer->GetPhysicalDevice()->CastVulkan()->GetVkPhysicalDevice());
+				VkMemoryAllocateInfo t_allocInfo = {};
+				t_allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+				t_allocInfo.allocationSize = t_memRequirements.size;
+				t_allocInfo.memoryTypeIndex = VulkanBuffer::FindMemoryType(t_memRequirements.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, m_renderer->GetPhysicalDevice()->CastVulkan()->GetVkPhysicalDevice());
 
-				VK_CHECK(vkAllocateMemory(m_device, &allocInfo, nullptr, &m_attachmentResources[i].memory), "Failed to allocate image memory");
+				VK_CHECK(vkAllocateMemory(m_device, &t_allocInfo, nullptr, &m_attachmentResources[i].memory), "Failed to allocate image memory");
 
 				vkBindImageMemory(m_device, m_attachmentResources[i].image, m_attachmentResources[i].memory, 0);
 
 				// Create image view
-				VkImageViewCreateInfo viewInfo = {};
-				viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-				viewInfo.image = m_attachmentResources[i].image;
-				viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
-				viewInfo.format = a_attachment.format;
-				viewInfo.subresourceRange.aspectMask = a_attachment.aspectMask;
-				viewInfo.subresourceRange.baseMipLevel = 0;
-				viewInfo.subresourceRange.levelCount = 1;
-				viewInfo.subresourceRange.baseArrayLayer = 0;
-				viewInfo.subresourceRange.layerCount = 1;
+				VkImageViewCreateInfo t_viewInfo = {};
+				t_viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+				t_viewInfo.image = m_attachmentResources[i].image;
+				t_viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+				t_viewInfo.format = a_attachment.format;
+				t_viewInfo.subresourceRange.aspectMask = a_attachment.aspectMask;
+				t_viewInfo.subresourceRange.baseMipLevel = 0;
+				t_viewInfo.subresourceRange.levelCount = 1;
+				t_viewInfo.subresourceRange.baseArrayLayer = 0;
+				t_viewInfo.subresourceRange.layerCount = 1;
 
-				VK_CHECK(vkCreateImageView(m_device, &viewInfo, nullptr, &m_attachmentResources[i].view), "Failed to create image view");
+				VK_CHECK(vkCreateImageView(m_device, &t_viewInfo, nullptr, &m_attachmentResources[i].view), "Failed to create image view")
 
 				
 			}

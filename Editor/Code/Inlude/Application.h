@@ -31,7 +31,7 @@ namespace Editor
 			void Destroy();
 			Engine::Core::Window::IWindow* GetWindow() const { return m_mainWindow; }
 
-			void AddLayer(Layer* layer);
+			void AddLayer(EditorLayer::Layer* a_layer);
 			void UpdateLayers();
 			void CleanupLayers();
 
@@ -47,7 +47,7 @@ namespace Editor
 			std::chrono::high_resolution_clock::time_point m_lastTime = std::chrono::high_resolution_clock::now();
 			float m_deltaTime = 0.0f;
 
-			std::vector<Layer*> m_layers;
+			std::vector<EditorLayer::Layer*> m_layers;
 		};
 	}
 }

@@ -47,9 +47,9 @@ namespace Engine
 				ENGINE_API VulkanRenderPassManager* CastVulkan() override { return this; }
 
 				// --- Initialization ---
-				ENGINE_API void Create(Renderer* renderer) override;
-				ENGINE_API void CreateDefaultRenderPass(Renderer* renderer);
-				ENGINE_API void Destroy(RHI::ILogicalDevice* logicalDevice) override;
+				ENGINE_API void Create(Renderer* a_renderer) override;
+				ENGINE_API void CreateDefaultRenderPass(Renderer* a_renderer);
+				ENGINE_API void Destroy(RHI::ILogicalDevice* a_logicalDevice) override;
 
 				// --- Recording ---
 				ENGINE_API void RecordRenderPasses(const RecordRenderPassinfo& a_info,
@@ -65,13 +65,13 @@ namespace Engine
 					const std::vector<uint32_t>& a_nbIndices);
 
 				// --- Dependency Resolution ---
-				ENGINE_API void ResolveDependencies(VulkanRenderPass* pass,
-					std::set<VulkanRenderPass*>& visited,
-					std::vector<VulkanRenderPass*>& sorted);
+				ENGINE_API void ResolveDependencies(VulkanRenderPass* a_pass,
+					std::set<VulkanRenderPass*>& a_visited,
+					std::vector<VulkanRenderPass*>& a_sorted);
 
 				// --- Setters ---
-				ENGINE_API void SetSceneRenderPass(VulkanRenderPass* renderPass);
-				ENGINE_API void AddRenderPass(VulkanRenderPass* renderPass);
+				ENGINE_API void SetSceneRenderPass(VulkanRenderPass* a_renderPass);
+				ENGINE_API void AddRenderPass(VulkanRenderPass* a_renderPass);
 
 				// --- Getters ---
 				[[nodiscard]] ENGINE_API VulkanRenderPass* GetSceneRenderPass() const { return m_sceneRenderPass; }
@@ -134,28 +134,28 @@ namespace Engine
 			class VulkanRenderPass
 			{
 			public:
-				ENGINE_API VulkanRenderPass(VkDevice device, Renderer* renderer);
+				ENGINE_API VulkanRenderPass(VkDevice a_device, Renderer* a_renderer);
 				ENGINE_API ~VulkanRenderPass();
 
 				// --- Creation ---
-				ENGINE_API void Create(const RenderPassConfig& config);
+				ENGINE_API void Create(const RenderPassConfig& a_config);
 				ENGINE_API void CreateAttachments();
 				ENGINE_API void CreateFramebuffers(); // Uses internally defined attachments
-				ENGINE_API void CreateFramebuffers(const std::vector<std::vector<VkImageView>>& views); // Uses provided views
+				ENGINE_API void CreateFramebuffers(const std::vector<std::vector<VkImageView>>& a_views); // Uses provided views
 				ENGINE_API void SetParent(VulkanRenderPassManager* a_parent) { m_parent = a_parent; }
 
 				// --- Lifecycle ---
 				ENGINE_API void Destroy();
 
 				// --- Recording ---
-				ENGINE_API void RecordRenderPass(RecordRenderPassinfo info,
-					const std::vector<Core::RHI::IRenderObject*>& renderObjects,
-					const std::vector<Core::RHI::IBuffer*>& vertexBuffers,
-					const std::vector<Core::RHI::IBuffer*>& indexBuffers,
-					const std::vector<uint32_t>& nbIndices);
+				ENGINE_API void RecordRenderPass(const RecordRenderPassinfo& a_info,
+					const std::vector<Core::RHI::IRenderObject*>& a_renderObjects,
+					const std::vector<Core::RHI::IBuffer*>& a_vertexBuffers,
+					const std::vector<Core::RHI::IBuffer*>& a_indexBuffers,
+					const std::vector<uint32_t>& a_nbIndices);
 
-				ENGINE_API void Begin(VkCommandBuffer cmd, uint32_t imageIndex, uint32_t currentFrame, VkSubpassContents contents = VK_SUBPASS_CONTENTS_INLINE);
-				ENGINE_API void End(VkCommandBuffer cmd);
+				ENGINE_API void Begin(VkCommandBuffer a_cmd, uint32_t a_imageIndex, uint32_t a_currentFrame, VkSubpassContents a_contents = VK_SUBPASS_CONTENTS_INLINE) const;
+				ENGINE_API void End(VkCommandBuffer a_cmd);
 
 				// --- Draw Control ---
 				ENGINE_API void SetDrawFunc(std::function<void(RecordRenderPassinfo,
@@ -165,12 +165,9 @@ namespace Engine
 					const std::vector<uint32_t>&)> a_func);
 
 				// --- Dependencies ---
-				ENGINE_API void AddDependency(VulkanRenderPass* dependency) { m_dependencies.push_back(dependency); }
+				ENGINE_API void AddDependency(VulkanRenderPass* a_dependency) { m_dependencies.push_back(a_dependency); }
 				[[nodiscard]] ENGINE_API const std::vector<VulkanRenderPass*>& GetDependencies() { return m_dependencies; }
 				[[nodiscard]] ENGINE_API bool HasDependency() const { return !m_dependencies.empty(); }
-
-				// --- State Transition ---
-				ENGINE_API void TransitionImageLayout(VkImageLayout newImageLayout);
 
 				// --- Getters ---
 				[[nodiscard]] ENGINE_API VkRenderPass GetRenderPass() const { return m_renderPass; }
@@ -206,8 +203,8 @@ namespace Engine
 				std::vector<VulkanRenderPass*> m_dependencies;
 
 				// --- Helpers ---
-				void CreateDepthAttachment(const RenderPassAttachment& attachment);
-				void CreateAttachment(const RenderPassAttachment& attachment, uint32_t index);
+				void CreateDepthAttachment(const RenderPassAttachment& a_attachment);
+				void CreateAttachment(const RenderPassAttachment& a_attachment, uint32_t a_index);
 			};
 		}
 	}

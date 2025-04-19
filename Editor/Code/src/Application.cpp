@@ -13,6 +13,7 @@ using namespace Engine::Core;
 using namespace Engine::GamePlay;
 using namespace Engine;
 using namespace Engine::Math;
+using namespace Editor::EditorLayer;
 
 namespace Editor
 {
@@ -31,7 +32,7 @@ namespace Editor
 			m_renderer->Init(RendererType::VULKAN);
 			m_renderer->Create(RendererType::VULKAN, m_mainWindow);
 
-			ImGuiLayer* t_imguiLayer = new ImGuiLayer(m_renderer);
+			Ui::ImGuiLayer* t_imguiLayer = new Ui::ImGuiLayer(m_renderer);
 			AddLayer(t_imguiLayer);
 
 			m_renderer->LateCreate(RendererType::VULKAN, m_mainWindow);
@@ -81,10 +82,10 @@ namespace Editor
 			delete m_mainWindow;
 		}
 
-		void Application::AddLayer(Layer* layer)
+		void Application::AddLayer(Layer* a_layer)
 		{
-			layer->OnAttach(m_mainWindow);
-			m_layers.push_back(layer);
+			a_layer->OnAttach(m_mainWindow);
+			m_layers.push_back(a_layer);
 		}
 
 		void Application::UpdateLayers()

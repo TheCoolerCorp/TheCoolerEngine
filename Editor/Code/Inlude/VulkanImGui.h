@@ -23,33 +23,34 @@ namespace Engine::Core
 
 }
 
-class VulkanImGui : public RHIImGui
+namespace Editor::EditorLayer::Ui
 {
-public:
-	VulkanImGui(Engine::Core::Renderer* renderer);
-	~VulkanImGui() override;
-	void Init(Engine::Core::Window::IWindow* window, Engine::Core::Renderer* renderer) override;
+	class VulkanImGui : public RHIImGui
+	{
+	public:
+		VulkanImGui(Engine::Core::Renderer* a_renderer);
+		~VulkanImGui() override;
+		void Init(Engine::Core::Window::IWindow* a_window, Engine::Core::Renderer* a_renderer) override;
 
-	void SetupRenderPasses();
-	void SetupSceneRenderPass();
-	void SetupImGuiRenderPass();
+		void SetupRenderPasses();
+		void SetupSceneRenderPass();
+		void SetupImGuiRenderPass();
 
-	void NewFrame() override;
-	void Render() override;
-	void DrawSceneAsImage() override;
+		void NewFrame() override;
+		void Render() override;
+		void DrawSceneAsImage() override;
 
-	void Cleanup() override;
+		void Cleanup() override;
 
-	void CreateDescriptorPool(VkDevice device);
-	void CreateSceneImageDescriptorSets();
-private:
-	Engine::Core::Renderer* m_renderer = nullptr;
+		void CreateDescriptorPool(VkDevice a_device);
+		void CreateSceneImageDescriptorSets();
+	private:
+		Engine::Core::GraphicsAPI::VulkanRenderPass* m_imGuiRenderPass = nullptr;
+		Engine::Core::GraphicsAPI::VulkanRenderPass* m_imGuiViewportRenderPass = nullptr;
 
-	Engine::Core::GraphicsAPI::VulkanRenderPass* m_imGuiRenderPass = nullptr;
-	Engine::Core::GraphicsAPI::VulkanRenderPass* m_imGuiViewportRenderPass = nullptr;
-
-	std::vector<VkDescriptorSet> m_Dset;
-	VkDescriptorPool m_pool;
-};
+		std::vector<VkDescriptorSet> m_dset;
+		VkDescriptorPool m_pool;
+	};
+}
 
 #endif
