@@ -19,7 +19,7 @@ namespace Engine
 			~Scene() = default;
 
 			ENGINE_API void Create(Core::Renderer* a_renderer);
-			ENGINE_API void Update(Core::Renderer* a_renderer);
+			ENGINE_API void Update(Core::Renderer* a_renderer, float a_deltaTime);
 			ENGINE_API void Draw(Core::Renderer* a_renderer, Core::Window::IWindow* a_window, Camera* a_camera);
 			ENGINE_API void Destroy(Core::Renderer* a_renderer);
 

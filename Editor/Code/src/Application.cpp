@@ -47,11 +47,12 @@ namespace Editor
 		{
 			while (!m_mainWindow->ShouldClose())
 			{
-				m_currentScene->Update(m_renderer);
-				m_currentScene->Draw(m_renderer, m_mainWindow, m_camera);
 				auto t_now = std::chrono::high_resolution_clock::now();
 				m_deltaTime = std::chrono::duration<float>(t_now - m_lastTime).count();
 				m_lastTime = t_now;
+
+				m_currentScene->Update(m_renderer, m_deltaTime);
+				m_currentScene->Draw(m_renderer, m_mainWindow, m_camera);
 				m_camera->Update(m_renderer, m_inputHandler, m_mainWindow, m_deltaTime);
 				m_mainWindow->PollEvents();
 			}
