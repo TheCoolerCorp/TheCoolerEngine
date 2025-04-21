@@ -351,7 +351,7 @@ namespace Engine
 					CreateAttachments();
 					CreateFramebuffers();
 				}
-				if (m_config.createOwnFramebuffers)
+				if (m_config.createOwnFramebuffers && m_config.setResizeCallback)
 				{
 					VulkanSwapchain* swapchain = m_renderer->GetSwapChain()->CastVulkan();
 					swapchain->AddResizeCallback([this](VkExtent2D a_extent)
@@ -496,18 +496,21 @@ namespace Engine
 				//set viewport and scissor if configured to do so
 				if (m_config.setViewportAndScissor)
 				{
-					VkViewport viewport{};
-					viewport.x = 0.0f;
-					viewport.y = 0.0f;
+					float t_offsetWidth = (static_cast<float>(t_swapChainExtent.width) - static_cast<float>(m_config.extent.width))/2;
+					float t_offsetHeight = (static_cast<float>(t_swapChainExtent.height) - static_cast<float>(m_config.extent.height))/2;
+
+					VkViewport viewport;
+					viewport.x = -t_offsetWidth;
+					viewport.y = -t_offsetHeight;
 					viewport.width = static_cast<float>(t_swapChainExtent.width);
 					viewport.height = static_cast<float>(t_swapChainExtent.height);
 					viewport.minDepth = 0.0f;
 					viewport.maxDepth = 1.0f;
 					vkCmdSetViewport(a_cmd, 0, 1, &viewport);
 
-					VkRect2D scissor{};
-					scissor.offset = { 0, 0 };
-					scissor.extent = t_swapChainExtent;
+					VkRect2D scissor;
+					scissor.offset = {0,0};
+					scissor.extent = m_config.extent;
 					vkCmdSetScissor(a_cmd, 0, 1, &scissor);
 				}
 			}

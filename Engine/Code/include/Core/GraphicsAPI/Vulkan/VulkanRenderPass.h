@@ -118,6 +118,7 @@ namespace Engine
 				bool setViewportAndScissor = false;
 				bool useSwapChainFramebuffers = false;
 				bool createOwnFramebuffers = true;
+				bool setResizeCallback = true;
 			};
 
 			struct AttachmentResource {

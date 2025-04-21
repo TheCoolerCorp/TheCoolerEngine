@@ -105,6 +105,16 @@ namespace Editor::EditorLayer::Ui
 		CreateSceneImageDescriptorSets();
 	}
 
+	void VulkanImGui::Update()
+	{
+		if (m_viewportWindowResized)
+		{
+			m_viewportWindowResized = false;
+			m_imGuiRenderPass->RecreateFrameBuffer(m_viewportWindowExtent);
+			RecreateSceneImageDescriptorSets(m_viewportWindowExtent);
+		}
+	}
+
 	void VulkanImGui::SetupRenderPasses()
 	{
 		SetupSceneRenderPass();
@@ -172,6 +182,8 @@ namespace Editor::EditorLayer::Ui
 		t_config.extent = extent;
 		t_config.setViewportAndScissor = true;
 		t_config.useSwapChainFramebuffers = false;
+		//we handle the resize for this one
+		t_config.setResizeCallback = false;
 
 		m_imGuiRenderPass = new VulkanRenderPass(device, m_renderer);
 
@@ -300,6 +312,12 @@ namespace Editor::EditorLayer::Ui
 	{
 		VulkanSwapchain* t_swapchain = m_renderer->GetSwapChain()->CastVulkan();
 		const ImVec2 t_viewportPanelSize = ImGui::GetContentRegionAvail();
+		VkExtent2D t_extent = { static_cast<uint32_t>(t_viewportPanelSize.x), static_cast<uint32_t>(t_viewportPanelSize.y) };
+		if (m_viewportWindowExtent.width != t_extent.width || m_viewportWindowExtent.height != t_extent.height)
+		{
+			m_viewportWindowExtent = t_extent;
+			m_viewportWindowResized = true;
+		}
 		ImGui::Image(reinterpret_cast<ImTextureID>(m_dset[t_swapchain->GetCurrentFrame()]), ImVec2{ t_viewportPanelSize.x, t_viewportPanelSize.y });
 	}
 
@@ -340,5 +358,11 @@ namespace Editor::EditorLayer::Ui
 			ImGui_ImplVulkan_RemoveTexture(dset);
 		}
 		CreateSceneImageDescriptorSets();
+	}
+
+	void VulkanImGui::SetWindowExtent(VkExtent2D a_extent)
+	{
+		m_viewportWindowExtent = a_extent;
+		m_viewportWindowResized = true;
 	}
 }

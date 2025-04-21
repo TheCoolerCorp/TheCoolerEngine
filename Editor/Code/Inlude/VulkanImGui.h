@@ -31,6 +31,7 @@ namespace Editor::EditorLayer::Ui
 		VulkanImGui(Engine::Core::Renderer* a_renderer);
 		~VulkanImGui() override;
 		void Init(Engine::Core::Window::IWindow* a_window, Engine::Core::Renderer* a_renderer) override;
+		void Update() override;
 
 		void SetupRenderPasses();
 		void SetupSceneRenderPass();
@@ -45,12 +46,20 @@ namespace Editor::EditorLayer::Ui
 		void CreateDescriptorPool(VkDevice a_device);
 		void CreateSceneImageDescriptorSets();
 		void RecreateSceneImageDescriptorSets(VkExtent2D a_extent);
+
+		
 	private:
 		Engine::Core::GraphicsAPI::VulkanRenderPass* m_imGuiRenderPass = nullptr;
 		Engine::Core::GraphicsAPI::VulkanRenderPass* m_imGuiViewportRenderPass = nullptr;
 
+		VkExtent2D m_viewportWindowExtent;
+		//if resized, recreate necessary elements during update call
+		bool m_viewportWindowResized = false;
+
 		std::vector<VkDescriptorSet> m_dset;
 		VkDescriptorPool m_pool;
+
+		void SetWindowExtent(VkExtent2D a_extent);
 	};
 }
 

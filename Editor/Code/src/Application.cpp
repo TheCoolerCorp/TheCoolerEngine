@@ -54,6 +54,7 @@ namespace Editor
 				m_deltaTime = std::chrono::duration<float>(t_now - m_lastTime).count();
 				m_lastTime = t_now;
 
+				UpdateLayers();
 				m_currentScene->Update(m_renderer, m_deltaTime);
 				m_currentScene->Draw(m_renderer, m_mainWindow, m_camera);
 				m_camera->Update(m_renderer, m_inputHandler, m_mainWindow, m_deltaTime);

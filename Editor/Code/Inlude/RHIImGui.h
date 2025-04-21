@@ -24,6 +24,8 @@ namespace Editor::EditorLayer::Ui
 
 		virtual void Init(Engine::Core::Window::IWindow* a_window, Engine::Core::Renderer* a_renderer) = 0;
 
+		virtual void Update() = 0;;
+
 		virtual void NewFrame() = 0;
 		virtual void Render() = 0;
 		virtual void DrawSceneAsImage() = 0;

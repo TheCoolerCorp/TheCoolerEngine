@@ -25,6 +25,7 @@ namespace Editor::EditorLayer::Ui
 	void ImGuiLayer::OnUpdate(float a_deltaTime)
 	{
 		Layer::OnUpdate(a_deltaTime);
+		m_imGui->Update();
 	}
 
 	void ImGuiLayer::OnUiRender()
