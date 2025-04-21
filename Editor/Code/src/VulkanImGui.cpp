@@ -109,6 +109,10 @@ namespace Editor::EditorLayer::Ui
 	{
 		if (m_viewportWindowResized)
 		{
+			const VkDevice t_device = m_renderer->GetLogicalDevice()->CastVulkan()->GetVkDevice();
+
+			vkDeviceWaitIdle(t_device);
+
 			m_viewportWindowResized = false;
 			m_imGuiRenderPass->RecreateFrameBuffer(m_viewportWindowExtent);
 			RecreateSceneImageDescriptorSets(m_viewportWindowExtent);
