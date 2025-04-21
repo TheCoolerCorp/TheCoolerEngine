@@ -262,6 +262,7 @@ namespace Engine
 				if (t_result == VK_ERROR_OUT_OF_DATE_KHR || t_result == VK_SUBOPTIMAL_KHR || a_window->GetResized()) {
 					a_window->SetResized(false);
 					RecreateSwapChain(a_window, a_logicalDevice, a_surface, a_physicalDevice, a_renderPass, a_commandPool);
+
 				}
 				else if (t_result != VK_SUCCESS) {
 					throw std::runtime_error("failed to present swap chain image!");
@@ -387,6 +388,7 @@ namespace Engine
 
 				Create(a_surface, a_window, a_physicalDevice, a_logicalDevice);
 				CreateFramebuffers(a_logicalDevice, a_physicalDevice, a_renderPass, a_commandPool);
+				CallResizeCallbacks(m_swapChainExtent);
 			}
 		}
 	}

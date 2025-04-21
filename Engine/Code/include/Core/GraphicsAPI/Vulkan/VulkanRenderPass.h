@@ -143,9 +143,12 @@ namespace Engine
 				ENGINE_API void CreateFramebuffers(); // Uses internally defined attachments
 				ENGINE_API void CreateFramebuffers(const std::vector<std::vector<VkImageView>>& a_views); // Uses provided views
 				ENGINE_API void SetParent(VulkanRenderPassManager* a_parent) { m_parent = a_parent; }
+				ENGINE_API void RecreateFrameBuffer(VkExtent2D a_extent);
 
 				// --- Lifecycle ---
 				ENGINE_API void Destroy();
+				ENGINE_API void DestroyFramebuffers();
+				ENGINE_API void DestroyAttachments();
 
 				// --- Recording ---
 				ENGINE_API void RecordRenderPass(const RecordRenderPassinfo& a_info,

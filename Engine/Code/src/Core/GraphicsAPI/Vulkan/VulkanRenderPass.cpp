@@ -351,6 +351,16 @@ namespace Engine
 					CreateAttachments();
 					CreateFramebuffers();
 				}
+				if (m_config.createOwnFramebuffers)
+				{
+					VulkanSwapchain* swapchain = m_renderer->GetSwapChain()->CastVulkan();
+					swapchain->AddResizeCallback([this](VkExtent2D a_extent)
+						{
+							m_config.extent = a_extent;
+							RecreateFrameBuffer(a_extent);
+						});
+					
+				}
 					
 			}
 
@@ -429,7 +439,9 @@ namespace Engine
 				const VkDevice t_logicalDevice = m_renderer->GetLogicalDevice()->CastVulkan()->GetVkDevice();
 				VkPhysicalDevice t_physicalDevice = m_renderer->GetPhysicalDevice()->CastVulkan()->GetVkPhysicalDevice();
 
-				VulkanImage::CreateSampler(&m_sampler, t_logicalDevice, t_physicalDevice);
+				//we only need to create a sampler once so no need to recreate it
+				if (m_sampler == VK_NULL_HANDLE)
+					VulkanImage::CreateSampler(&m_sampler, t_logicalDevice, t_physicalDevice);
 			}
 
 			void VulkanRenderPass::RecordRenderPass(const RecordRenderPassinfo& a_info,
@@ -470,12 +482,12 @@ namespace Engine
 				VkRenderPassBeginInfo t_beginInfo{};
 				t_beginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
 				t_beginInfo.renderPass = m_renderPass;
-				if (m_config.useSwapChainFramebuffers)
+				if (m_config.useSwapChainFramebuffers && !m_config.createOwnFramebuffers)
 					t_beginInfo.framebuffer = m_renderer->GetSwapChain()->CastVulkan()->GetFramebuffers()[a_imageIndex];
 				else
 					t_beginInfo.framebuffer = m_framebuffers[a_currentFrame];
 				t_beginInfo.renderArea.offset = { 0, 0 };
-				t_beginInfo.renderArea.extent = t_swapChainExtent;
+				t_beginInfo.renderArea.extent = m_config.extent;
 				t_beginInfo.clearValueCount = static_cast<uint32_t>(t_clearValues.size());
 				t_beginInfo.pClearValues = t_clearValues.data();
 
@@ -513,6 +525,38 @@ namespace Engine
 				m_drawFunc = std::move(a_func);
 			}
 
+			void VulkanRenderPass::RecreateFrameBuffer(const VkExtent2D a_extent)
+			{
+				//set the new extent
+				m_config.extent = a_extent;
+
+				//if using swapchain images, only recreate framebuffers
+				//cleanup old framebuffers
+				if (m_config.useSwapChainFramebuffers && m_config.createOwnFramebuffers)
+				{
+					DestroyFramebuffers();
+
+					//create framebuffers
+					std::vector<VkImageView> t_imageViews = m_renderer->GetSwapChain()->CastVulkan()->GetImageViews();
+					std::vector<std::vector<VkImageView>> t_imageViews2;
+					for (auto& t_imageView : t_imageViews)
+					{
+						t_imageViews2.push_back({ t_imageView });
+					}
+					CreateFramebuffers(t_imageViews2);
+				}
+				//if not using swapchain images, recreate framebuffers and attachments
+				else if (m_config.createOwnFramebuffers)
+				{
+					DestroyFramebuffers();
+					DestroyAttachments();
+					//create framebuffers
+					CreateAttachments();
+					CreateFramebuffers();
+				}
+				
+			}
+
 			void VulkanRenderPass::Destroy()
 			{
 				if (m_renderPass != VK_NULL_HANDLE)
@@ -521,22 +565,22 @@ namespace Engine
 					m_renderPass = VK_NULL_HANDLE;
 				}
 
-				for (auto& t_res : m_attachmentResources)
+				
+				//cleanup framebuffer and attachments
+				DestroyFramebuffers();
+				DestroyAttachments();
+				
+				//destroy sampler
+				if (m_sampler != VK_NULL_HANDLE)
 				{
-					if (t_res.view != VK_NULL_HANDLE) {
-						vkDestroyImageView(m_device, t_res.view, nullptr);
-						t_res.view = VK_NULL_HANDLE;
-					}
-					if (t_res.image != VK_NULL_HANDLE) {
-						vkDestroyImage(m_device, t_res.image, nullptr);
-						t_res.image = VK_NULL_HANDLE;
-					}
-					if (t_res.memory != VK_NULL_HANDLE) {
-						vkFreeMemory(m_device, t_res.memory, nullptr);
-						t_res.memory = VK_NULL_HANDLE;
-					}
+					vkDestroySampler(m_device, m_sampler, nullptr);
+					m_sampler = VK_NULL_HANDLE;
 				}
-				//cleanup framebuffer
+				m_attachmentResources.clear();
+			}
+
+			void VulkanRenderPass::DestroyFramebuffers()
+			{
 				for (auto& t_framebuffer : m_framebuffers)
 				{
 					if (t_framebuffer != VK_NULL_HANDLE)
@@ -545,12 +589,34 @@ namespace Engine
 						t_framebuffer = VK_NULL_HANDLE;
 					}
 				}
+				m_framebuffers.clear();
+			}
+
+			void VulkanRenderPass::DestroyAttachments()
+			{
+				for (auto& [image, memory, view] : m_attachmentResources)
+				{
+					if (view != VK_NULL_HANDLE) {
+						vkDestroyImageView(m_device, view, nullptr);
+						view = VK_NULL_HANDLE;
+					}
+					if (image != VK_NULL_HANDLE) {
+						vkDestroyImage(m_device, image, nullptr);
+						image = VK_NULL_HANDLE;
+					}
+					if (memory != VK_NULL_HANDLE) {
+						vkFreeMemory(m_device, memory, nullptr);
+						memory = VK_NULL_HANDLE;
+					}
+				}
+				m_attachmentResources.clear();
+
 				//cleanup depth attachment
 				if (m_depthAttachmentResource.view != VK_NULL_HANDLE)
 				{
 					vkDestroyImageView(m_device, m_depthAttachmentResource.view, nullptr);
 					m_depthAttachmentResource.view = VK_NULL_HANDLE;
-					
+
 				}
 				if (m_depthAttachmentResource.image != VK_NULL_HANDLE)
 				{
@@ -562,13 +628,6 @@ namespace Engine
 					vkFreeMemory(m_device, m_depthAttachmentResource.memory, nullptr);
 					m_depthAttachmentResource.memory = VK_NULL_HANDLE;
 				}
-				//destroy sampler
-				if (m_sampler != VK_NULL_HANDLE)
-				{
-					vkDestroySampler(m_device, m_sampler, nullptr);
-					m_sampler = VK_NULL_HANDLE;
-				}
-				m_attachmentResources.clear();
 			}
 
 			void VulkanRenderPass::CreateDepthAttachment(const RenderPassAttachment& a_attachment)
@@ -634,7 +693,7 @@ namespace Engine
 				}
 			}
 
-			void VulkanRenderPass::CreateAttachment(const RenderPassAttachment& a_attachment, uint32_t i)
+			void VulkanRenderPass::CreateAttachment(const RenderPassAttachment& a_attachment, uint32_t a_index)
 			{
 				VkImageCreateInfo t_imageInfo = {};
 				t_imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
@@ -657,25 +716,25 @@ namespace Engine
 				
 
 				// Create image
-				VK_CHECK(vkCreateImage(m_device, &t_imageInfo, nullptr, &m_attachmentResources[i].image), "Failed to create attachment image");
+				VK_CHECK(vkCreateImage(m_device, &t_imageInfo, nullptr, &m_attachmentResources[a_index].image), "Failed to create attachment image");
 
 				// Allocate memory
 				VkMemoryRequirements t_memRequirements;
-				vkGetImageMemoryRequirements(m_device, m_attachmentResources[i].image, &t_memRequirements);
+				vkGetImageMemoryRequirements(m_device, m_attachmentResources[a_index].image, &t_memRequirements);
 
 				VkMemoryAllocateInfo t_allocInfo = {};
 				t_allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
 				t_allocInfo.allocationSize = t_memRequirements.size;
 				t_allocInfo.memoryTypeIndex = VulkanBuffer::FindMemoryType(t_memRequirements.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, m_renderer->GetPhysicalDevice()->CastVulkan()->GetVkPhysicalDevice());
 
-				VK_CHECK(vkAllocateMemory(m_device, &t_allocInfo, nullptr, &m_attachmentResources[i].memory), "Failed to allocate image memory");
+				VK_CHECK(vkAllocateMemory(m_device, &t_allocInfo, nullptr, &m_attachmentResources[a_index].memory), "Failed to allocate image memory");
 
-				vkBindImageMemory(m_device, m_attachmentResources[i].image, m_attachmentResources[i].memory, 0);
+				vkBindImageMemory(m_device, m_attachmentResources[a_index].image, m_attachmentResources[a_index].memory, 0);
 
 				// Create image view
 				VkImageViewCreateInfo t_viewInfo = {};
 				t_viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-				t_viewInfo.image = m_attachmentResources[i].image;
+				t_viewInfo.image = m_attachmentResources[a_index].image;
 				t_viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
 				t_viewInfo.format = a_attachment.format;
 				t_viewInfo.subresourceRange.aspectMask = a_attachment.aspectMask;
@@ -684,7 +743,7 @@ namespace Engine
 				t_viewInfo.subresourceRange.baseArrayLayer = 0;
 				t_viewInfo.subresourceRange.layerCount = 1;
 
-				VK_CHECK(vkCreateImageView(m_device, &t_viewInfo, nullptr, &m_attachmentResources[i].view), "Failed to create image view")
+				VK_CHECK(vkCreateImageView(m_device, &t_viewInfo, nullptr, &m_attachmentResources[a_index].view), "Failed to create image view")
 
 				
 			}

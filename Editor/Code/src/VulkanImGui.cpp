@@ -62,6 +62,14 @@ namespace Editor::EditorLayer::Ui
 		VkAllocationCallbacks* g_Allocator = nullptr;
 
 		SetupRenderPasses();
+		VulkanSwapchain* t_swapChain = a_renderer->GetSwapChain()->CastVulkan();
+		t_swapChain->AddResizeCallback(
+			[this](VkExtent2D a_extent)
+			{
+				this->RecreateSceneImageDescriptorSets(a_extent);
+			}
+		);
+
 		CreateDescriptorPool(g_Device);
 
 		IMGUI_CHECKVERSION();
@@ -246,8 +254,8 @@ namespace Editor::EditorLayer::Ui
 		t_dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
 
 		t_config.dependencies.push_back(t_dependency);
-		t_config.useSwapChainFramebuffers = false;
-		t_config.createOwnFramebuffers = false;
+		t_config.useSwapChainFramebuffers = true;
+		t_config.createOwnFramebuffers = true;
 		t_config.dependencyImageLayoutOverride = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 
 		m_imGuiViewportRenderPass->Create(t_config);
@@ -267,8 +275,13 @@ namespace Editor::EditorLayer::Ui
 			t_imageViews2.push_back({t_imageView});
 		}
 		m_imGuiViewportRenderPass->CreateFramebuffers(t_imageViews2);
+
+		
+
 		VulkanRenderPassManager* t_manager = m_renderer->GetRenderPass()->CastVulkan();
 		t_manager->AddRenderPass(m_imGuiViewportRenderPass);
+
+
 	}
 
 	void VulkanImGui::NewFrame()
@@ -317,5 +330,15 @@ namespace Editor::EditorLayer::Ui
 		m_dset.resize(t_attachmentResources.size());
 		for (uint32_t i = 0; i < t_attachmentResources.size(); i++)
 			m_dset[i] = ImGui_ImplVulkan_AddTexture(m_imGuiRenderPass->GetSampler(), t_attachmentResources[i].view, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+	}
+
+	void VulkanImGui::RecreateSceneImageDescriptorSets(VkExtent2D a_extent)
+	{
+		//cleanup old descriptor sets
+		for (VkDescriptorSet& dset : m_dset)
+		{
+			ImGui_ImplVulkan_RemoveTexture(dset);
+		}
+		CreateSceneImageDescriptorSets();
 	}
 }

@@ -1,6 +1,8 @@
 #ifndef IVULKANSWAPCHAIN_H
 #define IVULKANSWAPCHAIN_H
 
+#include <functional>
+
 #include "Core/Interfaces/ISwapChain.h"
 #include  "Core/Interfaces/IRenderPass.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanUtils.h"
@@ -47,6 +49,15 @@ namespace Engine
 
 				ENGINE_API void DrawFrame(Window::IWindow* a_window, RHI::ILogicalDevice* a_logicalDevice, RHI::ICommandPool* a_commandPool, RHI::ISurface* a_surface, RHI::IPhysicalDevice* a_physicalDevice, RHI::IRenderPass* a_renderPass, const std::vector<Core::RHI::IRenderObject*>& a_renderObjects, const std::vector<Core::RHI::IBuffer*>& a_vertexBuffers, const std::vector<Core::RHI::IBuffer*>& a_indexBuffers, const std::vector<uint32_t>& a_nbIndices, const GamePlay::Camera* a_camera) override;
 
+				ENGINE_API void AddResizeCallback(const std::function<void(VkExtent2D a_extent)>& a_callback) { m_resizeCallback.push_back(a_callback); }
+
+				ENGINE_API void CallResizeCallbacks(const VkExtent2D a_extent) const
+				{
+					for (const auto& t_callback : m_resizeCallback)
+					{
+						t_callback(a_extent);
+					}
+				}
 			private:
 				VkSwapchainKHR m_swapChain = VK_NULL_HANDLE;
 
@@ -80,6 +91,7 @@ namespace Engine
 
 				ENGINE_API static VkImageView CreateImageView(VkImage a_image, VkFormat a_format, VkImageAspectFlags a_aspectFlags, VkDevice a_device);
 
+				std::vector<std::function<void(VkExtent2D a_extent)>> m_resizeCallback;
 				void RecreateSwapChain(Window::IWindow* a_window, RHI::ILogicalDevice* a_logicalDevice, RHI::ISurface* a_surface, RHI::IPhysicalDevice* a_physicalDevice, RHI::IRenderPass* a_renderPass, RHI::ICommandPool* a_commandPool);
 
 			};

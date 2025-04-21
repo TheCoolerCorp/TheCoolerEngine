@@ -44,6 +44,7 @@ namespace Editor::EditorLayer::Ui
 
 		void CreateDescriptorPool(VkDevice a_device);
 		void CreateSceneImageDescriptorSets();
+		void RecreateSceneImageDescriptorSets(VkExtent2D a_extent);
 	private:
 		Engine::Core::GraphicsAPI::VulkanRenderPass* m_imGuiRenderPass = nullptr;
 		Engine::Core::GraphicsAPI::VulkanRenderPass* m_imGuiViewportRenderPass = nullptr;
