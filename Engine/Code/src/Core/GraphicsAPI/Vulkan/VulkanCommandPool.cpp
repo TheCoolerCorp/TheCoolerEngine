@@ -54,11 +54,15 @@ namespace Engine
 
 			void VulkanCommandPool::CreateCommandBuffer(RHI::ILogicalDevice* a_logicalDevice, RHI::ISwapChain* a_swapChain, RHI::IRenderPass* a_renderPass, RHI::IGraphicPipeline* a_graphicPipeline)
 			{
+
 				const uint32_t t_maxFrames = a_swapChain->CastVulkan()->GetMaxFrame();
+				// USELESS FOR PIPELINE AND RENDERPASS
 				VkRenderPass t_renderPass = a_renderPass->CastVulkan()->GetRenderPass();
 				VulkanGraphicPipeline* t_pipeline = a_graphicPipeline->CastVulkan();
 				std::vector<std::tuple<VkCommandBuffer, VkRenderPass, VulkanGraphicPipeline*>> t_commandBuffers = std::vector<std::tuple<VkCommandBuffer, VkRenderPass, VulkanGraphicPipeline*>>(t_maxFrames);
 
+
+				m_commandBuffers.resize(t_maxFrames);
 				for (uint32_t i = 0; i < t_maxFrames; ++i)
 				{
 					VkCommandBuffer t_commandBuffer;
@@ -72,12 +76,22 @@ namespace Engine
 
 					VK_CHECK(vkAllocateCommandBuffers(t_device, &t_allocInfo, &t_commandBuffer), "failed to allocate command buffers!");
 
+					m_commandBuffers[i] = t_commandBuffer;
 					t_commandBuffers[i] = { t_commandBuffer, t_renderPass, t_pipeline };
 				}
-
-				mCommandBuffers.push_back(t_commandBuffers);
 			}
 
+			ENGINE_API void VulkanCommandPool::BeginCommand()
+			{
+
+				for (int i = 0; i < m_commandBuffers.size(); ++i)
+				{
+					VkCommandBufferBeginInfo t_beginInfo{};
+					t_beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+
+					VK_CHECK(vkBeginCommandBuffer(m_commandBuffers[i], &t_beginInfo), "failed to begin recording command buffer!");
+				}
+			}
 
 			void VulkanCommandPool::RecordCommandBuffer(const VkCommandBuffer a_commandBuffer, const uint32_t a_imageIndex, const VkRenderPass a_renderPass, VulkanSwapchain* a_swapChain, const VulkanGraphicPipeline* a_graphicPipeline, const std::vector<Core::RHI::IObjectDescriptor*>& a_renderObjects, const std::vector<Core::RHI::IBuffer*>& a_vertexBuffers, const std::vector<Core::RHI::IBuffer*>& a_indexBuffers, const std::vector<uint32_t>& a_nbIndices, const GamePlay::Camera* a_camera)
 			{

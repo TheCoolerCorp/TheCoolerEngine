@@ -17,6 +17,7 @@ namespace Engine
 			class ISwapChain;
 			class ILogicalDevice;
 			class IPhysicalDevice;
+			class ICommandPool;
 
 			class IRenderPass
 			{
@@ -26,6 +27,9 @@ namespace Engine
 
 				ENGINE_API virtual void Create(ISwapChain* a_swapChain, IPhysicalDevice* a_physicalDevice, ILogicalDevice* a_logicalDevice) = 0;
 				ENGINE_API virtual void Destroy(ILogicalDevice* a_logicalDevice) = 0;
+
+				ENGINE_API virtual void BeginRenderPass(ICommandPool* a_commandPool, ISwapChain* a_swapChain) = 0;
+				ENGINE_API virtual void EndRenderPass(ICommandPool* a_commandPool) = 0;
 			};
 		}
 	}

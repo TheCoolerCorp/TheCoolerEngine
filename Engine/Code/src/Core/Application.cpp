@@ -35,7 +35,7 @@ namespace Engine
 
 				m_renderer->GetSwapChain()->BeginFrame(m_renderer->GetLogicalDevice(), &t_imageIndex);
 
-				// Begin Command
+				m_renderer->GetCommandPool()->BeginCommand();
 
 				// Begin renderpass
 				// bind pipeline unlit

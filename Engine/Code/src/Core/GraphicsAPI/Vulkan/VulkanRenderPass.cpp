@@ -2,7 +2,7 @@
 #include "Core/GraphicsAPI/Vulkan/VulkanSwapChain.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanLogicalDevice.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanPhysicalDevice.h"
-
+#include "Core/GraphicsAPI/Vulkan/VulkanCommandPool.h"
 
 namespace Engine
 {
@@ -90,6 +90,30 @@ namespace Engine
 			{
                 vkDestroyRenderPass(a_logicalDevice->CastVulkan()->GetVkDevice(), m_renderPass, nullptr);
 			}
+
+            void VulkanRenderPass::BeginRenderPass(RHI::ICommandPool* a_commandPool, RHI::ISwapChain* a_swapChain)
+            {
+                /*VkRenderPassBeginInfo t_renderPassInfo{};
+                t_renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+                t_renderPassInfo.renderPass = m_renderPass;
+                t_renderPassInfo.framebuffer = a_swapChain->CastVulkan()->GetFramebuffers()[a_imageIndex];
+                t_renderPassInfo.renderArea.offset = { .x = 0, .y = 0 };
+                t_renderPassInfo.renderArea.extent = a_swapChain->CastVulkan()->GetExtent2D();
+
+                std::array<VkClearValue, 2> t_clearValues{};
+                t_clearValues[0].color = { {0.467f, 0.71f, 1.f, 0.996f} };
+                t_clearValues[1].depthStencil = { .depth = 1.0f, .stencil = 0 };
+
+                t_renderPassInfo.clearValueCount = static_cast<uint32_t>(t_clearValues.size());
+                t_renderPassInfo.pClearValues = t_clearValues.data();
+
+                vkCmdBeginRenderPass(a_commandBuffer, &t_renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);*/
+            }
+
+            void VulkanRenderPass::EndRenderPass(RHI::ICommandPool* a_commandPool)
+            {
+
+            }
 		}
 	}
 }

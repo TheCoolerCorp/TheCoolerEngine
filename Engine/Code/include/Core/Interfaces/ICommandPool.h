@@ -31,6 +31,7 @@ namespace Engine
 				ENGINE_API virtual void Create(IPhysicalDevice* a_physicalDevice, ISurface* a_surface, ILogicalDevice* a_logicalDevice) = 0;
 				ENGINE_API virtual void Destroy(ILogicalDevice* a_logicalDevice) = 0;
 				ENGINE_API virtual void CreateCommandBuffer(ILogicalDevice* a_logicalDevice, ISwapChain* a_swapChain, IRenderPass* a_renderPass, IGraphicPipeline* a_graphicPipeline) = 0;
+				ENGINE_API virtual void BeginCommand() = 0;
 				ENGINE_API virtual GraphicsAPI::VulkanCommandPool* CastVulkan() { LOG_ERROR("Try to return wrong cast type : VulkanCommandPool!"); return nullptr; }
 			};
 		}
