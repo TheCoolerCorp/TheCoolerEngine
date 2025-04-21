@@ -39,13 +39,14 @@ namespace Engine
 			t_texture->Load(a_renderer);
 
 			GameObject* t_object = new GameObject();
-			t_object->GetComponent<TransformComponent>()->Set(Math::vec3(0.f), Math::vec3(Math::ToRadians(30.f), 0.f, 0.f), Math::vec3(1.f));
+			t_object->GetComponent<TransformComponent>()->Set(Math::vec3(0.f), Math::vec3(Math::ToRadians(0.f), 0.f, 0.f), Math::vec3(1.f));
 			t_object->AddComponent<MeshComponent>();
 			t_object->AddComponent<RigidBodyComponent>();
 			RigidBodyComponent* t_rigidBodyComponent = t_object->GetComponent<RigidBodyComponent>();
 			if (t_rigidBodyComponent)
 			{
-				t_rigidBodyComponent->CreateBoxRigidBody(Physics::BodyType::STATIC, Physics::CollisionLayer::NON_MOVING, Math::vec3(0.f), Math::vec3(2.f), Math::quat(Math::vec3(Math::ToRadians(0.f), 0.f, 0.f)));
+				t_rigidBodyComponent->CreateBoxRigidBody(Physics::BodyType::STATIC, Physics::CollisionLayer::NON_MOVING, Math::vec3(0.f, 0.f, 0.f), Math::vec3(2.f), Math::quat(Math::vec3(Math::ToRadians(0.f), 0.f, 0.f)), *t_object->GetComponent<TransformComponent>()->GetTransform());
+				t_rigidBodyComponent->SetDebug(true);
 			}
 			t_object->AddComponent<MeshComponent>(true);
 			t_object->GetComponent<MeshComponent>(true)->SetMesh(t_cubeCollider);
@@ -62,13 +63,14 @@ namespace Engine
 			t_texture2->Load(a_renderer);
 
 			GameObject* t_object2 = new GameObject();
-			t_object2->GetComponent<TransformComponent>()->Set(Math::vec3(0.f, 10.f, 0.f), Math::vec3(0.f, 0.f, 0.f), Math::vec3(0.05f));
+			t_object2->GetComponent<TransformComponent>()->Set(Math::vec3(0.f, 20.f, 0.f), Math::vec3(0.f, 0.f, 0.f), Math::vec3(0.2f));
 			t_object2->AddComponent<MeshComponent>();
 			t_object2->AddComponent<RigidBodyComponent>();
 			RigidBodyComponent* t_rigidBodyComponent2 = t_object2->GetComponent<RigidBodyComponent>();
 			if (t_rigidBodyComponent2)
 			{
-				t_rigidBodyComponent2->CreateCapsuleRigidBody(Physics::BodyType::DYNAMIC, Physics::CollisionLayer::MOVING, Math::vec3(0.f, 10.f, 0.f), 0.2f, 0.2f, Math::quat());
+				t_rigidBodyComponent2->CreateCapsuleRigidBody(Physics::BodyType::DYNAMIC, Physics::CollisionLayer::MOVING, Math::vec3(0.f, 2.f, 0.f), 1.f, 1.f, Math::quat(), *t_object2->GetComponent<TransformComponent>()->GetTransform());
+				t_rigidBodyComponent2->SetDebug(true);
 			}
 			t_object2->AddComponent<MeshComponent>(true);
 			t_object2->GetComponent<MeshComponent>(true)->SetMesh(t_capsuleCollider);
@@ -127,8 +129,16 @@ namespace Engine
 				const int t_colliderMeshId = t_obj->GetComponentID<MeshComponent>(true);
 				if (std::cmp_not_equal(t_colliderMeshId, -1))
 				{
-					Math::mat4 t_matrix = t_obj->GetColliderMat();
-					t_matrix.Transpose();
+					Math::mat4 t_matrix;
+					if (t_obj->GetComponent<RigidBodyComponent>()->GetDebug())
+					{
+						t_matrix = t_obj->GetColliderMat();
+						t_matrix.Transpose();
+					}
+					else
+					{
+						t_matrix = Math::mat4(false);
+					}
 					t_syncro.emplace_back(t_colliderMeshId, t_matrix);
 				}
 			}

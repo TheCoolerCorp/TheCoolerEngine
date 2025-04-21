@@ -40,24 +40,27 @@ namespace Engine
 		void GameObject::UpdateColliderMat()
 		{
 			const Physics::ColliderType t_colliderType = GetComponent<RigidBodyComponent>()->GetBodyType();
+			GetComponent<TransformComponent>()->GetTransform()->SetGlobalPositionFromMatrix();
+			const Math::vec3 t_pos = GetComponent<RigidBodyComponent>()->GetPos() + GetComponent<TransformComponent>()->GetTransform()->GetGlobalPosition();
+			const Math::quat t_rotation = GetComponent<RigidBodyComponent>()->GetRot();
 
 			switch (t_colliderType)
 			{
 			case Physics::ColliderType::BOX:
-				m_colliderMat = GetComponent<TransformComponent>()->GetTransform()->GetTransformMatrix() * Math::mat4::TRS(Math::vec3(0.f), Math::quat(), GetComponent<RigidBodyComponent>()->GetBody().GetScale());
+				m_colliderMat = Math::mat4::TRS(t_pos, t_rotation, GetComponent<RigidBodyComponent>()->GetBody().GetScale());
 				break;
 			case Physics::ColliderType::SPHERE:
 				{
 					const Math::vec3 t_sphereScale = Math::vec3(GetComponent<RigidBodyComponent>()->GetBody().GetRadius());
-					m_colliderMat = GetComponent<TransformComponent>()->GetTransform()->GetTransformMatrix() * Math::mat4::TRS(Math::vec3(0.f), Math::quat(), t_sphereScale);
+					m_colliderMat = Math::mat4::TRS(t_pos, t_rotation, t_sphereScale);
 				}
 				break;
 			case Physics::ColliderType::CAPSULE:
 				{
-					const float t_xZScale = GetComponent<RigidBodyComponent>()->GetBody().GetRadius() * 20;
-					const float t_yScale = GetComponent<RigidBodyComponent>()->GetBody().GetHalfHeight() * 20;
+					const float t_xZScale = GetComponent<RigidBodyComponent>()->GetBody().GetRadius();
+					const float t_yScale = GetComponent<RigidBodyComponent>()->GetBody().GetHalfHeight();
 					const Math::vec3 t_capsuleScale = Math::vec3(t_xZScale, t_yScale, t_xZScale);
-					m_colliderMat = GetComponent<TransformComponent>()->GetTransform()->GetTransformMatrix() * Math::mat4::TRS(Math::vec3(0.f), Math::quat(), t_capsuleScale);
+					m_colliderMat = Math::mat4::TRS(t_pos, t_rotation, t_capsuleScale);
 				}
 				break;
 			}

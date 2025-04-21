@@ -21,7 +21,6 @@ namespace Engine
 
 		void TransformComponent::Set(Math::vec3 a_pos, Math::quat a_rot, Math::vec3 a_scale)
 		{
-			bool t_needUpdate = false;
 			if (m_transform->GetPosition() != a_pos)
 			{
 				m_transform->SetPosition(a_pos);

@@ -35,8 +35,8 @@ namespace Engine
 			t_bodyInterface->AddBody(m_body->GetID(), t_activation);
 		}
 
-		void RigidBody::CreateSphereBody(BodyType a_type, CollisionLayer a_layer, Math::vec3 a_position, float a_radius,
-			Math::quat a_rotation, bool a_enable)
+		void RigidBody::CreateSphereBody(const BodyType a_type, const CollisionLayer a_layer, const Math::vec3 a_position, const float a_radius,
+			const Math::quat a_rotation, const bool a_enable)
 		{
 			m_radius = a_radius;
 			m_type = ColliderType::SPHERE;
@@ -55,8 +55,8 @@ namespace Engine
 			t_bodyInterface->AddBody(m_body->GetID(), t_activation);
 		}
 
-		void RigidBody::CreateCapsuleBody(BodyType a_type, CollisionLayer a_layer, Math::vec3 a_position,
-			float a_halfHeight, float a_radius, Math::quat a_rotation, bool a_enable)
+		void RigidBody::CreateCapsuleBody(const BodyType a_type, const CollisionLayer a_layer, const Math::vec3 a_position,
+			const float a_halfHeight, const float a_radius, const Math::quat a_rotation, const bool a_enable)
 		{
 			m_halfHeight = a_halfHeight;
 			m_radius = a_radius;
@@ -71,7 +71,7 @@ namespace Engine
 			const JPH::ObjectLayer t_layer = CollisionLayerToJPHLayer(a_layer);
 			const JPH::EActivation t_activation = a_enable ? JPH::EActivation::Activate : JPH::EActivation::DontActivate;
 
-			const JPH::BodyCreationSettings t_bodySettings(new JPH::CapsuleShape(m_halfHeight, a_radius), t_position, t_rotation, t_motionType, t_layer);
+			const JPH::BodyCreationSettings t_bodySettings(new JPH::CapsuleShape(m_halfHeight, m_radius), t_position, t_rotation, t_motionType, t_layer);
 			m_body = t_bodyInterface->CreateBody(t_bodySettings);
 			t_bodyInterface->AddBody(m_body->GetID(), t_activation);
 		}
