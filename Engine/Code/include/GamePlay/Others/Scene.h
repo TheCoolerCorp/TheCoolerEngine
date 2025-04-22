@@ -23,8 +23,10 @@ namespace Engine
 			ENGINE_API void Draw(Core::Renderer* a_renderer, Core::Window::IWindow* a_window, Camera* a_camera);
 			ENGINE_API void Destroy(Core::Renderer* a_renderer);
 
+			ENGINE_API void AddGameObject(GameObject* a_object, uint32_t a_parentId = -1, std::vector<uint32_t> a_childIds = {});
 		private:
 			std::vector<GameObject*> m_objs;
+			std::vector<int> m_availableIds;
 			TransformSystem* m_transformSystem = nullptr;
 			MeshRendererSystem* m_meshRendererSystem = nullptr;
 			Resource::ResourceManager* m_resourceManager = nullptr;

@@ -98,12 +98,13 @@ namespace Engine
 					ComponentClass::RemoveComponent(t_id);
 				}
 
+				void SetName(const std::string& a_name) { m_name = a_name; }
 				void SetParent(uint32_t a_id);
 				void AddChild(uint32_t a_id);
 				void RemoveChild(uint32_t a_id);
 				void ClearChildren();
 
-				[[nodiscard]] uint32_t GetParentID() const { return m_parentId; }
+				[[nodiscard]] uint32_t GetParentId() const { return m_parentId; }
 				[[nodiscard]] std::vector<uint32_t> GetChildrenIDs() const { return m_childrenIds; }
 				[[nodiscard]] std::string GetName() const { return m_name; }
 
@@ -111,7 +112,9 @@ namespace Engine
 				std::unordered_map<ComponentType, uint32_t> m_compsId = std::unordered_map<ComponentType, uint32_t>(0);
 
 				std::string m_name;
+				//id of the parent gameObject
 				uint32_t m_parentId = -1;
+				//id of the child gameObjects
 				std::vector<uint32_t> m_childrenIds{};
 
 			};

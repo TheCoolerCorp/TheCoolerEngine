@@ -108,5 +108,22 @@ namespace Engine
 			}
 			m_objs.clear();
 		}
+
+		void Scene::AddGameObject(GameObject* a_object, uint32_t a_parentId, std::vector<uint32_t> a_childIds)
+		{
+			if (m_availableIds.empty())
+			{
+				m_objs.push_back(a_object);
+				if (a_parentId!=-1)
+					a_object->SetParent(a_parentId);
+				if (!a_childIds.empty())
+				{
+					for (uint32_t a_id : a_childIds)
+					{
+						a_object->AddChild(a_id);
+					}
+				}
+			}
+		}
 	}
 }
