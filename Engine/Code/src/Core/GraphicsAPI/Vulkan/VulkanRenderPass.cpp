@@ -91,28 +91,40 @@ namespace Engine
                 vkDestroyRenderPass(a_logicalDevice->CastVulkan()->GetVkDevice(), m_renderPass, nullptr);
 			}
 
-            void VulkanRenderPass::BeginRenderPass(RHI::ICommandPool* a_commandPool, RHI::ISwapChain* a_swapChain)
+            void VulkanRenderPass::BeginRenderPass(RHI::ICommandPool* a_commandPool, uint32_t a_commandBufferIndex, RHI::ISwapChain* a_swapChain, uint32_t a_imageIndex)
             {
-                /*VkRenderPassBeginInfo t_renderPassInfo{};
-                t_renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-                t_renderPassInfo.renderPass = m_renderPass;
-                t_renderPassInfo.framebuffer = a_swapChain->CastVulkan()->GetFramebuffers()[a_imageIndex];
-                t_renderPassInfo.renderArea.offset = { .x = 0, .y = 0 };
-                t_renderPassInfo.renderArea.extent = a_swapChain->CastVulkan()->GetExtent2D();
+                const VulkanCommandPool* t_commandPool = a_commandPool->CastVulkan();
+                const VulkanSwapchain* t_swapchain = a_swapChain->CastVulkan();
 
-                std::array<VkClearValue, 2> t_clearValues{};
-                t_clearValues[0].color = { {0.467f, 0.71f, 1.f, 0.996f} };
-                t_clearValues[1].depthStencil = { .depth = 1.0f, .stencil = 0 };
+                if (!t_commandPool->m_commandBuffers[a_commandBufferIndex].empty())
+                {
+                    VkRenderPassBeginInfo t_renderPassInfo{};
+                    t_renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+                    t_renderPassInfo.renderPass = m_renderPass;
+                    t_renderPassInfo.framebuffer = t_swapchain->GetFramebuffers()[a_imageIndex];
+                    t_renderPassInfo.renderArea.offset = { .x = 0, .y = 0 };
+                    t_renderPassInfo.renderArea.extent = t_swapchain->GetExtent2D();
 
-                t_renderPassInfo.clearValueCount = static_cast<uint32_t>(t_clearValues.size());
-                t_renderPassInfo.pClearValues = t_clearValues.data();
+                    std::array<VkClearValue, 2> t_clearValues{};
+                    t_clearValues[0].color = { {0.467f, 0.71f, 1.f, 0.996f} };
+                    t_clearValues[1].depthStencil = { .depth = 1.0f, .stencil = 0 };
 
-                vkCmdBeginRenderPass(a_commandBuffer, &t_renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);*/
+                    t_renderPassInfo.clearValueCount = static_cast<uint32_t>(t_clearValues.size());
+                    t_renderPassInfo.pClearValues = t_clearValues.data();
+
+                    vkCmdBeginRenderPass(t_commandPool->m_commandBuffers[a_commandBufferIndex][t_swapchain->GetCurrentFrame()], &t_renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+                }
+
             }
 
-            void VulkanRenderPass::EndRenderPass(RHI::ICommandPool* a_commandPool)
+            void VulkanRenderPass::EndRenderPass(RHI::ICommandPool* a_commandPool, uint32_t a_commandBufferIndex, uint32_t a_currentFrame)
             {
+                const VulkanCommandPool* t_commandPool = a_commandPool->CastVulkan();
 
+                if (!t_commandPool->m_commandBuffers[a_commandBufferIndex].empty())
+                {
+                    vkCmdEndRenderPass(t_commandPool->m_commandBuffers[a_commandBufferIndex][a_currentFrame]);
+                }
             }
 		}
 	}

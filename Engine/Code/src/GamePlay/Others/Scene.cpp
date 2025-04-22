@@ -24,7 +24,7 @@ namespace Engine
 				Math::vec3(0.f, 1.f, 3.f), Math::ToRadians(70.f),
 				static_cast<float>(a_width) / static_cast<float>(a_height), 0.1f, 100.f, 10.f, 2.f);
 			m_mainCamera->Create(a_renderer);
-
+			
 			#pragma region ObjectTest
 			Ref<Resource::Mesh> t_mesh = m_resourceManager->CreateResource<Resource::Mesh>("Assets/Meshes/viking_room.obj");
 			Ref<Resource::Texture> t_texture = m_resourceManager->CreateResource<Resource::Texture>("Assets/Textures/viking_room.png");
@@ -73,8 +73,8 @@ namespace Engine
 			m_objs[1]->GetComponent<TransformComponent>()->SetParent(m_objs[0]->GetComponentID<TransformComponent>());
 			m_objs[2]->GetComponent<TransformComponent>()->SetParent(m_objs[1]->GetComponentID<TransformComponent>());
 			m_objs[2]->GetComponent<TransformComponent>()->GetTransform()->Rotate(Math::vec3(0.f, 0.05f, 0.f));
-			m_transformSystem->Update();
 
+			m_transformSystem->Update();
 
 			m_mainCamera->Update(a_renderer, a_inputHandler, a_window, a_deltatime);
 			std::vector<std::pair<int, Math::mat4>> syncro;
@@ -97,6 +97,53 @@ namespace Engine
 		{
 			m_meshRendererSystem->Render(a_renderer, a_window, m_mainCamera);
 		}
+
+		std::vector<Core::RHI::IBuffer*> Scene::GetVertexBuffers()
+		{
+			std::vector<Core::RHI::IBuffer*> t_vertexBuffers;
+
+			for (int i = 0; i < m_meshRendererSystem->GetComponents().size(); ++i)
+			{
+				t_vertexBuffers.push_back(m_meshRendererSystem->GetComponents().at(i)->GetMesh()->GetVertexBuffer());
+			}
+			return t_vertexBuffers;
+		}
+
+		std::vector<Core::RHI::IBuffer*> Scene::GetIndexBuffers()
+		{
+			std::vector<Core::RHI::IBuffer*> t_indexBuffers;
+
+			for (int i = 0; i < m_meshRendererSystem->GetComponents().size(); ++i)
+			{
+				t_indexBuffers.push_back(m_meshRendererSystem->GetComponents().at(i)->GetMesh()->GetIndexBuffer());
+
+			}
+			return t_indexBuffers;
+		}
+
+		std::vector<uint32_t> Scene::GetNBIndices()
+		{
+			std::vector<uint32_t> t_nbIndices;
+
+			for (int i = 0; i < m_meshRendererSystem->GetComponents().size(); ++i)
+			{
+				t_nbIndices.push_back(m_meshRendererSystem->GetComponents().at(i)->GetMesh()->GetNbIndices());
+
+			}
+			return t_nbIndices;
+		}
+
+		std::vector<Core::RHI::IObjectDescriptor*> Scene::GetDescriptors()
+		{
+			std::vector<Core::RHI::IObjectDescriptor*> t_objectDescriptors;
+
+			for (int i = 0; i < m_meshRendererSystem->GetDescriptors().size(); ++i)
+			{
+				t_objectDescriptors.push_back(m_meshRendererSystem->GetDescriptors().at(i));
+			}
+			return t_objectDescriptors;
+		}
+
 
 		void Scene::Destroy(Core::Renderer* a_renderer)
 		{

@@ -24,6 +24,12 @@ namespace Engine
 			ENGINE_API void Draw(Core::Renderer* a_renderer, Core::Window::IWindow* a_window);
 			ENGINE_API void Destroy(Core::Renderer* a_renderer);
 
+			ENGINE_API std::vector<Core::RHI::IBuffer*> GetVertexBuffers();
+			ENGINE_API std::vector<Core::RHI::IBuffer*> GetIndexBuffers();
+			ENGINE_API std::vector<uint32_t> GetNBIndices();
+			ENGINE_API std::vector<Core::RHI::IObjectDescriptor*> GetDescriptors();
+			ENGINE_API Core::RHI::IObjectDescriptor* GetCameraDescriptor() { return m_mainCamera->GetDescriptor(); }
+			
 		private:
 			std::vector<GamePlay::GameObject*> m_objs;
 			Camera* m_mainCamera;

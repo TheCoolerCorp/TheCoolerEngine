@@ -30,28 +30,59 @@ namespace Engine
 				UpdateDeltaTime();
 				m_currentScene->Update(m_renderer, m_mainWindow, m_inputHandler, m_deltaTime);
 
+				/*
+				 * Basic begin frame to acquired the next image index in the swapchain to draw in for presentation on screen
+				 */
 				uint32_t t_imageIndex = 0;
-				// Get Data (buffer, descriptors, etc...)
-
 				m_renderer->GetSwapChain()->BeginFrame(m_renderer->GetLogicalDevice(), &t_imageIndex);
 
-				m_renderer->GetCommandPool()->BeginCommand();
-
-				// Begin renderpass
-				// bind pipeline unlit
-
-				// Record command Buffer
-
-				// End renderpass
-
-				// End Command 
-
-				// SwapChain End Frame (submit, etc..)
+				/*
+				 * Choose the set of commandBuffers to begin and the index of this set of commandBuffers to begin
+				 */
+				m_renderer->GetCommandPool()->BeginCommand(0,m_renderer->GetSwapChain()->GetCurrentFrame());
 
 
+				/*
+				 * Begin the renderpass
+				 */
+				m_renderer->GetRenderPass()->BeginRenderPass(m_renderer->GetCommandPool(), 0,  m_renderer->GetSwapChain(), t_imageIndex);
 
-				m_currentScene->Draw(m_renderer, m_mainWindow);
 
+				/*
+				 * Bind the pipeline to use
+				 */
+				m_renderer->GetPipeline()->Bind(m_renderer->GetCommandPool(), 0, m_renderer->GetSwapChain());
+
+
+				/*
+				* Bind decriptors only (for special case like lights, cubemap, camera, etc...)
+				*/
+				m_renderer->GetPipeline()->BindSingleDescriptors(m_renderer->GetCommandPool(), 0, m_renderer->GetSwapChain()->GetCurrentFrame(),
+												t_imageIndex, {m_currentScene->GetCameraDescriptor()});
+
+
+				/*
+				* Bind decriptors and sent buffer
+				*/
+				m_renderer->GetPipeline()->BindObjects(m_renderer->GetCommandPool(), 0, m_renderer->GetSwapChain()->GetCurrentFrame(), 
+												t_imageIndex, m_currentScene->GetIndexBuffers(), m_currentScene->GetVertexBuffers(), m_currentScene->GetNBIndices(), m_currentScene->GetDescriptors());
+
+				/*
+				 * End the renderpass 
+				 */
+				m_renderer->GetRenderPass()->EndRenderPass(m_renderer->GetCommandPool(), 0, m_renderer->GetSwapChain()->GetCurrentFrame());
+
+
+				/*
+				 * Choose the set of commandBuffers to end and the index of this set of commandBuffers to end
+				 */ 
+				m_renderer->GetCommandPool()->EndCommand(0, m_renderer->GetSwapChain()->GetCurrentFrame());
+
+
+				/*
+				 * Basic end frame to submit data and present image
+				 */
+				m_renderer->GetSwapChain()->EndFrame(m_renderer->GetLogicalDevice(), m_renderer->GetCommandPool(), m_renderer->GetSurface(), m_renderer->GetPhysicalDevice(), m_renderer->GetRenderPass(), m_mainWindow, t_imageIndex);
 
 				m_mainWindow->PollEvents();
 			}

@@ -40,6 +40,13 @@ namespace Engine
 				ENGINE_API void Create(RHI::ILogicalDevice* a_logicalDevice, RHI::IRenderPass* a_renderPass, RHI::PipelineType a_type, std::array<RHI::IShader*, 2> a_vertFragShaders, std::vector<RHI::IShader*> a_additionalShaders = {}) override;
 				ENGINE_API void Destroy(RHI::ILogicalDevice* a_logicalDevice) override;
 
+				ENGINE_API void Bind(RHI::ICommandPool* a_commandPool, uint32_t a_commandBufferIndex, RHI::ISwapChain* a_swapChain) override;
+
+				ENGINE_API void BindObjects(RHI::ICommandPool* a_commandPool, uint32_t a_commandBufferIndex, uint32_t a_currentFrame, uint32_t  a_imageIndex, std::vector<RHI::IBuffer*> a_indexBuffers,
+											std::vector<RHI::IBuffer*> a_vertexBuffers, std::vector<uint32_t> a_indicesCount, std::vector<RHI::IObjectDescriptor*> a_objectsDescriptors) override;
+
+				ENGINE_API void BindSingleDescriptors(RHI::ICommandPool* a_commandPool, uint32_t a_commandBufferIndex, uint32_t a_currentFrame, uint32_t  a_imageIndex, std::vector<RHI::IObjectDescriptor*> a_objectsDescriptors) override;
+
 				ENGINE_API VkPipeline GetPipeline() const { return m_pipeline; }
 				ENGINE_API VkPipelineLayout GetLayout() const { return m_layout; }
 

@@ -36,6 +36,7 @@ namespace Engine
 
 
 				ENGINE_API std::vector<VkDescriptorSet> GetDescriptorSets() const { return m_sets; }
+				ENGINE_API RHI::DescriptorSetTarget GetType() { return m_type; }
 
 				ENGINE_API bool IsUpdated() override { return m_Updated; }
 			private:

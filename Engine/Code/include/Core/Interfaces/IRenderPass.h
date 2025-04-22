@@ -28,8 +28,8 @@ namespace Engine
 				ENGINE_API virtual void Create(ISwapChain* a_swapChain, IPhysicalDevice* a_physicalDevice, ILogicalDevice* a_logicalDevice) = 0;
 				ENGINE_API virtual void Destroy(ILogicalDevice* a_logicalDevice) = 0;
 
-				ENGINE_API virtual void BeginRenderPass(ICommandPool* a_commandPool, ISwapChain* a_swapChain) = 0;
-				ENGINE_API virtual void EndRenderPass(ICommandPool* a_commandPool) = 0;
+				ENGINE_API virtual void BeginRenderPass(RHI::ICommandPool* a_commandPool, uint32_t a_commandBufferIndex, RHI::ISwapChain* a_swapChain, uint32_t a_imageIndex) = 0;
+				ENGINE_API virtual void EndRenderPass(RHI::ICommandPool* a_commandPool, uint32_t a_commandBufferIndex, uint32_t a_currentFrame) = 0;
 			};
 		}
 	}

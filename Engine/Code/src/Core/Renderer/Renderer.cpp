@@ -60,7 +60,7 @@ namespace Engine
 			m_swapChain->CreateFramebuffers(m_logicalDevice, m_physicalDevice, m_renderPass, m_commandPool);
 
 
-			m_commandPool->CreateCommandBuffer(m_logicalDevice, m_swapChain, m_renderPass, m_graphicPipeline);
+			m_commandPool->CreateCommandBuffer(m_logicalDevice, m_swapChain->GetMaxFrame());
 
 			m_swapChain->CreateSyncObjects(m_logicalDevice);
 		}

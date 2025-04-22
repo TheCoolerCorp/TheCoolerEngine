@@ -41,7 +41,7 @@ namespace Engine
 				m_indexesCount.push_back(m_components.at(i)->GetMesh()->GetNbIndices());
 			}
 
-			a_renderer->GetSwapChain()->DrawFrame(a_window, a_renderer->GetLogicalDevice(), a_renderer->GetCommandPool(), a_renderer->GetSurface(), a_renderer->GetPhysicalDevice(), a_renderer->GetRenderPass(), m_renderDescriptors, m_vertexBuffers, m_indexesBuffers, m_indexesCount, a_camera);
+			//a_renderer->GetSwapChain()->DrawFrame(a_window, a_renderer->GetLogicalDevice(), a_renderer->GetCommandPool(), a_renderer->GetSurface(), a_renderer->GetPhysicalDevice(), a_renderer->GetRenderPass(), m_renderDescriptors, m_vertexBuffers, m_indexesBuffers, m_indexesCount, a_camera);
 		}
 
 		void MeshRendererSystem::Destroy(Core::Renderer* a_renderer)

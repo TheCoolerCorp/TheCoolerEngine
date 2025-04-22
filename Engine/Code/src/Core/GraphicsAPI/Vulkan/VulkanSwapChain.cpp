@@ -275,6 +275,59 @@ namespace Engine
 				vkResetFences(t_device, 1, &m_inFlightFences[m_currentFrame]);
 			}
 
+			void VulkanSwapchain::EndFrame(RHI::ILogicalDevice* a_logicalDevice, RHI::ICommandPool* a_commandPool, RHI::ISurface* a_surface, RHI::IPhysicalDevice* a_physicalDevice, RHI::IRenderPass* a_renderPass, Window::IWindow* a_window, uint32_t a_FrameBufferIndex)
+			{
+				std::vector<VkCommandBuffer> t_commandBuffers;
+
+				for (int i = 0; i < a_commandPool->CastVulkan()->m_commandBuffers.size(); ++i)
+				{
+					const VkCommandBuffer t_commandBuffer = a_commandPool->CastVulkan()->m_commandBuffers[i][m_currentFrame];
+					t_commandBuffers.push_back(t_commandBuffer);
+				}
+
+				VkSubmitInfo t_submitInfo{ VK_STRUCTURE_TYPE_SUBMIT_INFO };
+
+				const VkSemaphore t_waitSemaphores[] = { m_imageAvailableSemaphores[m_currentFrame] };
+				constexpr VkPipelineStageFlags t_waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
+				t_submitInfo.waitSemaphoreCount = 1;
+				t_submitInfo.pWaitSemaphores = t_waitSemaphores;
+				t_submitInfo.pWaitDstStageMask = t_waitStages;
+
+				t_submitInfo.commandBufferCount = static_cast<uint32_t>(t_commandBuffers.size());
+				t_submitInfo.pCommandBuffers = t_commandBuffers.data();
+
+				const VkSemaphore t_signalSemaphores[] = { m_renderFinishedSemaphores[m_currentFrame] };
+				t_submitInfo.signalSemaphoreCount = 1;
+				t_submitInfo.pSignalSemaphores = t_signalSemaphores;
+
+				VK_CHECK(vkQueueSubmit(a_logicalDevice->CastVulkan()->GetGraphicsQueue(), 1, &t_submitInfo, m_inFlightFences[m_currentFrame]), "failed to submit draw command buffer!");
+
+				VkPresentInfoKHR t_presentInfo{};
+				t_presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+
+				t_presentInfo.waitSemaphoreCount = 1;
+				t_presentInfo.pWaitSemaphores = t_signalSemaphores;
+
+				const VkSwapchainKHR t_swapChains[] = { m_swapChain };
+				t_presentInfo.swapchainCount = 1;
+				t_presentInfo.pSwapchains = t_swapChains;
+
+				t_presentInfo.pImageIndices = &a_FrameBufferIndex;
+
+				VkResult t_result = vkQueuePresentKHR(a_logicalDevice->CastVulkan()->GetPresentQueue(), &t_presentInfo);
+
+				if (t_result == VK_ERROR_OUT_OF_DATE_KHR || t_result == VK_SUBOPTIMAL_KHR || a_window->GetResized()) {
+					a_window->SetResized(false);
+					RecreateSwapChain(a_window, a_logicalDevice, a_surface, a_physicalDevice, a_renderPass, a_commandPool);
+				}
+				else if (t_result != VK_SUCCESS) {
+					throw std::runtime_error("failed to present swap chain image!");
+				}
+
+				m_currentFrame = (m_currentFrame + 1) % m_maxFrame;
+				t_commandBuffers.clear();
+			}
+
 			void VulkanSwapchain::CleanupSwapChain(const VkDevice a_device) const
 			{
 				for (const auto& t_framebuffer : m_framebuffers)

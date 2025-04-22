@@ -52,18 +52,12 @@ namespace Engine
 				vkDestroyCommandPool(t_device, m_commandPool, nullptr);
 			}
 
-			void VulkanCommandPool::CreateCommandBuffer(RHI::ILogicalDevice* a_logicalDevice, RHI::ISwapChain* a_swapChain, RHI::IRenderPass* a_renderPass, RHI::IGraphicPipeline* a_graphicPipeline)
+			void VulkanCommandPool::CreateCommandBuffer(RHI::ILogicalDevice* a_logicalDevice, uint32_t a_maxFrames)
 			{
+				const VkDevice t_device = a_logicalDevice->CastVulkan()->GetVkDevice();
 
-				const uint32_t t_maxFrames = a_swapChain->CastVulkan()->GetMaxFrame();
-				// USELESS FOR PIPELINE AND RENDERPASS
-				VkRenderPass t_renderPass = a_renderPass->CastVulkan()->GetRenderPass();
-				VulkanGraphicPipeline* t_pipeline = a_graphicPipeline->CastVulkan();
-				std::vector<std::tuple<VkCommandBuffer, VkRenderPass, VulkanGraphicPipeline*>> t_commandBuffers = std::vector<std::tuple<VkCommandBuffer, VkRenderPass, VulkanGraphicPipeline*>>(t_maxFrames);
-
-
-				m_commandBuffers.resize(t_maxFrames);
-				for (uint32_t i = 0; i < t_maxFrames; ++i)
+				std::vector<VkCommandBuffer> t_commandBuffers = std::vector<VkCommandBuffer>(a_maxFrames);
+				for (uint32_t i = 0; i < a_maxFrames; ++i)
 				{
 					VkCommandBuffer t_commandBuffer;
 					VkCommandBufferAllocateInfo t_allocInfo{};
@@ -72,24 +66,32 @@ namespace Engine
 					t_allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
 					t_allocInfo.commandBufferCount = 1;
 
-					const VkDevice t_device = a_logicalDevice->CastVulkan()->GetVkDevice();
-
 					VK_CHECK(vkAllocateCommandBuffers(t_device, &t_allocInfo, &t_commandBuffer), "failed to allocate command buffers!");
 
-					m_commandBuffers[i] = t_commandBuffer;
-					t_commandBuffers[i] = { t_commandBuffer, t_renderPass, t_pipeline };
+					t_commandBuffers[i] = t_commandBuffer;
 				}
+				m_commandBuffers.push_back(t_commandBuffers);
 			}
 
-			ENGINE_API void VulkanCommandPool::BeginCommand()
+			void VulkanCommandPool::BeginCommand(uint32_t a_commandBufferIndex, uint32_t a_currentFrame)
 			{
-
-				for (int i = 0; i < m_commandBuffers.size(); ++i)
+				if (m_commandBuffers[a_commandBufferIndex].size() != 0)
 				{
+					VkCommandBuffer t_commandBuffer = m_commandBuffers[a_commandBufferIndex][a_currentFrame];
 					VkCommandBufferBeginInfo t_beginInfo{};
 					t_beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 
-					VK_CHECK(vkBeginCommandBuffer(m_commandBuffers[i], &t_beginInfo), "failed to begin recording command buffer!");
+					VK_CHECK(vkBeginCommandBuffer(t_commandBuffer, &t_beginInfo), "failed to begin recording command buffer!");
+				}
+			}
+
+			void VulkanCommandPool::EndCommand(uint32_t a_commandBufferIndex, uint32_t a_currentFrame)
+			{
+				if (m_commandBuffers[a_commandBufferIndex].size() != 0)
+				{
+					VkCommandBuffer t_commandBuffer = m_commandBuffers[a_commandBufferIndex][a_currentFrame];
+
+					VK_CHECK(vkEndCommandBuffer(t_commandBuffer), "failed to end recording command buffer!");
 				}
 			}
 
