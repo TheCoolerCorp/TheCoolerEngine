@@ -41,7 +41,7 @@ namespace Engine
 		{
 			const Physics::ColliderType t_colliderType = GetComponent<RigidBodyComponent>()->GetBodyType();
 			GetComponent<TransformComponent>()->GetTransform()->SetGlobalPositionFromMatrix();
-			const Math::vec3 t_pos = GetComponent<RigidBodyComponent>()->GetPos() + GetComponent<TransformComponent>()->GetTransform()->GetGlobalPosition();
+			const Math::vec3 t_pos = GetComponent<RigidBodyComponent>()->GetPos();
 			const Math::quat t_rotation = GetComponent<RigidBodyComponent>()->GetRot();
 
 			switch (t_colliderType)

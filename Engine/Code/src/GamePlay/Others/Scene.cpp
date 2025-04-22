@@ -69,7 +69,7 @@ namespace Engine
 			RigidBodyComponent* t_rigidBodyComponent2 = t_object2->GetComponent<RigidBodyComponent>();
 			if (t_rigidBodyComponent2)
 			{
-				t_rigidBodyComponent2->CreateCapsuleRigidBody(Physics::BodyType::DYNAMIC, Physics::CollisionLayer::MOVING, Math::vec3(0.f, 2.f, 0.f), 1.f, 1.f, Math::quat(), *t_object2->GetComponent<TransformComponent>()->GetTransform());
+				t_rigidBodyComponent2->CreateCapsuleRigidBody(Physics::BodyType::DYNAMIC, Physics::CollisionLayer::MOVING, Math::vec3(0.f, 2.f, 0.f), 1.f, 1.f, Math::quat(Math::vec3(Math::ToRadians(0.f), 0.f, 0.f)), *t_object2->GetComponent<TransformComponent>()->GetTransform());
 				t_rigidBodyComponent2->SetDebug(true);
 			}
 			t_object2->AddComponent<MeshComponent>(true);
@@ -94,7 +94,7 @@ namespace Engine
 
 		void Scene::Update(Core::Renderer* a_renderer, const float a_deltaTime)
 		{
-			m_objs[0]->GetComponent<RigidBodyComponent>()->Rotate(Math::quat(Math::vec3(0.05f, 0.f,0.f)));
+			m_objs[0]->GetComponent<RigidBodyComponent>()->Rotate(Math::quat(Math::vec3(0.01f * a_deltaTime, 0.f,0.f)));
 			//m_objs[1]->GetComponent<TransformComponent>()->GetTransform()->SetScale(Math::vec3(0.05f));
 			//m_objs[1]->GetComponent<TransformComponent>()->GetTransform()->SetPosition(Math::vec3(5.f, 0.f, 0.f));
 			//m_objs[1]->GetComponent<TransformComponent>()->SetParent(m_objs[0]->GetComponentID<TransformComponent>());

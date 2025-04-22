@@ -38,7 +38,7 @@ namespace Engine
 
 			ENGINE_API [[nodiscard]] Physics::ColliderType GetBodyType() const { return m_rigidBody.GetType(); }
 			ENGINE_API [[nodiscard]] Physics::RigidBody GetBody() const { return m_rigidBody; }
-			ENGINE_API [[nodiscard]] Math::vec3 GetPos() const { return m_localPos; }
+			ENGINE_API [[nodiscard]] Math::vec3 GetPos() const { return m_oldGlobalPos; }
 			ENGINE_API [[nodiscard]] Math::quat GetRot() const { return m_bodyRot; }
 			ENGINE_API [[nodiscard]] bool GetDebug() const { return m_debug; }
 
