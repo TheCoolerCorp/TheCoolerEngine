@@ -30,6 +30,11 @@ namespace Engine
 
 		void PhysicsSystem::Update(const float a_deltaTime, const std::vector<Math::Transform*>& a_transforms)
 		{
+			for (size_t i = 0; i < m_components.size(); ++i)
+			{
+				m_components[i]->UpdateFromTransform(a_transforms[i]);
+			}
+
 			constexpr float t_stepSize = 1.0f / 60.0f;
 			const int t_collisionSteps = static_cast<int>(ceil(a_deltaTime / t_stepSize));
 

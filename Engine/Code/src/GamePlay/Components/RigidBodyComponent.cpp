@@ -20,8 +20,8 @@ namespace Engine
 			m_localRot = a_rotation;
 			const Math::vec3 t_pos = m_localPos + a_transform.GetPosition();
 			const Math::quat t_rot = a_transform.GetRotation() * m_localRot;
-			m_oldGlobalPos = t_pos;
-			m_oldGlobalRot = t_rot;
+			m_bodyPos = t_pos;
+			m_bodyRot = t_rot;
 
 			m_rigidBody.CreateBoxBody(a_type, a_layer, t_pos, a_scale, t_rot, a_enable);
 		}
@@ -33,8 +33,8 @@ namespace Engine
 			m_localRot = a_rotation;
 			const Math::vec3 t_pos = m_localPos + a_transform.GetPosition();
 			const Math::quat t_rot = a_transform.GetRotation() * m_localRot;
-			m_oldGlobalPos = t_pos;
-			m_oldGlobalRot = t_rot;
+			m_bodyPos = t_pos;
+			m_bodyRot = t_rot;
 
 			m_rigidBody.CreateSphereBody(a_type, a_layer, t_pos, a_radius, t_rot, a_enable);
 		}
@@ -46,82 +46,45 @@ namespace Engine
 			m_localRot = a_rotation;
 			const Math::vec3 t_pos = m_localPos + a_transform.GetPosition();
 			const Math::quat t_rot = a_transform.GetRotation() * m_localRot;
-			m_oldGlobalPos = t_pos;
-			m_oldGlobalRot = t_rot;
+			m_bodyPos = t_pos;
+			m_bodyRot = t_rot;
 
 			m_rigidBody.CreateCapsuleBody(a_type, a_layer, t_pos, a_halfHeight, a_radius, t_rot, a_enable);
 		}
 
+		void RigidBodyComponent::UpdateFromTransform(const Math::Transform* a_transform, const bool a_enable)
+		{
+			JPH::BodyInterface* t_bodyInterface = ServiceLocator::GetPhysicsSystem()->GetBodyInterface();
+			const JPH::EActivation t_activation = a_enable ? JPH::EActivation::Activate : JPH::EActivation::DontActivate;
+			const JPH::BodyID t_bodyID = m_rigidBody.GetBodyID();
+			const Math::vec3 t_worldPos = a_transform->GetGlobalPosition() + (a_transform->GetGlobalRotation() * m_localPos);
+			const Math::quat t_worldRot = Math::quat::Normalize(a_transform->GetGlobalRotation() * m_localRot);
+
+			const JPH::Vec3 t_jphPos(t_worldPos.x, t_worldPos.y, t_worldPos.z);
+			const JPH::Quat t_jphRot(t_worldRot.x, t_worldRot.y, t_worldRot.z, t_worldRot.w);
+
+			t_bodyInterface->SetPosition(t_bodyID, t_jphPos, t_activation);
+			m_bodyPos = t_worldPos;
+			t_bodyInterface->SetRotation(t_bodyID, t_jphRot, t_activation);
+			m_bodyRot = t_worldRot;
+		}
+
 		void RigidBodyComponent::UpdateObjectTransform(Math::Transform* a_transform)
 		{
-			/*
 			const JPH::BodyInterface* t_bodyInterface = ServiceLocator::GetPhysicsSystem()->GetBodyInterface();
-			const JPH::BodyID t_bodyID = m_rigidBody.GetBodyID();
-			const JPH::Vec3 t_bodyPos = t_bodyInterface->GetCenterOfMassPosition(t_bodyID);
-			const JPH::Quat t_bodyRot = t_bodyInterface->GetRotation(t_bodyID);
+			const JPH::BodyID t_bodyId = m_rigidBody.GetBodyID();
+			const JPH::Vec3 t_bodyPos = t_bodyInterface->GetCenterOfMassPosition(t_bodyId);
+			const JPH::Quat t_bodyRot = t_bodyInterface->GetRotation(t_bodyId);
 
-			Math::vec3 t_newPos = { t_bodyPos.GetX(), t_bodyPos.GetY(), t_bodyPos.GetZ() };
-			Math::vec3 t_deltaPos = t_newPos - m_oldGlobalPos;
-			Math::quat t_newRot = Math::quat::Normalize({ t_bodyRot.GetX(), t_bodyRot.GetY(), t_bodyRot.GetZ(), t_bodyRot.GetW() });
-			Math::quat t_deltaRot = t_newRot * Math::quat::Conjugate(m_oldGlobalRot);
+			const Math::vec3 t_worldPos = { t_bodyPos.GetX(), t_bodyPos.GetY(), t_bodyPos.GetZ() };
+			const Math::quat t_worldRot = Math::quat::Normalize({ t_bodyRot.GetX(), t_bodyRot.GetY(), t_bodyRot.GetZ(), t_bodyRot.GetW() });
+			const Math::vec3 t_finalPos = t_worldPos - (t_worldRot * m_localPos);
+			const Math::quat t_finalRot = t_worldRot * Math::quat::Conjugate(m_localRot);
 
-			Math::vec3 oldOffsetPos = m_oldGlobalRot * m_localPos;
-			Math::vec3 newOffsetPos = t_deltaRot * m_localPos;
-
-			Math::vec3 offsetDelta = newOffsetPos - oldOffsetPos;
-			Math::vec3 fullDeltaPos = t_deltaPos + offsetDelta;
-
-			a_transform->Translate(fullDeltaPos);
-			m_oldGlobalPos = t_newPos;
-			a_transform->Rotate(t_deltaRot);
-			m_oldGlobalRot = t_newRot;
-			m_bodyRot = t_newRot;
-			*/
-
-			/*
-			const JPH::BodyInterface* t_bodyInterface = ServiceLocator::GetPhysicsSystem()->GetBodyInterface();
-			const JPH::BodyID t_bodyID = m_rigidBody.GetBodyID();
-			const JPH::Vec3 t_bodyPos = t_bodyInterface->GetCenterOfMassPosition(t_bodyID);
-			const JPH::Quat t_bodyRot = t_bodyInterface->GetRotation(t_bodyID);
-
-			Math::vec3 t_newPos = { t_bodyPos.GetX(), t_bodyPos.GetY(), t_bodyPos.GetZ() };
-			Math::vec3 t_deltaPos = t_newPos - m_oldGlobalPos;
-			Math::quat t_newRot = Math::quat::Normalize({ t_bodyRot.GetX(), t_bodyRot.GetY(), t_bodyRot.GetZ(), t_bodyRot.GetW() });
-			Math::quat t_deltaRot = t_newRot * Math::quat::Conjugate(m_oldGlobalRot);
-
-			Math::vec3 pivotCorrection = m_localPos - (Math::quat::Normalize(t_deltaRot) * m_localPos);
-			pivotCorrection.Print();
-
-			a_transform->Translate(t_deltaPos + pivotCorrection);
-			m_oldGlobalPos = t_newPos;
-			a_transform->Rotate(t_deltaRot);
-			m_oldGlobalRot = t_newRot;
-			m_bodyRot = t_newRot;
-			*/
-
-			const JPH::BodyInterface* bodyInterface = ServiceLocator::GetPhysicsSystem()->GetBodyInterface();
-			const JPH::BodyID bodyID = m_rigidBody.GetBodyID();
-
-			// Get world-space rigid body transform
-			const JPH::Vec3 bodyPos = bodyInterface->GetCenterOfMassPosition(bodyID);
-			const JPH::Quat bodyRot = bodyInterface->GetRotation(bodyID);
-
-			// Convert to Math types
-			Math::vec3 worldPos = { bodyPos.GetX(), bodyPos.GetY(), bodyPos.GetZ() };
-			Math::quat worldRot = Math::quat::Normalize({ bodyRot.GetX(), bodyRot.GetY(), bodyRot.GetZ(), bodyRot.GetW() });
-
-			// Apply local offset to world transform
-			Math::vec3 finalPos = worldPos - (worldRot * m_localPos);
-			Math::quat finalRot = worldRot * Math::quat::Conjugate(m_localRot);
-
-			// Set transform directly
-			a_transform->SetPosition(finalPos);
-			a_transform->SetRotation(Math::quat::Normalize(finalRot));
-
-			// Update cached state
-			m_oldGlobalPos = worldPos;
-			m_oldGlobalRot = worldRot;
-			m_bodyRot = worldRot;
+			a_transform->SetPosition(t_finalPos);
+			m_bodyPos = t_worldPos;
+			a_transform->SetRotation(Math::quat::Normalize(t_finalRot));
+			m_bodyRot = t_worldRot;
 		}
 
 		void RigidBodyComponent::Destroy()

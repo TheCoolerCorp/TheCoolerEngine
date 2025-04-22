@@ -28,6 +28,7 @@ namespace Engine
 			ENGINE_API void CreateSphereRigidBody(Physics::BodyType a_type, Physics::CollisionLayer a_layer, Math::vec3 a_position, float a_radius, Math::quat a_rotation, const Math::Transform& a_transform, bool a_enable = true);
 			ENGINE_API void CreateCapsuleRigidBody(Physics::BodyType a_type, Physics::CollisionLayer a_layer, Math::vec3 a_position, float a_halfHeight, float a_radius, Math::quat a_rotation, const Math::Transform& a_transform, bool a_enable = true);
 
+			ENGINE_API void UpdateFromTransform(Math::Transform* a_transform, bool a_enable = true);
 			ENGINE_API void UpdateObjectTransform(Math::Transform* a_transform);
 
 			ENGINE_API void Destroy();
@@ -38,7 +39,7 @@ namespace Engine
 
 			ENGINE_API [[nodiscard]] Physics::ColliderType GetBodyType() const { return m_rigidBody.GetType(); }
 			ENGINE_API [[nodiscard]] Physics::RigidBody GetBody() const { return m_rigidBody; }
-			ENGINE_API [[nodiscard]] Math::vec3 GetPos() const { return m_oldGlobalPos; }
+			ENGINE_API [[nodiscard]] Math::vec3 GetPos() const { return m_bodyPos; }
 			ENGINE_API [[nodiscard]] Math::quat GetRot() const { return m_bodyRot; }
 			ENGINE_API [[nodiscard]] bool GetDebug() const { return m_debug; }
 
@@ -48,10 +49,9 @@ namespace Engine
 		private:
 			Physics::RigidBody m_rigidBody;
 			Math::vec3 m_localPos;
-			Math::vec3 m_oldGlobalPos;
 			Math::quat m_localRot;
+			Math::vec3 m_bodyPos;
 			Math::quat m_bodyRot;
-			Math::quat m_oldGlobalRot;
 			bool m_debug = false;
 		};
 	}

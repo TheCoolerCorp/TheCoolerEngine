@@ -166,48 +166,48 @@ namespace Engine
 
             mat4 t_rotMat;
             t_rotMat.mElements = {
-                a_m.mElements[0] / t_scale.x, a_m.mElements[1] / t_scale.y, a_m.mElements[2] / t_scale.z, 0.f,
-                a_m.mElements[4] / t_scale.x, a_m.mElements[5] / t_scale.y, a_m.mElements[6] / t_scale.z, 0.f,
-                a_m.mElements[8] / t_scale.x, a_m.mElements[9] / t_scale.y, a_m.mElements[10] / t_scale.z, 0.f,
-                0.f,                    0.f,                    0.f,                    1.f
+                a_m.mElements[0] / t_scale.x, a_m.mElements[1] / t_scale.x, a_m.mElements[2] / t_scale.x, 0.f,
+                a_m.mElements[4] / t_scale.y, a_m.mElements[5] / t_scale.y, a_m.mElements[6] / t_scale.y, 0.f,
+                a_m.mElements[8] / t_scale.z, a_m.mElements[9] / t_scale.z, a_m.mElements[10] / t_scale.z, 0.f,
+                0.f,                         0.f,                         0.f,                         1.f
             };
 
-            const float t_trace = a_m.Trace();
+            const float t_trace = t_rotMat.mElements[0] + t_rotMat.mElements[5] + t_rotMat.mElements[10];
             quat t_q;
 
             if (t_trace > 0.f)
             {
                 const float t_s = 0.5f / sqrtf(t_trace + 1.f);
+                t_q.w = 0.25f / t_s;
                 t_q.x = (t_rotMat.mElements[9] - t_rotMat.mElements[6]) * t_s;
                 t_q.y = (t_rotMat.mElements[2] - t_rotMat.mElements[8]) * t_s;
                 t_q.z = (t_rotMat.mElements[4] - t_rotMat.mElements[1]) * t_s;
-                t_q.w = 0.25f / t_s;
             }
             else
             {
                 if (t_rotMat.mElements[0] > t_rotMat.mElements[5] && t_rotMat.mElements[0] > t_rotMat.mElements[10])
                 {
                     const float t_s = 2.f * sqrtf(1.f + t_rotMat.mElements[0] - t_rotMat.mElements[5] - t_rotMat.mElements[10]);
+                    t_q.w = (t_rotMat.mElements[9] - t_rotMat.mElements[6]) / t_s;
                     t_q.x = 0.25f * t_s;
                     t_q.y = (t_rotMat.mElements[1] + t_rotMat.mElements[4]) / t_s;
                     t_q.z = (t_rotMat.mElements[2] + t_rotMat.mElements[8]) / t_s;
-                    t_q.w = (t_rotMat.mElements[9] - t_rotMat.mElements[6]) / t_s;
                 }
                 else if (t_rotMat.mElements[5] > t_rotMat.mElements[10])
                 {
                     const float t_s = 2.f * sqrtf(1.f + t_rotMat.mElements[5] - t_rotMat.mElements[0] - t_rotMat.mElements[10]);
+                    t_q.w = (t_rotMat.mElements[2] - t_rotMat.mElements[8]) / t_s;
                     t_q.x = (t_rotMat.mElements[1] + t_rotMat.mElements[4]) / t_s;
                     t_q.y = 0.25f * t_s;
                     t_q.z = (t_rotMat.mElements[6] + t_rotMat.mElements[9]) / t_s;
-                    t_q.w = (t_rotMat.mElements[2] - t_rotMat.mElements[8]) / t_s;
                 }
                 else
                 {
                     const float t_s = 2.f * sqrtf(1.f + t_rotMat.mElements[10] - t_rotMat.mElements[0] - t_rotMat.mElements[5]);
+                    t_q.w = (t_rotMat.mElements[4] - t_rotMat.mElements[1]) / t_s;
                     t_q.x = (t_rotMat.mElements[2] + t_rotMat.mElements[8]) / t_s;
                     t_q.y = (t_rotMat.mElements[6] + t_rotMat.mElements[9]) / t_s;
                     t_q.z = 0.25f * t_s;
-                    t_q.w = (t_rotMat.mElements[4] - t_rotMat.mElements[1]) / t_s;
                 }
             }
 
