@@ -39,7 +39,7 @@ namespace Engine
 				/*
 				 * Choose the set of commandBuffers to begin and the index of this set of commandBuffers to begin
 				 */
-				m_renderer->GetCommandPool()->BeginCommand(0,m_renderer->GetSwapChain()->GetCurrentFrame());
+				m_renderer->GetCommandPool()->BeginCommand(0, m_renderer->GetSwapChain()->GetCurrentFrame());
 
 
 				/*

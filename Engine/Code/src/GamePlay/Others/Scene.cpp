@@ -93,11 +93,6 @@ namespace Engine
 			syncro.clear();
 		}
 
-		void Scene::Draw(Core::Renderer* a_renderer, Core::Window::IWindow* a_window)
-		{
-			m_meshRendererSystem->Render(a_renderer, a_window, m_mainCamera);
-		}
-
 		std::vector<Core::RHI::IBuffer*> Scene::GetVertexBuffers()
 		{
 			std::vector<Core::RHI::IBuffer*> t_vertexBuffers;

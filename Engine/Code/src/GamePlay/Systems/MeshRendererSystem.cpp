@@ -29,21 +29,6 @@ namespace Engine
 
 		}
 
-		void MeshRendererSystem::Render(Core::Renderer* a_renderer, Core::Window::IWindow* a_window, GamePlay::Camera* a_camera)
-		{
-			std::vector<Core::RHI::IBuffer*> m_vertexBuffers;
-			std::vector<Core::RHI::IBuffer*> m_indexesBuffers;
-			std::vector<uint32_t> m_indexesCount;
-			for (int i = 0; i < m_components.size(); ++i)
-			{
-				m_vertexBuffers.push_back(m_components.at(i)->GetMesh()->GetVertexBuffer());
-				m_indexesBuffers.push_back(m_components.at(i)->GetMesh()->GetIndexBuffer());
-				m_indexesCount.push_back(m_components.at(i)->GetMesh()->GetNbIndices());
-			}
-
-			//a_renderer->GetSwapChain()->DrawFrame(a_window, a_renderer->GetLogicalDevice(), a_renderer->GetCommandPool(), a_renderer->GetSurface(), a_renderer->GetPhysicalDevice(), a_renderer->GetRenderPass(), m_renderDescriptors, m_vertexBuffers, m_indexesBuffers, m_indexesCount, a_camera);
-		}
-
 		void MeshRendererSystem::Destroy(Core::Renderer* a_renderer)
 		{
 			for (int i = 0; i < m_components.size(); ++i)
@@ -96,19 +81,26 @@ namespace Engine
 			}
 		}
 
+		enum PipelineBindingName : int
+		{
+			MAT = 0,
+			albedo = 1,
+
+		};
+
 		void MeshRendererSystem::CreatePendingComponentsDescriptors(Core::RHI::ApiInterface* apiInterface, Core::RHI::ILogicalDevice* a_logicalDevice, Core::RHI::IPhysicalDevice* a_physicalDevice, Core::RHI::ISurface* a_surface, Core::RHI::ICommandPool* a_commandPool, Core::RHI::IGraphicPipeline* a_graphicPipeline, int a_maxFrame, std::vector<std::pair<int, Math::mat4>>& a_updatedMatrix)
 		{
 			for (int i = 0; i < m_pendingComponents.size(); ++i)
 			{
 				Core::RHI::IObjectDescriptor* t_newRenderObject = apiInterface->InstantiateObjectDescriptor();
 
-				t_newRenderObject->Create(a_logicalDevice, a_graphicPipeline, Core::RHI::Per, a_maxFrame, { Core::RHI::DescriptorSetType::DESCRIPTOR_SET_TYPE_COMBINED_IMAGE_SAMPLER, Core::RHI::DescriptorSetType::DESCRIPTOR_SET_TYPE_COMBINED_IMAGE_SAMPLER});
+				t_newRenderObject->Create(a_logicalDevice, a_graphicPipeline, Core::RHI::Per, a_maxFrame, { Core::RHI::DescriptorSetType::DESCRIPTOR_SET_TYPE_UNIFORM_BUFFER, Core::RHI::DescriptorSetType::DESCRIPTOR_SET_TYPE_COMBINED_IMAGE_SAMPLER });
 
 				Core::RHI::IImage* t_newRenderObjectTexture = m_components.at(m_pendingComponents.at(i))->GetTexture()->GetImage();
 				void* t_newRenderObjectMatrixData = a_updatedMatrix.at(m_pendingComponents.at(i)).second.mElements.data();
 
 				t_newRenderObject->SetTexture(a_logicalDevice, t_newRenderObjectTexture, 1, 1);
-				t_newRenderObject->SetMat(a_logicalDevice, a_physicalDevice, a_commandPool, t_newRenderObjectMatrixData, 0, 1);
+				t_newRenderObject->SetMat(a_logicalDevice, a_physicalDevice, a_commandPool, t_newRenderObjectMatrixData, 1, 1);
 
 				if (m_availableIndexes.empty())
 				{

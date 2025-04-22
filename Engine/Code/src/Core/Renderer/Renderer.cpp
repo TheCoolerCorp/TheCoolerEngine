@@ -65,15 +65,6 @@ namespace Engine
 			m_swapChain->CreateSyncObjects(m_logicalDevice);
 		}
 
-		void Renderer::Render(Window::IWindow* a_window,
-		                      const std::unordered_map<int, Core::RHI::IObjectDescriptor*>& a_renderObjects,
-		                      const std::vector<int>& a_ids, const std::unordered_map<int, Core::RHI::IBuffer*>& a_vertexBuffers,
-		                      const std::unordered_map<int, Core::RHI::IBuffer*>& a_indexBuffers, const std::unordered_map<int, uint32_t>& a_nbIndices,
-		                      GamePlay::Camera* camera) const
-		{
-			//m_swapChain->DrawFrame(a_window, m_logicalDevice, m_commandPool, m_surface, m_physicalDevice, m_renderPass, a_renderObjects, a_ids, a_vertexBuffers, a_indexBuffers, a_nbIndices, camera);
-		}
-
 		void Renderer::WaitIdle() const
 		{
 			m_logicalDevice->WaitIdle();

@@ -1,11 +1,11 @@
 #version 450
 
 // Textures
-layout(set = 1, binding = 1) uniform sampler2D AlbedoMap;
-layout(set = 1, binding = 2) uniform sampler2D NormalMap;
-layout(set = 1, binding = 3) uniform sampler2D MetallicMap;
-layout(set = 1, binding = 4) uniform sampler2D RoughnessMap;
-layout(set = 1, binding = 5) uniform sampler2D AoMap;
+layout(set = 1, binding = 1) uniform sampler2D per_albedoMap;
+layout(set = 1, binding = 2) uniform sampler2D per_normalMap;
+layout(set = 1, binding = 3) uniform sampler2D per_metallicMap;
+layout(set = 1, binding = 4) uniform sampler2D per_RoughnessMap;
+layout(set = 1, binding = 5) uniform sampler2D per_aoMap;
 
 // Values
 layout(set = 1, binding = 1) uniform TexturesValues
@@ -14,7 +14,7 @@ layout(set = 1, binding = 1) uniform TexturesValues
     float AsMetallicTexture;
     float AsRoughnessTexture;
     float AsAotexture;
-} texsVal;
+} per_texsVal;
 
 // Check if a texture is passed to the shader or values are used
 layout(set = 1, binding = 6) uniform AsTextures 
@@ -24,7 +24,7 @@ layout(set = 1, binding = 6) uniform AsTextures
     bool AsMetallicTexture;
     bool AsRoughnessTexture;
     bool AsAotexture;
-} bTexs;
+} per_bTexs;
 
 
 // Lights
@@ -33,7 +33,7 @@ layout(set = 0, binding = 1) uniform LightData
     vec3 lightPosition;
     vec3 lightColor;
     float intensity;
-} light;
+} common_light;
 
 
 
@@ -45,6 +45,6 @@ layout(location = 0) out vec4 outColor;
 
 void main() 
 {
-    outColor = texture(AlbedoMap, fragTexCoord);
+    outColor = texture(per_albedoMap, fragTexCoord);
 
 }

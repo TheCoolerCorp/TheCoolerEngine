@@ -29,6 +29,13 @@ namespace Engine
 				Other
 			};
 
+			enum PipelineBindingName : int
+			{
+				MAT = 0,
+				albedo = 1,
+
+			};
+
 			class IGraphicPipeline
 			{
 			public:

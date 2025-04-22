@@ -3,12 +3,12 @@
 layout(set = 0, binding = 0) uniform CameraUBO
 {
     mat4 vp;
-} common_camubo;
+} common_camModel;
 
 layout(set = 1, binding = 0) uniform ObjectUBO
 {
     mat4 model;
-} per_objubo;
+} per_objModel;
 
 layout(location = 0) in vec3 inPosition;
 layout(location = 1) in vec3 inNormal;

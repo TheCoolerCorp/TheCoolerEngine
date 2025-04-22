@@ -21,7 +21,6 @@ namespace Engine
 
 			ENGINE_API void Create(Core::Renderer* a_renderer, int a_width, int a_height);
 			ENGINE_API void Update(Core::Renderer* a_renderer, Core::Window::IWindow* a_window, Core::Window::IInputHandler* a_inputHandler, float a_deltatime);
-			ENGINE_API void Draw(Core::Renderer* a_renderer, Core::Window::IWindow* a_window);
 			ENGINE_API void Destroy(Core::Renderer* a_renderer);
 
 			ENGINE_API std::vector<Core::RHI::IBuffer*> GetVertexBuffers();
