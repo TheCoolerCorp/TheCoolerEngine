@@ -27,6 +27,9 @@ namespace Engine
 			ENGINE_API void Move(Math::vec3 a_pos, Math::vec3 a_rot, Math::vec3 a_scale);
 
 			ENGINE_API void SetParent(uint32_t a_id);
+			ENGINE_API void AddChild(uint32_t a_id);
+			ENGINE_API void RemoveChild(uint32_t a_id);
+			ENGINE_API void ClearChildren();
 
 			ENGINE_API Math::Transform* GetTransform() const { return m_transform; }
 
@@ -42,6 +45,7 @@ namespace Engine
 			Math::Transform* m_transform = nullptr;
 
 			uint32_t m_parentId = -1;
+			std::vector<uint32_t> m_childrenIds{};
 		};
 	}
 }

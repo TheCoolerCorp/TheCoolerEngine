@@ -72,5 +72,34 @@ namespace Engine
 				.mNbIndices= GetComponent<MeshComponent>()->GetMesh()->GetNbIndices()
 			};
 		}*/
+		void GameObject::SetParent(uint32_t a_id)
+		{
+			m_parentId = a_id;
+		}
+
+		void GameObject::AddChild(uint32_t a_id)
+		{
+			if (std::ranges::find(m_childrenIds, a_id) == m_childrenIds.end())
+			{
+				m_childrenIds.push_back(a_id);
+			}
+		}
+
+		void GameObject::RemoveChild(uint32_t a_id)
+		{
+			for (int a = 0; a < m_childrenIds.size(); a++)
+			{
+				if (m_childrenIds[a] == a_id)
+				{
+					m_childrenIds.erase(m_childrenIds.begin() + a);
+					break;
+				}
+			}
+		}
+
+		void GameObject::ClearChildren()
+		{
+			m_childrenIds.clear();
+		}
 	}
 }

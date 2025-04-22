@@ -31,8 +31,8 @@ namespace Engine
 			class GameObject
 			{
 			public:
-				ENGINE_API GameObject();
-				ENGINE_API GameObject(Math::vec3 a_position, Math::vec3 a_rotation, Math::vec3 a_scale);
+				ENGINE_API GameObject(std::string a_name = "Game Object");
+				ENGINE_API GameObject(Math::vec3 a_position, Math::vec3 a_rotation, Math::vec3 a_scale, std::string a_name = "Game Object");
 
 				ENGINE_API ~GameObject() = default;
 
@@ -98,8 +98,22 @@ namespace Engine
 					ComponentClass::RemoveComponent(t_id);
 				}
 
+				void SetParent(uint32_t a_id);
+				void AddChild(uint32_t a_id);
+				void RemoveChild(uint32_t a_id);
+				void ClearChildren();
+
+				[[nodiscard]] uint32_t GetParentID() const { return m_parentId; }
+				[[nodiscard]] std::vector<uint32_t> GetChildrenIDs() const { return m_childrenIds; }
+				[[nodiscard]] std::string GetName() const { return m_name; }
+
 			private:
 				std::unordered_map<ComponentType, uint32_t> m_compsId = std::unordered_map<ComponentType, uint32_t>(0);
+
+				std::string m_name;
+				uint32_t m_parentId = -1;
+				std::vector<uint32_t> m_childrenIds{};
+
 			};
 
 		

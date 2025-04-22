@@ -76,6 +76,31 @@ namespace Engine
 			m_transform->SetNeedToUpdate(true);
 		}
 
+		void TransformComponent::AddChild(uint32_t a_id)
+		{
+			if (std::ranges::find(m_childrenIds, a_id) == m_childrenIds.end())
+			{
+				m_childrenIds.push_back(a_id);
+			}
+		}
+
+		void TransformComponent::RemoveChild(uint32_t a_id)
+		{
+			for (int a = 0; a < m_childrenIds.size(); a++)
+			{
+				if (m_childrenIds[a] == a_id)
+				{
+					m_childrenIds.erase(m_childrenIds.begin() + a);
+					break;
+				}
+			}
+		}
+
+		void TransformComponent::ClearChildren()
+		{
+			m_childrenIds.clear();
+		}
+
 		TransformComponent* TransformComponent::GetComponent(uint32_t a_id)
 		{
 			return ServiceLocator::GetTransformSystem()->GetComponent(a_id);

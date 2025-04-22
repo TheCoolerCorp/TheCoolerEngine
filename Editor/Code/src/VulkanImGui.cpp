@@ -109,6 +109,8 @@ namespace Editor::EditorLayer::Ui
 	{
 		if (m_viewportWindowResized)
 		{
+			if (m_viewportWindowExtent.height <= 0 || m_viewportWindowExtent.width <= 0)
+				return;
 			const VkDevice t_device = m_renderer->GetLogicalDevice()->CastVulkan()->GetVkDevice();
 
 			vkDeviceWaitIdle(t_device);

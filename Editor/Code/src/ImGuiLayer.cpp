@@ -3,6 +3,7 @@
 #include "Core/Renderer/Renderer.h"
 
 #include "imgui.h"
+#include "imgui_internal.h"
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_vulkan.h"
 
@@ -30,8 +31,32 @@ namespace Editor::EditorLayer::Ui
 
 	void ImGuiLayer::OnUiRender()
 	{
+		
+
+		bool dockSpaceOpen = true;
+
+		VkExtent2D swapChainExtent = m_renderer->GetSwapChain()->CastVulkan()->GetExtent2D();
+
 		Layer::OnUiRender();
 		m_imGui->NewFrame();
+		ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
+		const ImGuiViewport* viewport = ImGui::GetMainViewport();
+		ImGui::SetNextWindowPos(viewport->WorkPos);
+		ImGui::SetNextWindowSize(viewport->WorkSize);
+		ImGui::SetNextWindowViewport(viewport->ID);
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+		window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+		window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+
+		ImGui::Begin("DockSpace", &dockSpaceOpen, window_flags);
+		ImGuiID t_dockSpaceID = ImGui::GetID("MainDockSpace");
+		ImGuiDockNodeFlags t_dockspaceFlags = ImGuiDockNodeFlags_None;
+		ImGui::DockSpace(t_dockSpaceID, ImVec2(0.0f, 0.0f), t_dockspaceFlags);
+		ImGui::End();
+		ImGui::PopStyleVar(3);
+
 		ImGui::ShowDemoWindow();
 		ImGui::Begin("Viewport");
 		m_imGui->DrawSceneAsImage();
@@ -51,4 +76,6 @@ namespace Editor::EditorLayer::Ui
 
 		Layer::OnDetach();
 	}
+
+	
 }
