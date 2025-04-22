@@ -18,8 +18,8 @@ namespace Engine
 		{
 			m_localPos = a_position;
 			m_localRot = a_rotation;
-			const Math::vec3 t_pos = m_localPos + a_transform.GetPosition();
-			const Math::quat t_rot = a_transform.GetRotation() * m_localRot;
+			const Math::vec3 t_pos = m_localPos + a_transform.GetGlobalPosition();
+			const Math::quat t_rot = a_transform.GetGlobalRotation() * m_localRot;
 			m_bodyPos = t_pos;
 			m_bodyRot = t_rot;
 
@@ -31,8 +31,8 @@ namespace Engine
 		{
 			m_localPos = a_position;
 			m_localRot = a_rotation;
-			const Math::vec3 t_pos = m_localPos + a_transform.GetPosition();
-			const Math::quat t_rot = a_transform.GetRotation() * m_localRot;
+			const Math::vec3 t_pos = m_localPos + a_transform.GetGlobalPosition();
+			const Math::quat t_rot = a_transform.GetGlobalRotation() * m_localRot;
 			m_bodyPos = t_pos;
 			m_bodyRot = t_rot;
 
@@ -44,8 +44,8 @@ namespace Engine
 		{
 			m_localPos = a_position;
 			m_localRot = a_rotation;
-			const Math::vec3 t_pos = m_localPos + a_transform.GetPosition();
-			const Math::quat t_rot = a_transform.GetRotation() * m_localRot;
+			const Math::vec3 t_pos = m_localPos + a_transform.GetGlobalPosition();
+			const Math::quat t_rot = a_transform.GetGlobalRotation() * m_localRot;
 			m_bodyPos = t_pos;
 			m_bodyRot = t_rot;
 
@@ -81,9 +81,9 @@ namespace Engine
 			const Math::vec3 t_finalPos = t_worldPos - (t_worldRot * m_localPos);
 			const Math::quat t_finalRot = t_worldRot * Math::quat::Conjugate(m_localRot);
 
-			a_transform->SetPosition(t_finalPos);
+			a_transform->Translate(t_finalPos - a_transform->GetGlobalPosition());
 			m_bodyPos = t_worldPos;
-			a_transform->SetRotation(Math::quat::Normalize(t_finalRot));
+			a_transform->Rotate(Math::quat::Normalize(t_finalRot) * Math::quat::Normalize(Math::quat::Conjugate(a_transform->GetGlobalRotation())));
 			m_bodyRot = t_worldRot;
 		}
 
