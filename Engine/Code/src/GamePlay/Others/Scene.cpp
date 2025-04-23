@@ -36,7 +36,7 @@ namespace Engine
 
 
 			t_object->GetComponent<MeshComponent>()->SetMesh(t_mesh);
-			t_object->GetComponent<MeshComponent>()->SetTexture(t_texture);
+			t_object->GetComponent<MeshComponent>()->GetMaterial()->SetAlbedo(t_texture);
 
 			m_objs.push_back(t_object);
 
@@ -50,7 +50,7 @@ namespace Engine
 
 
 			t_object2->GetComponent<MeshComponent>()->SetMesh(t_mesh2);
-			t_object2->GetComponent<MeshComponent>()->SetTexture(t_texture2);
+			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetAlbedo(t_texture2);
 
 			m_objs.push_back(t_object2);
 
@@ -59,7 +59,7 @@ namespace Engine
 
 
 			t_object3->GetComponent<MeshComponent>()->SetMesh(t_mesh);
-			t_object3->GetComponent<MeshComponent>()->SetTexture(t_texture);
+			t_object3->GetComponent<MeshComponent>()->GetMaterial()->SetAlbedo(t_texture);
 
 			m_objs.push_back(t_object3);
 			#pragma endregion

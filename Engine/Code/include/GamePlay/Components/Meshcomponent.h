@@ -5,6 +5,7 @@
 
 #include "Component.h"
 #include  "Ressources/Mesh.h"
+#include "GamePlay/ComponentsBase/Material.h"
 #include "Ressources/Texture.h"
 #include <string>
 
@@ -24,7 +25,7 @@ namespace Engine
 
 			ENGINE_API void SetMesh(Ref<Resource::Mesh> a_mesh);
 
-			ENGINE_API void SetTexture(Ref<Resource::Texture> a_texture);
+			ENGINE_API void SetMaterial(Ref<Material> a_material);
 
 			ENGINE_API static ComponentType GetType() { return ComponentType::MESH; }
 
@@ -33,12 +34,11 @@ namespace Engine
 			ENGINE_API static void RemoveComponent(uint32_t a_id);
 
 			ENGINE_API Ref<Resource::Mesh> GetMesh() { return m_mesh; }
-			ENGINE_API Ref<Resource::Texture> GetTexture() { return m_texture; }
-
+			ENGINE_API Ref<Material> GetMaterial() { return m_material; }
 			//static MeshComponent* FindComponent(uint32_t a_id)
 		private:
 			Ref<Resource::Mesh> m_mesh = nullptr;
-			Ref<Resource::Texture> m_texture = nullptr;
+			Ref<Material> m_material = nullptr;
 		};
 	}
 }

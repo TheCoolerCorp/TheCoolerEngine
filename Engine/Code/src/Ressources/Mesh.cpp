@@ -56,6 +56,9 @@ namespace Engine
             m_indexBuffer->Create(Core::RHI::BufferType::INDEX, t_bufferData, t_physicalDevice, t_logicalDevice, t_commandPool);
 
             m_isLoaded = true;
+
+            //m_vertices.clear();
+            //m_indexes.clear();
 		}
 
         void Mesh::Unload(Core::Renderer* a_renderer)

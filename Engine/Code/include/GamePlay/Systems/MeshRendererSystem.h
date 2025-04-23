@@ -29,11 +29,11 @@ namespace Engine
 			ENGINE_API void RemoveComponent(uint32_t a_id);
 
 			std::vector<MeshComponent*>& GetComponents() { return m_components; }
-			std::vector<Core::RHI::IObjectDescriptor*>& GetDescriptors() { return m_renderDescriptors; }
+			std::vector<Core::RHI::IObjectDescriptor*>& GetDescriptors() { return m_objectsDescriptors; }
 
 		private:
 			std::vector<MeshComponent*> m_components;
-			std::vector<Core::RHI::IObjectDescriptor*> m_renderDescriptors;
+			std::vector<Core::RHI::IObjectDescriptor*> m_objectsDescriptors;
 
 			std::vector<int> m_availableIndexes;
 

@@ -24,7 +24,7 @@ namespace Engine
 
 			for (int i = 0; i < a_updatedMatrix.size(); ++i)
 			{
-				m_renderDescriptors[a_updatedMatrix[i].first]->UpdateUniforms(t_logicalDevice, a_updatedMatrix[i].second.mElements.data(), a_renderer->GetSwapChain()->GetCurrentFrame());
+				m_objectsDescriptors[a_updatedMatrix[i].first]->UpdateUniforms(t_logicalDevice, a_updatedMatrix[i].second.mElements.data(), a_renderer->GetSwapChain()->GetCurrentFrame());
 			}
 
 		}
@@ -35,8 +35,8 @@ namespace Engine
 			{
 				auto& comp = m_components[i];
 				comp->Destroy();
-				m_renderDescriptors[i]->Destroy(a_renderer->GetLogicalDevice());
-				a_renderer->GetInterface()->DestroyObjectDescriptor(m_renderDescriptors[i]);
+				m_objectsDescriptors[i]->Destroy(a_renderer->GetLogicalDevice());
+				a_renderer->GetInterface()->DestroyObjectDescriptor(m_objectsDescriptors[i]);
 				delete comp;
 			}
 			m_components.clear();
@@ -81,36 +81,47 @@ namespace Engine
 			}
 		}
 
-		enum PipelineBindingName : int
-		{
-			MAT = 0,
-			albedo = 1,
-
-		};
-
 		void MeshRendererSystem::CreatePendingComponentsDescriptors(Core::RHI::ApiInterface* apiInterface, Core::RHI::ILogicalDevice* a_logicalDevice, Core::RHI::IPhysicalDevice* a_physicalDevice, Core::RHI::ISurface* a_surface, Core::RHI::ICommandPool* a_commandPool, Core::RHI::IGraphicPipeline* a_graphicPipeline, int a_maxFrame, std::vector<std::pair<int, Math::mat4>>& a_updatedMatrix)
 		{
 			for (int i = 0; i < m_pendingComponents.size(); ++i)
 			{
 				Core::RHI::IObjectDescriptor* t_newRenderObject = apiInterface->InstantiateObjectDescriptor();
 
-				t_newRenderObject->Create(a_logicalDevice, a_graphicPipeline, Core::RHI::Per, a_maxFrame, { Core::RHI::DescriptorSetType::DESCRIPTOR_SET_TYPE_UNIFORM_BUFFER, Core::RHI::DescriptorSetType::DESCRIPTOR_SET_TYPE_COMBINED_IMAGE_SAMPLER });
-
-				Core::RHI::IImage* t_newRenderObjectTexture = m_components.at(m_pendingComponents.at(i))->GetTexture()->GetImage();
+				Core::RHI::IImage* t_newRenderObjectTexture = m_components.at(m_pendingComponents.at(i))->GetMaterial()->GetAlbedo()->GetImage();
 				void* t_newRenderObjectMatrixData = a_updatedMatrix.at(m_pendingComponents.at(i)).second.mElements.data();
 
-				t_newRenderObject->SetTexture(a_logicalDevice, t_newRenderObjectTexture, 1, 1);
-				t_newRenderObject->SetMat(a_logicalDevice, a_physicalDevice, a_commandPool, t_newRenderObjectMatrixData, 1, 1);
-
-				if (m_availableIndexes.empty())
+				std::vector<Core::RHI::DescriptorSetType> m_types;
+				if (a_graphicPipeline->GetType() == Core::RHI::Unlit)
 				{
-					m_renderDescriptors.push_back(t_newRenderObject);
+					m_types = { Core::RHI::DescriptorSetType::DESCRIPTOR_SET_TYPE_UNIFORM_BUFFER, Core::RHI::DescriptorSetType::DESCRIPTOR_SET_TYPE_COMBINED_IMAGE_SAMPLER };
+				}
+				else if (a_graphicPipeline->GetType() == Core::RHI::Lit)
+				{
+					m_types = { Core::RHI::DescriptorSetType::DESCRIPTOR_SET_TYPE_UNIFORM_BUFFER, Core::RHI::DescriptorSetType::DESCRIPTOR_SET_TYPE_COMBINED_IMAGE_SAMPLER,
+								Core::RHI::DescriptorSetType::DESCRIPTOR_SET_TYPE_COMBINED_IMAGE_SAMPLER, Core::RHI::DescriptorSetType::DESCRIPTOR_SET_TYPE_COMBINED_IMAGE_SAMPLER,
+								Core::RHI::DescriptorSetType::DESCRIPTOR_SET_TYPE_COMBINED_IMAGE_SAMPLER, Core::RHI::DescriptorSetType::DESCRIPTOR_SET_TYPE_COMBINED_IMAGE_SAMPLER,
+								Core::RHI::DescriptorSetType::DESCRIPTOR_SET_TYPE_UNIFORM_BUFFER, Core::RHI::DescriptorSetType::DESCRIPTOR_SET_TYPE_UNIFORM_BUFFER };
 				}
 				else
 				{
-					if (m_renderDescriptors.at(m_availableIndexes.at(i)) == nullptr)
+					LOG_ERROR("Not other type of pipeline has been implemented");
+				}
+				t_newRenderObject->Create(a_logicalDevice, a_graphicPipeline, Core::RHI::Per, a_maxFrame, m_types);
+				t_newRenderObject->SetMat(a_logicalDevice, a_physicalDevice, a_commandPool, t_newRenderObjectMatrixData, 0, 1);
+				t_newRenderObject->SetTexture(a_logicalDevice, t_newRenderObjectTexture, 1, 1);
+
+				//t_newRenderObject->SetTexture(a_logicalDevice, t_newRenderObjectTexture, 1, 1);
+				//t_newRenderObject->SetMat(a_logicalDevice, a_physicalDevice, a_commandPool, t_newRenderObjectMatrixData, 0, 1);
+
+				if (m_availableIndexes.empty())
+				{
+					m_objectsDescriptors.push_back(t_newRenderObject);
+				}
+				else
+				{
+					if (m_objectsDescriptors.at(m_availableIndexes.at(i)) == nullptr)
 					{
-						m_renderDescriptors.at(m_availableIndexes.at(i)) = t_newRenderObject;
+						m_objectsDescriptors.at(m_availableIndexes.at(i)) = t_newRenderObject;
 					}
 				}
 			}

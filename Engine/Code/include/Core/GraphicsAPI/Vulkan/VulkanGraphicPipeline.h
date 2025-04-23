@@ -52,7 +52,6 @@ namespace Engine
 
 				ENGINE_API std::vector<VulkanSetLayout> GetSetLayouts() const { return m_setslayouts; }
 
-				ENGINE_API RHI::PipelineType GetType() { return m_type; }
 			private:
 				SetLayoutType GetType(std::string a_string);
 
@@ -60,8 +59,6 @@ namespace Engine
 				VkPipelineLayout m_layout = VK_NULL_HANDLE;
 
 				std::vector<VulkanSetLayout> m_setslayouts = std::vector<VulkanSetLayout>();
-
-				RHI::PipelineType m_type = RHI::Unlit;
 			};
 		}
 	}

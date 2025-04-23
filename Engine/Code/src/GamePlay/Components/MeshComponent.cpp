@@ -8,14 +8,18 @@ namespace Engine
 	{
 		ComponentType MeshComponent::Create(uint32_t& a_outId)
 		{
+			m_material = CreateRef<Material>();
+
 			a_outId = ServiceLocator::GetMeshRendererSystem()->AddComponent(this);
 			return ComponentType::MESH;
+
 		}
 
 		void MeshComponent::Destroy()
 		{
 			// Just set mesh to nullptr, resource manager handle the resource.
 			m_mesh = nullptr;
+			m_material = nullptr;
 		}
 
 		void MeshComponent::SetMesh(Ref<Resource::Mesh> a_mesh)
@@ -24,10 +28,10 @@ namespace Engine
 			m_mesh = a_mesh;
 		}
 
-		void MeshComponent::SetTexture(Ref<Resource::Texture> a_texture)
+		void MeshComponent::SetMaterial(Ref<Material> a_material)
 		{
-			// Set the texture to use.
-			m_texture = a_texture;
+			// Set the material to use.
+			m_material = a_material;
 		}
 
 		MeshComponent* MeshComponent::GetComponent(uint32_t a_id)

@@ -8,7 +8,7 @@ layout(set = 1, binding = 4) uniform sampler2D per_RoughnessMap;
 layout(set = 1, binding = 5) uniform sampler2D per_aoMap;
 
 // Values
-layout(set = 1, binding = 1) uniform TexturesValues
+layout(set = 1, binding = 6) uniform TexturesValues
 {
     vec3 AsAlbedoTexture;
     float AsMetallicTexture;
@@ -17,7 +17,7 @@ layout(set = 1, binding = 1) uniform TexturesValues
 } per_texsVal;
 
 // Check if a texture is passed to the shader or values are used
-layout(set = 1, binding = 6) uniform AsTextures 
+layout(set = 1, binding = 7) uniform HasTextures 
 {
     bool AsAlbedoTexture;
     bool AsNormalTexture;

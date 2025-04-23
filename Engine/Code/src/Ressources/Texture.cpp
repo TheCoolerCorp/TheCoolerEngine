@@ -29,7 +29,10 @@ namespace Engine
 
         void Texture::Destroy()
         {
-            delete m_data;
+            if (m_data)
+            {
+				delete m_data;
+            }
         }
 
         void Texture::Load(Core::Renderer* a_renderer)
@@ -55,6 +58,7 @@ namespace Engine
             m_image->Create(Core::RHI::ImageType::TEXTURE, t_imageData, t_physicalDevice, t_logicalDevice, t_commandPool);
 
             m_isLoaded = true;
+            //delete m_data;
         }
 
         void Texture::Unload(Core::Renderer* a_renderer)

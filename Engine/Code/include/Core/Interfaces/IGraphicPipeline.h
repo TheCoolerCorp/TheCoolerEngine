@@ -51,6 +51,11 @@ namespace Engine
 													std::vector<RHI::IBuffer*> a_vertexBuffers, std::vector<uint32_t> a_indicesCount, std::vector<RHI::IObjectDescriptor*> a_objectsDescriptors) = 0;
 
 				ENGINE_API virtual void  BindSingleDescriptors(RHI::ICommandPool* a_commandPool, uint32_t a_commandBufferIndex, uint32_t a_currentFrame, uint32_t  a_imageIndex, std::vector<RHI::IObjectDescriptor*> a_objectsDescriptors) = 0;
+
+				ENGINE_API RHI::PipelineType GetType() { return m_type; }
+
+			protected:
+				PipelineType m_type = Unlit;
 			};
 		}
 	}

@@ -29,13 +29,13 @@ namespace Engine
 				UNDEFINED = 2
 			};
 
-			
-
 			enum DescriptorSetType : int
 			{
 				DESCRIPTOR_SET_TYPE_COMBINED_IMAGE_SAMPLER = 1,
 				DESCRIPTOR_SET_TYPE_UNIFORM_BUFFER = 6
 			};
+
+
 
 			class IObjectDescriptor
 			{
