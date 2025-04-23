@@ -9,6 +9,7 @@ namespace Engine
 	{
 		ComponentType RigidBodyComponent::Create(uint32_t& a_outId, bool a_colliderMesh)
 		{
+			m_rigidBody = new Physics::RigidBody;
 			a_outId = ServiceLocator::GetPhysicsSystem()->AddComponent(this);
 			return ComponentType::RIGIDBODY;
 		}
@@ -23,7 +24,7 @@ namespace Engine
 			m_bodyPos = t_pos;
 			m_bodyRot = t_rot;
 
-			m_rigidBody.CreateBoxBody(a_type, a_layer, t_pos, a_scale, t_rot, a_enable);
+			m_rigidBody->CreateBoxBody(a_type, a_layer, t_pos, a_scale, t_rot, a_enable);
 		}
 
 		void RigidBodyComponent::CreateSphereRigidBody(Physics::BodyType a_type, Physics::CollisionLayer a_layer,
@@ -36,7 +37,7 @@ namespace Engine
 			m_bodyPos = t_pos;
 			m_bodyRot = t_rot;
 
-			m_rigidBody.CreateSphereBody(a_type, a_layer, t_pos, a_radius, t_rot, a_enable);
+			m_rigidBody->CreateSphereBody(a_type, a_layer, t_pos, a_radius, t_rot, a_enable);
 		}
 
 		void RigidBodyComponent::CreateCapsuleRigidBody(Physics::BodyType a_type, Physics::CollisionLayer a_layer,
@@ -49,14 +50,14 @@ namespace Engine
 			m_bodyPos = t_pos;
 			m_bodyRot = t_rot;
 
-			m_rigidBody.CreateCapsuleBody(a_type, a_layer, t_pos, a_halfHeight, a_radius, t_rot, a_enable);
+			m_rigidBody->CreateCapsuleBody(a_type, a_layer, t_pos, a_halfHeight, a_radius, t_rot, a_enable);
 		}
 
 		void RigidBodyComponent::UpdateFromTransform(const Math::Transform* a_transform, const bool a_enable)
 		{
 			JPH::BodyInterface* t_bodyInterface = ServiceLocator::GetPhysicsSystem()->GetBodyInterface();
 			const JPH::EActivation t_activation = a_enable ? JPH::EActivation::Activate : JPH::EActivation::DontActivate;
-			const JPH::BodyID t_bodyID = m_rigidBody.GetBodyID();
+			const JPH::BodyID t_bodyID = m_rigidBody->GetBodyID();
 			const Math::vec3 t_worldPos = a_transform->GetGlobalPosition() + (a_transform->GetGlobalRotation() * m_localPos);
 			const Math::quat t_worldRot = Math::quat::Normalize(a_transform->GetGlobalRotation() * m_localRot);
 
@@ -72,7 +73,7 @@ namespace Engine
 		void RigidBodyComponent::UpdateObjectTransform(Math::Transform* a_transform)
 		{
 			const JPH::BodyInterface* t_bodyInterface = ServiceLocator::GetPhysicsSystem()->GetBodyInterface();
-			const JPH::BodyID t_bodyId = m_rigidBody.GetBodyID();
+			const JPH::BodyID t_bodyId = m_rigidBody->GetBodyID();
 			const JPH::Vec3 t_bodyPos = t_bodyInterface->GetCenterOfMassPosition(t_bodyId);
 			const JPH::Quat t_bodyRot = t_bodyInterface->GetRotation(t_bodyId);
 
@@ -89,8 +90,10 @@ namespace Engine
 
 		void RigidBodyComponent::Destroy()
 		{
-			m_rigidBody.Remove();
-			m_rigidBody.Destroy();
+			m_rigidBody->Remove();
+			m_rigidBody->Destroy();
+			delete m_rigidBody;
+			m_rigidBody = nullptr;
 		}
 
 		void RigidBodyComponent::SetPosition(const Math::vec3& a_pos, const bool a_enable) const
@@ -98,7 +101,7 @@ namespace Engine
 			JPH::BodyInterface* t_bodyInterface = ServiceLocator::GetPhysicsSystem()->GetBodyInterface();
 			const JPH::EActivation t_activation = a_enable ? JPH::EActivation::Activate : JPH::EActivation::DontActivate;
 
-			t_bodyInterface->SetPosition(m_rigidBody.GetBodyID(), { a_pos.x, a_pos.y, a_pos.z }, t_activation);
+			t_bodyInterface->SetPosition(m_rigidBody->GetBodyID(), { a_pos.x, a_pos.y, a_pos.z }, t_activation);
 		}
 
 		void RigidBodyComponent::Rotate(const Math::quat& a_rot, const bool a_enable)
@@ -107,7 +110,7 @@ namespace Engine
 
 			m_localRot *= a_rot;
 
-			const JPH::BodyID t_bodyID = m_rigidBody.GetBodyID();
+			const JPH::BodyID t_bodyID = m_rigidBody->GetBodyID();
 			const JPH::Quat t_currentRot = t_bodyInterface->GetRotation(t_bodyID);
 
 			JPH::Quat t_newRot = t_currentRot * JPH::Quat(a_rot.x, a_rot.y, a_rot.z, a_rot.w);

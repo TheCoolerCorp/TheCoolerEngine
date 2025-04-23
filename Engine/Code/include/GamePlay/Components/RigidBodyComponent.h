@@ -35,10 +35,12 @@ namespace Engine
 
 			ENGINE_API void SetPosition(const Math::vec3& a_pos, bool a_enable = true) const;
 			ENGINE_API void Rotate(const Math::quat& a_rot, bool a_enable = true);
-			ENGINE_API void SetDebug(bool t_debug) { m_debug = t_debug; }
+			ENGINE_API void SetDebug(const bool a_debug) { m_debug = a_debug; }
 
-			ENGINE_API [[nodiscard]] Physics::ColliderType GetBodyType() const { return m_rigidBody.GetType(); }
-			ENGINE_API [[nodiscard]] Physics::RigidBody GetBody() const { return m_rigidBody; }
+			ENGINE_API void SetActive(const bool a_enable) const { m_rigidBody->SetActive(a_enable); }
+
+			ENGINE_API [[nodiscard]] Physics::ColliderType GetColliderType() const { return m_rigidBody->GetColliderType(); }
+			ENGINE_API [[nodiscard]] Physics::RigidBody* GetBody() const { return m_rigidBody; }
 			ENGINE_API [[nodiscard]] Math::vec3 GetPos() const { return m_bodyPos; }
 			ENGINE_API [[nodiscard]] Math::quat GetRot() const { return m_bodyRot; }
 			ENGINE_API [[nodiscard]] bool GetDebug() const { return m_debug; }
@@ -47,7 +49,7 @@ namespace Engine
 			ENGINE_API static RigidBodyComponent* GetComponent(uint32_t a_id);
 
 		private:
-			Physics::RigidBody m_rigidBody;
+			Physics::RigidBody* m_rigidBody = nullptr;
 			Math::vec3 m_localPos;
 			Math::quat m_localRot;
 			Math::vec3 m_bodyPos;

@@ -1,7 +1,8 @@
 #include "Physics/Layers.h"
 
-JPH_NAMESPACE_BEGIN
+#include "Physics/RigidBody.h"
 
+JPH_NAMESPACE_BEGIN
 	bool ObjectLayerPairFilterImpl::ShouldCollide(const ObjectLayer a_inObject1, const ObjectLayer a_inObject2) const
 	{
 		switch (a_inObject1)
@@ -9,7 +10,9 @@ JPH_NAMESPACE_BEGIN
 		case Layers::NON_MOVING:
 			return a_inObject2 == Layers::MOVING;
 		case Layers::MOVING:
-			return true;
+			return a_inObject2 != Layers::DISABLED;
+		case Layers::DISABLED:
+			return false;
 		default:
 			JPH_ASSERT(false);
 			return false;
@@ -41,6 +44,8 @@ JPH_NAMESPACE_BEGIN
 			return "NON_MOVING";
 		case static_cast<BroadPhaseLayer::Type>(BroadPhaseLayers::MOVING):		
 			return "MOVING";
+		case static_cast<BroadPhaseLayer::Type>(BroadPhaseLayers::DISABLED):
+			return "DISABLED";
 		default:													
 			JPH_ASSERT(false);
 			return "INVALID";
@@ -54,7 +59,9 @@ JPH_NAMESPACE_BEGIN
 		case Layers::NON_MOVING:
 			return a_inLayer2 == BroadPhaseLayers::MOVING;
 		case Layers::MOVING:
-			return true;
+			return a_inLayer2 != BroadPhaseLayers::DISABLED;
+		case Layers::DISABLED:
+			return false;
 		default:
 			JPH_ASSERT(false);
 			return false;

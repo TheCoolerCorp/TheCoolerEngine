@@ -21,7 +21,8 @@ namespace Engine
 		enum class CollisionLayer
 		{
 			NON_MOVING = 0,
-			MOVING
+			MOVING,
+			DISABLED
 		};
 
 		enum class ColliderType
@@ -38,10 +39,12 @@ namespace Engine
 			ENGINE_API void CreateSphereBody(BodyType a_type, CollisionLayer a_layer, Math::vec3 a_position, float a_radius, Math::quat a_rotation, bool a_enable);
 			ENGINE_API void CreateCapsuleBody(BodyType a_type, CollisionLayer a_layer, Math::vec3 a_position, float a_halfHeight, float a_radius, Math::quat a_rotation, bool a_enable);
 
-			ENGINE_API void SetActive(bool a_enable) const;
+			ENGINE_API void SetActive(bool a_enable);
 			ENGINE_API [[nodiscard]] JPH::BodyID GetBodyID() const;
-			ENGINE_API [[nodiscard]] bool IsActive() const;
-			ENGINE_API [[nodiscard]] ColliderType GetType() const { return m_type; }
+			ENGINE_API [[nodiscard]] bool IsActive() const { return m_isActive; }
+			ENGINE_API [[nodiscard]] ColliderType GetColliderType() const { return m_colliderType; }
+			ENGINE_API [[nodiscard]] BodyType GetBodyType() const { return m_bodyType; }
+			ENGINE_API [[nodiscard]] CollisionLayer GetLayer() const { return m_collisionLayer; }
 			ENGINE_API [[nodiscard]] Math::vec3 GetScale() const { return m_scale; }
 			ENGINE_API [[nodiscard]] float GetRadius() const { return m_radius; }
 			ENGINE_API [[nodiscard]] float GetHalfHeight() const { return m_halfHeight; }
@@ -51,10 +54,13 @@ namespace Engine
 		private:
 			JPH::Body* m_body = nullptr;
 
-			Math::vec3 m_scale;
-			float m_radius, m_halfHeight;
+			Math::vec3 m_scale = Math::vec3();
+			float m_radius = 0.f, m_halfHeight = 0.f;
 
-			ColliderType m_type;
+			ColliderType m_colliderType = ColliderType::BOX;
+			BodyType m_bodyType = BodyType::STATIC;
+			CollisionLayer m_collisionLayer = CollisionLayer::DISABLED;
+			bool m_isActive = false;
 
 			static JPH::EMotionType BodyTypeToJPHType(BodyType a_type);
 			static JPH::ObjectLayer CollisionLayerToJPHLayer(CollisionLayer a_layer);

@@ -18,7 +18,10 @@ namespace Engine
 			const Math::vec3 a_scale, const Math::quat a_rotation, const bool a_enable)
 		{
 			m_scale = a_scale;
-			m_type = ColliderType::BOX;
+			m_colliderType = ColliderType::BOX;
+			m_bodyType = a_type;
+			m_collisionLayer = a_layer;
+			m_isActive = a_enable;
 
 			JPH::BodyInterface* t_bodyInterface = GamePlay::ServiceLocator::GetPhysicsSystem()->GetBodyInterface();
 
@@ -39,7 +42,10 @@ namespace Engine
 			const Math::quat a_rotation, const bool a_enable)
 		{
 			m_radius = a_radius;
-			m_type = ColliderType::SPHERE;
+			m_colliderType = ColliderType::SPHERE;
+			m_bodyType = a_type;
+			m_collisionLayer = a_layer;
+			m_isActive = a_enable;
 
 			JPH::BodyInterface* t_bodyInterface = GamePlay::ServiceLocator::GetPhysicsSystem()->GetBodyInterface();
 
@@ -60,7 +66,10 @@ namespace Engine
 		{
 			m_halfHeight = a_halfHeight;
 			m_radius = a_radius;
-			m_type = ColliderType::CAPSULE;
+			m_colliderType = ColliderType::CAPSULE;
+			m_bodyType = a_type;
+			m_collisionLayer = a_layer;
+			m_isActive = a_enable;
 
 			JPH::BodyInterface* t_bodyInterface = GamePlay::ServiceLocator::GetPhysicsSystem()->GetBodyInterface();
 
@@ -76,26 +85,27 @@ namespace Engine
 			t_bodyInterface->AddBody(m_body->GetID(), t_activation);
 		}
 
-		void RigidBody::SetActive(const bool a_enable) const
+		void RigidBody::SetActive(const bool a_enable)
 		{
 			JPH::BodyInterface* t_bodyInterface = GamePlay::ServiceLocator::GetPhysicsSystem()->GetBodyInterface();
-			if (a_enable)
+			JPH::BodyID t_id = m_body->GetID();
+			if (a_enable && !this->m_isActive)
 			{
-				t_bodyInterface->ActivateBody(m_body->GetID());
-				return;
+				this->m_isActive = true;
+				t_bodyInterface->SetObjectLayer(t_id, CollisionLayerToJPHLayer(m_collisionLayer));
+				t_bodyInterface->SetMotionType(t_id, BodyTypeToJPHType(m_bodyType), JPH::EActivation::Activate);
 			}
-			t_bodyInterface->DeactivateBody(m_body->GetID());
+			else if (this->m_isActive)
+			{
+				this->m_isActive = false;
+				t_bodyInterface->SetObjectLayer(t_id, CollisionLayerToJPHLayer(CollisionLayer::DISABLED));
+				t_bodyInterface->SetMotionType(t_id, BodyTypeToJPHType(BodyType::STATIC), JPH::EActivation::DontActivate);
+			}
 		}
 
 		JPH::BodyID RigidBody::GetBodyID() const
 		{
 			return m_body->GetID();
-		}
-
-		bool RigidBody::IsActive() const
-		{
-			const JPH::BodyInterface* t_bodyInterface = GamePlay::ServiceLocator::GetPhysicsSystem()->GetBodyInterface();
-			return t_bodyInterface->IsActive(m_body->GetID());
 		}
 
 		void RigidBody::Remove() const
@@ -133,6 +143,8 @@ namespace Engine
 				return JPH::Layers::MOVING;
 			case CollisionLayer::NON_MOVING:
 				return JPH::Layers::NON_MOVING;
+			case CollisionLayer::DISABLED:
+				return JPH::Layers::DISABLED;
 			}
 			return JPH::Layers::MOVING;
 		}

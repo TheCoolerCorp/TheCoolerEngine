@@ -48,6 +48,8 @@ namespace Engine
 				t_rigidBodyComponent->CreateBoxRigidBody(Physics::BodyType::STATIC, Physics::CollisionLayer::NON_MOVING, Math::vec3(0.f, 0.f, 0.f), Math::vec3(2.f), Math::quat(Math::vec3(Math::ToRadians(0.f), 0.f, 0.f)), *t_object->GetComponent<TransformComponent>()->GetTransform());
 				t_rigidBodyComponent->SetDebug(true);
 			}
+			t_rigidBodyComponent->SetActive(false);
+			t_rigidBodyComponent->SetActive(true);
 			t_object->AddComponent<MeshComponent>(true);
 			t_object->GetComponent<MeshComponent>(true)->SetMesh(t_cubeCollider);
 			t_object->GetComponent<MeshComponent>(true)->SetTexture(t_colliderTexture);

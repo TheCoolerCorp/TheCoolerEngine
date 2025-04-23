@@ -39,7 +39,7 @@ namespace Engine
 
 		void GameObject::UpdateColliderMat()
 		{
-			const Physics::ColliderType t_colliderType = GetComponent<RigidBodyComponent>()->GetBodyType();
+			const Physics::ColliderType t_colliderType = GetComponent<RigidBodyComponent>()->GetColliderType();
 			GetComponent<TransformComponent>()->GetTransform()->SetGlobalPositionFromMatrix();
 			const Math::vec3 t_pos = GetComponent<RigidBodyComponent>()->GetPos();
 			const Math::quat t_rotation = GetComponent<RigidBodyComponent>()->GetRot();
@@ -47,18 +47,18 @@ namespace Engine
 			switch (t_colliderType)
 			{
 			case Physics::ColliderType::BOX:
-				m_colliderMat = Math::mat4::TRS(t_pos, t_rotation, GetComponent<RigidBodyComponent>()->GetBody().GetScale());
+				m_colliderMat = Math::mat4::TRS(t_pos, t_rotation, GetComponent<RigidBodyComponent>()->GetBody()->GetScale());
 				break;
 			case Physics::ColliderType::SPHERE:
 				{
-					const Math::vec3 t_sphereScale = Math::vec3(GetComponent<RigidBodyComponent>()->GetBody().GetRadius());
+					const Math::vec3 t_sphereScale = Math::vec3(GetComponent<RigidBodyComponent>()->GetBody()->GetRadius());
 					m_colliderMat = Math::mat4::TRS(t_pos, t_rotation, t_sphereScale);
 				}
 				break;
 			case Physics::ColliderType::CAPSULE:
 				{
-					const float t_xZScale = GetComponent<RigidBodyComponent>()->GetBody().GetRadius();
-					const float t_yScale = GetComponent<RigidBodyComponent>()->GetBody().GetHalfHeight();
+					const float t_xZScale = GetComponent<RigidBodyComponent>()->GetBody()->GetRadius();
+					const float t_yScale = GetComponent<RigidBodyComponent>()->GetBody()->GetHalfHeight();
 					const Math::vec3 t_capsuleScale = Math::vec3(t_xZScale, t_yScale, t_xZScale);
 					m_colliderMat = Math::mat4::TRS(t_pos, t_rotation, t_capsuleScale);
 				}
