@@ -27,7 +27,7 @@ namespace Engine
 		void Camera::Create(Core::Renderer* a_renderer)
 		{
 			m_descriptor = a_renderer->GetInterface()->InstantiateObjectDescriptor();
-			m_descriptor->Create(a_renderer->GetLogicalDevice(), a_renderer->GetPipeline(), Core::RHI::Common, 1, { Core::RHI::DescriptorSetType::DESCRIPTOR_SET_TYPE_UNIFORM_BUFFER });
+			m_descriptor->Create(a_renderer->GetLogicalDevice(), a_renderer->GetPipeline(), Core::RHI::Camera, 1, { Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_UNIFORM_BUFFER });
 			m_descriptor->SetMat(a_renderer->GetLogicalDevice(), a_renderer->GetPhysicalDevice(), a_renderer->GetCommandPool(), m_vp.mElements.data(), 0, 1);
 		}
 

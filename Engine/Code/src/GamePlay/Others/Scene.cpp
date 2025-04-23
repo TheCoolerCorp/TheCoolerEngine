@@ -41,16 +41,14 @@ namespace Engine
 			m_objs.push_back(t_object);
 
 			Ref<Resource::Mesh> t_mesh2 = m_resourceManager->CreateResource<Resource::Mesh>("Assets/Meshes/FinalBaseMesh.obj");
-			Ref<Resource::Texture> t_texture2 = m_resourceManager->CreateResource<Resource::Texture>("Assets/Textures/viking_room.png");
 			t_mesh2->Load(a_renderer);
-			t_texture2->Load(a_renderer);
 
 			GameObject* t_object2 = new GameObject(Math::vec3(0.f), Math::vec3(0.f, Math::ToRadians(270.f), 0.f), Math::vec3(1.f));
 			t_object2->AddComponent<MeshComponent>();
 
 
 			t_object2->GetComponent<MeshComponent>()->SetMesh(t_mesh2);
-			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetAlbedo(t_texture2);
+			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetAlbedo(t_texture);
 
 			m_objs.push_back(t_object2);
 

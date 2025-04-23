@@ -79,23 +79,22 @@ namespace Engine
 
 			ENGINE_API bool HasAlbedo() { return m_hasTextures.albdeo; }
 			ENGINE_API Ref<Resource::Texture> GetAlbedo() { return m_textures[0]; }
-			ENGINE_API Math::vec3 GetAlbedoValues() { return m_values.albedo; }
 
 			ENGINE_API bool HasNormal() { return m_hasTextures.normal; }
 			ENGINE_API Ref<Resource::Texture> GetNormal() { return m_textures[1]; }
 
 			ENGINE_API bool HasMetallic() { return m_hasTextures.albdeo; }
 			ENGINE_API Ref<Resource::Texture> GetMetallic() { return m_textures[2]; }
-			ENGINE_API float GetMetallicValues() { return m_values.metallic; }
 
 			ENGINE_API bool HasRoughness() { return m_hasTextures.roughness; }
 			ENGINE_API Ref<Resource::Texture> GetRoughness() { return m_textures[3]; }
-			ENGINE_API float GetRoughnessValues() { return m_values.roughness; }
 
 			ENGINE_API bool HasAO() { return m_hasTextures.ao; }
 			ENGINE_API Ref<Resource::Texture> GetAO() { return m_textures[3]; }
-			ENGINE_API float GetAOValues() { return m_values.ao; }
 
+			MaterialType GetType() { return m_type; }
+			HasMaterialTextures& GetHasTextures() { return m_hasTextures; }
+			MaterialValues& GetMaterialValues() { return m_values; }
 		private:
 			MaterialType m_type = UNLIT;
 

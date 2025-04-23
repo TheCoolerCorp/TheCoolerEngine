@@ -13,7 +13,7 @@ namespace Engine
 		namespace GraphicsAPI
 		{
 
-			void VulkanObjectDescriptor::Create(RHI::ILogicalDevice* a_logicalDevice, RHI::IGraphicPipeline* a_graphicPipeline, RHI::DescriptorSetTarget a_type, int a_count, std::vector<RHI::DescriptorSetType> a_types)
+			void VulkanObjectDescriptor::Create(RHI::ILogicalDevice* a_logicalDevice, RHI::IGraphicPipeline* a_graphicPipeline, RHI::DescriptorSetTarget a_type, int a_count, std::vector<RHI::DescriptorSetDataType> a_types)
 			{
 				// Type : Common to all object in shader or per object.
 				m_type = a_type;

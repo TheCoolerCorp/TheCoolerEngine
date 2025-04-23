@@ -20,7 +20,7 @@ namespace Engine
 			Core::RHI::IGraphicPipeline* t_graphicPipeline = a_renderer->GetPipeline();
 			int t_maxFrame = a_renderer->GetSwapChain()->GetMaxFrame();
 
-			CreatePendingComponentsDescriptors(a_renderer->GetInterface(), t_logicalDevice, t_physicalDevice, t_surface, t_commandPool, t_graphicPipeline, t_maxFrame, a_updatedMatrix);
+			//CreatePendingComponentsDescriptors(a_renderer->GetInterface(), t_logicalDevice, t_physicalDevice, t_surface, t_commandPool, t_graphicPipeline, t_maxFrame, a_updatedMatrix);
 
 			for (int i = 0; i < a_updatedMatrix.size(); ++i)
 			{
@@ -81,37 +81,49 @@ namespace Engine
 			}
 		}
 
-		void MeshRendererSystem::CreatePendingComponentsDescriptors(Core::RHI::ApiInterface* apiInterface, Core::RHI::ILogicalDevice* a_logicalDevice, Core::RHI::IPhysicalDevice* a_physicalDevice, Core::RHI::ISurface* a_surface, Core::RHI::ICommandPool* a_commandPool, Core::RHI::IGraphicPipeline* a_graphicPipeline, int a_maxFrame, std::vector<std::pair<int, Math::mat4>>& a_updatedMatrix)
+		void MeshRendererSystem::CreatePendingComponentsDescriptors(Core::RHI::ApiInterface* apiInterface, Core::RHI::ILogicalDevice* a_logicalDevice, Core::RHI::IPhysicalDevice* a_physicalDevice, Core::RHI::ISurface* a_surface, Core::RHI::ICommandPool* a_commandPool, Core::RHI::IGraphicPipeline* a_unlitPipeine, Core::RHI::IGraphicPipeline* a_litPipeine, int a_maxFrame, std::vector<std::pair<int, Math::mat4>>& a_updatedMatrix)
 		{
 			for (int i = 0; i < m_pendingComponents.size(); ++i)
 			{
 				Core::RHI::IObjectDescriptor* t_newRenderObject = apiInterface->InstantiateObjectDescriptor();
 
 				Core::RHI::IImage* t_newRenderObjectTexture = m_components.at(m_pendingComponents.at(i))->GetMaterial()->GetAlbedo()->GetImage();
+
+				Ref<Material> t_material = m_components[m_pendingComponents[i]]->GetMaterial();
 				void* t_newRenderObjectMatrixData = a_updatedMatrix.at(m_pendingComponents.at(i)).second.mElements.data();
 
-				std::vector<Core::RHI::DescriptorSetType> m_types;
-				if (a_graphicPipeline->GetType() == Core::RHI::Unlit)
+				std::vector<Core::RHI::DescriptorSetDataType> m_types;
+				if (m_components.at(m_pendingComponents.at(i))->GetMaterial()->GetType() == UNLIT)
 				{
-					m_types = { Core::RHI::DescriptorSetType::DESCRIPTOR_SET_TYPE_UNIFORM_BUFFER, Core::RHI::DescriptorSetType::DESCRIPTOR_SET_TYPE_COMBINED_IMAGE_SAMPLER };
+					m_types = { Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_UNIFORM_BUFFER, Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_COMBINED_IMAGE_SAMPLER };
+					t_newRenderObject->Create(a_logicalDevice, a_unlitPipeine, Core::RHI::Object, a_maxFrame, m_types);
 				}
-				else if (a_graphicPipeline->GetType() == Core::RHI::Lit)
+				else if (m_components.at(m_pendingComponents.at(i))->GetMaterial()->GetType() == LIT)
 				{
-					m_types = { Core::RHI::DescriptorSetType::DESCRIPTOR_SET_TYPE_UNIFORM_BUFFER, Core::RHI::DescriptorSetType::DESCRIPTOR_SET_TYPE_COMBINED_IMAGE_SAMPLER,
-								Core::RHI::DescriptorSetType::DESCRIPTOR_SET_TYPE_COMBINED_IMAGE_SAMPLER, Core::RHI::DescriptorSetType::DESCRIPTOR_SET_TYPE_COMBINED_IMAGE_SAMPLER,
-								Core::RHI::DescriptorSetType::DESCRIPTOR_SET_TYPE_COMBINED_IMAGE_SAMPLER, Core::RHI::DescriptorSetType::DESCRIPTOR_SET_TYPE_COMBINED_IMAGE_SAMPLER,
-								Core::RHI::DescriptorSetType::DESCRIPTOR_SET_TYPE_UNIFORM_BUFFER, Core::RHI::DescriptorSetType::DESCRIPTOR_SET_TYPE_UNIFORM_BUFFER };
+					m_types = { Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_UNIFORM_BUFFER, Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_COMBINED_IMAGE_SAMPLER,
+								Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_COMBINED_IMAGE_SAMPLER, Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_COMBINED_IMAGE_SAMPLER,
+								Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_COMBINED_IMAGE_SAMPLER, Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_COMBINED_IMAGE_SAMPLER,
+								Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_UNIFORM_BUFFER, Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_UNIFORM_BUFFER };
+
+					t_newRenderObject->Create(a_logicalDevice, a_litPipeine, Core::RHI::Object, a_maxFrame, m_types);
+
+
+
+					//m_components.at(m_pendingComponents.at(i))->GetMaterial().
+					//t_newRenderObject->SetTexture(a_logicalDevice, t_newRenderObjectTexture, 2, 1);
+					//t_newRenderObject->SetTexture(a_logicalDevice, t_newRenderObjectTexture, 3, 1);
+					//t_newRenderObject->SetTexture(a_logicalDevice, t_newRenderObjectTexture, 4, 1);
+					//t_newRenderObject->SetTexture(a_logicalDevice, t_newRenderObjectTexture, 5, 1);
+
+					t_newRenderObject->SetMat(a_logicalDevice, a_physicalDevice, a_commandPool, &t_material->GetMaterialValues(), 6, 1);
+					t_newRenderObject->SetMat(a_logicalDevice, a_physicalDevice, a_commandPool, &t_material->GetHasTextures(), 7, 1);
 				}
 				else
 				{
 					LOG_ERROR("Not other type of pipeline has been implemented");
 				}
-				t_newRenderObject->Create(a_logicalDevice, a_graphicPipeline, Core::RHI::Per, a_maxFrame, m_types);
 				t_newRenderObject->SetMat(a_logicalDevice, a_physicalDevice, a_commandPool, t_newRenderObjectMatrixData, 0, 1);
-				t_newRenderObject->SetTexture(a_logicalDevice, t_newRenderObjectTexture, 1, 1);
-
-				//t_newRenderObject->SetTexture(a_logicalDevice, t_newRenderObjectTexture, 1, 1);
-				//t_newRenderObject->SetMat(a_logicalDevice, a_physicalDevice, a_commandPool, t_newRenderObjectMatrixData, 0, 1);
+				t_newRenderObject->SetTexture(a_logicalDevice, t_material->GetAlbedo()->GetImage(), 1, 1);
 
 				if (m_availableIndexes.empty())
 				{

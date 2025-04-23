@@ -25,7 +25,7 @@ namespace Engine
 
 				ENGINE_API VulkanObjectDescriptor* CastVulkan() override { return this; }
 
-				ENGINE_API void Create(RHI::ILogicalDevice* a_logicalDevice, RHI::IGraphicPipeline* a_graphicPipeline, RHI::DescriptorSetTarget a_type, int a_count, std::vector<RHI::DescriptorSetType> a_types = std::vector<RHI::DescriptorSetType>(0)) override;
+				ENGINE_API void Create(RHI::ILogicalDevice* a_logicalDevice, RHI::IGraphicPipeline* a_graphicPipeline, RHI::DescriptorSetTarget a_type, int a_count, std::vector<RHI::DescriptorSetDataType> a_types = std::vector<RHI::DescriptorSetDataType>(0)) override;
 
 				ENGINE_API void Destroy(RHI::ILogicalDevice* a_logicalDevice) override;
 
@@ -46,7 +46,7 @@ namespace Engine
 				std::vector<VulkanBuffer*> m_uniforms;
 
 				bool m_Updated = false;
-				RHI::DescriptorSetTarget m_type = RHI::UNDEFINED;
+				RHI::DescriptorSetTarget m_type = RHI::Undefined;
 
 				std::vector<VkWriteDescriptorSet> t_descriptorWrites{};
 

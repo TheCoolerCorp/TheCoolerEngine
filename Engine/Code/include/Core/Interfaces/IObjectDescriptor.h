@@ -24,18 +24,23 @@ namespace Engine
 
 			enum DescriptorSetTarget : int
 			{
-				Common = 0,
-				Per = 1,
-				UNDEFINED = 2
+				Camera = 0,
+				Object = 1,
+				Lights = 2,
+				Undefined = -1
 			};
 
-			enum DescriptorSetType : int
+			enum DescriptorSetDataType : int
 			{
 				DESCRIPTOR_SET_TYPE_COMBINED_IMAGE_SAMPLER = 1,
 				DESCRIPTOR_SET_TYPE_UNIFORM_BUFFER = 6
 			};
 
-
+			enum ObjectType : int
+			{
+				RenderObject,
+				DataObject
+			};
 
 			class IObjectDescriptor
 			{
@@ -44,7 +49,7 @@ namespace Engine
 
 				ENGINE_API virtual GraphicsAPI::VulkanObjectDescriptor* CastVulkan() { return nullptr; }
 
-				ENGINE_API virtual void Create(ILogicalDevice* a_logicalDevice, IGraphicPipeline* a_graphicPipeline, DescriptorSetTarget a_type, int a_count, std::vector<DescriptorSetType> a_types = std::vector<DescriptorSetType>(0)) = 0;
+				ENGINE_API virtual void Create(ILogicalDevice* a_logicalDevice, IGraphicPipeline* a_graphicPipeline, DescriptorSetTarget a_type, int a_count, std::vector<DescriptorSetDataType> a_types = std::vector<DescriptorSetDataType>(0)) = 0;
 
 				ENGINE_API virtual void Destroy(ILogicalDevice* a_logicalDevice) = 0;
 
