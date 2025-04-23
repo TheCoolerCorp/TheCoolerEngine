@@ -22,6 +22,7 @@ namespace Engine
 		{
 			NON_MOVING = 0,
 			MOVING,
+			TRIGGER,
 			DISABLED
 		};
 
@@ -40,6 +41,7 @@ namespace Engine
 			ENGINE_API void CreateCapsuleBody(BodyType a_type, CollisionLayer a_layer, Math::vec3 a_position, float a_halfHeight, float a_radius, Math::quat a_rotation, bool a_enable);
 
 			ENGINE_API void SetActive(bool a_enable);
+			ENGINE_API void SetIsTrigger(bool a_trigger);
 			ENGINE_API [[nodiscard]] JPH::BodyID GetBodyID() const;
 			ENGINE_API [[nodiscard]] bool IsActive() const { return m_isActive; }
 			ENGINE_API [[nodiscard]] ColliderType GetColliderType() const { return m_colliderType; }

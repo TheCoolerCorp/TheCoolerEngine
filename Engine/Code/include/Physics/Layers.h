@@ -15,8 +15,9 @@ namespace Layers
 {
     static constexpr uint8 NON_MOVING = 0;
     static constexpr uint8 MOVING = 1;
-    static constexpr uint8 DISABLED = 2;
-    static constexpr uint8 NUM_LAYERS = 3;
+    static constexpr uint8 TRIGGER = 2;
+    static constexpr uint8 DISABLED = 4;
+    static constexpr uint8 NUM_LAYERS = 5;
 }
 
 class ObjectLayerPairFilterImpl final : public ObjectLayerPairFilter
@@ -29,8 +30,9 @@ namespace BroadPhaseLayers
 {
     static constexpr BroadPhaseLayer NON_MOVING(0);
     static constexpr BroadPhaseLayer MOVING(1);
-    static constexpr BroadPhaseLayer DISABLED(2);
-    static constexpr uint32_t NUM_LAYERS(3);
+    static constexpr BroadPhaseLayer TRIGGER(2);
+    static constexpr BroadPhaseLayer DISABLED(3);
+    static constexpr uint32_t NUM_LAYERS(4);
 }
 
 class MyBroadPhaseLayerInterface final : public BroadPhaseLayerInterface

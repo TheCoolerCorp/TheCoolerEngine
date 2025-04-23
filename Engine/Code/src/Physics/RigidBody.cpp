@@ -88,7 +88,7 @@ namespace Engine
 		void RigidBody::SetActive(const bool a_enable)
 		{
 			JPH::BodyInterface* t_bodyInterface = GamePlay::ServiceLocator::GetPhysicsSystem()->GetBodyInterface();
-			JPH::BodyID t_id = m_body->GetID();
+			const JPH::BodyID t_id = m_body->GetID();
 			if (a_enable && !this->m_isActive)
 			{
 				this->m_isActive = true;
@@ -101,6 +101,15 @@ namespace Engine
 				t_bodyInterface->SetObjectLayer(t_id, CollisionLayerToJPHLayer(CollisionLayer::DISABLED));
 				t_bodyInterface->SetMotionType(t_id, BodyTypeToJPHType(BodyType::STATIC), JPH::EActivation::DontActivate);
 			}
+		}
+
+		void RigidBody::SetIsTrigger(const bool a_trigger)
+		{
+			m_collisionLayer = CollisionLayer::TRIGGER;
+			JPH::BodyInterface* t_bodyInterface = GamePlay::ServiceLocator::GetPhysicsSystem()->GetBodyInterface();
+			const JPH::BodyID t_id = m_body->GetID();
+			t_bodyInterface->SetObjectLayer(t_id, CollisionLayerToJPHLayer(m_collisionLayer));
+			m_body->SetIsSensor(a_trigger);
 		}
 
 		JPH::BodyID RigidBody::GetBodyID() const
@@ -143,6 +152,8 @@ namespace Engine
 				return JPH::Layers::MOVING;
 			case CollisionLayer::NON_MOVING:
 				return JPH::Layers::NON_MOVING;
+			case CollisionLayer::TRIGGER:
+				return JPH::Layers::TRIGGER;
 			case CollisionLayer::DISABLED:
 				return JPH::Layers::DISABLED;
 			}

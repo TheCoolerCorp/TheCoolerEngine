@@ -11,6 +11,8 @@ JPH_NAMESPACE_BEGIN
 			return a_inObject2 == Layers::MOVING;
 		case Layers::MOVING:
 			return a_inObject2 != Layers::DISABLED;
+		case Layers::TRIGGER:
+			return a_inObject2 != Layers::TRIGGER;
 		case Layers::DISABLED:
 			return false;
 		default:
@@ -44,6 +46,8 @@ JPH_NAMESPACE_BEGIN
 			return "NON_MOVING";
 		case static_cast<BroadPhaseLayer::Type>(BroadPhaseLayers::MOVING):		
 			return "MOVING";
+		case static_cast<BroadPhaseLayer::Type>(BroadPhaseLayers::TRIGGER):
+			return "TRIGGER";
 		case static_cast<BroadPhaseLayer::Type>(BroadPhaseLayers::DISABLED):
 			return "DISABLED";
 		default:													
@@ -59,6 +63,8 @@ JPH_NAMESPACE_BEGIN
 		case Layers::NON_MOVING:
 			return a_inLayer2 == BroadPhaseLayers::MOVING;
 		case Layers::MOVING:
+			return a_inLayer2 != BroadPhaseLayers::DISABLED;
+		case Layers::TRIGGER:
 			return a_inLayer2 != BroadPhaseLayers::DISABLED;
 		case Layers::DISABLED:
 			return false;

@@ -9,9 +9,11 @@ JPH_NAMESPACE_BEGIN
 	ValidateResult MyContactListener::OnContactValidate(const Body& a_inBody1, const Body& a_inBody2, RVec3Arg a_inBaseOffset,
 	                                                    const CollideShapeResult& a_inCollisionResult)
 	{
-	if (a_inBody1.GetObjectLayer() == Layers::DISABLED || a_inBody2.GetObjectLayer() == Layers::DISABLED)
-		return ValidateResult::RejectContact;
-	else
+		if (a_inBody1.GetObjectLayer() == Layers::DISABLED || a_inBody2.GetObjectLayer() == Layers::DISABLED)
+		{
+			return ValidateResult::RejectContact;
+		}
+	
 		return ValidateResult::AcceptContact;
 	}
 
