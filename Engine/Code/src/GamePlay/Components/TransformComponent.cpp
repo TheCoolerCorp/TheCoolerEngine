@@ -6,10 +6,11 @@ namespace Engine
 {
 	namespace GamePlay
 	{
-		ComponentType TransformComponent::Create(uint32_t& a_outId)
+		ComponentType TransformComponent::Create(int& a_outId)
 		{
 			m_transform = new Math::Transform();
-			a_outId = ServiceLocator::GetTransformSystem()->AddComponent(this);
+			m_id = ServiceLocator::GetTransformSystem()->AddComponent(this);
+			a_outId = m_id;
 			return ComponentType::TRANSFORM;
 		}
 
@@ -70,27 +71,66 @@ namespace Engine
 			m_transform->Scale(a_scale);
 		}
 
-		void TransformComponent::SetParent(uint32_t a_id)
+		/**
+		 * Sets a new parent Transform for this TransformComponent.
+		 * Notifies the previous parent transform that this TransformComponent is no longer a child if it has one.
+		 * @param a_id the id of the new parent Transform
+		 */
+		void TransformComponent::SetParent(int a_id)
 		{
+			if (a_id == m_parentId)
+				return;
+			//tell the previous parent we are no longer their child if we have one
+			if (m_parentId != -1)
+				ServiceLocator::GetTransformSystem()->GetComponent(m_parentId)->RemoveChild(m_id);
+			//set the new parent and tell them we are their child
 			m_parentId = a_id;
+			ServiceLocator::GetTransformSystem()->GetComponent(m_parentId)->AddChild(m_id);
 			m_transform->SetNeedToUpdate(true);
 		}
 
-		void TransformComponent::AddChild(uint32_t a_id)
+		/**
+		 * Removes the parent Transform for this TransformComponent if one is assigned.
+		 */
+		void TransformComponent::RemoveParent()
 		{
-			if (std::ranges::find(m_childrenIds, a_id) == m_childrenIds.end())
+			//tell the previous parent we are no longer their child
+			if (m_parentId != -1)
 			{
-				m_childrenIds.push_back(a_id);
+				ServiceLocator::GetTransformSystem()->GetComponent(m_parentId)->RemoveChild(m_id);
+				m_parentId = -1;
 			}
 		}
 
-		void TransformComponent::RemoveChild(uint32_t a_id)
+		/**
+		 * Adds a child Transform to this TransformComponent, and tells it of its new parent.
+		 * @param a_id the id of the child Transform
+		 */
+		void TransformComponent::AddChild(int a_id)
+		{
+			//if it isnt already a child, add
+			if (std::ranges::find(m_childrenIds, a_id) == m_childrenIds.end())
+			{
+				m_childrenIds.push_back(a_id);
+				//now tell the child we are their new parent
+				ServiceLocator::GetTransformSystem()->GetComponent(a_id)->SetParent(m_id);
+				m_transform->SetNeedToUpdate(true);
+			}
+			
+		}
+
+		/**
+		 * Removes the child Transform from this TransformComponent, and tells it to remove its parent.
+		 * @param a_id the id of the child Transform
+		 */
+		void TransformComponent::RemoveChild(int a_id)
 		{
 			for (int a = 0; a < m_childrenIds.size(); a++)
 			{
 				if (m_childrenIds[a] == a_id)
 				{
 					m_childrenIds.erase(m_childrenIds.begin() + a);
+					ServiceLocator::GetTransformSystem()->GetComponent(a_id)->RemoveParent();
 					break;
 				}
 			}
@@ -98,15 +138,19 @@ namespace Engine
 
 		void TransformComponent::ClearChildren()
 		{
+			for (int t_childId : m_childrenIds) //tell each child we are no longer their parent
+			{
+				ServiceLocator::GetTransformSystem()->GetComponent(t_childId)->RemoveParent();
+			}
 			m_childrenIds.clear();
 		}
 
-		TransformComponent* TransformComponent::GetComponent(uint32_t a_id)
+		TransformComponent* TransformComponent::GetComponent(int a_id)
 		{
 			return ServiceLocator::GetTransformSystem()->GetComponent(a_id);
 		}
 
-		void TransformComponent::RemoveComponent(uint32_t a_id)
+		void TransformComponent::RemoveComponent(int a_id)
 		{
 			ServiceLocator::GetTransformSystem()->RemoveComponent(a_id);
 		}

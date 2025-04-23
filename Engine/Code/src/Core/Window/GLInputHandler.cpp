@@ -66,11 +66,15 @@ namespace Engine
 
 			void GLInputHandler::KeyCallBack(GLFWwindow* window, int key, int scancode, int action, int mods)
 			{
+				if (action == -1)
+					return;
 				m_currentKeyStatus[key] = action;
 			}
 
 			void GLInputHandler::MouseCallBack(GLFWwindow* window, int button, int action, int mods)
 			{
+				if (action == -1)
+					return;
 				m_currentMouseButtonStatus[button] = action;
 			}
 

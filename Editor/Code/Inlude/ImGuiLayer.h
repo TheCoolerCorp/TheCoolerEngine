@@ -1,10 +1,14 @@
 #ifndef IMGUILAYER_H
 #define IMGUILAYER_H
 
+#include <vector>
+
 #include "Layer.h"
 #include "RHIImGui.h"
 namespace Editor::EditorLayer::Ui
 {
+	class UiWindow;
+
 	class ImGuiLayer : public Layer
 	{
 	public:
@@ -21,8 +25,13 @@ namespace Editor::EditorLayer::Ui
 		void OnUiRender() override;
 		void Delete() override;
 
+		void AddWindow(UiWindow* a_window)
+		{
+			m_windows.push_back(a_window);
+		}
 	private:
 		RHIImGui* m_imGui = nullptr;
+		std::vector<UiWindow*> m_windows;
 	};
 }
 

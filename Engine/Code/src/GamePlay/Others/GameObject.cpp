@@ -1,3 +1,5 @@
+#include <utility>
+
 #include "GamePlay/Others/GameObject.h"
 
 #include "GamePlay/Components/Meshcomponent.h"
@@ -9,7 +11,8 @@ namespace Engine
 	{
 		//std::bitset<INT32_MAX> GameObject::m_idBitset{};
 
-		GameObject::GameObject()
+		GameObject::GameObject(std::string a_name)
+			:m_name(std::move(a_name))
 		{
 			//m_id = Utils::GenerateRandomInt(0, INT32_MAX);
 
@@ -22,7 +25,8 @@ namespace Engine
 			AddComponent<TransformComponent>();
 		}
 
-		GameObject::GameObject(Math::vec3 a_position, Math::vec3 a_rotation, Math::vec3 a_scale)
+		GameObject::GameObject( Math::vec3 a_position, Math::vec3 a_rotation, Math::vec3 a_scale, std::string a_name)
+			:m_name(std::move(a_name))
 		{
 			/*m_id = Utils::GenerateRandomInt(0, INT32_MAX);
 
@@ -35,6 +39,12 @@ namespace Engine
 			AddComponent<TransformComponent>();
 		}
 
+		GameObject::~GameObject()
+		{
+			RemoveParent();
+			ClearChildren();
+		}
+
 
 		/*void GameObject::Create(Core::RHI::ApiInterface* a_interface, GameObjectinfo a_info)
 		{
@@ -44,7 +54,7 @@ namespace Engine
 			m_descriptor->Create(a_info.mLogicalDevice, a_info.mPhysicalDevice, a_info.mGraphicPipeline, m_descriptorPool, a_info.mCommandPool, this, a_info.mSize);
 		}
 
-		void GameObject::Update(uint32_t a_frameIndex, Engine::Core::RHI::ILogicalDevice* a_logicalDevice)
+		void GameObject::Update(int a_frameIndex, Engine::Core::RHI::ILogicalDevice* a_logicalDevice)
 		{
 			m_transform.UpdateMatrix();
 			m_descriptor->Update(a_frameIndex, a_logicalDevice, m_transform.GetModel().mElements.data());
@@ -72,34 +82,90 @@ namespace Engine
 				.mNbIndices= GetComponent<MeshComponent>()->GetMesh()->GetNbIndices()
 			};
 		}*/
-		void GameObject::SetParent(uint32_t a_id)
-		{
-			m_parentId = a_id;
-		}
 
-		void GameObject::AddChild(uint32_t a_id)
+		void GameObject::SetId(int a_id)
 		{
-			if (std::ranges::find(m_childrenIds, a_id) == m_childrenIds.end())
+			m_id = a_id;
+			if (TransformComponent* a_component = GetComponent<TransformComponent>())
 			{
-				m_childrenIds.push_back(a_id);
+				a_component->SetGameObject(m_id);
 			}
 		}
 
-		void GameObject::RemoveChild(uint32_t a_id)
+		void GameObject::SetParent(int a_transformId)
 		{
-			for (int a = 0; a < m_childrenIds.size(); a++)
+			if (TransformComponent* a_component = GetComponent<TransformComponent>())
 			{
-				if (m_childrenIds[a] == a_id)
-				{
-					m_childrenIds.erase(m_childrenIds.begin() + a);
-					break;
-				}
+				a_component->SetParent(a_transformId);
+			}
+		}
+
+		void GameObject::RemoveParent()
+		{
+			if (TransformComponent* a_component = GetComponent<TransformComponent>())
+			{
+				a_component->RemoveParent();
+			}
+		}
+
+		void GameObject::AddChild(int a_transformId)
+		{
+			if (TransformComponent* a_component = GetComponent<TransformComponent>())
+			{
+				a_component->AddChild(a_transformId);
+			}
+		}
+
+		void GameObject::RemoveChild(int a_transformId)
+		{
+			if (TransformComponent* a_component = GetComponent<TransformComponent>())
+			{
+				a_component->RemoveChild(a_transformId);
 			}
 		}
 
 		void GameObject::ClearChildren()
 		{
-			m_childrenIds.clear();
+			if (TransformComponent* a_component = GetComponent<TransformComponent>())
+			{
+				a_component->ClearChildren();
+			}
+		}
+
+		int GameObject::GetParentTransformId()
+		{
+			if (TransformComponent* a_component = GetComponent<TransformComponent>())
+			{
+				return a_component->GetParentID();
+			}
+			return -1;
+		}
+
+		std::vector<int> GameObject::GetChildrenTransformIDs()
+		{
+			if (TransformComponent* a_component = GetComponent<TransformComponent>())
+			{
+				return a_component->GetChildrenIDs();
+			}
+			return std::vector<int>{};
+		}
+
+		bool GameObject::HasParent()
+		{
+			if (TransformComponent* a_component = GetComponent<TransformComponent>())
+			{
+				return a_component->GetParentID() != -1;
+			}
+			return false;
+		}
+
+		bool GameObject::HasChildren()
+		{
+			if (TransformComponent* a_component = GetComponent<TransformComponent>())
+			{
+				return !a_component->GetChildrenIDs().empty();
+			}
+			return false;
 		}
 	}
 }

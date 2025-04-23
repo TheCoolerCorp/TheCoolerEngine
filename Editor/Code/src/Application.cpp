@@ -6,7 +6,7 @@
 #include "GamePlay/Components/Meshcomponent.h"
 #include "GamePlay/Others/Scene.h"
 #include "Math/TheCoolerMath.h"
-
+#include "../Inlude/SceneGraphWindow.h"
 #include "../Inlude/ImGuiLayer.h"
 
 using namespace Engine::Core;
@@ -33,6 +33,7 @@ namespace Editor
 			m_renderer->Create(RendererType::VULKAN, m_mainWindow);
 
 			Ui::ImGuiLayer* t_imguiLayer = new Ui::ImGuiLayer(m_renderer);
+			
 			AddLayer(t_imguiLayer);
 
 			m_renderer->LateCreate(RendererType::VULKAN, m_mainWindow);
@@ -44,6 +45,8 @@ namespace Editor
 
 			m_currentScene = new Scene();
 			m_currentScene->Create(m_renderer);
+
+			t_imguiLayer->AddWindow(new Ui::SceneGraphUiWindow(m_renderer, t_imguiLayer, m_currentScene));
 		}
 
 		void Application::Run()

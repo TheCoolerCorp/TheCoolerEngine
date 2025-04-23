@@ -6,7 +6,7 @@
 #include "imgui_internal.h"
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_vulkan.h"
-
+#include "../Inlude/UiWindow.h"
 namespace Editor::EditorLayer::Ui
 {
 	void ImGuiLayer::OnAttach(Engine::Core::Window::IWindow* a_window)
@@ -57,10 +57,15 @@ namespace Editor::EditorLayer::Ui
 		ImGui::End();
 		ImGui::PopStyleVar(3);
 
-		ImGui::ShowDemoWindow();
 		ImGui::Begin("Viewport");
 		m_imGui->DrawSceneAsImage();
 		ImGui::End();
+
+		for (UiWindow* t_window : m_windows)
+		{
+			t_window->UiDraw();	
+		}
+
 		m_imGui->Render();
 
 	}
@@ -73,7 +78,12 @@ namespace Editor::EditorLayer::Ui
 			delete m_imGui;
 			m_imGui = nullptr;
 		}
-
+		//delete every UiWindow
+		for (UiWindow* t_window : m_windows)
+		{
+			t_window->Destroy();
+			delete t_window;
+		}
 		Layer::OnDetach();
 	}
 

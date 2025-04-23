@@ -1,5 +1,7 @@
 #include  "GamePlay/Systems/TransformSystem.h"
 
+#include "Core/Logger/Logger.h"
+
 namespace Engine
 {
 	namespace GamePlay
@@ -13,7 +15,7 @@ namespace Engine
 		{
 			for (TransformComponent* t_component : m_components)
 			{
-				uint32_t t_componentParentId = t_component->GetParentID();
+				int t_componentParentId = t_component->GetParentID();
 				Math::Transform* t_transform = t_component->GetTransform();
 
 				if (t_transform->GetNeedToUpdate())
@@ -39,13 +41,13 @@ namespace Engine
 			}
 		}
 
-		Math::mat4 TransformSystem::GetParentsMatrix(uint32_t a_id)
+		Math::mat4 TransformSystem::GetParentsMatrix(int a_id)
 		{
 			TransformComponent* t_firstParentComp = m_components[a_id];
 
 			if (t_firstParentComp->GetTransform()->GetNeedToUpdate())
 			{
-				uint32_t otherParent = m_components[a_id]->GetParentID();
+				int otherParent = m_components[a_id]->GetParentID();
 				if (otherParent != -1)
 				{
 					t_firstParentComp->GetTransform()->SetNeedToUpdate(false);
@@ -66,14 +68,14 @@ namespace Engine
 			m_availableIds.clear();
 		}
 
-		uint32_t TransformSystem::AddComponent(TransformComponent* a_component)
+		int TransformSystem::AddComponent(TransformComponent* a_component)
 		{
 			if (m_availableIds.empty())
 			{
 				m_components.emplace_back(a_component);
-				return static_cast<uint32_t>(m_components.size()) - 1u;
+				return static_cast<int>(m_components.size()) - 1u;
 			}
-			for (const uint32_t t_availableIndex : m_availableIds)
+			for (const int t_availableIndex : m_availableIds)
 			{
 				if (m_components.at(t_availableIndex) == nullptr)
 				{
@@ -84,8 +86,10 @@ namespace Engine
 			return -1;
 		}
 
-		TransformComponent* TransformSystem::GetComponent(uint32_t a_id)
+		TransformComponent* TransformSystem::GetComponent(int a_id)
 		{
+			if (!IsValidId(a_id))
+				return nullptr;
 			if (a_id >= m_components.size())
 			{
 				return nullptr;
@@ -93,14 +97,27 @@ namespace Engine
 			return m_components.at(a_id);
 		}
 
-		void TransformSystem::RemoveComponent(const uint32_t a_id)
+		void TransformSystem::RemoveComponent(const int a_id)
 		{
+			if (!IsValidId(a_id))
+				return;
 			m_components[a_id]->Destroy();
 			delete m_components[a_id];
 			m_components[a_id] = nullptr;
 			m_availableIds.push_back(a_id);
 		}
-		
+
+		bool TransformSystem::IsValidId(int id)
+		{
+			if (id >= 0 && id < m_components.size())
+			{
+				if (m_components[id] != nullptr)
+				{
+					return true;
+				}
+			}
+			return false;
+		}
 	}
 }
 		

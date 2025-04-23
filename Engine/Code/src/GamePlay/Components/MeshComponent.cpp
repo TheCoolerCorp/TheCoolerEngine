@@ -6,7 +6,7 @@ namespace Engine
 {
 	namespace GamePlay
 	{
-		ComponentType MeshComponent::Create(uint32_t& a_outId)
+		ComponentType MeshComponent::Create(int& a_outId)
 		{
 			a_outId = ServiceLocator::GetMeshRendererSystem()->AddComponent(this);
 			return ComponentType::MESH;
@@ -35,12 +35,12 @@ namespace Engine
 			m_texture = a_texture;
 		}
 
-		MeshComponent* MeshComponent::GetComponent(uint32_t a_id)
+		MeshComponent* MeshComponent::GetComponent(int a_id)
 		{
 			return ServiceLocator::GetMeshRendererSystem()->GetComponent(a_id);
 		}
 
-		void MeshComponent::RemoveComponent(uint32_t a_id)
+		void MeshComponent::RemoveComponent(int a_id)
 		{
 			ServiceLocator::GetMeshRendererSystem()->RemoveComponent(a_id);
 		}

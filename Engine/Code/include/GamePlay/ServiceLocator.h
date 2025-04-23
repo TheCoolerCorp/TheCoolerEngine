@@ -18,9 +18,9 @@ namespace Engine
 			static void ProvideTransformSystem(TransformSystem* a_transformSystem);
 			static void ProvideRendererSystem(MeshRendererSystem* a_meshRendererSystem);
 
-			static Resource::ResourceManager* GetResourceManager();
-			static TransformSystem* GetTransformSystem();
-			static MeshRendererSystem* GetMeshRendererSystem();
+			ENGINE_API static Resource::ResourceManager* GetResourceManager();
+			ENGINE_API static TransformSystem* GetTransformSystem();
+			ENGINE_API static MeshRendererSystem* GetMeshRendererSystem();
 
 		private:
 			static Resource::ResourceManager* m_resourceManager;
