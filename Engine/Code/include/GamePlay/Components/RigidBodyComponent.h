@@ -31,6 +31,20 @@ namespace Engine
 			ENGINE_API void UpdateFromTransform(const Math::Transform* a_transform, bool a_enable = true);
 			ENGINE_API void UpdateObjectTransform(Math::Transform* a_transform);
 
+			ENGINE_API void OnCollisionEnter() const;
+			ENGINE_API void OnCollisionStay() const;
+			ENGINE_API void OnCollisionExit() const;
+			ENGINE_API void OnTriggerEnter() const;
+			ENGINE_API void OnTriggerStay() const;
+			ENGINE_API void OnTriggerExit() const;
+
+			ENGINE_API void SetOnCollisionEnter(std::function<void()> a_event);
+			ENGINE_API void SetOnCollisionStay(std::function<void()> a_event);
+			ENGINE_API void SetOnCollisionExit(std::function<void()> a_event);
+			ENGINE_API void SetOnTriggerEnter(std::function<void()> a_event);
+			ENGINE_API void SetOnTriggerStay(std::function<void()> a_event);
+			ENGINE_API void SetOnTriggerExit(std::function<void()> a_event);
+
 			ENGINE_API void Destroy();
 
 			ENGINE_API void SetPosition(const Math::vec3& a_pos, bool a_enable = true) const;
@@ -55,6 +69,12 @@ namespace Engine
 			Math::vec3 m_bodyPos;
 			Math::quat m_bodyRot;
 			bool m_debug = false;
+			std::function<void()> m_onCollisionEnter;
+			std::function<void()> m_onCollisionStay;
+			std::function<void()> m_onCollisionExit;
+			std::function<void()> m_onTriggerEnter;
+			std::function<void()> m_onTriggerStay;
+			std::function<void()> m_onTriggerExit;
 		};
 	}
 }

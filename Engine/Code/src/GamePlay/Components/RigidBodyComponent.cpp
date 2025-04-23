@@ -1,3 +1,5 @@
+#include <utility>
+
 #include "GamePlay/Components/RigidBodyComponent.h"
 
 #include "Gameplay/ServiceLocator.h"
@@ -86,6 +88,96 @@ namespace Engine
 			m_bodyPos = t_worldPos;
 			a_transform->Rotate(Math::quat::Normalize(t_finalRot) * Math::quat::Normalize(Math::quat::Conjugate(a_transform->GetGlobalRotation())));
 			m_bodyRot = t_worldRot;
+		}
+
+		void RigidBodyComponent::OnCollisionEnter() const
+		{
+			if (!m_onCollisionEnter)
+			{
+				return;
+			}
+
+			m_onCollisionEnter();
+		}
+
+		void RigidBodyComponent::OnCollisionStay() const
+		{
+			if (!m_onCollisionStay)
+			{
+				return;
+			}
+
+			m_onCollisionStay();
+		}
+
+		void RigidBodyComponent::OnCollisionExit() const
+		{
+			if (!m_onCollisionExit)
+			{
+				return;
+			}
+
+			m_onCollisionExit();
+		}
+
+		void RigidBodyComponent::OnTriggerEnter() const
+		{
+			if (!m_onTriggerEnter)
+			{
+				return;
+			}
+
+			m_onTriggerEnter();
+		}
+
+		void RigidBodyComponent::OnTriggerStay() const
+		{
+			if (!m_onTriggerStay)
+			{
+				return;
+			}
+
+			m_onTriggerStay();
+		}
+
+		void RigidBodyComponent::OnTriggerExit() const
+		{
+			if (!m_onTriggerExit)
+			{
+				return;
+			}
+
+			m_onTriggerExit();
+		}
+
+		void RigidBodyComponent::SetOnCollisionEnter(std::function<void()> a_event)
+		{
+			m_onCollisionEnter = std::move(a_event);
+		}
+
+		void RigidBodyComponent::SetOnCollisionStay(std::function<void()> a_event)
+		{
+			m_onCollisionStay = std::move(a_event);
+		}
+
+		void RigidBodyComponent::SetOnCollisionExit(std::function<void()> a_event)
+		{
+			m_onCollisionExit = std::move(a_event);
+		}
+
+		void RigidBodyComponent::SetOnTriggerEnter(std::function<void()> a_event)
+		{
+			m_onTriggerEnter = std::move(a_event);
+		}
+
+		void RigidBodyComponent::SetOnTriggerStay(std::function<void()> a_event)
+		{
+			m_onTriggerStay = std::move(a_event);
+		}
+
+		void RigidBodyComponent::SetOnTriggerExit(std::function<void()> a_event)
+		{
+			m_onTriggerExit = std::move(a_event);
 		}
 
 		void RigidBodyComponent::Destroy()

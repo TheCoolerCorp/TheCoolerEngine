@@ -8,6 +8,16 @@
 
 JPH_NAMESPACE_BEGIN
 
+enum class CollisionEvent : uint8_t
+{
+	COLLISION_ENTER = 0,
+	COLLISION_STAY,
+	COLLISION_EXIT,
+	TRIGGER_ENTER,
+	TRIGGER_STAY,
+	TRIGGER_EXIT
+};
+
 class MyContactListener final : public ContactListener
 {
 public:
