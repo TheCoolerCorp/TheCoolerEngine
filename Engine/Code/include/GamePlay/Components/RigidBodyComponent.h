@@ -31,12 +31,7 @@ namespace Engine
 			ENGINE_API void UpdateFromTransform(const Math::Transform* a_transform, bool a_enable = true);
 			ENGINE_API void UpdateObjectTransform(Math::Transform* a_transform);
 
-			ENGINE_API void OnCollisionEnter() const;
-			ENGINE_API void OnCollisionStay() const;
-			ENGINE_API void OnCollisionExit() const;
-			ENGINE_API void OnTriggerEnter() const;
-			ENGINE_API void OnTriggerStay() const;
-			ENGINE_API void OnTriggerExit() const;
+			ENGINE_API void NotifyCollision(JPH::CollisionEvent a_collisionEvent) const;
 
 			ENGINE_API void SetOnCollisionEnter(std::function<void()> a_event);
 			ENGINE_API void SetOnCollisionStay(std::function<void()> a_event);
@@ -45,6 +40,8 @@ namespace Engine
 			ENGINE_API void SetOnTriggerStay(std::function<void()> a_event);
 			ENGINE_API void SetOnTriggerExit(std::function<void()> a_event);
 
+			ENGINE_API void SetLinearVelocity(Math::vec3 a_velocity) const;
+
 			ENGINE_API void Destroy();
 
 			ENGINE_API void SetPosition(const Math::vec3& a_pos, bool a_enable = true) const;
@@ -52,7 +49,9 @@ namespace Engine
 			ENGINE_API void SetDebug(const bool a_debug) { m_debug = a_debug; }
 
 			ENGINE_API void SetActive(const bool a_enable) const { m_rigidBody->SetActive(a_enable); }
-
+			ENGINE_API void SetIsTrigger(const bool a_isTrigger) const { m_rigidBody->SetIsTrigger(a_isTrigger); }
+			
+			ENGINE_API [[nodiscard]] bool IsTrigger() const { return m_rigidBody->IsTrigger(); }
 			ENGINE_API [[nodiscard]] Physics::ColliderType GetColliderType() const { return m_rigidBody->GetColliderType(); }
 			ENGINE_API [[nodiscard]] Physics::RigidBody* GetBody() const { return m_rigidBody; }
 			ENGINE_API [[nodiscard]] Math::vec3 GetPos() const { return m_bodyPos; }
@@ -63,6 +62,13 @@ namespace Engine
 			ENGINE_API static RigidBodyComponent* GetComponent(uint32_t a_id);
 
 		private:
+			ENGINE_API void OnCollisionEnter() const;
+			ENGINE_API void OnCollisionStay() const;
+			ENGINE_API void OnCollisionExit() const;
+			ENGINE_API void OnTriggerEnter() const;
+			ENGINE_API void OnTriggerStay() const;
+			ENGINE_API void OnTriggerExit() const;
+
 			Physics::RigidBody* m_rigidBody = nullptr;
 			Math::vec3 m_localPos;
 			Math::quat m_localRot;

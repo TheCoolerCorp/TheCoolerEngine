@@ -42,6 +42,7 @@ namespace Engine
 
 			ENGINE_API void SetActive(bool a_enable);
 			ENGINE_API void SetIsTrigger(bool a_trigger);
+			ENGINE_API [[nodiscard]] bool IsTrigger() const { return m_body->IsSensor(); }
 			ENGINE_API [[nodiscard]] JPH::BodyID GetBodyID() const;
 			ENGINE_API [[nodiscard]] bool IsActive() const { return m_isActive; }
 			ENGINE_API [[nodiscard]] ColliderType GetColliderType() const { return m_colliderType; }

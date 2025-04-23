@@ -90,6 +90,30 @@ namespace Engine
 			m_bodyRot = t_worldRot;
 		}
 
+		void RigidBodyComponent::NotifyCollision(const JPH::CollisionEvent a_collisionEvent) const
+		{
+			switch (a_collisionEvent)
+			{
+			case JPH::CollisionEvent::COLLISION_ENTER:
+				OnCollisionEnter();
+				return;
+			case JPH::CollisionEvent::COLLISION_STAY:
+				OnCollisionStay();
+				return;
+			case JPH::CollisionEvent::COLLISION_EXIT:
+				OnCollisionExit();
+				return;
+			case JPH::CollisionEvent::TRIGGER_ENTER:
+				OnTriggerEnter();
+				return;
+			case JPH::CollisionEvent::TRIGGER_STAY:
+				OnTriggerStay();
+				return;
+			case JPH::CollisionEvent::TRIGGER_EXIT:
+				OnTriggerExit();
+			}
+		}
+
 		void RigidBodyComponent::OnCollisionEnter() const
 		{
 			if (!m_onCollisionEnter)
@@ -178,6 +202,11 @@ namespace Engine
 		void RigidBodyComponent::SetOnTriggerExit(std::function<void()> a_event)
 		{
 			m_onTriggerExit = std::move(a_event);
+		}
+
+		void RigidBodyComponent::SetLinearVelocity(const Math::vec3 a_velocity) const
+		{
+			ServiceLocator::GetPhysicsSystem()->EnqueueLinearVelocity(m_rigidBody->GetBodyID(), a_velocity);
 		}
 
 		void RigidBodyComponent::Destroy()

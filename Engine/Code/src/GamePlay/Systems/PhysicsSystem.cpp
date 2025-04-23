@@ -43,6 +43,13 @@ namespace Engine
 				return;
 			}
 
+			for (auto& [fst, snd] : m_linearVelocityQueue)
+			{
+				const JPH::Vec3 t_velocity = { snd.x, snd.y, snd.z };
+				m_bodyInterface->SetLinearVelocity(fst, t_velocity);
+			}
+			m_linearVelocityQueue.clear();
+
 			m_physicsSystem.Update(a_deltaTime, t_collisionSteps, m_tempAllocator, m_jobSystem);
 
 			for (size_t i = 0; i < m_components.size(); ++i)
@@ -106,6 +113,64 @@ namespace Engine
 			delete m_components[a_id];
 			m_components[a_id] = nullptr;
 			m_availableIds.push_back(a_id);
+		}
+
+		void PhysicsSystem::EnqueueLinearVelocity(JPH::BodyID a_bodyID, Math::vec3 a_linearVelocity)
+		{
+			m_linearVelocityQueue.push_back({ a_bodyID, a_linearVelocity });
+		}
+
+		void PhysicsSystem::NotifyCollision(JPH::CollisionEvent a_collisionEvent, JPH::BodyID a_body1,
+		                                    JPH::BodyID a_body2)
+		{
+			auto t_unaryPredicate1 = [&a_body1](const RigidBodyComponent* a_rigidBodyComponent)
+			{
+				return a_body1 == a_rigidBodyComponent->GetBody()->GetBodyID();
+			};
+			const auto t_it1 = std::ranges::find_if(m_components, t_unaryPredicate1);
+
+			auto t_unaryPredicate2 = [&a_body2](const RigidBodyComponent* a_rigidBodyComponent)
+			{
+				return a_body2 == a_rigidBodyComponent->GetBody()->GetBodyID();
+			};
+			const auto t_it2 = std::ranges::find_if(m_components, t_unaryPredicate2);
+
+			if (t_it1 == m_components.end() || t_it2 == m_components.end())
+			{
+				return;
+			}
+			const RigidBodyComponent* t_rigidBodyComponent1 = *t_it1;
+			const RigidBodyComponent* t_rigidBodyComponent2 = *t_it2;
+
+			t_rigidBodyComponent1->NotifyCollision(a_collisionEvent);
+			t_rigidBodyComponent2->NotifyCollision(a_collisionEvent);
+		}
+
+		void PhysicsSystem::NotifyCollisionExit(JPH::BodyID a_body1, JPH::BodyID a_body2)
+		{
+			auto t_unaryPredicate1 = [&a_body1](const RigidBodyComponent* a_rigidBodyComponent)
+				{
+					return a_body1 == a_rigidBodyComponent->GetBody()->GetBodyID();
+				};
+			const auto t_it1 = std::ranges::find_if(m_components, t_unaryPredicate1);
+
+			auto t_unaryPredicate2 = [&a_body2](const RigidBodyComponent* a_rigidBodyComponent)
+				{
+					return a_body2 == a_rigidBodyComponent->GetBody()->GetBodyID();
+				};
+			const auto t_it2 = std::ranges::find_if(m_components, t_unaryPredicate2);
+
+			if (t_it1 == m_components.end() || t_it2 == m_components.end())
+			{
+				return;
+			}
+			const RigidBodyComponent* t_rigidBodyComponent1 = *t_it1;
+			const RigidBodyComponent* t_rigidBodyComponent2 = *t_it2;
+
+			const JPH::CollisionEvent t_collisionEvent = t_rigidBodyComponent1->IsTrigger() || t_rigidBodyComponent2->IsTrigger() ? JPH::CollisionEvent::TRIGGER_EXIT : JPH::CollisionEvent::COLLISION_EXIT;
+
+			t_rigidBodyComponent1->NotifyCollision(t_collisionEvent);
+			t_rigidBodyComponent2->NotifyCollision(t_collisionEvent);
 		}
 	}
 }
