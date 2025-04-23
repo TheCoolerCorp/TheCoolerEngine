@@ -8,7 +8,7 @@ file(GLOB_RECURSE EDITOR_SOURCES "Code/*.cpp")
 #---------------------------------------#
 #			BUILD MODE					#
 #---------------------------------------#
-add_executable(Editor ${EDITOR_SOURCES}  "Code/Inlude/VulkanImGui.h" "Code/src/VulkanImGui.cpp" "Code/Inlude/ImGuiLayer.h" "Code/src/ImGuiLayer.cpp" "Code/Inlude/RHIImGui.h" "Code/src/RHIImGui.cpp" "Code/Inlude/UiWindow.h" "Code/Inlude/SceneGraphWindow.h" "Code/src/SceneGraphWindow.cpp")
+add_executable(Editor ${EDITOR_SOURCES}  "Code/Inlude/VulkanImGui.h" "Code/src/VulkanImGui.cpp" "Code/Inlude/ImGuiLayer.h" "Code/src/ImGuiLayer.cpp" "Code/Inlude/RHIImGui.h" "Code/src/RHIImGui.cpp" "Code/Inlude/UiWindow.h" "Code/Inlude/SceneGraphWindow.h" "Code/src/SceneGraphWindow.cpp" "Code/Inlude/InspectorWindow.h")
 
 #---------------------------------------#
 #				INCLUDE					#

@@ -27,6 +27,8 @@ namespace Editor::EditorLayer::Ui
 	private:
 		Engine::GamePlay::Scene* m_scene;
 		Engine::GamePlay::TransformSystem* m_transformSystem = nullptr;
+
+		void CreateNameTextField(Engine::GamePlay::GameObject* a_object);
 	};
 }
 #endif
