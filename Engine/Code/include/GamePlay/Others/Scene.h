@@ -24,6 +24,8 @@ namespace Engine
 			ENGINE_API void Destroy(Core::Renderer* a_renderer);
 
 		private:
+			void TestFunc(RigidBodyComponent* a_rigidBodyComponent);
+
 			std::vector<GamePlay::GameObject*> m_objs;
 			TransformSystem* m_transformSystem = nullptr;
 			MeshRendererSystem* m_meshRendererSystem = nullptr;

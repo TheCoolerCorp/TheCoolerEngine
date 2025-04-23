@@ -47,9 +47,9 @@ namespace Engine
 			{
 				t_rigidBodyComponent->CreateBoxRigidBody(Physics::BodyType::STATIC, Physics::CollisionLayer::NON_MOVING, Math::vec3(0.f, 0.f, 0.f), Math::vec3(2.f), Math::quat(Math::vec3(Math::ToRadians(0.f), 0.f, 0.f)), *t_object->GetComponent<TransformComponent>()->GetTransform());
 				t_rigidBodyComponent->SetDebug(true);
+				t_rigidBodyComponent->SetActive(false);
+				t_rigidBodyComponent->SetActive(true);
 			}
-			t_rigidBodyComponent->SetActive(false);
-			t_rigidBodyComponent->SetActive(true);
 			t_object->AddComponent<MeshComponent>(true);
 			t_object->GetComponent<MeshComponent>(true)->SetMesh(t_cubeCollider);
 			t_object->GetComponent<MeshComponent>(true)->SetTexture(t_colliderTexture);
@@ -65,7 +65,7 @@ namespace Engine
 			t_texture2->Load(a_renderer);
 
 			GameObject* t_object2 = new GameObject();
-			t_object2->GetComponent<TransformComponent>()->Set(Math::vec3(0.f, 20.f, 0.f), Math::vec3(0.f, 0.f, 0.f), Math::vec3(0.2f));
+			t_object2->GetComponent<TransformComponent>()->Set(Math::vec3(0.f, 3.f, 0.f), Math::vec3(0.f, 0.f, 0.f), Math::vec3(0.2f));
 			t_object2->AddComponent<MeshComponent>();
 			t_object2->AddComponent<RigidBodyComponent>();
 			RigidBodyComponent* t_rigidBodyComponent2 = t_object2->GetComponent<RigidBodyComponent>();
@@ -73,6 +73,7 @@ namespace Engine
 			{
 				t_rigidBodyComponent2->CreateCapsuleRigidBody(Physics::BodyType::DYNAMIC, Physics::CollisionLayer::MOVING, Math::vec3(0.f, 2.f, 0.f), 1.f, 1.f, Math::quat(Math::vec3(Math::ToRadians(0.f), 0.f, 0.f)), *t_object2->GetComponent<TransformComponent>()->GetTransform());
 				t_rigidBodyComponent2->SetDebug(true);
+				t_rigidBodyComponent2->SetOnCollisionExit([this](RigidBodyComponent* a_rigidBodyComponent) { TestFunc(a_rigidBodyComponent); });
 			}
 			t_object2->AddComponent<MeshComponent>(true);
 			t_object2->GetComponent<MeshComponent>(true)->SetMesh(t_capsuleCollider);
@@ -91,7 +92,6 @@ namespace Engine
 			t_object3->GetComponent<MeshComponent>()->SetTexture(t_texture);*/
 
 			//m_objs.push_back(t_object3);
-
 		}
 
 		void Scene::Update(Core::Renderer* a_renderer, const float a_deltaTime)
@@ -175,6 +175,11 @@ namespace Engine
 				delete m_objs[i];
 			}
 			m_objs.clear();
+		}
+
+		void Scene::TestFunc(RigidBodyComponent* a_rigidBodyComponent)
+		{
+			m_objs[1]->GetComponent<RigidBodyComponent>()->SetLinearVelocity({ 0.f, 10.f, 0.f });
 		}
 	}
 }
