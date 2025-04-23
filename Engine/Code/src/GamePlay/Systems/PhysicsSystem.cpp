@@ -139,11 +139,11 @@ namespace Engine
 			{
 				return;
 			}
-			const RigidBodyComponent* t_rigidBodyComponent1 = *t_it1;
-			const RigidBodyComponent* t_rigidBodyComponent2 = *t_it2;
+			RigidBodyComponent* t_rigidBodyComponent1 = *t_it1;
+			RigidBodyComponent* t_rigidBodyComponent2 = *t_it2;
 
-			t_rigidBodyComponent1->NotifyCollision(a_collisionEvent);
-			t_rigidBodyComponent2->NotifyCollision(a_collisionEvent);
+			t_rigidBodyComponent1->NotifyCollision(a_collisionEvent, t_rigidBodyComponent2);
+			t_rigidBodyComponent2->NotifyCollision(a_collisionEvent, t_rigidBodyComponent1);
 		}
 
 		void PhysicsSystem::NotifyCollisionExit(JPH::BodyID a_body1, JPH::BodyID a_body2)
@@ -164,13 +164,13 @@ namespace Engine
 			{
 				return;
 			}
-			const RigidBodyComponent* t_rigidBodyComponent1 = *t_it1;
-			const RigidBodyComponent* t_rigidBodyComponent2 = *t_it2;
+			RigidBodyComponent* t_rigidBodyComponent1 = *t_it1;
+			RigidBodyComponent* t_rigidBodyComponent2 = *t_it2;
 
 			const JPH::CollisionEvent t_collisionEvent = t_rigidBodyComponent1->IsTrigger() || t_rigidBodyComponent2->IsTrigger() ? JPH::CollisionEvent::TRIGGER_EXIT : JPH::CollisionEvent::COLLISION_EXIT;
 
-			t_rigidBodyComponent1->NotifyCollision(t_collisionEvent);
-			t_rigidBodyComponent2->NotifyCollision(t_collisionEvent);
+			t_rigidBodyComponent1->NotifyCollision(t_collisionEvent, t_rigidBodyComponent2);
+			t_rigidBodyComponent2->NotifyCollision(t_collisionEvent, t_rigidBodyComponent1);
 		}
 	}
 }

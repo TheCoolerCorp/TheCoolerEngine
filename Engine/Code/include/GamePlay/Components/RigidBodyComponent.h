@@ -31,14 +31,14 @@ namespace Engine
 			ENGINE_API void UpdateFromTransform(const Math::Transform* a_transform, bool a_enable = true);
 			ENGINE_API void UpdateObjectTransform(Math::Transform* a_transform);
 
-			ENGINE_API void NotifyCollision(JPH::CollisionEvent a_collisionEvent) const;
+			ENGINE_API void NotifyCollision(JPH::CollisionEvent a_collisionEvent, RigidBodyComponent* a_otherRigidBodyComponent) const;
 
-			ENGINE_API void SetOnCollisionEnter(std::function<void()> a_event);
-			ENGINE_API void SetOnCollisionStay(std::function<void()> a_event);
-			ENGINE_API void SetOnCollisionExit(std::function<void()> a_event);
-			ENGINE_API void SetOnTriggerEnter(std::function<void()> a_event);
-			ENGINE_API void SetOnTriggerStay(std::function<void()> a_event);
-			ENGINE_API void SetOnTriggerExit(std::function<void()> a_event);
+			ENGINE_API void SetOnCollisionEnter(std::function<void(RigidBodyComponent*)> a_event);
+			ENGINE_API void SetOnCollisionStay(std::function<void(RigidBodyComponent*)> a_event);
+			ENGINE_API void SetOnCollisionExit(std::function<void(RigidBodyComponent*)> a_event);
+			ENGINE_API void SetOnTriggerEnter(std::function<void(RigidBodyComponent*)> a_event);
+			ENGINE_API void SetOnTriggerStay(std::function<void(RigidBodyComponent*)> a_event);
+			ENGINE_API void SetOnTriggerExit(std::function<void(RigidBodyComponent*)> a_event);
 
 			ENGINE_API void SetLinearVelocity(Math::vec3 a_velocity) const;
 
@@ -62,12 +62,12 @@ namespace Engine
 			ENGINE_API static RigidBodyComponent* GetComponent(uint32_t a_id);
 
 		private:
-			ENGINE_API void OnCollisionEnter() const;
-			ENGINE_API void OnCollisionStay() const;
-			ENGINE_API void OnCollisionExit() const;
-			ENGINE_API void OnTriggerEnter() const;
-			ENGINE_API void OnTriggerStay() const;
-			ENGINE_API void OnTriggerExit() const;
+			ENGINE_API void OnCollisionEnter(RigidBodyComponent* a_otherRigidBodyComponent) const;
+			ENGINE_API void OnCollisionStay(RigidBodyComponent* a_otherRigidBodyComponent) const;
+			ENGINE_API void OnCollisionExit(RigidBodyComponent* a_otherRigidBodyComponent) const;
+			ENGINE_API void OnTriggerEnter(RigidBodyComponent* a_otherRigidBodyComponent) const;
+			ENGINE_API void OnTriggerStay(RigidBodyComponent* a_otherRigidBodyComponent) const;
+			ENGINE_API void OnTriggerExit(RigidBodyComponent* a_otherRigidBodyComponent) const;
 
 			Physics::RigidBody* m_rigidBody = nullptr;
 			Math::vec3 m_localPos;
@@ -75,12 +75,12 @@ namespace Engine
 			Math::vec3 m_bodyPos;
 			Math::quat m_bodyRot;
 			bool m_debug = false;
-			std::function<void()> m_onCollisionEnter;
-			std::function<void()> m_onCollisionStay;
-			std::function<void()> m_onCollisionExit;
-			std::function<void()> m_onTriggerEnter;
-			std::function<void()> m_onTriggerStay;
-			std::function<void()> m_onTriggerExit;
+			std::function<void(RigidBodyComponent*)> m_onCollisionEnter;
+			std::function<void(RigidBodyComponent*)> m_onCollisionStay;
+			std::function<void(RigidBodyComponent*)> m_onCollisionExit;
+			std::function<void(RigidBodyComponent*)> m_onTriggerEnter;
+			std::function<void(RigidBodyComponent*)> m_onTriggerStay;
+			std::function<void(RigidBodyComponent*)> m_onTriggerExit;
 		};
 	}
 }

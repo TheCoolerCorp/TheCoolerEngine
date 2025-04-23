@@ -90,116 +90,116 @@ namespace Engine
 			m_bodyRot = t_worldRot;
 		}
 
-		void RigidBodyComponent::NotifyCollision(const JPH::CollisionEvent a_collisionEvent) const
+		void RigidBodyComponent::NotifyCollision(const JPH::CollisionEvent a_collisionEvent, RigidBodyComponent* a_otherRigidBodyComponent) const
 		{
 			switch (a_collisionEvent)
 			{
 			case JPH::CollisionEvent::COLLISION_ENTER:
-				OnCollisionEnter();
+				OnCollisionEnter(a_otherRigidBodyComponent);
 				return;
 			case JPH::CollisionEvent::COLLISION_STAY:
-				OnCollisionStay();
+				OnCollisionStay(a_otherRigidBodyComponent);
 				return;
 			case JPH::CollisionEvent::COLLISION_EXIT:
-				OnCollisionExit();
+				OnCollisionExit(a_otherRigidBodyComponent);
 				return;
 			case JPH::CollisionEvent::TRIGGER_ENTER:
-				OnTriggerEnter();
+				OnTriggerEnter(a_otherRigidBodyComponent);
 				return;
 			case JPH::CollisionEvent::TRIGGER_STAY:
-				OnTriggerStay();
+				OnTriggerStay(a_otherRigidBodyComponent);
 				return;
 			case JPH::CollisionEvent::TRIGGER_EXIT:
-				OnTriggerExit();
+				OnTriggerExit(a_otherRigidBodyComponent);
 			}
 		}
 
-		void RigidBodyComponent::OnCollisionEnter() const
+		void RigidBodyComponent::OnCollisionEnter(RigidBodyComponent* a_otherRigidBodyComponent) const
 		{
 			if (!m_onCollisionEnter)
 			{
 				return;
 			}
 
-			m_onCollisionEnter();
+			m_onCollisionEnter(a_otherRigidBodyComponent);
 		}
 
-		void RigidBodyComponent::OnCollisionStay() const
+		void RigidBodyComponent::OnCollisionStay(RigidBodyComponent* a_otherRigidBodyComponent) const
 		{
 			if (!m_onCollisionStay)
 			{
 				return;
 			}
 
-			m_onCollisionStay();
+			m_onCollisionStay(a_otherRigidBodyComponent);
 		}
 
-		void RigidBodyComponent::OnCollisionExit() const
+		void RigidBodyComponent::OnCollisionExit(RigidBodyComponent* a_otherRigidBodyComponent) const
 		{
 			if (!m_onCollisionExit)
 			{
 				return;
 			}
 
-			m_onCollisionExit();
+			m_onCollisionExit(a_otherRigidBodyComponent);
 		}
 
-		void RigidBodyComponent::OnTriggerEnter() const
+		void RigidBodyComponent::OnTriggerEnter(RigidBodyComponent* a_otherRigidBodyComponent) const
 		{
 			if (!m_onTriggerEnter)
 			{
 				return;
 			}
 
-			m_onTriggerEnter();
+			m_onTriggerEnter(a_otherRigidBodyComponent);
 		}
 
-		void RigidBodyComponent::OnTriggerStay() const
+		void RigidBodyComponent::OnTriggerStay(RigidBodyComponent* a_otherRigidBodyComponent) const
 		{
 			if (!m_onTriggerStay)
 			{
 				return;
 			}
 
-			m_onTriggerStay();
+			m_onTriggerStay(a_otherRigidBodyComponent);
 		}
 
-		void RigidBodyComponent::OnTriggerExit() const
+		void RigidBodyComponent::OnTriggerExit(RigidBodyComponent* a_otherRigidBodyComponent) const
 		{
 			if (!m_onTriggerExit)
 			{
 				return;
 			}
 
-			m_onTriggerExit();
+			m_onTriggerExit(a_otherRigidBodyComponent);
 		}
 
-		void RigidBodyComponent::SetOnCollisionEnter(std::function<void()> a_event)
+		void RigidBodyComponent::SetOnCollisionEnter(std::function<void(RigidBodyComponent*)> a_event)
 		{
 			m_onCollisionEnter = std::move(a_event);
 		}
 
-		void RigidBodyComponent::SetOnCollisionStay(std::function<void()> a_event)
+		void RigidBodyComponent::SetOnCollisionStay(std::function<void(RigidBodyComponent*)> a_event)
 		{
 			m_onCollisionStay = std::move(a_event);
 		}
 
-		void RigidBodyComponent::SetOnCollisionExit(std::function<void()> a_event)
+		void RigidBodyComponent::SetOnCollisionExit(std::function<void(RigidBodyComponent*)> a_event)
 		{
 			m_onCollisionExit = std::move(a_event);
 		}
 
-		void RigidBodyComponent::SetOnTriggerEnter(std::function<void()> a_event)
+		void RigidBodyComponent::SetOnTriggerEnter(std::function<void(RigidBodyComponent*)> a_event)
 		{
 			m_onTriggerEnter = std::move(a_event);
 		}
 
-		void RigidBodyComponent::SetOnTriggerStay(std::function<void()> a_event)
+		void RigidBodyComponent::SetOnTriggerStay(std::function<void(RigidBodyComponent*)> a_event)
 		{
 			m_onTriggerStay = std::move(a_event);
 		}
 
-		void RigidBodyComponent::SetOnTriggerExit(std::function<void()> a_event)
+		void RigidBodyComponent::SetOnTriggerExit(std::function<void(RigidBodyComponent*)> a_event)
 		{
 			m_onTriggerExit = std::move(a_event);
 		}
