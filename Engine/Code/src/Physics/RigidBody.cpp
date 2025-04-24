@@ -33,7 +33,10 @@ namespace Engine
 			const JPH::ObjectLayer t_layer = CollisionLayerToJPHLayer(a_layer);
 			const JPH::EActivation t_activation = a_enable ? JPH::EActivation::Activate : JPH::EActivation::DontActivate;
 
-			const JPH::BodyCreationSettings t_bodySettings(new JPH::BoxShape(t_halfExtent), t_position, t_rotation, t_motionType, t_layer);
+			JPH::BodyCreationSettings t_bodySettings(new JPH::BoxShape(t_halfExtent), t_position, t_rotation, t_motionType, t_layer);
+			t_bodySettings.mOverrideMassProperties = JPH::EOverrideMassProperties::CalculateInertia;
+			t_bodySettings.mMassPropertiesOverride.mMass = 1.f;
+			m_mass = 1.f;
 			m_body = t_bodyInterface->CreateBody(t_bodySettings);
 			t_bodyInterface->AddBody(m_body->GetID(), t_activation);
 		}
@@ -56,7 +59,10 @@ namespace Engine
 			const JPH::ObjectLayer t_layer = CollisionLayerToJPHLayer(a_layer);
 			const JPH::EActivation t_activation = a_enable ? JPH::EActivation::Activate : JPH::EActivation::DontActivate;
 
-			const JPH::BodyCreationSettings t_bodySettings(new JPH::SphereShape(a_radius), t_position, t_rotation, t_motionType, t_layer);
+			JPH::BodyCreationSettings t_bodySettings(new JPH::SphereShape(a_radius), t_position, t_rotation, t_motionType, t_layer);
+			t_bodySettings.mOverrideMassProperties = JPH::EOverrideMassProperties::CalculateInertia;
+			t_bodySettings.mMassPropertiesOverride.mMass = 1.f;
+			m_mass = 1.f;
 			m_body = t_bodyInterface->CreateBody(t_bodySettings);
 			t_bodyInterface->AddBody(m_body->GetID(), t_activation);
 		}
@@ -80,7 +86,10 @@ namespace Engine
 			const JPH::ObjectLayer t_layer = CollisionLayerToJPHLayer(a_layer);
 			const JPH::EActivation t_activation = a_enable ? JPH::EActivation::Activate : JPH::EActivation::DontActivate;
 
-			const JPH::BodyCreationSettings t_bodySettings(new JPH::CapsuleShape(m_halfHeight, m_radius), t_position, t_rotation, t_motionType, t_layer);
+			JPH::BodyCreationSettings t_bodySettings(new JPH::CapsuleShape(m_halfHeight, m_radius), t_position, t_rotation, t_motionType, t_layer);
+			t_bodySettings.mOverrideMassProperties = JPH::EOverrideMassProperties::CalculateInertia;
+			t_bodySettings.mMassPropertiesOverride.mMass = 1.f;
+			m_mass = 1.f;
 			m_body = t_bodyInterface->CreateBody(t_bodySettings);
 			t_bodyInterface->AddBody(m_body->GetID(), t_activation);
 		}
@@ -110,6 +119,24 @@ namespace Engine
 			const JPH::BodyID t_id = m_body->GetID();
 			t_bodyInterface->SetObjectLayer(t_id, CollisionLayerToJPHLayer(m_collisionLayer));
 			m_body->SetIsSensor(a_trigger);
+		}
+
+		void RigidBody::SetMass(const float a_mass)
+		{
+			if (!m_isActive || m_bodyType != BodyType::DYNAMIC)
+			{
+				return;
+			}
+
+			m_mass = a_mass;
+
+			JPH::MotionProperties* t_motionProperties = m_body->GetMotionProperties();
+			const JPH::Shape* t_shape = m_body->GetShape();
+			JPH::MassProperties t_massProperties = t_shape->GetMassProperties();
+
+			t_massProperties.ScaleToMass(m_mass);
+			t_massProperties.mMass = m_mass;
+			t_motionProperties->SetMassProperties(JPH::EAllowedDOFs::All, t_massProperties);
 		}
 
 		JPH::BodyID RigidBody::GetBodyID() const

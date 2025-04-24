@@ -209,6 +209,11 @@ namespace Engine
 			ServiceLocator::GetPhysicsSystem()->EnqueueLinearVelocity(m_rigidBody->GetBodyID(), a_velocity);
 		}
 
+		void RigidBodyComponent::AddForce(Math::vec3 a_force) const
+		{
+			ServiceLocator::GetPhysicsSystem()->EnqueueAddForce(m_rigidBody->GetBodyID(), a_force);
+		}
+
 		void RigidBodyComponent::Destroy()
 		{
 			m_rigidBody->Remove();

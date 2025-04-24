@@ -30,10 +30,7 @@ namespace Engine
 
 		void PhysicsSystem::Update(const float a_deltaTime, const std::vector<Math::Transform*>& a_transforms)
 		{
-			for (size_t i = 0; i < m_components.size(); ++i)
-			{
-				m_components[i]->UpdateFromTransform(a_transforms[i]);
-			}
+			UpdatesFromTransforms(a_transforms);
 
 			constexpr float t_stepSize = 1.0f / 60.0f;
 			const int t_collisionSteps = static_cast<int>(ceil(a_deltaTime / t_stepSize));
@@ -43,19 +40,11 @@ namespace Engine
 				return;
 			}
 
-			for (auto& [fst, snd] : m_linearVelocityQueue)
-			{
-				const JPH::Vec3 t_velocity = { snd.x, snd.y, snd.z };
-				m_bodyInterface->SetLinearVelocity(fst, t_velocity);
-			}
-			m_linearVelocityQueue.clear();
+			UpdateEnqueued();
 
 			m_physicsSystem.Update(a_deltaTime, t_collisionSteps, m_tempAllocator, m_jobSystem);
 
-			for (size_t i = 0; i < m_components.size(); ++i)
-			{
-				m_components[i]->UpdateObjectTransform(a_transforms[i]);
-			}
+			UpdateTransforms(a_transforms);
 		}
 
 		void PhysicsSystem::Destroy()
@@ -117,7 +106,12 @@ namespace Engine
 
 		void PhysicsSystem::EnqueueLinearVelocity(JPH::BodyID a_bodyID, Math::vec3 a_linearVelocity)
 		{
-			m_linearVelocityQueue.push_back({ a_bodyID, a_linearVelocity });
+			m_linearVelocityQueue.emplace_back(a_bodyID, a_linearVelocity);
+		}
+
+		void PhysicsSystem::EnqueueAddForce(JPH::BodyID a_bodyID, Math::vec3 a_force)
+		{
+			m_addForceQueue.emplace_back(a_bodyID, a_force);
 		}
 
 		void PhysicsSystem::NotifyCollision(JPH::CollisionEvent a_collisionEvent, JPH::BodyID a_body1,
@@ -171,6 +165,39 @@ namespace Engine
 
 			t_rigidBodyComponent1->NotifyCollision(t_collisionEvent, t_rigidBodyComponent2);
 			t_rigidBodyComponent2->NotifyCollision(t_collisionEvent, t_rigidBodyComponent1);
+		}
+
+		void PhysicsSystem::UpdatesFromTransforms(const std::vector<Math::Transform*>& a_transforms) const
+		{
+			for (size_t i = 0; i < m_components.size(); ++i)
+			{
+				m_components[i]->UpdateFromTransform(a_transforms[i]);
+			}
+		}
+
+		void PhysicsSystem::UpdateTransforms(const std::vector<Math::Transform*>& a_transforms) const
+		{
+			for (size_t i = 0; i < m_components.size(); ++i)
+			{
+				m_components[i]->UpdateObjectTransform(a_transforms[i]);
+			}
+		}
+
+		void PhysicsSystem::UpdateEnqueued()
+		{
+			for (auto& [fst, snd] : m_linearVelocityQueue)
+			{
+				const JPH::Vec3 t_velocity = { snd.x, snd.y, snd.z };
+				m_bodyInterface->SetLinearVelocity(fst, t_velocity);
+			}
+			m_linearVelocityQueue.clear();
+
+			for (auto& [fst, snd] : m_addForceQueue)
+			{
+				const JPH::Vec3 t_velocity = { snd.x, snd.y, snd.z };
+				m_bodyInterface->AddForce(fst, t_velocity);
+			}
+			m_addForceQueue.clear();
 		}
 	}
 }

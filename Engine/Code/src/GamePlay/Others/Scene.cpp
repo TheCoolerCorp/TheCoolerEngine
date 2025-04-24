@@ -181,7 +181,7 @@ namespace Engine
 
 		void Scene::TestFunc(RigidBodyComponent* a_rigidBodyComponent)
 		{
-			m_objs[1]->GetComponent<RigidBodyComponent>()->SetLinearVelocity({ 0.f, 10.f, 0.f });
+			m_objs[1]->GetComponent<RigidBodyComponent>()->AddForce({ 0.f, 100000.f, 0.f });
 		}
 	}
 }

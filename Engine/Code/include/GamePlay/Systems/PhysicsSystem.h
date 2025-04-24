@@ -26,6 +26,7 @@ namespace Engine
 			ENGINE_API void RemoveComponent(uint32_t a_id);
 
 			ENGINE_API void EnqueueLinearVelocity(JPH::BodyID a_bodyID, Math::vec3 a_linearVelocity);
+			ENGINE_API void EnqueueAddForce(JPH::BodyID a_bodyID, Math::vec3 a_force);
 
 			ENGINE_API void NotifyCollision(JPH::CollisionEvent a_collisionEvent, JPH::BodyID a_body1, JPH::BodyID a_body2);
 			ENGINE_API void NotifyCollisionExit(JPH::BodyID a_body1, JPH::BodyID a_body2);
@@ -35,8 +36,13 @@ namespace Engine
 			ENGINE_API JPH::BodyInterface* GetBodyInterface() const { return m_bodyInterface; }
 
 		private:
+			void UpdatesFromTransforms(const std::vector<Math::Transform*>& a_transforms) const;
+			void UpdateTransforms(const std::vector<Math::Transform*>& a_transforms) const;
+			void UpdateEnqueued();
+
 			std::vector<RigidBodyComponent*> m_components{};
 			std::vector<std::pair<JPH::BodyID, Math::vec3>> m_linearVelocityQueue{};
+			std::vector<std::pair<JPH::BodyID, Math::vec3>> m_addForceQueue{};
 			std::vector<uint32_t> m_availableIds{};
 			JPH::PhysicsSystem m_physicsSystem{};
 			JPH::BodyInterface* m_bodyInterface = nullptr;

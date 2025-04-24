@@ -41,6 +41,7 @@ namespace Engine
 			ENGINE_API void SetOnTriggerExit(std::function<void(RigidBodyComponent*)> a_event);
 
 			ENGINE_API void SetLinearVelocity(Math::vec3 a_velocity) const;
+			ENGINE_API void AddForce(Math::vec3 a_force) const;
 
 			ENGINE_API void Destroy();
 
@@ -50,6 +51,7 @@ namespace Engine
 
 			ENGINE_API void SetActive(const bool a_enable) const { m_rigidBody->SetActive(a_enable); }
 			ENGINE_API void SetIsTrigger(const bool a_isTrigger) const { m_rigidBody->SetIsTrigger(a_isTrigger); }
+			ENGINE_API void SetMass(const float a_mass) const { m_rigidBody->SetMass(a_mass); }
 			
 			ENGINE_API [[nodiscard]] bool IsTrigger() const { return m_rigidBody->IsTrigger(); }
 			ENGINE_API [[nodiscard]] Physics::ColliderType GetColliderType() const { return m_rigidBody->GetColliderType(); }
@@ -57,6 +59,7 @@ namespace Engine
 			ENGINE_API [[nodiscard]] Math::vec3 GetPos() const { return m_bodyPos; }
 			ENGINE_API [[nodiscard]] Math::quat GetRot() const { return m_bodyRot; }
 			ENGINE_API [[nodiscard]] bool GetDebug() const { return m_debug; }
+			ENGINE_API [[nodiscard]] float GetMass() const { return m_rigidBody->GetMass(); }
 
 			ENGINE_API static ComponentType GetType(bool a_colliderMesh = false) { return ComponentType::RIGIDBODY; }
 			ENGINE_API static RigidBodyComponent* GetComponent(uint32_t a_id);

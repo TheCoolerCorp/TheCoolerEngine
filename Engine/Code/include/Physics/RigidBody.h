@@ -42,8 +42,10 @@ namespace Engine
 
 			ENGINE_API void SetActive(bool a_enable);
 			ENGINE_API void SetIsTrigger(bool a_trigger);
+			ENGINE_API void SetMass(float a_mass);
 			ENGINE_API [[nodiscard]] bool IsTrigger() const { return m_body->IsSensor(); }
 			ENGINE_API [[nodiscard]] JPH::BodyID GetBodyID() const;
+			ENGINE_API [[nodiscard]] JPH::Body* GetBody() const { return m_body; }
 			ENGINE_API [[nodiscard]] bool IsActive() const { return m_isActive; }
 			ENGINE_API [[nodiscard]] ColliderType GetColliderType() const { return m_colliderType; }
 			ENGINE_API [[nodiscard]] BodyType GetBodyType() const { return m_bodyType; }
@@ -51,6 +53,7 @@ namespace Engine
 			ENGINE_API [[nodiscard]] Math::vec3 GetScale() const { return m_scale; }
 			ENGINE_API [[nodiscard]] float GetRadius() const { return m_radius; }
 			ENGINE_API [[nodiscard]] float GetHalfHeight() const { return m_halfHeight; }
+			ENGINE_API [[nodiscard]] float GetMass() const { return m_mass; }
 			ENGINE_API void Remove() const;
 			ENGINE_API void Destroy();
 
@@ -64,6 +67,8 @@ namespace Engine
 			BodyType m_bodyType = BodyType::STATIC;
 			CollisionLayer m_collisionLayer = CollisionLayer::DISABLED;
 			bool m_isActive = false;
+
+			float m_mass = 0.f;
 
 			static JPH::EMotionType BodyTypeToJPHType(BodyType a_type);
 			static JPH::ObjectLayer CollisionLayerToJPHLayer(CollisionLayer a_layer);
