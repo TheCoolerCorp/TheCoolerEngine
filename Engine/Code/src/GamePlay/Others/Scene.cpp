@@ -73,12 +73,12 @@ namespace Engine
 			RigidBodyComponent* t_rigidBodyComponent2 = t_object2->GetComponent<RigidBodyComponent>();
 			if (t_rigidBodyComponent2)
 			{
-				t_rigidBodyComponent2->CreateSphereRigidBody(Physics::BodyType::DYNAMIC, Physics::CollisionLayer::MOVING, Math::vec3(0.f, 2.f, 0.f), 1.f, Math::quat(Math::vec3(Math::ToRadians(0.f), 0.f, 0.f)), *t_object2->GetComponent<TransformComponent>()->GetTransform());
+				t_rigidBodyComponent2->CreateCapsuleRigidBody(Physics::BodyType::DYNAMIC, Physics::CollisionLayer::MOVING, Math::vec3(0.f, 2.f, 0.f), 1.f, 1.f, Math::quat(Math::vec3(Math::ToRadians(0.f), 0.f, 0.f)), *t_object2->GetComponent<TransformComponent>()->GetTransform());
 				t_rigidBodyComponent2->SetDebug(true);
 				t_rigidBodyComponent2->SetOnCollisionExit([this](RigidBodyComponent* a_rigidBodyComponent) { TestFunc(a_rigidBodyComponent); });
 			}
 			t_object2->AddComponent<MeshComponent>(true);
-			t_object2->GetComponent<MeshComponent>(true)->SetMesh(t_sphereCollider);
+			t_object2->GetComponent<MeshComponent>(true)->SetMesh(t_capsuleCollider);
 			t_object2->GetComponent<MeshComponent>(true)->SetTexture(t_colliderTexture);
 
 			t_object2->GetComponent<MeshComponent>()->SetMesh(t_mesh2);
@@ -98,7 +98,7 @@ namespace Engine
 
 		void Scene::Update(Core::Renderer* a_renderer, const float a_deltaTime)
 		{
-			//m_objs[0]->GetComponent<TransformComponent>()->GetTransform()->Rotate(Math::quat(Math::vec3(0.01f * a_deltaTime, 0.f,0.f)));
+			m_objs[0]->GetComponent<TransformComponent>()->GetTransform()->Rotate(Math::quat(Math::vec3(0.01f * a_deltaTime, 0.f,0.f)));
 			//m_objs[1]->GetComponent<TransformComponent>()->GetTransform()->SetScale(Math::vec3(0.05f));
 			//m_objs[1]->GetComponent<TransformComponent>()->GetTransform()->SetPosition(Math::vec3(5.f, 0.f, 0.f));
 			//m_objs[1]->GetComponent<TransformComponent>()->SetParent(m_objs[0]->GetComponentID<TransformComponent>());
