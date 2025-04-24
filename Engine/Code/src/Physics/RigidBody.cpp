@@ -1,5 +1,6 @@
 #include "Physics/RigidBody.h"
 
+#include <ranges>
 #include <Jolt/Jolt.h>
 #include <Jolt/Core/JobSystemThreadPool.h>
 #include <Jolt/Physics/PhysicsSystem.h>
@@ -139,6 +140,57 @@ namespace Engine
 			t_motionProperties->SetMassProperties(JPH::EAllowedDOFs::All, t_massProperties);
 		}
 
+		void RigidBody::LockRotation(const char a_axis)
+		{
+			if (m_lockedRotationAxes.contains(a_axis))
+			{
+				LOG_WARNING("Rotation axis: " + std::string(1, a_axis) + " is already locked!");
+				return;
+			}
+
+			JPH::SixDOFConstraintSettings t_constraintSettings;
+			t_constraintSettings.mPosition1 = JPH::Vec3(0, 0, 0);
+			t_constraintSettings.mPosition2 = JPH::Vec3(0, 0, 0);
+
+			switch (a_axis)
+			{
+			case 'x':
+				t_constraintSettings.SetLimitedAxis(JPH::SixDOFConstraintSettings::EAxis::RotationX, 1.f, 0.f);
+				break;
+			case 'y':
+				t_constraintSettings.SetLimitedAxis(JPH::SixDOFConstraintSettings::EAxis::RotationY, 1.f, 0.f);
+				break;
+			case 'z':
+				t_constraintSettings.SetLimitedAxis(JPH::SixDOFConstraintSettings::EAxis::RotationZ, 1.f, 0.f);
+				break;
+			default:
+				LOG_ERROR("Invalid axis! Use 'x', 'y', or 'z'.");
+				return;
+			}
+
+			GamePlay::PhysicsSystem* t_physicsSystem = GamePlay::ServiceLocator::GetPhysicsSystem();
+
+			JPH::SixDOFConstraint* t_constraint = new JPH::SixDOFConstraint(*m_body, *t_physicsSystem->GetDummy(), t_constraintSettings);
+
+			t_physicsSystem->AddConstraint(t_constraint);
+
+			m_lockedRotationAxes.emplace(a_axis, t_constraint);
+		}
+
+		void RigidBody::UnlockRotation(const char a_axis)
+		{
+			const auto t_it = m_lockedRotationAxes.find(a_axis);
+			if (t_it == m_lockedRotationAxes.end())
+			{
+				LOG_WARNING("Rotation axis: " + std::string(1, a_axis) + " is already unlocked!");
+				return;
+			}
+
+			GamePlay::ServiceLocator::GetPhysicsSystem()->RemoveConstraint(t_it->second);
+
+			m_lockedRotationAxes.erase(t_it);
+		}
+
 		JPH::BodyID RigidBody::GetBodyID() const
 		{
 			return m_body->GetID();
@@ -152,6 +204,19 @@ namespace Engine
 
 		void RigidBody::Destroy()
 		{
+			std::vector<char> t_axesToUnlock;
+			for (const auto& t_axis : m_lockedRotationAxes | std::views::keys)
+			{
+				t_axesToUnlock.push_back(t_axis);
+			}
+
+			for (const char t_axis : t_axesToUnlock)
+			{
+				UnlockRotation(t_axis);
+			}
+			m_lockedRotationAxes.clear();
+			t_axesToUnlock.clear();
+
 			JPH::BodyInterface* t_bodyInterface = GamePlay::ServiceLocator::GetPhysicsSystem()->GetBodyInterface();
 			t_bodyInterface->DestroyBody(m_body->GetID());
 			m_body = nullptr;

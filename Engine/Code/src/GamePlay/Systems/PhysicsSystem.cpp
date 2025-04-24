@@ -1,6 +1,8 @@
 #include "GamePlay/Systems/PhysicsSystem.h"
 
 #include "Jolt/RegisterTypes.h"
+#include "Jolt/Physics/Body/BodyCreationSettings.h"
+#include "Jolt/Physics/Collision/Shape/BoxShape.h"
 
 namespace Engine
 {
@@ -26,6 +28,16 @@ namespace Engine
 			m_bodyInterface = &m_physicsSystem.GetBodyInterface();
 
 			m_physicsSystem.OptimizeBroadPhase();
+
+			const JPH::BodyCreationSettings t_dummySettings(
+				new JPH::BoxShape(JPH::Vec3(0.1f, 0.1f, 0.1f)),
+				JPH::Vec3::sZero(),
+				JPH::Quat::sIdentity(),
+				JPH::EMotionType::Static,
+				JPH::Layers::DISABLED
+			);
+			m_dummy = m_bodyInterface->CreateBody(t_dummySettings);
+			m_bodyInterface->AddBody(m_dummy->GetID(), JPH::EActivation::DontActivate);
 		}
 
 		void PhysicsSystem::Update(const float a_deltaTime, const std::vector<Math::Transform*>& a_transforms)
@@ -49,6 +61,10 @@ namespace Engine
 
 		void PhysicsSystem::Destroy()
 		{
+			m_bodyInterface->RemoveBody(m_dummy->GetID());
+			m_bodyInterface->DestroyBody(m_dummy->GetID());
+			m_dummy = nullptr;
+
 			for (RigidBodyComponent* t_component : m_components)
 			{
 				t_component->Destroy();
@@ -114,7 +130,22 @@ namespace Engine
 			m_addForceQueue.emplace_back(a_bodyID, a_force);
 		}
 
-		void PhysicsSystem::NotifyCollision(JPH::CollisionEvent a_collisionEvent, JPH::BodyID a_body1,
+		void PhysicsSystem::EnqueueAddImpulse(JPH::BodyID a_bodyID, Math::vec3 a_force)
+		{
+			m_addImpulseQueue.emplace_back(a_bodyID, a_force);
+		}
+
+		void PhysicsSystem::AddConstraint(JPH::Constraint* a_constraint)
+		{
+			m_physicsSystem.AddConstraint(a_constraint);
+		}
+
+		void PhysicsSystem::RemoveConstraint(JPH::Constraint* a_constraint)
+		{
+			m_physicsSystem.RemoveConstraint(a_constraint);
+		}
+
+		void PhysicsSystem::NotifyCollision(const JPH::CollisionEvent a_collisionEvent, JPH::BodyID a_body1,
 		                                    JPH::BodyID a_body2)
 		{
 			auto t_unaryPredicate1 = [&a_body1](const RigidBodyComponent* a_rigidBodyComponent)
@@ -194,10 +225,17 @@ namespace Engine
 
 			for (auto& [fst, snd] : m_addForceQueue)
 			{
-				const JPH::Vec3 t_velocity = { snd.x, snd.y, snd.z };
-				m_bodyInterface->AddForce(fst, t_velocity);
+				const JPH::Vec3 t_force = { snd.x, snd.y, snd.z };
+				m_bodyInterface->AddForce(fst, t_force);
 			}
 			m_addForceQueue.clear();
+
+			for (auto& [fst, snd] : m_addImpulseQueue)
+			{
+				const JPH::Vec3 t_impulse = { snd.x, snd.y, snd.z };
+				m_bodyInterface->AddImpulse(fst, t_impulse);
+			}
+			m_addImpulseQueue.clear();
 		}
 	}
 }

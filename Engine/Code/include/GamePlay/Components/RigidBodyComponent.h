@@ -42,6 +42,7 @@ namespace Engine
 
 			ENGINE_API void SetLinearVelocity(Math::vec3 a_velocity) const;
 			ENGINE_API void AddForce(Math::vec3 a_force) const;
+			ENGINE_API void AddImpulse(Math::vec3 a_force) const;
 
 			ENGINE_API void Destroy();
 
@@ -52,6 +53,9 @@ namespace Engine
 			ENGINE_API void SetActive(const bool a_enable) const { m_rigidBody->SetActive(a_enable); }
 			ENGINE_API void SetIsTrigger(const bool a_isTrigger) const { m_rigidBody->SetIsTrigger(a_isTrigger); }
 			ENGINE_API void SetMass(const float a_mass) const { m_rigidBody->SetMass(a_mass); }
+
+			ENGINE_API void LockRotation(const char a_axis) const;
+			ENGINE_API void UnlockRotation(const char a_axis) const;
 			
 			ENGINE_API [[nodiscard]] bool IsTrigger() const { return m_rigidBody->IsTrigger(); }
 			ENGINE_API [[nodiscard]] Physics::ColliderType GetColliderType() const { return m_rigidBody->GetColliderType(); }

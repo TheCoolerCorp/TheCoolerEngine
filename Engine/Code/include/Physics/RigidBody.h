@@ -5,6 +5,7 @@
 #include <Jolt/Physics/PhysicsSystem.h>
 
 #include "EngineExport.h"
+#include "Jolt/Physics/Constraints/SixDOFConstraint.h"
 #include "Math/quat.h"
 
 namespace Engine
@@ -43,6 +44,9 @@ namespace Engine
 			ENGINE_API void SetActive(bool a_enable);
 			ENGINE_API void SetIsTrigger(bool a_trigger);
 			ENGINE_API void SetMass(float a_mass);
+			ENGINE_API void LockRotation(const char a_axis);
+			ENGINE_API void UnlockRotation(const char a_axis);
+
 			ENGINE_API [[nodiscard]] bool IsTrigger() const { return m_body->IsSensor(); }
 			ENGINE_API [[nodiscard]] JPH::BodyID GetBodyID() const;
 			ENGINE_API [[nodiscard]] JPH::Body* GetBody() const { return m_body; }
@@ -69,6 +73,8 @@ namespace Engine
 			bool m_isActive = false;
 
 			float m_mass = 0.f;
+
+			std::unordered_map<char, JPH::SixDOFConstraint*> m_lockedRotationAxes{};
 
 			static JPH::EMotionType BodyTypeToJPHType(BodyType a_type);
 			static JPH::ObjectLayer CollisionLayerToJPHLayer(CollisionLayer a_layer);

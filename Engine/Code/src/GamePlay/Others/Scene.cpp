@@ -76,6 +76,9 @@ namespace Engine
 				t_rigidBodyComponent2->CreateCapsuleRigidBody(Physics::BodyType::DYNAMIC, Physics::CollisionLayer::MOVING, Math::vec3(0.f, 2.f, 0.f), 1.f, 1.f, Math::quat(Math::vec3(Math::ToRadians(0.f), 0.f, 0.f)), *t_object2->GetComponent<TransformComponent>()->GetTransform());
 				t_rigidBodyComponent2->SetDebug(true);
 				t_rigidBodyComponent2->SetOnCollisionExit([this](RigidBodyComponent* a_rigidBodyComponent) { TestFunc(a_rigidBodyComponent); });
+				t_rigidBodyComponent2->LockRotation('x');
+				t_rigidBodyComponent2->LockRotation('z');
+				//t_rigidBodyComponent2->UnlockRotation('x');
 			}
 			t_object2->AddComponent<MeshComponent>(true);
 			t_object2->GetComponent<MeshComponent>(true)->SetMesh(t_capsuleCollider);
@@ -181,7 +184,7 @@ namespace Engine
 
 		void Scene::TestFunc(RigidBodyComponent* a_rigidBodyComponent)
 		{
-			m_objs[1]->GetComponent<RigidBodyComponent>()->AddForce({ 0.f, 100000.f, 0.f });
+			m_objs[1]->GetComponent<RigidBodyComponent>()->AddForce({ 0.f, 10000.f, 0.f });
 		}
 	}
 }

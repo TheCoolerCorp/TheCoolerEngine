@@ -25,15 +25,20 @@ namespace Engine
 			ENGINE_API RigidBodyComponent* GetComponent(uint32_t a_id) const;
 			ENGINE_API void RemoveComponent(uint32_t a_id);
 
+
 			ENGINE_API void EnqueueLinearVelocity(JPH::BodyID a_bodyID, Math::vec3 a_linearVelocity);
 			ENGINE_API void EnqueueAddForce(JPH::BodyID a_bodyID, Math::vec3 a_force);
+			ENGINE_API void EnqueueAddImpulse(JPH::BodyID a_bodyID, Math::vec3 a_force);
+
+			ENGINE_API void AddConstraint(JPH::Constraint* a_constraint);
+			ENGINE_API void RemoveConstraint(JPH::Constraint* a_constraint);
 
 			ENGINE_API void NotifyCollision(JPH::CollisionEvent a_collisionEvent, JPH::BodyID a_body1, JPH::BodyID a_body2);
 			ENGINE_API void NotifyCollisionExit(JPH::BodyID a_body1, JPH::BodyID a_body2);
 
-			ENGINE_API uint32_t GetSize() const { return static_cast<uint32_t>(m_components.size()); }
-
-			ENGINE_API JPH::BodyInterface* GetBodyInterface() const { return m_bodyInterface; }
+			ENGINE_API [[nodiscard]] JPH::Body* GetDummy() const { return m_dummy; }
+			ENGINE_API [[nodiscard]] uint32_t GetSize() const { return static_cast<uint32_t>(m_components.size()); }
+			ENGINE_API [[nodiscard]] JPH::BodyInterface* GetBodyInterface() const { return m_bodyInterface; }
 
 		private:
 			void UpdatesFromTransforms(const std::vector<Math::Transform*>& a_transforms) const;
@@ -43,9 +48,12 @@ namespace Engine
 			std::vector<RigidBodyComponent*> m_components{};
 			std::vector<std::pair<JPH::BodyID, Math::vec3>> m_linearVelocityQueue{};
 			std::vector<std::pair<JPH::BodyID, Math::vec3>> m_addForceQueue{};
+			std::vector<std::pair<JPH::BodyID, Math::vec3>> m_addImpulseQueue{};
 			std::vector<uint32_t> m_availableIds{};
 			JPH::PhysicsSystem m_physicsSystem{};
 			JPH::BodyInterface* m_bodyInterface = nullptr;
+
+			JPH::Body* m_dummy = nullptr;
 
 			const JPH::uint m_maxBodies = 65536;
 			const JPH::uint m_numBodyMutexes = 0;

@@ -214,6 +214,11 @@ namespace Engine
 			ServiceLocator::GetPhysicsSystem()->EnqueueAddForce(m_rigidBody->GetBodyID(), a_force);
 		}
 
+		void RigidBodyComponent::AddImpulse(Math::vec3 a_force) const
+		{
+			
+		}
+
 		void RigidBodyComponent::Destroy()
 		{
 			m_rigidBody->Remove();
@@ -247,6 +252,15 @@ namespace Engine
 			t_bodyInterface->SetRotation(t_bodyID, t_newRot, t_activation);
 
 			m_bodyRot = Math::quat(t_newRot.GetX(), t_newRot.GetY(), t_newRot.GetZ(), t_newRot.GetW());
+		}
+
+		void RigidBodyComponent::LockRotation(const char a_axis) const
+		{
+			m_rigidBody->LockRotation(a_axis);
+		}
+		void RigidBodyComponent::UnlockRotation(const char a_axis) const
+		{
+			m_rigidBody->UnlockRotation(a_axis);
 		}
 
 		RigidBodyComponent* RigidBodyComponent::GetComponent(const uint32_t a_id)
