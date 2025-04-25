@@ -14,7 +14,6 @@ int main()
 #endif
     Editor::Core::Application app = Editor::Core::Application();
     app.Create(1440, 1080);
-    TCLOG_ERROR("test");
     app.Run();
     app.Destroy();
     return 0;
