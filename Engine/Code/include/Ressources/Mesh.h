@@ -44,7 +44,10 @@ namespace Engine
 
 			ENGINE_API Core::RHI::IBuffer* GetVertexBuffer() const { return m_vertexBuffer; }
 			ENGINE_API Core::RHI::IBuffer* GetIndexBuffer() const { return m_indexBuffer; }
-			ENGINE_API uint32_t GetNbIndices() const { return static_cast<uint32_t>(m_indexes.size()); }
+
+			[[nodiscard]] ENGINE_API uint32_t GetNbIndices() const { return static_cast<uint32_t>(m_indexes.size()); }
+			[[nodiscard]] ENGINE_API uint32_t GetNbVertices() const { return static_cast<uint32_t>(m_vertices.size()); }
+			[[nodiscard]] ENGINE_API const std::string& GetPath() const { return m_path; }
 
 		private:
 			void ProcessMesh(const aiMesh* a_mesh);

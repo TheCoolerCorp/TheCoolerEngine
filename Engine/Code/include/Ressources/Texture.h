@@ -36,8 +36,10 @@ namespace Engine
 			ENGINE_API int GetHeight() const { return m_height; }
 			ENGINE_API unsigned char* GetData() const { if (m_data) { return m_data; } LOG_ERROR("No image data."); return nullptr; }
 
-			ENGINE_API Core::RHI::IImage* GetImage() const { return m_image; }
-
+			[[nodiscard]] ENGINE_API Core::RHI::IImage* GetImage() const { return m_image; }
+			[[nodiscard]] ENGINE_API const std::string& GetPath() const { return m_path; }
+			[[nodiscard]] ENGINE_API bool IsLoaded() const { return m_isLoaded; }
+			[[nodiscard]] ENGINE_API Math::vec2 GetSize() const { return Math::vec2(static_cast<float>(m_width), static_cast<float>(m_height)); }
 		private:
 			std::string m_path;
 			bool m_isLoaded = false;

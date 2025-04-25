@@ -36,13 +36,22 @@ void Editor::EditorLayer::Ui::SceneGraphUiWindow::DrawObject(int a_transformId)
    }  
    if (GameObject* t_object = m_scene->GetGameObject(t_transform->GetGameObjectID()))  
    {  
-       std::string t_nodeName = t_object->GetName() + " " + std::to_string(t_object->GetId());  
+   		std::string t_nodeName = t_object->GetName() + " " + std::to_string(t_object->GetId());
+   		if (!t_object->HasChildren())
+   		{
+	        ImGui::TreeNodeEx(std::to_string(t_object->GetId()).c_str(), ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen, t_object->GetName().c_str());
+			if (ImGui::IsItemClicked())
+			{
+				m_layer->SetSelectedGameObject(t_object);
+			}
+   			return;
+   		}
+
        bool t_open = ImGui::TreeNodeEx(std::to_string(t_object->GetId()).c_str(), ImGuiTreeNodeFlags_OpenOnArrow, t_object->GetName().c_str());
        if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen())
        {
            m_layer->SetSelectedGameObject(t_object);
        }
-       //CreateNameTextField(t_object);
 
        if (t_open)
        {

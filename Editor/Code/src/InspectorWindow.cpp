@@ -4,6 +4,7 @@
 #include "../Inlude/ImGuiLayer.h"
 #include "../Inlude/InspectorComponent/UiInspectorComponent.h"
 #include "../Inlude/InspectorComponent/UiTransformComponent.h"
+#include "../Inlude/InspectorComponent/UiMeshComponent.h"
 
 Editor::EditorLayer::Ui::InspectorUiWindow::~InspectorUiWindow()
 {
@@ -85,9 +86,9 @@ void Editor::EditorLayer::Ui::InspectorUiWindow::RefreshSelectedObject()
 			AddComponent(new UiTransformComponent(m_layer, m_selectedObject->GetComponent<Engine::GamePlay::TransformComponent>()));
 			break;
 		case Engine::GamePlay::ComponentType::MESH:
-			//AddComponent(new UiMeshComponent(m_layer, m_selectedObject->GetComponent<MeshComponent>()));
+			AddComponent(new UiMeshComponent(m_layer, m_selectedObject->GetComponent<Engine::GamePlay::MeshComponent>()));
 			break;
-		case Engine::GamePlay::ComponentType::MATERIAL:
+		case Engine::GamePlay::ComponentType::MATERIAL: //not implemented yet
 			//AddComponent(new UiMaterialComponent(m_layer, m_selectedObject->GetComponent<MaterialComponent>()));
 			break;
 		}
