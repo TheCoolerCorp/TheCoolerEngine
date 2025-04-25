@@ -16,7 +16,7 @@ namespace Engine
 			TransformComponent() = default;
 			~TransformComponent() override = default;
 
-			ENGINE_API ComponentType Create(uint32_t& a_outId, bool a_colliderMesh = false);
+			ENGINE_API ComponentType Create(int& a_outId, bool a_colliderMesh = false);
 
 			ENGINE_API void Destroy();
 

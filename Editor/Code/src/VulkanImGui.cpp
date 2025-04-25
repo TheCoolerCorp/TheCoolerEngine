@@ -266,10 +266,11 @@ namespace Editor::EditorLayer::Ui
 		VkSubpassDependency t_dependency = {};
 		t_dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
 		t_dependency.dstSubpass = 0;
-		t_dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+		t_dependency.srcStageMask = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
 		t_dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
 		t_dependency.srcAccessMask = 0;
 		t_dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+		t_dependency.dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT;
 
 		t_config.dependencies.push_back(t_dependency);
 		t_config.useSwapChainFramebuffers = true;

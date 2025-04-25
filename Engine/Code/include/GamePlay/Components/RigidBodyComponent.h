@@ -22,7 +22,7 @@ namespace Engine
 			RigidBodyComponent() = default;
 			~RigidBodyComponent() override = default;
 
-			ENGINE_API ComponentType Create(uint32_t& a_outId, bool a_colliderMesh = false);
+			ENGINE_API ComponentType Create(int& a_outId, bool a_colliderMesh = false);
 
 			ENGINE_API void CreateBoxRigidBody(Physics::BodyType a_type, Physics::CollisionLayer a_layer, Math::vec3 a_position, Math::vec3 a_scale, Math::quat a_rotation, const Math::Transform& a_transform, bool a_enable = true);
 			ENGINE_API void CreateSphereRigidBody(Physics::BodyType a_type, Physics::CollisionLayer a_layer, Math::vec3 a_position, float a_radius, Math::quat a_rotation, const Math::Transform& a_transform, bool a_enable = true);

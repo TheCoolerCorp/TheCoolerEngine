@@ -39,8 +39,8 @@ namespace Editor
 			m_renderer->LateCreate(RendererType::VULKAN, m_mainWindow);
 
 			m_camera = new Camera(vec3(0.f, 1.f, 0.f), vec3(0.f, 0.f, 0.f),
-			                                        vec3(0.f, 1.f, -3.f), ToRadians(70.f),
-			                                        static_cast<float>(a_width) / static_cast<float>(a_height), 0.1f, 100.f, 10.f, 2.f);
+			                                        vec3(0.f, 1.f, 3.f), ToRadians(70.f),
+			                                        static_cast<float>(a_width) / static_cast<float>(a_height), 0.1f, 100.f, 10.f, 20.f);
 			m_camera->Create(m_renderer);
 
 			m_currentScene = new Scene();

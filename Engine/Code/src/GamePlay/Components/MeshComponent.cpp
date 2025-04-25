@@ -6,7 +6,7 @@ namespace Engine
 {
 	namespace GamePlay
 	{
-		ComponentType MeshComponent::Create(uint32_t& a_outId, bool a_colliderMesh)
+		ComponentType MeshComponent::Create(int& a_outId, bool a_colliderMesh)
 		{
 			a_outId = ServiceLocator::GetMeshRendererSystem()->AddComponent(this);
 			return a_colliderMesh ? ComponentType::COLLIDERMESH : ComponentType::MESH;
