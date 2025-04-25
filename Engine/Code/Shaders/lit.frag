@@ -28,7 +28,7 @@ layout(set = 1, binding = 7) uniform HasTextures
 
 
 // Lights
-layout(set = 0, binding = 1) uniform LightData 
+layout(set = 2, binding = 0) uniform LightData 
 {
     vec3 lightPosition;
     vec3 lightColor;
@@ -45,6 +45,7 @@ layout(location = 0) out vec4 outColor;
 
 void main() 
 {
-    outColor = texture(per_albedoMap, fragTexCoord);
+    //outColor = texture(per_albedoMap, fragTexCoord);
+    outColor = vec4(1.0, 0, 0,1 );
 
 }

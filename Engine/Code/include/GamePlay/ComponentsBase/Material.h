@@ -83,7 +83,7 @@ namespace Engine
 			ENGINE_API bool HasNormal() { return m_hasTextures.normal; }
 			ENGINE_API Ref<Resource::Texture> GetNormal() { return m_textures[1]; }
 
-			ENGINE_API bool HasMetallic() { return m_hasTextures.albdeo; }
+			ENGINE_API bool HasMetallic() { return m_hasTextures.metallic; }
 			ENGINE_API Ref<Resource::Texture> GetMetallic() { return m_textures[2]; }
 
 			ENGINE_API bool HasRoughness() { return m_hasTextures.roughness; }
@@ -92,6 +92,7 @@ namespace Engine
 			ENGINE_API bool HasAO() { return m_hasTextures.ao; }
 			ENGINE_API Ref<Resource::Texture> GetAO() { return m_textures[3]; }
 
+			void SetType(MaterialType a_type) { m_type = a_type; }
 			MaterialType GetType() { return m_type; }
 			HasMaterialTextures& GetHasTextures() { return m_hasTextures; }
 			MaterialValues& GetMaterialValues() { return m_values; }

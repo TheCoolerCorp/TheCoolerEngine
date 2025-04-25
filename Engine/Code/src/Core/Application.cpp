@@ -48,25 +48,89 @@ namespace Engine
 				m_renderer->GetRenderPass()->BeginRenderPass(m_renderer->GetCommandPool(), 0,  m_renderer->GetSwapChain(), t_imageIndex);
 
 
+				std::vector<RHI::IBuffer*> t_vertexBuffers = m_currentScene->GetVertexBuffers();
+				std::vector<RHI::IBuffer*> t_indexBuffers = m_currentScene->GetVertexBuffers();
+				std::vector<uint32_t> t_nbIndices = m_currentScene->GetNBIndices();
+				std::vector<RHI::IObjectDescriptor*> t_descriptors = m_currentScene->GetDescriptors();
+
+				std::vector<RHI::IBuffer*> t_unlitVertexBuffers;
+				std::vector<RHI::IBuffer*> t_unlitIndexBuffers;
+				std::vector<uint32_t> t_unlitNbIndices;
+				std::vector<RHI::IObjectDescriptor*> t_unlitDescriptors;
+
+				std::vector<RHI::IBuffer*> t_litVertexBuffers;
+				std::vector<RHI::IBuffer*> t_litIndexBuffers;
+				std::vector<uint32_t> t_litnbIndices;
+				std::vector<RHI::IObjectDescriptor*> t_litdescriptors;
+
+				for (int i = 0; i < t_descriptors.size(); ++i)
+				{
+					if (t_descriptors[i]->GetPipelineTargetType() == RHI::LitDescriptor)
+					{
+						t_unlitDescriptors.push_back(t_descriptors[i]);
+						t_unlitVertexBuffers.push_back(t_vertexBuffers[i]);
+						t_unlitIndexBuffers.push_back(t_indexBuffers[i]);
+						t_unlitNbIndices.push_back(t_nbIndices[i]);
+					}
+					else
+					{
+						t_litdescriptors.push_back(t_descriptors[i]);
+						t_litVertexBuffers.push_back(t_vertexBuffers[i]);
+						t_litIndexBuffers.push_back(t_indexBuffers[i]);
+						t_litnbIndices.push_back(t_nbIndices[i]);
+					}
+				}
+				t_descriptors.clear();
+#pragma region Unlit
 				/*
 				 * Bind the pipeline to use
 				 */
-				m_renderer->GetPipeline()->Bind(m_renderer->GetCommandPool(), 0, m_renderer->GetSwapChain());
+				m_renderer->GetUnlitPipeline()->Bind(m_renderer->GetCommandPool(), 0, m_renderer->GetSwapChain());
 
 
 				/*
 				* Bind decriptors only (for special case like lights, cubemap, camera, etc...)
 				*/
-				m_renderer->GetPipeline()->BindSingleDescriptors(m_renderer->GetCommandPool(), 0, m_renderer->GetSwapChain()->GetCurrentFrame(),
+				m_renderer->GetUnlitPipeline()->BindSingleDescriptors(m_renderer->GetCommandPool(), 0, m_renderer->GetSwapChain()->GetCurrentFrame(),
 												t_imageIndex, {m_currentScene->GetCameraDescriptor()});
 
 
 				/*
 				* Bind decriptors and sent buffer
 				*/
-				m_renderer->GetPipeline()->BindObjects(m_renderer->GetCommandPool(), 0, m_renderer->GetSwapChain()->GetCurrentFrame(), 
-												t_imageIndex, m_currentScene->GetIndexBuffers(), m_currentScene->GetVertexBuffers(), m_currentScene->GetNBIndices(), m_currentScene->GetDescriptors());
+				m_renderer->GetUnlitPipeline()->BindObjects(m_renderer->GetCommandPool(), 0, m_renderer->GetSwapChain()->GetCurrentFrame(),
+												t_imageIndex, t_unlitIndexBuffers, t_unlitVertexBuffers, t_unlitNbIndices, t_unlitDescriptors);
+				t_unlitIndexBuffers.clear();
+				t_unlitVertexBuffers.clear();
+				t_unlitNbIndices.clear();
+				t_unlitDescriptors.clear();
+#pragma endregion
 
+#pragma  region Lit
+				/*
+				 * Bind the pipeline to use
+				 */
+				//m_renderer->GetLitPipeline()->Bind(m_renderer->GetCommandPool(), 0, m_renderer->GetSwapChain());
+
+
+				/*
+				* Bind decriptors only (for special case like lights, cubemap, camera, etc...)
+				*/
+				//m_renderer->GetLitPipeline()->BindSingleDescriptors(m_renderer->GetCommandPool(), 0, m_renderer->GetSwapChain()->GetCurrentFrame(),
+					//t_imageIndex, { m_currentScene->GetCameraDescriptor() });
+
+
+				/*
+				* Bind decriptors and sent buffer
+				*/
+				//m_renderer->GetUnlitPipeline()->BindObjects(m_renderer->GetCommandPool(), 0, m_renderer->GetSwapChain()->GetCurrentFrame(),
+					//t_imageIndex, t_litIndexBuffers, t_litVertexBuffers, t_litnbIndices, t_litdescriptors);
+
+				t_litIndexBuffers.clear();
+				t_litVertexBuffers.clear();
+				t_litnbIndices.clear();
+				t_litdescriptors.clear();
+#pragma endregion
 				/*
 				 * End the renderpass 
 				 */

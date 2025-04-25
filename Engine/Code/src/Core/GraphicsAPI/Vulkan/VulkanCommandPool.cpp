@@ -97,73 +97,73 @@ namespace Engine
 
 			void VulkanCommandPool::RecordCommandBuffer(const VkCommandBuffer a_commandBuffer, const uint32_t a_imageIndex, const VkRenderPass a_renderPass, VulkanSwapchain* a_swapChain, const VulkanGraphicPipeline* a_graphicPipeline, const std::vector<Core::RHI::IObjectDescriptor*>& a_renderObjects, const std::vector<Core::RHI::IBuffer*>& a_vertexBuffers, const std::vector<Core::RHI::IBuffer*>& a_indexBuffers, const std::vector<uint32_t>& a_nbIndices, const GamePlay::Camera* a_camera)
 			{
-				const VkExtent2D t_swapChainExtent = a_swapChain->GetExtent2D();
-				const VkPipeline t_pipeline = a_graphicPipeline->GetPipeline();
-				const VkPipelineLayout t_layout = a_graphicPipeline->GetLayout();
+				//const VkExtent2D t_swapChainExtent = a_swapChain->GetExtent2D();
+				//const VkPipeline t_pipeline = a_graphicPipeline->GetPipeline();
+				//const VkPipelineLayout t_layout = a_graphicPipeline->GetLayout();
 
-				VkCommandBufferBeginInfo t_beginInfo{};
-				t_beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+				//VkCommandBufferBeginInfo t_beginInfo{};
+				//t_beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 
-				VK_CHECK(vkBeginCommandBuffer(a_commandBuffer, &t_beginInfo), "failed to begin recording command buffer!");
+				//VK_CHECK(vkBeginCommandBuffer(a_commandBuffer, &t_beginInfo), "failed to begin recording command buffer!");
 
-				VkRenderPassBeginInfo t_renderPassInfo{};
-				t_renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-				t_renderPassInfo.renderPass = a_renderPass;
-				t_renderPassInfo.framebuffer = a_swapChain->GetFramebuffers()[a_imageIndex];
-				t_renderPassInfo.renderArea.offset = { .x = 0, .y = 0 };
-				t_renderPassInfo.renderArea.extent = t_swapChainExtent;
+				//VkRenderPassBeginInfo t_renderPassInfo{};
+				//t_renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+				//t_renderPassInfo.renderPass = a_renderPass;
+				//t_renderPassInfo.framebuffer = a_swapChain->GetFramebuffers()[a_imageIndex];
+				//t_renderPassInfo.renderArea.offset = { .x = 0, .y = 0 };
+				//t_renderPassInfo.renderArea.extent = t_swapChainExtent;
 
-				std::array<VkClearValue, 2> t_clearValues{};
-				t_clearValues[0].color = { {0.467f, 0.71f, 1.f, 0.996f} };
-				t_clearValues[1].depthStencil = { .depth = 1.0f, .stencil = 0 };
+				//std::array<VkClearValue, 2> t_clearValues{};
+				//t_clearValues[0].color = { {0.467f, 0.71f, 1.f, 0.996f} };
+				//t_clearValues[1].depthStencil = { .depth = 1.0f, .stencil = 0 };
 
-				t_renderPassInfo.clearValueCount = static_cast<uint32_t>(t_clearValues.size());
-				t_renderPassInfo.pClearValues = t_clearValues.data(); 
+				//t_renderPassInfo.clearValueCount = static_cast<uint32_t>(t_clearValues.size());
+				//t_renderPassInfo.pClearValues = t_clearValues.data(); 
 
-				vkCmdBeginRenderPass(a_commandBuffer, &t_renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+				//vkCmdBeginRenderPass(a_commandBuffer, &t_renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 
-				vkCmdBindPipeline(a_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, t_pipeline);
-				
-				VkViewport t_viewport;
-				t_viewport.x = 0.0f;
-				t_viewport.y = 0.0f;
-				t_viewport.width = static_cast<float>(a_swapChain->GetExtent2D().width);
-				t_viewport.height = static_cast<float>(t_swapChainExtent.height);
-				t_viewport.minDepth = 0.0f;
-				t_viewport.maxDepth = 1.0f;
-				vkCmdSetViewport(a_commandBuffer, 0, 1, &t_viewport);
+				//vkCmdBindPipeline(a_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, t_pipeline);
+				//
+				//VkViewport t_viewport;
+				//t_viewport.x = 0.0f;
+				//t_viewport.y = 0.0f;
+				//t_viewport.width = static_cast<float>(a_swapChain->GetExtent2D().width);
+				//t_viewport.height = static_cast<float>(t_swapChainExtent.height);
+				//t_viewport.minDepth = 0.0f;
+				//t_viewport.maxDepth = 1.0f;
+				//vkCmdSetViewport(a_commandBuffer, 0, 1, &t_viewport);
 
-				VkRect2D t_scissor;
-				t_scissor.offset = { .x = 0, .y = 0 };
-				t_scissor.extent = t_swapChainExtent;
-				vkCmdSetScissor(a_commandBuffer, 0, 1, &t_scissor);
+				//VkRect2D t_scissor;
+				//t_scissor.offset = { .x = 0, .y = 0 };
+				//t_scissor.extent = t_swapChainExtent;
+				//vkCmdSetScissor(a_commandBuffer, 0, 1, &t_scissor);
 
-				// Change to common layout
-				const VkDescriptorSet t_cameraDescriptorSet = a_camera->GetDescriptor()->CastVulkan()->GetDescriptorSets()[0];
-				vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, t_layout, 0, 1, &t_cameraDescriptorSet, 0, nullptr);
+				//// Change to common layout
+				////const VkDescriptorSet t_cameraDescriptorSet = a_camera->GetDescriptor()->CastVulkan()->GetDescriptorSets(0);
+				//vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, t_layout, 0, 1, &t_cameraDescriptorSet, 0, nullptr);
 
-				for (int i = 0; i < a_renderObjects.size(); ++i)
-				{
-					if (a_vertexBuffers.at(i)->CastVulkan()->GetBuffer() != nullptr)
-					{
-						VkBuffer t_vertexBuffer = a_vertexBuffers.at(i)->CastVulkan()->GetBuffer();
-						constexpr VkDeviceSize t_offsets[] = { 0 };
-						vkCmdBindVertexBuffers(a_commandBuffer, 0, 1, &t_vertexBuffer, t_offsets);
-					}
+				//for (int i = 0; i < a_renderObjects.size(); ++i)
+				//{
+				//	if (a_vertexBuffers.at(i)->CastVulkan()->GetBuffer() != nullptr)
+				//	{
+				//		VkBuffer t_vertexBuffer = a_vertexBuffers.at(i)->CastVulkan()->GetBuffer();
+				//		constexpr VkDeviceSize t_offsets[] = { 0 };
+				//		vkCmdBindVertexBuffers(a_commandBuffer, 0, 1, &t_vertexBuffer, t_offsets);
+				//	}
 
-					if (a_indexBuffers.at(i)->CastVulkan()->GetBuffer() != nullptr)
-					{
-						vkCmdBindIndexBuffer(a_commandBuffer, a_indexBuffers.at(i)->CastVulkan()->GetBuffer(), 0, VK_INDEX_TYPE_UINT32);
-					}
+				//	if (a_indexBuffers.at(i)->CastVulkan()->GetBuffer() != nullptr)
+				//	{
+				//		vkCmdBindIndexBuffer(a_commandBuffer, a_indexBuffers.at(i)->CastVulkan()->GetBuffer(), 0, VK_INDEX_TYPE_UINT32);
+				//	}
 
-					// Change to per layout
-					vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, t_layout, 1, 1, &a_renderObjects.at(i)->CastVulkan()->GetDescriptorSets()[a_imageIndex], 0, nullptr);
+				//	// Change to per layout
+				//	vkCmdBindDescriptorSets(a_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, t_layout, 1, 1, &a_renderObjects.at(i)->CastVulkan()->GetDescriptorSets()[a_imageIndex], 0, nullptr);
 
-					vkCmdDrawIndexed(a_commandBuffer, a_nbIndices.at(i), 1, 0, 0, 0);
-				}
-				vkCmdEndRenderPass(a_commandBuffer);
+				//	vkCmdDrawIndexed(a_commandBuffer, a_nbIndices.at(i), 1, 0, 0, 0);
+				//}
+				//vkCmdEndRenderPass(a_commandBuffer);
 
-				VK_CHECK(vkEndCommandBuffer(a_commandBuffer), "failed to end command buffer!");
+				//VK_CHECK(vkEndCommandBuffer(a_commandBuffer), "failed to end command buffer!");
 			}
 
 			VkCommandBuffer VulkanCommandPool::BeginSingleTimeCommands(const VkDevice a_device, const VkCommandPool a_commandPool)

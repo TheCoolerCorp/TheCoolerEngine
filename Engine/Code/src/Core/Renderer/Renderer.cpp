@@ -38,20 +38,27 @@ namespace Engine
 			m_renderPass = m_interface->InstantiateRenderPass();
 			m_renderPass->Create(m_swapChain, m_physicalDevice, m_logicalDevice);
 
-			m_graphicPipeline = m_interface->InstantiateGraphicPipeline();
+			m_unlitPipeline = m_interface->InstantiateGraphicPipeline();
+			m_litPipeline = m_interface->InstantiateGraphicPipeline();
 
 			RHI::IShader* t_vertexShader = m_interface->InstantiateShader();
-			RHI::IShader* t_fragmentShader = m_interface->InstantiateShader();
+			RHI::IShader* t_unlitFragmentShader = m_interface->InstantiateShader();
+			RHI::IShader* t_litFragmentShader = m_interface->InstantiateShader();
 			t_vertexShader->Create(BASEVERTEX, m_logicalDevice);
-			t_fragmentShader->Create(UNLITFRAGMENT, m_logicalDevice);
-			std::array<RHI::IShader*, 2> t_vertAndFrag = { t_vertexShader, t_fragmentShader };
+			t_unlitFragmentShader->Create(UNLITFRAGMENT, m_logicalDevice);
+			t_litFragmentShader->Create(LITFRAGMENT, m_logicalDevice);
+			std::array<RHI::IShader*, 2> t_unlitVertAndFrag = { t_vertexShader, t_unlitFragmentShader };
+			std::array<RHI::IShader*, 2> t_litVertAndFrag = { t_vertexShader, t_litFragmentShader };
 
-			m_graphicPipeline->Create(m_logicalDevice, m_renderPass, RHI::Unlit, t_vertAndFrag);
-
+			m_unlitPipeline->Create(m_logicalDevice, m_renderPass, RHI::Unlit, t_unlitVertAndFrag);
+			m_litPipeline->Create(m_logicalDevice, m_renderPass, RHI::Lit, t_litVertAndFrag);
+			
 			t_vertexShader->Destroy(m_logicalDevice);
-			t_fragmentShader->Destroy(m_logicalDevice);
+			t_unlitFragmentShader->Destroy(m_logicalDevice);
+			t_litFragmentShader->Destroy(m_logicalDevice);
 			m_interface->DestroyShader(t_vertexShader);
-			m_interface->DestroyShader(t_fragmentShader);
+			m_interface->DestroyShader(t_unlitFragmentShader);
+			m_interface->DestroyShader(t_litFragmentShader);
 
 
 
@@ -76,8 +83,10 @@ namespace Engine
 			m_commandPool->Destroy(m_logicalDevice);
 			m_interface->DestroyCommandPool(m_commandPool);
 
-			m_graphicPipeline->Destroy(m_logicalDevice);
-			m_interface->DestroyGraphicPipeline(m_graphicPipeline);
+			m_unlitPipeline->Destroy(m_logicalDevice);
+			m_interface->DestroyGraphicPipeline(m_unlitPipeline);
+			m_litPipeline->Destroy(m_logicalDevice);
+			m_interface->DestroyGraphicPipeline(m_litPipeline);
 
 			m_renderPass->Destroy(m_logicalDevice);
 			m_interface->DestroyRenderPass(m_renderPass);

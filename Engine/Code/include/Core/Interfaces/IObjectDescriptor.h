@@ -30,6 +30,12 @@ namespace Engine
 				Undefined = -1
 			};
 
+			enum DescriptorSetPipelineTarget : int
+			{
+				UnlitDescriptor,
+				LitDescriptor
+			};
+
 			enum DescriptorSetDataType : int
 			{
 				DESCRIPTOR_SET_TYPE_COMBINED_IMAGE_SAMPLER = 1,
@@ -49,16 +55,18 @@ namespace Engine
 
 				ENGINE_API virtual GraphicsAPI::VulkanObjectDescriptor* CastVulkan() { return nullptr; }
 
-				ENGINE_API virtual void Create(ILogicalDevice* a_logicalDevice, IGraphicPipeline* a_graphicPipeline, DescriptorSetTarget a_type, int a_count, std::vector<DescriptorSetDataType> a_types = std::vector<DescriptorSetDataType>(0)) = 0;
+				ENGINE_API virtual void Create(RHI::ILogicalDevice* a_logicalDevice, RHI::IGraphicPipeline* a_graphicPipeline, RHI::DescriptorSetTarget a_type, uint32_t a_maxDescriptorPerSet, uint32_t a_setCount, std::vector<uint32_t> a_subSetCount, uint32_t a_uniformCount, std::vector<uint32_t> a_subUniformCount, std::vector<RHI::DescriptorSetDataType> a_types) = 0;
 
 				ENGINE_API virtual void Destroy(ILogicalDevice* a_logicalDevice) = 0;
 
-				ENGINE_API virtual void SetTexture(RHI::ILogicalDevice* a_logicalDevice, RHI::IImage* a_image, uint32_t a_dstBinding, uint32_t a_count) = 0;
-				ENGINE_API virtual void SetMat(RHI::ILogicalDevice* a_logicalDevice, RHI::IPhysicalDevice* a_physicalDevice, RHI::ICommandPool* a_commandPool,void* a_matData, uint32_t a_dstBinding, uint32_t a_count) = 0;
+				ENGINE_API virtual void SetTexture(RHI::ILogicalDevice* a_logicalDevice, uint32_t a_setIndex, RHI::IImage* a_image, uint32_t a_dstBinding, uint32_t a_count) = 0;
+				ENGINE_API virtual void SetUniform(RHI::ILogicalDevice* a_logicalDevice, RHI::IPhysicalDevice* a_physicalDevice, RHI::ICommandPool* a_commandPool, uint32_t a_setindex, uint32_t a_bufferIndex, void* a_data, uint32_t a_dataSize, uint32_t a_dstBinding, uint32_t a_descriptorCount) = 0;
 
-				ENGINE_API virtual void UpdateUniforms(ILogicalDevice* a_logicalDevice, void* a_data, int a_imageIndex) = 0;
+				ENGINE_API virtual void UpdateUniforms(RHI::ILogicalDevice* a_logicalDevice, uint32_t a_bufferIndex, void* a_data, uint32_t a_dataSize, int a_imageIndex) = 0;
 
 				ENGINE_API virtual bool IsUpdated() { return false; }
+
+				ENGINE_API virtual DescriptorSetPipelineTarget GetPipelineTargetType() = 0;
 
 			};
 		}
