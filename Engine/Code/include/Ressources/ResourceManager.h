@@ -1,6 +1,8 @@
 #ifndef RESOURCEMANAGER_H
 #define RESOURCEMANAGER_H
 
+#include <ranges>
+
 #include "EngineExport.h"
 #include  "Core/Logger/Logger.h"
 
@@ -29,20 +31,20 @@ namespace Engine
 				Ref<Type> t_resource = CreateRef<Type>();
 				t_resource->Create(std::forward<Args>(args)...);
 
-				for (auto& [id, resource] : m_resources)
+				for (auto& t_toFindResource : m_resources | std::views::values)
 				{
-					if (resource == t_resource)
+					if (t_toFindResource == t_resource)
 					{
 						return t_resource;
 					}
 				}
 
 				int t_id = -1;
-				int m_resourcesSize = static_cast<int>(m_resources.size());
+				const int t_resourcesSize = static_cast<int>(m_resources.size());
 
-				if (m_resourcesSize != 0)
+				if (t_resourcesSize != 0)
 				{
-					t_id = m_resourcesSize;
+					t_id = t_resourcesSize;
 				}
 				else
 				{

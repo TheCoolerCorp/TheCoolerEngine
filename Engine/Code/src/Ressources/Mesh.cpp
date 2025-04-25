@@ -55,6 +55,9 @@ namespace Engine
             m_vertexBuffer->Create(Core::RHI::BufferType::VERTEX, t_bufferData, t_physicalDevice, t_logicalDevice, t_commandPool);
             m_indexBuffer->Create(Core::RHI::BufferType::INDEX, t_bufferData, t_physicalDevice, t_logicalDevice, t_commandPool);
 
+            m_vertices.clear();
+            m_indexes.clear();
+
             m_isLoaded = true;
 		}
 

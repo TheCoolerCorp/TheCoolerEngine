@@ -52,9 +52,10 @@ namespace Engine
 				t_rigidBodyComponent->SetActive(false);
 				t_rigidBodyComponent->SetActive(true);
 			}
-			//t_object->AddComponent<MeshComponent>(true);
-			//t_object->GetComponent<MeshComponent>(true)->SetMesh(t_cubeCollider);
-			//t_object->GetComponent<MeshComponent>(true)->SetTexture(t_colliderTexture);
+			t_object->AddComponent<MeshComponent>(true);
+			MeshComponent* t_debugMeshComponent = t_object->GetComponent<MeshComponent>(true);
+			t_object->GetComponent<MeshComponent>(true)->SetMesh(t_cubeCollider);
+			t_object->GetComponent<MeshComponent>(true)->SetTexture(t_colliderTexture);
 
 			t_object->GetComponent<MeshComponent>()->SetMesh(t_mesh);
 			t_object->GetComponent<MeshComponent>()->SetTexture(t_texture);

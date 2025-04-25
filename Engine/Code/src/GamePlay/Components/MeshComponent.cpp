@@ -1,3 +1,5 @@
+#include <utility>
+
 #include  "GamePlay/Components/Meshcomponent.h"
 
 #include "GamePlay/ServiceLocator.h"
@@ -25,14 +27,15 @@ namespace Engine
 
 		void MeshComponent::SetMesh(Ref<Resource::Mesh> a_mesh)
 		{
+			std::cout << "MeshComponent ptr: " << this << std::endl;
 			// Set the mesh to use.
-			m_mesh = a_mesh;
+			m_mesh = std::move(a_mesh);
 		}
 
 		void MeshComponent::SetTexture(Ref<Resource::Texture> a_texture)
 		{
 			// Set the texture to use.
-			m_texture = a_texture;
+			m_texture = std::move(a_texture);
 		}
 
 		MeshComponent* MeshComponent::GetComponent(int a_id)
