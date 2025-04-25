@@ -23,9 +23,9 @@ namespace Engine
 			ENGINE_API void Render(Core::Renderer* a_renderer, Core::Window::IWindow* a_window, GamePlay::Camera* a_camera);
 			ENGINE_API void Destroy(Core::Renderer* a_renderer);
 
-			ENGINE_API uint32_t AddComponent(MeshComponent* a_meshComponent);
-			ENGINE_API MeshComponent* GetComponent(uint32_t a_id);
-			ENGINE_API void RemoveComponent(uint32_t a_id);
+			ENGINE_API int AddComponent(MeshComponent* a_meshComponent);
+			ENGINE_API MeshComponent* GetComponent(int a_id) const;
+			ENGINE_API void RemoveComponent(int a_id);
 
 		private:
 			std::vector<MeshComponent*> m_components; // ADD HERE

@@ -24,6 +24,10 @@ namespace Engine
             ENGINE_API explicit quat(const float a_coords) : x(a_coords), y(a_coords), z(a_coords), w(a_coords) {}
             ENGINE_API explicit quat(vec3 a_eulerAngles);
             ENGINE_API ~quat() = default;
+            ENGINE_API quat(const quat&) = default;
+            ENGINE_API quat& operator=(const quat&) = default;
+            ENGINE_API quat(quat&&) = default;
+            ENGINE_API quat& operator=(quat&&) = default;
 
             // different print methods
             ENGINE_API void Print() const;
@@ -45,6 +49,7 @@ namespace Engine
             ENGINE_API  static float Norm(quat a_q); // returns the norm of a quaternion
             ENGINE_API static quat Normalize(quat a_q); //returns normalized quaternion
             ENGINE_API static float DotProduct(quat a_q1, quat a_q2); // returns the dot product of two quaternions
+            ENGINE_API static quat GetRotation(const mat4& a_m);
         };
     }
 }

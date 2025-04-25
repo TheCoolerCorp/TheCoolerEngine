@@ -6,7 +6,7 @@ namespace Engine
 {
 	namespace GamePlay
 	{
-		ComponentType TransformComponent::Create(int& a_outId)
+		ComponentType TransformComponent::Create(int& a_outId, bool a_colliderMesh)
 		{
 			m_transform = new Math::Transform();
 			m_id = ServiceLocator::GetTransformSystem()->AddComponent(this);
@@ -22,7 +22,6 @@ namespace Engine
 
 		void TransformComponent::Set(Math::vec3 a_pos, Math::quat a_rot, Math::vec3 a_scale)
 		{
-			bool t_needUpdate = false;
 			if (m_transform->GetPosition() != a_pos)
 			{
 				m_transform->SetPosition(a_pos);

@@ -76,15 +76,16 @@ namespace Engine
 			m_components.clear();
 		}
 
-		uint32_t MeshRendererSystem::AddComponent(MeshComponent* a_meshComponent)
+		int MeshRendererSystem::AddComponent(MeshComponent* a_meshComponent)
 		{
 			if (m_availableIndexes.empty())
 			{
-				m_components.push_back(a_meshComponent);
-				m_pendingComponents.push_back((int)(m_components.size() - 1));
-				return static_cast<uint32_t>(m_components.size() - 1);
+				m_components.emplace_back(a_meshComponent);
+				const int t_nbComps = static_cast<int>(m_components.size() - 1);
+				m_pendingComponents.push_back(t_nbComps);
+				return t_nbComps;
 			}
-			for (const uint32_t t_availableIndex : m_availableIndexes)
+			for (const int t_availableIndex : m_availableIndexes)
 			{
 				if (m_components.at(t_availableIndex) == nullptr)
 				{
@@ -97,16 +98,16 @@ namespace Engine
 			// ADD PENDING INDEX
 		}
 
-		MeshComponent* MeshRendererSystem::GetComponent(uint32_t a_id)
+		MeshComponent* MeshRendererSystem::GetComponent(const int a_id) const
 		{
-			if (a_id >= m_components.size())
+			if (a_id >= static_cast<int>(m_components.size()))
 			{
 				return nullptr;
 			}
 			return m_components.at(a_id);
 		}
 
-		void MeshRendererSystem::RemoveComponent(uint32_t a_id)
+		void MeshRendererSystem::RemoveComponent(const int a_id)
 		{
 			if (m_components.at(a_id) != nullptr && a_id < m_components.size())
 			{

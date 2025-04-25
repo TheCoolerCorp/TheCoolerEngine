@@ -31,8 +31,11 @@ namespace Engine
 			std::vector<GameObject*> m_objs;
 			std::vector<int> m_availableIds;
 
+			void TestFunc(RigidBodyComponent* a_rigidBodyComponent);
+
 			TransformSystem* m_transformSystem = nullptr;
 			MeshRendererSystem* m_meshRendererSystem = nullptr;
+			PhysicsSystem* m_physicsSystem = nullptr;
 			Resource::ResourceManager* m_resourceManager = nullptr;
 		};
 	}	

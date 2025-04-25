@@ -7,6 +7,7 @@ namespace Engine
 		Resource::ResourceManager* ServiceLocator::m_resourceManager = nullptr;
 		TransformSystem* ServiceLocator::m_transformSystem = nullptr;
 		MeshRendererSystem* ServiceLocator::m_meshRendererSystem = nullptr;
+		PhysicsSystem* ServiceLocator::m_physicsSystem = nullptr;
 
 		void ServiceLocator::ProvideResourceManager(Resource::ResourceManager* a_resourceManager)
 		{
@@ -23,6 +24,10 @@ namespace Engine
 			m_meshRendererSystem = a_meshRendererSystem;
 		}
 
+		void ServiceLocator::ProvidePhysicsSystem(PhysicsSystem* a_physicsSystem)
+		{
+			m_physicsSystem = a_physicsSystem;
+		}
 
 		Resource::ResourceManager* ServiceLocator::GetResourceManager()
 		{
@@ -37,6 +42,11 @@ namespace Engine
 		MeshRendererSystem* ServiceLocator::GetMeshRendererSystem()
 		{
 			return m_meshRendererSystem;
+		}
+
+		PhysicsSystem* ServiceLocator::GetPhysicsSystem()
+		{
+			return m_physicsSystem;
 		}
 	}
 }

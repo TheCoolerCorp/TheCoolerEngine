@@ -1,10 +1,11 @@
-#include "../Inlude/InspectorWindow.h"
+#include "InspectorWindow.h"
 
 #include "imgui.h"
-#include "../Inlude/ImGuiLayer.h"
-#include "../Inlude/InspectorComponent/UiInspectorComponent.h"
-#include "../Inlude/InspectorComponent/UiTransformComponent.h"
-#include "../Inlude/InspectorComponent/UiMeshComponent.h"
+#include "../Include/ImGuiLayer.h"
+#include "../Include/InspectorComponent/UiInspectorComponent.h"
+#include "../Include/InspectorComponent/UiTransformComponent.h"
+#include "../Include/InspectorComponent/UiMeshComponent.h"
+#include "../Include/UiWindow.h"
 
 Editor::EditorLayer::Ui::InspectorUiWindow::~InspectorUiWindow()
 {
@@ -57,6 +58,9 @@ void Editor::EditorLayer::Ui::InspectorUiWindow::UiDraw()
 
 void Editor::EditorLayer::Ui::InspectorUiWindow::Destroy()
 {
+	ClearComponents();
+	m_selectedObject = nullptr;
+	m_open = false; 
 }
 
 

@@ -7,11 +7,14 @@ namespace Engine
         void mat4::Print() const
         {
             std::cout << "Matrix 4x4 : " << '\n';
-            for (int i = 0; i < 4; ++i)
-            {
-                quat t_line(mElements[i], mElements[i + 1], mElements[i + 2], mElements[i + 3]);
-                t_line.BlankPrint();
-            }
+            quat t_line1(mElements[0], mElements[1], mElements[2], mElements[3]);
+            t_line1.BlankPrint();
+            quat t_line2(mElements[4], mElements[5], mElements[6], mElements[7]);
+            t_line2.BlankPrint();
+            quat t_line3(mElements[8], mElements[9], mElements[10], mElements[11]);
+            t_line3.BlankPrint();
+            quat t_line4(mElements[12], mElements[13], mElements[14], mElements[15]);
+            t_line4.BlankPrint();
             std::cout << '\n';
         }
 

@@ -1,4 +1,4 @@
-#include "../Inlude/InspectorComponent/UiMeshComponent.h"
+#include "../Include/InspectorComponent/UiMeshComponent.h"
 
 #include "imgui.h"
 #include "backends/imgui_impl_vulkan.h"
