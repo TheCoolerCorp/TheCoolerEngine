@@ -31,11 +31,7 @@ namespace Editor::EditorLayer::Ui
 
 	void ImGuiLayer::OnUiRender()
 	{
-		
-
 		bool dockSpaceOpen = true;
-
-		VkExtent2D swapChainExtent = m_renderer->GetSwapChain()->CastVulkan()->GetExtent2D();
 
 		Layer::OnUiRender();
 		m_imGui->NewFrame();

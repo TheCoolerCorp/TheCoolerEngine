@@ -8,6 +8,7 @@
 #include "Math/TheCoolerMath.h"
 #include "../Inlude/SceneGraphWindow.h"
 #include "../Inlude/ImGuiLayer.h"
+#include "../Inlude/InspectorWindow.h"
 
 using namespace Engine::Core;
 using namespace Engine::GamePlay;
@@ -47,6 +48,7 @@ namespace Editor
 			m_currentScene->Create(m_renderer);
 
 			t_imguiLayer->AddWindow(new Ui::SceneGraphUiWindow(m_renderer, t_imguiLayer, m_currentScene));
+			t_imguiLayer->AddWindow(new Ui::InspectorUiWindow(m_renderer, t_imguiLayer));
 		}
 
 		void Application::Run()
