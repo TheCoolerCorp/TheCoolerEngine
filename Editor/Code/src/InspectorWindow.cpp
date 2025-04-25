@@ -1,9 +1,9 @@
-#include "../Inlude/InspectorWindow.h"
+#include "InspectorWindow.h"
 
 #include "imgui.h"
-#include "../Inlude/ImGuiLayer.h"
-#include "../Inlude/InspectorComponent/UiInspectorComponent.h"
-#include "../Inlude/InspectorComponent/UiTransformComponent.h"
+#include "ImGuiLayer.h"
+#include "InspectorComponent/UiInspectorComponent.h"
+#include "InspectorComponent/UiTransformComponent.h"
 
 Editor::EditorLayer::Ui::InspectorUiWindow::~InspectorUiWindow()
 {

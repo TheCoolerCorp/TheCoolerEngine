@@ -1,5 +1,5 @@
-#include "../Inlude/RHIImGui.h"
-#include "../Inlude/VulkanImGui.h"
+#include "RHIImGui.h"
+#include "VulkanImGui.h"
 
 #include "imgui.h"
 #include "backends/imgui_impl_glfw.h"
@@ -7,7 +7,7 @@
 #include "Core/GraphicsAPI/Vulkan/QueueFamilies.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanRenderPass.h"
 #include "Core/Renderer/Renderer.h"
-#include "../Inlude/ImGuiLayer.h"
+#include "ImGuiLayer.h"
 
 using namespace Engine::Core;
 using namespace Engine::Core::GraphicsAPI;

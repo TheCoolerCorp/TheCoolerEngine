@@ -1,7 +1,7 @@
-#include "../Inlude/SceneGraphWindow.h"
+#include "SceneGraphWindow.h"
 
 #include "imgui.h"
-#include "../Inlude/ImGuiLayer.h"
+#include "ImGuiLayer.h"
 using namespace Engine::GamePlay;
 
 Editor::EditorLayer::Ui::SceneGraphUiWindow::~SceneGraphUiWindow()

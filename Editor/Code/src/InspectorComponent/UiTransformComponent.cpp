@@ -1,4 +1,4 @@
-#include "../Inlude/InspectorComponent/UiTransformComponent.h"
+#include "InspectorComponent/UiTransformComponent.h"
 
 #include "imgui.h"
 #include "Math/vec3.h"

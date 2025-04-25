@@ -1,4 +1,4 @@
-#include "../Inlude/Application.h"
+#include "Application.h"
 
 #include "Core/Window/GLInputHandler.h"
 #include "GamePlay/Others/GameObject.h"
@@ -6,9 +6,9 @@
 #include "GamePlay/Components/Meshcomponent.h"
 #include "GamePlay/Others/Scene.h"
 #include "Math/TheCoolerMath.h"
-#include "../Inlude/SceneGraphWindow.h"
-#include "../Inlude/ImGuiLayer.h"
-#include "../Inlude/InspectorWindow.h"
+#include "SceneGraphWindow.h"
+#include "ImGuiLayer.h"
+#include "InspectorWindow.h"
 
 using namespace Engine::Core;
 using namespace Engine::GamePlay;

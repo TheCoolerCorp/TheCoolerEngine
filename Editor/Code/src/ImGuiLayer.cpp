@@ -1,12 +1,12 @@
-#include "../Inlude/ImGuiLayer.h"
-#include "../Inlude/VulkanImGui.h"
+#include "ImGuiLayer.h"
+#include "VulkanImGui.h"
 #include "Core/Renderer/Renderer.h"
 
 #include "imgui.h"
 #include "imgui_internal.h"
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_vulkan.h"
-#include "../Inlude/UiWindow.h"
+#include "UiWindow.h"
 namespace Editor::EditorLayer::Ui
 {
 	void ImGuiLayer::OnAttach(Engine::Core::Window::IWindow* a_window)

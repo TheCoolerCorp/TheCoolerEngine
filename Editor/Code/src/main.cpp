@@ -1,4 +1,4 @@
-#include "../Inlude/Application.h"
+#include "Application.h"
 #include "Core/Logger/Logger.h"
 #include "Core/Assertion/Assertion.h"
 
