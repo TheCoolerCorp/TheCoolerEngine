@@ -41,6 +41,7 @@ namespace Engine
 			private:
 				std::mutex m_logMutex;
 				std::ofstream m_logFile;
+				std::string m_logFolder;
 				Logger();
 				~Logger();
 				ENGINE_API static void PrintConsoleLog(const std::string& a_message, const std::string& a_logLevel, const LogColor& a_color, const char* a_file, int a_line, const std::tm& a_localTime);

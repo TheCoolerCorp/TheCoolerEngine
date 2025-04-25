@@ -33,7 +33,11 @@ namespace Engine
 			{
 				if (!m_logFile.is_open())
 				{
-					return;
+					if (!std::filesystem::exists(m_logFolder) && !std::filesystem::is_directory(m_logFolder))
+					{
+						std::filesystem::create_directories(m_logFolder);
+					}
+					m_logFile.open(m_logFolder + "/TheCoolerEngine.log", std::ios::out | std::ios::trunc);
 				}
 
 				m_logFile << a_logLevel << " : ";
@@ -50,13 +54,7 @@ namespace Engine
 
 			Logger::Logger()
 			{
-				std::string t_logFolder = "../../Logs";
-
-				if (!std::filesystem::exists(t_logFolder) && !std::filesystem::is_directory(t_logFolder)) 
-				{
-					std::filesystem::create_directories(t_logFolder);
-				}
-				m_logFile.open(t_logFolder + "/TheCoolerEngine.log", std::ios::out | std::ios::app | std::ios::ate);
+				m_logFolder = "../../Logs";
 			}
 			Logger::~Logger()
 			{
