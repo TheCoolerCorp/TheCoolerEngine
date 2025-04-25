@@ -2,6 +2,8 @@
 
 #include "GamePlay/Others/GameObject.h"
 
+#include <ranges>
+
 #include "GamePlay/Components/Meshcomponent.h"
 #include  "GamePlay/Components/MaterialComponent.h"
 #include "Core/Utils.h"
@@ -179,6 +181,20 @@ namespace Engine
 				return a_component->GetChildrenIDs();
 			}
 			return std::vector<int>{};
+		}
+
+
+		/**
+		 * returns the type of every component owned by the GameObject
+		 */
+		std::vector<ComponentType> GameObject::GetOwnedTypes()
+		{
+			std::vector<ComponentType> t_types;
+			for (const auto& t_key : m_compsId | std::views::keys)
+			{
+				t_types.push_back(t_key);
+			}
+			return t_types;
 		}
 
 		bool GameObject::HasParent()

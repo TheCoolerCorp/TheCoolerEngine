@@ -134,7 +134,8 @@ namespace Engine
 				[[nodiscard]] ENGINE_API std::vector<int> GetChildrenTransformIDs();
 				[[nodiscard]] ENGINE_API std::string GetName() const { return m_name; }
 				[[nodiscard]] ENGINE_API int GetId() const { return m_id; }
-
+				[[nodiscard]] ENGINE_API std::vector<ComponentType> GetOwnedTypes();
+					
 				ENGINE_API bool HasParent();
 				ENGINE_API bool HasChildren();
 			private:

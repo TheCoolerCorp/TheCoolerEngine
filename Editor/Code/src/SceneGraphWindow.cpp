@@ -22,6 +22,8 @@ void Editor::EditorLayer::Ui::SceneGraphUiWindow::UiDraw()
 			DrawObject(m_scene->GetGameObject(i)->GetComponent<TransformComponent>()->GetID());
 		}
 	}
+    if (m_scene->GetObjectCount() == 0)
+		ImGui::Text("No objects in the scene :(. Go make some");
 	ImGui::End();
 }
 
@@ -35,9 +37,12 @@ void Editor::EditorLayer::Ui::SceneGraphUiWindow::DrawObject(int a_transformId)
    if (GameObject* t_object = m_scene->GetGameObject(t_transform->GetGameObjectID()))  
    {  
        std::string t_nodeName = t_object->GetName() + " " + std::to_string(t_object->GetId());  
-       bool t_open = ImGui::TreeNodeEx(std::to_string(t_object->GetId()).c_str(), ImGuiTreeNodeFlags_OpenOnArrow, "");
-
-       CreateNameTextField(t_object);
+       bool t_open = ImGui::TreeNodeEx(std::to_string(t_object->GetId()).c_str(), ImGuiTreeNodeFlags_OpenOnArrow, t_object->GetName().c_str());
+       if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen())
+       {
+           m_layer->SetSelectedGameObject(t_object);
+       }
+       //CreateNameTextField(t_object);
 
        if (t_open)
        {
@@ -47,10 +52,7 @@ void Editor::EditorLayer::Ui::SceneGraphUiWindow::DrawObject(int a_transformId)
 	       }  
 	       ImGui::TreePop();  
        }
-       if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen())
-       {
-           m_layer->SetSelectedGameObject(t_object);
-       }
+       
        
    }  
 }
