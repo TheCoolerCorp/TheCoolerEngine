@@ -95,6 +95,12 @@ void Editor::EditorLayer::Ui::InspectorUiWindow::RefreshSelectedObject()
 		case Engine::GamePlay::ComponentType::MATERIAL: //not implemented yet
 			//AddComponent(new UiMaterialComponent(m_layer, m_selectedObject->GetComponent<MaterialComponent>()));
 			break;
+		case Engine::GamePlay::ComponentType::COLLIDERMESH:
+			//AddComponent(new UiColliderMeshComponent(m_layer, m_selectedObject->GetComponent<ColliderMeshComponent>()));
+			break;
+		case Engine::GamePlay::ComponentType::RIGIDBODY:
+			//AddComponent(new UiRigidbodyComponent(m_layer, m_selectedObject->GetComponent<RigidbodyComponent>()));
+			break;
 		}
 	}
 }

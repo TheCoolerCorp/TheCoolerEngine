@@ -8,7 +8,7 @@ file(GLOB_RECURSE EDITOR_SOURCES "Code/*.cpp")
 #---------------------------------------#
 #			BUILD MODE					#
 #---------------------------------------#
-add_executable(Editor ${EDITOR_SOURCES})
+add_executable(Editor ${EDITOR_SOURCES} "Code/Include/LoggerWindow.h" "Code/src/LoggerWindow.cpp")
 
 #---------------------------------------#
 #				INCLUDE					#
