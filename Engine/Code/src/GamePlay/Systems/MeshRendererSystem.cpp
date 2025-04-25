@@ -80,8 +80,8 @@ namespace Engine
 		{
 			if (m_availableIndexes.empty())
 			{
+				m_components.emplace_back(a_meshComponent);
 				const int t_nbComps = static_cast<int>(m_components.size() - 1);
-				m_components.push_back(a_meshComponent);
 				m_pendingComponents.push_back(t_nbComps);
 				return t_nbComps;
 			}

@@ -55,7 +55,12 @@ namespace Engine
 					ComponentClass* t_newComponent = new ComponentClass();
 
 					int id = -1;
-					ComponentType t_componentType = t_newComponent->Create(id);
+					ComponentType t_componentType = t_newComponent->Create(id, a_colliderMesh);
+
+					if (m_compsId.contains(t_componentType))
+					{
+						return;
+					}
 
 					m_compsId.insert({ t_componentType, id });
 				}
@@ -75,7 +80,7 @@ namespace Engine
 						return nullptr;
 					}
 
-					uint32_t t_id = m_compsId.at(t_componentType);
+					int t_id = m_compsId.at(t_componentType);
 
 					return ComponentClass::GetComponent(t_id);
 				}
@@ -112,7 +117,7 @@ namespace Engine
 						return;
 					}
 
-					uint32_t t_id = m_compsId.at(t_componentType);
+					int t_id = m_compsId.at(t_componentType);
 
 					ComponentClass::RemoveComponent(t_id);
 				}
@@ -133,7 +138,7 @@ namespace Engine
 				ENGINE_API bool HasParent();
 				ENGINE_API bool HasChildren();
 			private:
-				std::unordered_map<ComponentType, uint32_t> m_compsId = std::unordered_map<ComponentType, uint32_t>(0);
+				std::unordered_map<ComponentType, int> m_compsId = std::unordered_map<ComponentType, int>(0);
 
 				Math::mat4 m_colliderMat;
 

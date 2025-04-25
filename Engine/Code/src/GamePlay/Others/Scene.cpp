@@ -81,9 +81,9 @@ namespace Engine
 				t_rigidBodyComponent2->LockRotation('z');
 				//t_rigidBodyComponent2->UnlockRotation('x');
 			}
-			//t_object2->AddComponent<MeshComponent>(true);
-			//t_object2->GetComponent<MeshComponent>(true)->SetMesh(t_capsuleCollider);
-			//t_object2->GetComponent<MeshComponent>(true)->SetTexture(t_colliderTexture);
+			t_object2->AddComponent<MeshComponent>(true);
+			t_object2->GetComponent<MeshComponent>(true)->SetMesh(t_capsuleCollider);
+			t_object2->GetComponent<MeshComponent>(true)->SetTexture(t_colliderTexture);
 
 			t_object2->GetComponent<MeshComponent>()->SetMesh(t_mesh2);
 			t_object2->GetComponent<MeshComponent>()->SetTexture(t_texture2);

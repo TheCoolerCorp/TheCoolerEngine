@@ -27,7 +27,6 @@ namespace Engine
 
 		void MeshComponent::SetMesh(Ref<Resource::Mesh> a_mesh)
 		{
-			std::cout << "MeshComponent ptr: " << this << std::endl;
 			// Set the mesh to use.
 			m_mesh = std::move(a_mesh);
 		}
