@@ -20,7 +20,7 @@ void Editor::EditorLayer::Ui::InspectorUiWindow::UiDraw()
 	{
 		RefreshSelectedObject();
 	}
-	ImGui::Begin(m_name.c_str());
+	ImGui::Begin((m_name+"##"+std::to_string(m_uid)).c_str(), &m_open);
 	if (m_selectedObject != nullptr)
 	{
 		ImGui::SeparatorText("Object Info");

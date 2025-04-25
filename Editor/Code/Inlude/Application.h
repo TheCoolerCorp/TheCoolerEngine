@@ -35,6 +35,7 @@ namespace Editor
 			void UpdateLayers();
 			void CleanupLayers();
 
+			[[nodiscard]] Engine::GamePlay::Scene* GetCurrentScene() const { return m_currentScene; }
 		private:
 			Engine::Core::Window::IWindow* m_mainWindow = nullptr;
 			Engine::Core::Window::IInputHandler* m_inputHandler = nullptr;

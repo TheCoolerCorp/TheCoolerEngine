@@ -33,7 +33,7 @@ namespace Editor
 			m_renderer->Init(RendererType::VULKAN);
 			m_renderer->Create(RendererType::VULKAN, m_mainWindow);
 
-			Ui::ImGuiLayer* t_imguiLayer = new Ui::ImGuiLayer(m_renderer);
+			Ui::ImGuiLayer* t_imguiLayer = new Ui::ImGuiLayer(m_renderer, this);
 			
 			AddLayer(t_imguiLayer);
 

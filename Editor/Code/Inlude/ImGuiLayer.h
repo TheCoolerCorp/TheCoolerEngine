@@ -7,6 +7,8 @@
 #include "RHIImGui.h"
 #include "GamePlay/Others/GameObject.h"
 
+
+
 namespace Editor::EditorLayer::Ui
 {
 	class UiWindow;
@@ -14,11 +16,8 @@ namespace Editor::EditorLayer::Ui
 	class ImGuiLayer : public Layer
 	{
 	public:
-		ImGuiLayer(Engine::Core::Renderer* a_renderer, const std::string& a_name = "ImGui Layer"): Layer(a_renderer)
-		{
-			m_name = a_name;
-			m_renderer = a_renderer;
-		}
+		ImGuiLayer(Engine::Core::Renderer* a_renderer, Core::Application* a_app, const std::string& a_name = "ImGui Layer"): Layer(a_renderer, a_app, a_name)
+		{}
 
 		~ImGuiLayer() override = default;
 		void OnAttach(Engine::Core::Window::IWindow* a_window) override;
@@ -27,10 +26,7 @@ namespace Editor::EditorLayer::Ui
 		void OnUiRender() override;
 		void Delete() override;
 
-		void AddWindow(UiWindow* a_window)
-		{
-			m_windows.push_back(a_window);
-		}
+		void AddWindow(UiWindow* a_window);
 
 		void SetSelectedGameObject(Engine::GamePlay::GameObject* a_object) { m_selectedGameObject = a_object; }
 		Engine::GamePlay::GameObject* GetSelectedGameObject() const { return m_selectedGameObject; }
@@ -39,6 +35,7 @@ namespace Editor::EditorLayer::Ui
 		Engine::GamePlay::GameObject* m_selectedGameObject = nullptr;
 		RHIImGui* m_imGui = nullptr;
 		std::vector<UiWindow*> m_windows;
+		std::vector<int> m_availableIds;
 	};
 }
 

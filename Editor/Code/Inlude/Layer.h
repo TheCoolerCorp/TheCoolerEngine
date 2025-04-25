@@ -2,6 +2,10 @@
 #define LAYERBASE_H
 #include <string>
 
+namespace Editor::Core
+{
+	class Application;
+}
 
 namespace Engine::Core
 {
@@ -23,7 +27,11 @@ namespace Editor::EditorLayer
    */
 	class Layer {
 	public:
-		Layer(Engine::Core::Renderer* a_renderer, std::string a_name = "UnnamedLayer") : m_name(std::move(a_name)){}
+		Layer(Engine::Core::Renderer* a_renderer, Core::Application* a_app, std::string a_name = "UnnamedLayer")
+		: m_app(a_app)
+		, m_renderer(a_renderer)
+		, m_name(std::move(a_name))
+		{}
 		virtual ~Layer() = default;
 
 		// Called once when the layer is added
@@ -44,6 +52,7 @@ namespace Editor::EditorLayer
 		const std::string& GetName() const { return m_name; }
 
 	protected:
+		Core::Application* m_app = nullptr;
 		Engine::Core::Renderer* m_renderer;
 		std::string m_name;
 	};

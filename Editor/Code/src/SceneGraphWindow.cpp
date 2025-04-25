@@ -14,7 +14,7 @@ void Editor::EditorLayer::Ui::SceneGraphUiWindow::Create()
 
 void Editor::EditorLayer::Ui::SceneGraphUiWindow::UiDraw()
 {
-	ImGui::Begin(m_name.c_str());
+    ImGui::Begin((m_name + "##" + std::to_string(m_uid)).c_str(), &m_open);
 	for (int i = 0; i < m_scene->GetObjectCount(); i++)
 	{
 		if (m_scene->GetGameObject(i) != nullptr && !m_scene->GetGameObject(i)->HasParent())
