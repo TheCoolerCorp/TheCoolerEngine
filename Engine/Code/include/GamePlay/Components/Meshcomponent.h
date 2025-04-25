@@ -30,14 +30,14 @@ namespace Engine
 
 			ENGINE_API static ComponentType GetType(bool a_colliderMesh = false) { return a_colliderMesh ? ComponentType::COLLIDERMESH : ComponentType::MESH; }
 
-			ENGINE_API static MeshComponent* GetComponent(uint32_t a_id);
+			ENGINE_API static MeshComponent* GetComponent(int a_id);
 
-			ENGINE_API static void RemoveComponent(uint32_t a_id);
+			ENGINE_API static void RemoveComponent(int a_id);
 
 			ENGINE_API Ref<Resource::Mesh> GetMesh() { return m_mesh; }
 			ENGINE_API Ref<Resource::Texture> GetTexture() { return m_texture; }
 
-			//static MeshComponent* FindComponent(uint32_t a_id)
+			//static MeshComponent* FindComponent(int a_id)
 		private:
 			Ref<Resource::Mesh> m_mesh = nullptr;
 			Ref<Resource::Texture> m_texture = nullptr;

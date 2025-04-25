@@ -35,12 +35,12 @@ namespace Engine
 			m_texture = a_texture;
 		}
 
-		MeshComponent* MeshComponent::GetComponent(uint32_t a_id)
+		MeshComponent* MeshComponent::GetComponent(int a_id)
 		{
 			return ServiceLocator::GetMeshRendererSystem()->GetComponent(a_id);
 		}
 
-		void MeshComponent::RemoveComponent(uint32_t a_id)
+		void MeshComponent::RemoveComponent(int a_id)
 		{
 			ServiceLocator::GetMeshRendererSystem()->RemoveComponent(a_id);
 		}

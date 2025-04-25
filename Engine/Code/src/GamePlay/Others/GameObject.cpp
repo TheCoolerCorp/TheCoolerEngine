@@ -1,3 +1,5 @@
+#include <utility>
+
 #include "GamePlay/Others/GameObject.h"
 
 #include "GamePlay/Components/Meshcomponent.h"
@@ -9,7 +11,8 @@ namespace Engine
 	{
 		//std::bitset<INT32_MAX> GameObject::m_idBitset{};
 
-		GameObject::GameObject()
+		GameObject::GameObject(std::string a_name)
+			:m_name(std::move(a_name))
 		{
 			//m_id = Utils::GenerateRandomInt(0, INT32_MAX);
 
@@ -23,7 +26,8 @@ namespace Engine
 			m_colliderMat = GetComponent<TransformComponent>()->GetTransform()->GetTransformMatrix();
 		}
 
-		GameObject::GameObject(Math::vec3 a_position, Math::vec3 a_rotation, Math::vec3 a_scale)
+		GameObject::GameObject( Math::vec3 a_position, Math::vec3 a_rotation, Math::vec3 a_scale, std::string a_name)
+			:m_name(std::move(a_name))
 		{
 			/*m_id = Utils::GenerateRandomInt(0, INT32_MAX);
 
@@ -66,6 +70,12 @@ namespace Engine
 			}
 		}
 
+		GameObject::~GameObject()
+		{
+			RemoveParent();
+			ClearChildren();
+		}
+
 
 		/*void GameObject::Create(Core::RHI::ApiInterface* a_interface, GameObjectinfo a_info)
 		{
@@ -75,7 +85,7 @@ namespace Engine
 			m_descriptor->Create(a_info.mLogicalDevice, a_info.mPhysicalDevice, a_info.mGraphicPipeline, m_descriptorPool, a_info.mCommandPool, this, a_info.mSize);
 		}
 
-		void GameObject::Update(uint32_t a_frameIndex, Engine::Core::RHI::ILogicalDevice* a_logicalDevice)
+		void GameObject::Update(int a_frameIndex, Engine::Core::RHI::ILogicalDevice* a_logicalDevice)
 		{
 			m_transform.UpdateMatrix();
 			m_descriptor->Update(a_frameIndex, a_logicalDevice, m_transform.GetModel().mElements.data());
@@ -103,5 +113,90 @@ namespace Engine
 				.mNbIndices= GetComponent<MeshComponent>()->GetMesh()->GetNbIndices()
 			};
 		}*/
+
+		void GameObject::SetId(int a_id)
+		{
+			m_id = a_id;
+			if (TransformComponent* a_component = GetComponent<TransformComponent>())
+			{
+				a_component->SetGameObject(m_id);
+			}
+		}
+
+		void GameObject::SetParent(int a_transformId)
+		{
+			if (TransformComponent* a_component = GetComponent<TransformComponent>())
+			{
+				a_component->SetParent(a_transformId);
+			}
+		}
+
+		void GameObject::RemoveParent()
+		{
+			if (TransformComponent* a_component = GetComponent<TransformComponent>())
+			{
+				a_component->RemoveParent();
+			}
+		}
+
+		void GameObject::AddChild(int a_transformId)
+		{
+			if (TransformComponent* a_component = GetComponent<TransformComponent>())
+			{
+				a_component->AddChild(a_transformId);
+			}
+		}
+
+		void GameObject::RemoveChild(int a_transformId)
+		{
+			if (TransformComponent* a_component = GetComponent<TransformComponent>())
+			{
+				a_component->RemoveChild(a_transformId);
+			}
+		}
+
+		void GameObject::ClearChildren()
+		{
+			if (TransformComponent* a_component = GetComponent<TransformComponent>())
+			{
+				a_component->ClearChildren();
+			}
+		}
+
+		int GameObject::GetParentTransformId()
+		{
+			if (TransformComponent* a_component = GetComponent<TransformComponent>())
+			{
+				return a_component->GetParentID();
+			}
+			return -1;
+		}
+
+		std::vector<int> GameObject::GetChildrenTransformIDs()
+		{
+			if (TransformComponent* a_component = GetComponent<TransformComponent>())
+			{
+				return a_component->GetChildrenIDs();
+			}
+			return std::vector<int>{};
+		}
+
+		bool GameObject::HasParent()
+		{
+			if (TransformComponent* a_component = GetComponent<TransformComponent>())
+			{
+				return a_component->GetParentID() != -1;
+			}
+			return false;
+		}
+
+		bool GameObject::HasChildren()
+		{
+			if (TransformComponent* a_component = GetComponent<TransformComponent>())
+			{
+				return !a_component->GetChildrenIDs().empty();
+			}
+			return false;
+		}
 	}
 }

@@ -167,7 +167,7 @@ namespace Engine
 					pipelineInfo.pColorBlendState = &colorBlending;
 					pipelineInfo.pDynamicState = &dynamicState;
 					pipelineInfo.layout = m_layout;
-					pipelineInfo.renderPass = a_renderPass->CastVulkan()->GetRenderPass();
+					pipelineInfo.renderPass = a_renderPass->CastVulkan()->GetSceneRenderPass()->GetRenderPass();
 					pipelineInfo.subpass = 0;
 					pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
 					pipelineInfo.basePipelineIndex = -1;

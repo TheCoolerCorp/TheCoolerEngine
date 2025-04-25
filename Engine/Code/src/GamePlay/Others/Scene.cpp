@@ -59,7 +59,7 @@ namespace Engine
 			t_object->GetComponent<MeshComponent>()->SetMesh(t_mesh);
 			t_object->GetComponent<MeshComponent>()->SetTexture(t_texture);
 
-			m_objs.push_back(t_object);
+			AddGameObject(t_object);
 
 			Ref<Resource::Mesh> t_mesh2 = m_resourceManager->CreateResource<Resource::Mesh>("Assets/Meshes/FinalBaseMesh.obj");
 			Ref<Resource::Texture> t_texture2 = m_resourceManager->CreateResource<Resource::Texture>("Assets/Textures/viking_room.png");
@@ -87,7 +87,7 @@ namespace Engine
 			t_object2->GetComponent<MeshComponent>()->SetMesh(t_mesh2);
 			t_object2->GetComponent<MeshComponent>()->SetTexture(t_texture2);
 
-			m_objs.push_back(t_object2);
+			AddGameObject(t_object2);
 
 			/*GameObject* t_object3 = new GameObject(Math::vec3(0.f), Math::vec3(0.f, Math::ToRadians(270.f), 0.f), Math::vec3(1.f));
 			t_object3->AddComponent<MeshComponent>();
@@ -182,6 +182,56 @@ namespace Engine
 			m_objs.clear();
 		}
 
+		/**
+		 * Adds game object to the scene, sets up its id and parent/child relationships.
+		 * @param a_object The Object to be added to the scene
+		 * @param a_parentTransformId the ids of the parent TransformComponent, if there is one
+		 * @param a_childTransformIds the ids of the child TransformComponents, if there are any
+		 */
+		void Scene::AddGameObject(GameObject* a_object, uint32_t a_parentTransformId, std::vector<uint32_t> a_childTransformIds)
+		{
+			if (m_availableIds.empty())
+			{
+				m_objs.push_back(a_object);
+				a_object->SetId(static_cast<uint32_t>(m_objs.size()) - 1);
+			}
+			else
+			{
+				m_objs[m_availableIds.back()] = a_object;
+				a_object->SetId(m_availableIds.back());
+				m_availableIds.pop_back();
+			}
+
+			if (a_parentTransformId != -1)
+				a_object->SetParent(a_parentTransformId);
+			if (!a_childTransformIds.empty())
+			{
+				for (uint32_t a_id : a_childTransformIds)
+				{
+					a_object->AddChild(a_id);
+				}
+			}
+		}
+
+		/**
+		 * Removes specified game object from the scene.
+		 * Also removes any parent/child relations the object had
+		 * @param a_id the id of the game object
+		 */
+		void Scene::RemoveGameObject(uint32_t a_id)
+		{
+			for (int i = 0; i < m_objs.size(); ++i)
+			{
+				if (m_objs[i]->GetId() == a_id)
+				{
+					m_availableIds.push_back(i);
+					delete m_objs[i];
+					m_objs.erase(m_objs.begin() + i);
+					break;
+				}
+			}
+		}
+		
 		void Scene::TestFunc(RigidBodyComponent* a_rigidBodyComponent)
 		{
 			m_objs[1]->GetComponent<RigidBodyComponent>()->AddForce({ 0.f, 10000.f, 0.f });

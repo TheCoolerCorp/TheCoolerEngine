@@ -7,48 +7,60 @@ namespace Engine
 {
 	namespace Core
 	{
-		void Renderer::Init(RendererType a_type, Window::IWindow* a_window)
+		void Renderer::Init(RendererType a_type)
 		{
 			if (a_type != RendererType::VULKAN)
 			{
 				LOG_ERROR("Only vulkan is implemented !");
 			}
 			m_interface = new GraphicsAPI::VulkanInterface();
-
 			m_apiInstance = m_interface->InstantiateInstance();
-			m_apiInstance->Create();
-
 			m_valiationLayers = m_interface->InstantiateValidationLayers();
-			m_valiationLayers->Create(m_apiInstance);
-
 			m_surface = m_interface->InstantiateSurface();
-			m_surface->Create(a_window, m_apiInstance);
-
 			m_physicalDevice = m_interface->InstantiatePhysicalDevice();
-			m_physicalDevice->Create(m_apiInstance, m_surface);
-
 			m_logicalDevice = m_interface->InstantiateLogicalDevice();
+			m_swapChain = m_interface->InstantiateSwapChain();
+			m_renderPass = m_interface->InstantiateRenderPass();
+			m_graphicPipeline = m_interface->InstantiateGraphicPipeline();
+			m_commandPool = m_interface->InstantiateCommandPool();
+		}
+
+		void Renderer::Create(RendererType a_type, Window::IWindow* a_window)
+		{
+			if (a_type != RendererType::VULKAN)
+			{
+				LOG_ERROR("Only vulkan is implemented !");
+			}
+			
+			m_apiInstance->Create();
+			
+			m_valiationLayers->Create(m_apiInstance);
+			
+			m_surface->Create(a_window, m_apiInstance);
+			
+			m_physicalDevice->Create(m_apiInstance, m_surface);
+			
 			m_logicalDevice->Create(m_physicalDevice, m_surface);
 
 			m_surface->SetupInfo(m_physicalDevice);
-
-			m_swapChain = m_interface->InstantiateSwapChain();
+			
 			m_swapChain->Create(m_surface, a_window, m_physicalDevice, m_logicalDevice);
-
-			m_renderPass = m_interface->InstantiateRenderPass();
-			m_renderPass->Create(m_swapChain, m_physicalDevice, m_logicalDevice);
-
-			m_graphicPipeline = m_interface->InstantiateGraphicPipeline();
-			m_graphicPipeline->Create(m_logicalDevice, m_renderPass);
-
-			m_commandPool = m_interface->InstantiateCommandPool();
+			
+			m_renderPass->Create(this);
+			m_renderPass->CastVulkan()->CreateDefaultRenderPass(this);
+			
+			
 			m_commandPool->Create(m_physicalDevice, m_surface, m_logicalDevice);
 			m_swapChain->CreateFramebuffers(m_logicalDevice, m_physicalDevice, m_renderPass, m_commandPool);
 
-
-			m_commandPool->CreateCommandBuffer(m_logicalDevice, m_swapChain, m_renderPass, m_graphicPipeline);
-
+			
 			m_swapChain->CreateSyncObjects(m_logicalDevice);
+		}
+
+		void Renderer::LateCreate(RendererType a_type, Window::IWindow* a_window)
+		{
+			m_graphicPipeline->Create(m_logicalDevice, m_renderPass);
+			m_commandPool->CreateCommandBuffer(m_logicalDevice, m_swapChain, m_renderPass, m_graphicPipeline);
 		}
 
 		void Renderer::Render(Window::IWindow* a_window,
@@ -57,7 +69,7 @@ namespace Engine
 		                      const std::unordered_map<int, Core::RHI::IBuffer*>& a_indexBuffers, const std::unordered_map<int, uint32_t>& a_nbIndices,
 		                      GamePlay::Camera* camera) const
 		{
-			//m_swapChain->DrawFrame(a_window, m_logicalDevice, m_commandPool, m_surface, m_physicalDevice, m_renderPass, a_renderObjects, a_ids, a_vertexBuffers, a_indexBuffers, a_nbIndices, camera);
+			//m_swapChain->DrawFrame(a_window, m_logicalDevice, m_commandPool, m_surface, m_physicalDevice, m_renderPass, a_renderObjects, a_vertexBuffers, a_indexBuffers, a_nbIndices, camera);
 		}
 
 		void Renderer::WaitIdle() const

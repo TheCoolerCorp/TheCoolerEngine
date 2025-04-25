@@ -20,16 +20,17 @@ namespace Engine
 			ENGINE_API void Update();
 			ENGINE_API void Destroy();
 
-			ENGINE_API uint32_t AddComponent(TransformComponent* a_component);
-			ENGINE_API TransformComponent* GetComponent(uint32_t a_id);
-			ENGINE_API void RemoveComponent(uint32_t a_id);
+			ENGINE_API int AddComponent(TransformComponent* a_component);
+			ENGINE_API TransformComponent* GetComponent(int a_id);
+			ENGINE_API void RemoveComponent(int a_id);
+			ENGINE_API bool IsValidId(int id);
 
-			ENGINE_API uint32_t GetSize() { return static_cast<uint32_t>(m_components.size()); }
+			ENGINE_API int GetSize() { return static_cast<int>(m_components.size()); }
 		private:
-			Math::mat4 GetParentsMatrix(uint32_t a_id);
+			Math::mat4 GetParentsMatrix(int a_id);
 
 			std::vector<TransformComponent*> m_components{};
-			std::vector<uint32_t> m_availableIds{};
+			std::vector<int> m_availableIds{};
 		};
 	}
 }

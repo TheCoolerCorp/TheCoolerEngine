@@ -27,9 +27,9 @@ namespace Engine
 				ENGINE_API VkBuffer GetBuffer() const { return m_buffer; }
 				ENGINE_API VkDeviceMemory GetMemory() const { return m_bufferMemory; }
 
-			private:
 				ENGINE_API static uint32_t FindMemoryType(uint32_t a_typeFilter, VkMemoryPropertyFlags a_properties, VkPhysicalDevice a_physicalDevice);
 
+			private:
 				VkBuffer m_buffer = VK_NULL_HANDLE;
 				VkDeviceMemory m_bufferMemory = VK_NULL_HANDLE;
 

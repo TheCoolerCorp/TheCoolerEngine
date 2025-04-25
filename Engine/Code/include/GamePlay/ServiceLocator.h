@@ -20,10 +20,10 @@ namespace Engine
 			static void ProvideRendererSystem(MeshRendererSystem* a_meshRendererSystem);
 			static void ProvidePhysicsSystem(PhysicsSystem* a_physicsSystem);
 
-			static Resource::ResourceManager* GetResourceManager();
-			static TransformSystem* GetTransformSystem();
-			static MeshRendererSystem* GetMeshRendererSystem();
-			static PhysicsSystem* GetPhysicsSystem();
+			ENGINE_API static Resource::ResourceManager* GetResourceManager();
+			ENGINE_API static TransformSystem* GetTransformSystem();
+			ENGINE_API static MeshRendererSystem* GetMeshRendererSystem();
+			ENGINE_API static PhysicsSystem* GetPhysicsSystem();
 
 		private:
 			static Resource::ResourceManager* m_resourceManager;

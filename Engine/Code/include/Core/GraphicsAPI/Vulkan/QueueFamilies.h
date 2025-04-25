@@ -5,6 +5,8 @@
 #include <optional>
 #include <set>
 
+#include "EngineExport.h"
+
 namespace Engine
 {
 	namespace Core
@@ -13,7 +15,7 @@ namespace Engine
 		{
 			struct QueueFamilyIndices {
 				bool IsComplete() const;
-				static QueueFamilyIndices FindQueueFamilies(VkPhysicalDevice a_physicalDevice, VkSurfaceKHR a_surface);
+				ENGINE_API static QueueFamilyIndices FindQueueFamilies(VkPhysicalDevice a_physicalDevice, VkSurfaceKHR a_surface);
 				std::optional<uint32_t> GetGraphicsFamily() const { return m_graphicsFamily; }
 				std::optional<uint32_t> GetPresentFamily() const { return m_presentFamily; }
 

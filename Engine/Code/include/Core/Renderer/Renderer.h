@@ -33,7 +33,9 @@ namespace Engine
 			ENGINE_API Renderer() = default;
 			ENGINE_API ~Renderer() = default;
 
-			ENGINE_API void Init(RendererType a_type, Window::IWindow* a_window);
+			ENGINE_API void Init(RendererType a_type);
+			ENGINE_API void Create(RendererType a_type, Window::IWindow* a_window);
+			ENGINE_API void LateCreate(RendererType a_type, Window::IWindow* a_window);
 			ENGINE_API void Render(Window::IWindow* a_window,
 			                       const std::unordered_map<int, Core::RHI::IRenderObject*>& a_renderObjects,
 			                       const std::vector<int>& a_ids,
@@ -53,6 +55,7 @@ namespace Engine
 			RHI::ISwapChain* GetSwapChain() { return m_swapChain; }
 			RHI::ISurface* GetSurface() { return m_surface; }
 			RHI::IRenderPass* GetRenderPass() { return m_renderPass; }
+			RHI::IInstance* GetApiInstance() { return m_apiInstance; }
 		private:
 			RendererType m_type = RendererType::VULKAN;
 

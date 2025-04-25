@@ -143,7 +143,7 @@ namespace Engine
 
 					VkFramebufferCreateInfo framebufferInfo{};
 					framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-					framebufferInfo.renderPass = a_renderPass->CastVulkan()->GetRenderPass();
+					framebufferInfo.renderPass = a_renderPass->CastVulkan()->GetSceneRenderPass()->GetRenderPass();
 					framebufferInfo.attachmentCount = static_cast<uint32_t>(attachments.size());
 					framebufferInfo.pAttachments = attachments.data();
 					framebufferInfo.width = m_swapChainExtent.width;
@@ -207,11 +207,24 @@ namespace Engine
 				for (int i = 0; i < static_cast<int>(t_commandPool->mCommandBuffers.size()); ++i) 
 				{
 					const VkCommandBuffer t_commandBuffer = std::get<VkCommandBuffer>(t_commandPool->mCommandBuffers[i][m_currentFrame]);
-					const VkRenderPass t_renderPass = std::get<VkRenderPass>(t_commandPool->mCommandBuffers[i][m_currentFrame]);
 					const VulkanGraphicPipeline* t_pipeline = std::get<VulkanGraphicPipeline*>(t_commandPool->mCommandBuffers[i][m_currentFrame]);
 					t_commandBuffers.push_back(t_commandBuffer);
 					vkResetCommandBuffer(t_commandBuffer, 0);
-					VulkanCommandPool::RecordCommandBuffer(t_commandBuffer, t_imageIndex, t_renderPass, this, t_pipeline, a_renderObjects, a_vertexBuffers, a_indexBuffers, a_nbIndices, a_camera);
+
+					RecordRenderPassinfo info;
+					info.commandBuffer = t_commandBuffer;
+					info.imageIndex = t_imageIndex;
+					info.currentFrame = m_currentFrame;
+					info.swapChain = this;
+					info.graphicPipeline = t_pipeline;	
+					info.camera = a_camera;
+
+					VkCommandBufferBeginInfo t_beginInfo{};
+					t_beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+
+					VK_CHECK(vkBeginCommandBuffer(t_commandBuffer, &t_beginInfo), "failed to begin recording command buffer!");
+					a_renderPass->CastVulkan()->RecordRenderPasses(info, a_renderObjects, a_vertexBuffers, a_indexBuffers, a_nbIndices);
+					VK_CHECK(vkEndCommandBuffer(t_commandBuffer), "failed to end command buffer!");
 				}
 
 				VkSubmitInfo t_submitInfo{};
@@ -249,6 +262,7 @@ namespace Engine
 				if (t_result == VK_ERROR_OUT_OF_DATE_KHR || t_result == VK_SUBOPTIMAL_KHR || a_window->GetResized()) {
 					a_window->SetResized(false);
 					RecreateSwapChain(a_window, a_logicalDevice, a_surface, a_physicalDevice, a_renderPass, a_commandPool);
+
 				}
 				else if (t_result != VK_SUCCESS) {
 					throw std::runtime_error("failed to present swap chain image!");
@@ -374,6 +388,7 @@ namespace Engine
 
 				Create(a_surface, a_window, a_physicalDevice, a_logicalDevice);
 				CreateFramebuffers(a_logicalDevice, a_physicalDevice, a_renderPass, a_commandPool);
+				CallResizeCallbacks(m_swapChainExtent);
 			}
 		}
 	}

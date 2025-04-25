@@ -25,10 +25,10 @@ namespace Engine
 				ENGINE_API void Create(RHI::ImageType a_type, RHI::ImageData a_data, RHI::IPhysicalDevice* a_physicalDevice, RHI::ILogicalDevice* a_logicalDevice, RHI::ICommandPool* a_commandPool) override;
 				ENGINE_API void Destroy(RHI::ILogicalDevice* a_logicalDevice) override;
 
-				ENGINE_API VkImage GetImage() { return m_image; }
-				ENGINE_API VkImageView GetView() { return m_view; }
-				ENGINE_API VkDeviceMemory GetMemory() { return m_memory; }
-				ENGINE_API VkSampler GetSampler() { return m_sampler; }
+				[[nodiscard]] ENGINE_API VkImage GetImage() { return m_image; }
+				[[nodiscard]] ENGINE_API VkImageView GetView() { return m_view; }
+				[[nodiscard]] ENGINE_API VkDeviceMemory GetMemory() { return m_memory; }
+				[[nodiscard]] ENGINE_API VkSampler GetSampler() { return m_sampler; }
 		
 				ENGINE_API static void CreateImage(VkImage* a_image, VkDeviceMemory* a_memory, VkDevice a_logicalDevice, VkPhysicalDevice a_physicalDevice, uint32_t a_width, uint32_t a_height, VkFormat a_format, VkImageTiling a_tiling, VkImageUsageFlags a_usage, VkMemoryPropertyFlags a_properties);
 				// FINISH LATER
@@ -38,6 +38,8 @@ namespace Engine
 				ENGINE_API static void CopyBufferToImage(VkDevice a_logicalDevice, VkQueue a_queue, VkCommandPool a_commandPool, VkBuffer a_buffer, VkImage a_image, uint32_t a_width, uint32_t a_height);
 
 				ENGINE_API static bool HasStencilComponent(VkFormat a_format);
+
+				 
 
 			private:
 				VkImage m_image = VK_NULL_HANDLE;
