@@ -21,11 +21,18 @@ namespace Editor::EditorLayer::Ui
 		void Destroy() override;
 
 	private:
-		int m_maxLogs = 10000;
-
-		std::vector<Debugging::LogInfo> m_logs;
 		Debugging::TCLogger* m_logger = nullptr;
+		Debugging::LogInfo m_selectedLog;
+
+		int GetLogCount() { return static_cast<int>(m_logger->GetPendingLogs().size()); }
+		bool IsValidLog();
+		std::string GetTimeString(const std::tm& a_time)
+		{
+			std::ostringstream oss;
+			oss << std::put_time(&a_time, "%H:%M:%S");
+			return oss.str();
+		}
 	};
 }
 
-#endif // !UILOGGERWINDOW_H
+#endif 

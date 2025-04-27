@@ -9,6 +9,7 @@
 #include "SceneGraphWindow.h"
 #include "ImGuiLayer.h"
 #include "InspectorWindow.h"
+#include "LoggerWindow.h"
 
 using namespace Engine::Core;
 using namespace Engine::GamePlay;
@@ -49,6 +50,7 @@ namespace Editor
 
 			t_imguiLayer->AddWindow(new Ui::SceneGraphUiWindow(m_renderer, t_imguiLayer, m_currentScene));
 			t_imguiLayer->AddWindow(new Ui::InspectorUiWindow(m_renderer, t_imguiLayer));
+			t_imguiLayer->AddWindow(new Ui::UiLoggerWindow(m_renderer, t_imguiLayer));
 		}
 
 		void Application::Run()
