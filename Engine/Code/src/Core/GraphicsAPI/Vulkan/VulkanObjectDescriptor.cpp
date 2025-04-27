@@ -13,7 +13,7 @@ namespace Engine
 	{
 		namespace GraphicsAPI
 		{
-			void VulkanObjectDescriptor::Create(RHI::ILogicalDevice* a_logicalDevice, RHI::IGraphicPipeline* a_graphicPipeline, RHI::DescriptorSetTarget a_type, uint32_t a_maxDescriptorPerSet, uint32_t a_setCount, std::vector<uint32_t> a_subSetCount, uint32_t a_uniformCount, std::vector<uint32_t> a_subUniformCount, std::vector<RHI::DescriptorSetDataType> a_types)
+			void VulkanObjectDescriptor::Create(RHI::ILogicalDevice* a_logicalDevice, RHI::IGraphicPipeline* a_graphicPipeline, RHI::DescriptorSetTarget a_type, uint32_t a_setCount, std::vector<uint32_t> a_subSetCount, uint32_t a_uniformCount, std::vector<uint32_t> a_subUniformCount, std::vector<std::vector<RHI::DescriptorSetDataType>> a_types)
 			{
 				// Type : Common to all object in shader or per object.
 				m_type = a_type;
@@ -30,12 +30,17 @@ namespace Engine
 
 
 				// Create the pool
-				std::vector<VkDescriptorType> t_types = std::vector<VkDescriptorType>(a_types.size());
+				std::vector<std::vector<VkDescriptorType>> t_types = std::vector<std::vector<VkDescriptorType>>(a_types.size());
 				for (int i = 0; i < t_types.size(); ++i)
 				{
-					t_types[i] = static_cast<VkDescriptorType>(static_cast<int>(a_types[i]));
+
+					t_types[i].resize(a_types[i].size());
+					for (int j = 0; j < t_types[i].size(); ++j)
+					{
+						t_types[i][j] = static_cast<VkDescriptorType>(static_cast<int>(a_types[i][j]));
+					}
 				}
-				CreatePool(t_device, a_maxDescriptorPerSet, t_types);
+				CreatePool(t_device, a_subSetCount, t_types);
 				t_types.clear();
 
 				// Create the descriptors
@@ -146,23 +151,37 @@ namespace Engine
 				return VK_NULL_HANDLE;
 			}
 
-			void VulkanObjectDescriptor::CreatePool(VkDevice a_logicalDevice, uint32_t a_count, std::vector<VkDescriptorType> a_types)
+			void VulkanObjectDescriptor::CreatePool(VkDevice a_logicalDevice, std::vector<uint32_t> a_subSetCount, std::vector<std::vector<VkDescriptorType>> a_types)
 			{
-				std::vector<VkDescriptorPoolSize> t_poolSizes = std::vector<VkDescriptorPoolSize>(a_types.size());
+				ASSERT(a_subSetCount.size() == a_types.size(), "Failed to match set count and set type size");
 
-				// TODO : FIX ISSUE HERE, wrong pool size i believe
-				for (int i = 0; i < t_poolSizes.size(); ++i)
+				std::unordered_map<VkDescriptorType, uint32_t> typeCounts;
+				uint32_t t_totalSets = 0;
+
+				for (size_t i = 0; i < a_types.size(); ++i)
 				{
-					VkDescriptorPoolSize t_poolSize = {};
-					t_poolSize.type = a_types[i];
-					t_poolSize.descriptorCount = a_count;
-					t_poolSizes[i] = t_poolSize;
+					for (size_t j = 0; j < a_types[i].size(); ++j)
+					{
+						typeCounts[a_types[i][j]] += a_subSetCount[i];
+					}
+					t_totalSets += a_subSetCount[i];
 				}
+
+
+				std::vector<VkDescriptorPoolSize> t_poolSizes;
+				for (const auto& [type, count] : typeCounts)
+				{
+					VkDescriptorPoolSize t_poolSize{};
+					t_poolSize.type = type;
+					t_poolSize.descriptorCount = count;
+					t_poolSizes.push_back(t_poolSize);
+				}
+
 				VkDescriptorPoolCreateInfo t_poolInfo{};
 				t_poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
 				t_poolInfo.poolSizeCount = static_cast<uint32_t>(t_poolSizes.size());
 				t_poolInfo.pPoolSizes = t_poolSizes.data();
-				t_poolInfo.maxSets = a_count;
+				t_poolInfo.maxSets = t_totalSets;
 
 				VK_CHECK(vkCreateDescriptorPool(a_logicalDevice, &t_poolInfo, nullptr, &m_pool), "failed to create descriptorPool");
 			}
@@ -179,18 +198,14 @@ namespace Engine
 				{
 					m_sets[i].resize(a_subSetCount[i]);
 
-					// TODO : FIX ISSUE HERE, for here, for object manage to pass one but not twice
-					for (int j = 0; j < m_sets[i].size(); ++j)
-					{
-						std::vector<VkDescriptorSetLayout> layouts(m_sets[j].size(), a_descriptorSetLayout);
-						VkDescriptorSetAllocateInfo allocInfo{};
-						allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-						allocInfo.descriptorPool = m_pool;
-						allocInfo.descriptorSetCount = static_cast<uint32_t>(m_sets[j].size());
-						allocInfo.pSetLayouts = layouts.data();
+					std::vector<VkDescriptorSetLayout> layouts(m_sets[i].size(), a_descriptorSetLayout);
+					VkDescriptorSetAllocateInfo allocInfo{};
+					allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+					allocInfo.descriptorPool = m_pool;
+					allocInfo.descriptorSetCount = static_cast<uint32_t>(m_sets[i].size());
+					allocInfo.pSetLayouts = layouts.data();
 
-						VK_CHECK(vkAllocateDescriptorSets(a_logicalDevice, &allocInfo, m_sets[i].data()), "Can't allocate descriptor sets");
-					}
+					VK_CHECK(vkAllocateDescriptorSets(a_logicalDevice, &allocInfo, m_sets[i].data()), "Can't allocate descriptor sets");
 				}
 			}
 

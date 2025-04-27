@@ -93,20 +93,20 @@ namespace Engine
 				Ref<Material> t_material = m_components[m_pendingComponents[i]]->GetMaterial();
 				void* t_newRenderObjectMatrixData = a_updatedMatrix.at(m_pendingComponents.at(i)).second.mElements.data();
 
-				std::vector<Core::RHI::DescriptorSetDataType> m_types;
+				std::vector<std::vector<Core::RHI::DescriptorSetDataType>> m_types;
 				if (m_components.at(m_pendingComponents.at(i))->GetMaterial()->GetType() == UNLIT)
 				{
-					m_types = { Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_UNIFORM_BUFFER, Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_COMBINED_IMAGE_SAMPLER };
-					t_newRenderObject->Create(a_logicalDevice, a_unlitPipeine, Core::RHI::Object, 3, 2, { 3, 1 }, 1, { a_maxFrame }, m_types);
+					m_types = { {Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_UNIFORM_BUFFER },  {Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_COMBINED_IMAGE_SAMPLER}};
+					t_newRenderObject->Create(a_logicalDevice, a_unlitPipeine, Core::RHI::Object, 2, { 3, 1 }, 1, { a_maxFrame }, m_types);
 				}
 				else if (m_components.at(m_pendingComponents.at(i))->GetMaterial()->GetType() == LIT)
 				{
-					m_types = { Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_UNIFORM_BUFFER, Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_COMBINED_IMAGE_SAMPLER,
-								Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_COMBINED_IMAGE_SAMPLER, Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_COMBINED_IMAGE_SAMPLER,
-								Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_COMBINED_IMAGE_SAMPLER, Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_COMBINED_IMAGE_SAMPLER,
-								Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_UNIFORM_BUFFER, Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_UNIFORM_BUFFER };
+					m_types = { {Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_UNIFORM_BUFFER },  {Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_COMBINED_IMAGE_SAMPLER, 
+																											Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_COMBINED_IMAGE_SAMPLER, Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_COMBINED_IMAGE_SAMPLER,
+																											Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_COMBINED_IMAGE_SAMPLER, Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_COMBINED_IMAGE_SAMPLER,
+																											Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_UNIFORM_BUFFER, Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_UNIFORM_BUFFER} };
 
-					t_newRenderObject->Create(a_logicalDevice, a_litPipeine, Core::RHI::Object, 3, 2, { 3, 1 },3, { a_maxFrame, 1, 1 }, m_types);
+					t_newRenderObject->Create(a_logicalDevice, a_litPipeine, Core::RHI::Object, 2, { 3, 1 },3, { a_maxFrame, 1, 1 }, m_types);
 
 					if (t_material->HasNormal())
 					{

@@ -25,7 +25,7 @@ namespace Engine
 
 				ENGINE_API VulkanObjectDescriptor* CastVulkan() override { return this; }
 
-				ENGINE_API void Create(RHI::ILogicalDevice* a_logicalDevice, RHI::IGraphicPipeline* a_graphicPipeline, RHI::DescriptorSetTarget a_type, uint32_t a_maxDescriptorPerSet, uint32_t a_setCount, std::vector<uint32_t> a_subSetCount, uint32_t a_uniformCount, std::vector<uint32_t> a_subUniformCount, std::vector<RHI::DescriptorSetDataType> a_types) override;
+				ENGINE_API void Create(RHI::ILogicalDevice* a_logicalDevice, RHI::IGraphicPipeline* a_graphicPipeline, RHI::DescriptorSetTarget a_type, uint32_t a_setCount, std::vector<uint32_t> a_subSetCount, uint32_t a_uniformCount, std::vector<uint32_t> a_subUniformCount, std::vector<std::vector<RHI::DescriptorSetDataType>> a_types) override;
 
 				ENGINE_API void Destroy(RHI::ILogicalDevice* a_logicalDevice) override;
 
@@ -51,10 +51,9 @@ namespace Engine
 				RHI::DescriptorSetTarget m_type = RHI::Undefined;
 				RHI::DescriptorSetPipelineTarget m_pipelineType = RHI::UnlitDescriptor;
 
-				std::vector<VkWriteDescriptorSet> t_descriptorWrites{};
 
 				VkDescriptorSetLayout ChooseLayout(std::vector<VulkanSetLayout> a_layouts, RHI::DescriptorSetTarget a_type);
-				void CreatePool(VkDevice a_logicalDevice, uint32_t a_count, std::vector<VkDescriptorType> a_types = std::vector<VkDescriptorType>(0));
+				void CreatePool(VkDevice a_logicalDevice, std::vector<uint32_t> a_subSetCount, std::vector<std::vector<VkDescriptorType>> a_types);
 				void CreateDescriptorSets(VkDevice a_logicalDevice, VkDescriptorSetLayout a_descriptorSetLayout, uint32_t a_setCount, std::vector<uint32_t> a_subSetCount);
 
 				void CreateBuffers(uint32_t a_uniformCount, std::vector<uint32_t> a_subUniformCount);

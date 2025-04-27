@@ -99,7 +99,7 @@ namespace Engine
 				* Bind decriptors and sent buffer
 				*/
 				m_renderer->GetUnlitPipeline()->BindObjects(m_renderer->GetCommandPool(), 0, m_renderer->GetSwapChain()->GetCurrentFrame(),
-												t_imageIndex, t_unlitIndexBuffers, t_unlitVertexBuffers, t_unlitNbIndices, t_unlitDescriptors);
+												t_imageIndex, t_indexBuffers, t_vertexBuffers, t_nbIndices, t_descriptors);
 				t_unlitIndexBuffers.clear();
 				t_unlitVertexBuffers.clear();
 				t_unlitNbIndices.clear();

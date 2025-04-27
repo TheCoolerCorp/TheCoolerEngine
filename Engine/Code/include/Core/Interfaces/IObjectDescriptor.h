@@ -55,7 +55,7 @@ namespace Engine
 
 				ENGINE_API virtual GraphicsAPI::VulkanObjectDescriptor* CastVulkan() { return nullptr; }
 
-				ENGINE_API virtual void Create(RHI::ILogicalDevice* a_logicalDevice, RHI::IGraphicPipeline* a_graphicPipeline, RHI::DescriptorSetTarget a_type, uint32_t a_maxDescriptorPerSet, uint32_t a_setCount, std::vector<uint32_t> a_subSetCount, uint32_t a_uniformCount, std::vector<uint32_t> a_subUniformCount, std::vector<RHI::DescriptorSetDataType> a_types) = 0;
+				ENGINE_API virtual void Create(RHI::ILogicalDevice* a_logicalDevice, RHI::IGraphicPipeline* a_graphicPipeline, RHI::DescriptorSetTarget a_type, uint32_t a_setCount, std::vector<uint32_t> a_subSetCount, uint32_t a_uniformCount, std::vector<uint32_t> a_subUniformCount, std::vector<std::vector<RHI::DescriptorSetDataType>> a_types) = 0;
 
 				ENGINE_API virtual void Destroy(ILogicalDevice* a_logicalDevice) = 0;
 
