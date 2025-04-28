@@ -294,18 +294,19 @@ namespace Engine
 		RigidBodyData RigidBodyComponent::GetRigidBodyData() const
 		{
 			const RigidBodyData t_data = {
-				.mBodyType= static_cast<uint8_t>(m_rigidBody->GetBodyType()),
-				.mLayer= static_cast<uint8_t>(m_rigidBody->GetLayer()),
-				.mColliderType= static_cast<uint8_t>(m_rigidBody->GetColliderType()),
+				.mBodyType= static_cast<int>(m_rigidBody->GetBodyType()),
+				.mLayer= static_cast<int>(m_rigidBody->GetLayer()),
+				.mColliderType= static_cast<int>(m_rigidBody->GetColliderType()),
 				.mPos= m_localPos,
 				.mScale= m_rigidBody->GetScale(),
 				.mRadius= m_rigidBody->GetRadius(),
 				.mHalfHeight= m_rigidBody->GetHalfHeight(),
 				.mRot= m_localRot,
 				.mMass= m_rigidBody->GetMass(),
-				.mEnable= m_rigidBody->IsRotLockedX(),
-				.mLockRotX= m_rigidBody->IsRotLockedY(),
-				.mLockRotY= m_rigidBody->IsRotLockedZ()
+				.mEnable= m_rigidBody->IsActive(),
+				.mLockRotX= m_rigidBody->IsRotLockedX(),
+				.mLockRotY= m_rigidBody->IsRotLockedY(),
+				.mLockRotZ = m_rigidBody->IsRotLockedZ(),
 			};
 
 			return t_data;

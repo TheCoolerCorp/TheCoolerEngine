@@ -239,27 +239,27 @@ namespace Engine
 			}
 		}
 
-		json SerializeTransformComponent(const TransformComponent& transform)
+		json SerializeTransformComponent(const TransformComponent& a_transform)
 		{
 			json t_json;
 			constexpr std::hash<std::string_view> t_hash{};
 
-			meta::any t_transformAny{ transform };
+			meta::any t_transformAny{ a_transform };
 
-			const meta::handle transformHandle{ t_transformAny };
+			const meta::handle t_transformHandle{ t_transformAny };
 
-			if (!transformHandle)
+			if (!t_transformHandle)
 			{
 				return t_json;
 			}
 
-			const meta::data t_transformDataField = transformHandle.type().data(t_hash("Transform"));
+			const meta::data t_transformDataField = t_transformHandle.type().data(t_hash("Transform"));
 			if (!t_transformDataField)
 			{
 				return t_json;
 			}
 
-			meta::any t_transformDataAny = t_transformDataField.get(transformHandle);
+			meta::any t_transformDataAny = t_transformDataField.get(t_transformHandle);
 			if (!t_transformDataAny)
 			{
 				return t_json;
@@ -319,6 +319,60 @@ namespace Engine
 			return t_json;
 		}
 
+		json SerializeRigidBodyComponent(const RigidBodyComponent& a_rigidBody)
+		{
+			json t_json;
+			constexpr std::hash<std::string_view> t_hash{};
+
+			meta::any t_rigidBodyAny{ a_rigidBody };
+
+			const meta::handle t_rigidBodyHandle{ t_rigidBodyAny };
+
+			if (!t_rigidBodyHandle)
+			{
+				return t_json;
+			}
+
+			const meta::data t_rigidBodyDataField = t_rigidBodyHandle.type().data(t_hash("RigidBody"));
+			if (!t_rigidBodyDataField)
+			{
+				return t_json;
+			}
+
+			meta::any t_rigidBodyDataAny = t_rigidBodyDataField.get(t_rigidBodyHandle);
+			if (!t_rigidBodyDataAny)
+			{
+				return t_json;
+			}
+
+			const meta::handle t_rigidBodyDataHandle(t_rigidBodyDataAny);
+
+			const meta::type t_rigidBodyDataType = t_rigidBodyDataHandle.type();
+
+			const meta::data t_bodyTypeField = t_rigidBodyDataType.data(t_hash("body type"));
+			if (t_bodyTypeField)
+			{
+				meta::any t_bodyTypeAny = t_bodyTypeField.get(t_rigidBodyDataHandle);
+				t_json["rigid body"]["body type"] = t_bodyTypeAny.cast<int>();
+			}
+
+			const meta::data t_layerField = t_rigidBodyDataType.data(t_hash("layer"));
+			if (t_layerField)
+			{
+				meta::any t_layerAny = t_layerField.get(t_rigidBodyDataHandle);
+				t_json["rigid body"]["layer"] = t_layerAny.cast<int>();
+			}
+
+			const meta::data t_colliderTypeField = t_rigidBodyDataType.data(t_hash("collider type"));
+			if (t_colliderTypeField)
+			{
+				meta::any t_colliderTypeAny = t_colliderTypeField.get(t_rigidBodyDataHandle);
+				t_json["rigid body"]["collider type"] = t_colliderTypeAny.cast<int>();
+			}
+
+			return t_json;
+		}
+
 		void Scene::Save()
 		{
 			json t_scene;
@@ -328,6 +382,10 @@ namespace Engine
 				json t_objJson;
 				t_objJson["GameObject"] = t_obj->GetName();
 				t_objJson["TransformComponent"] = SerializeTransformComponent(*t_obj->GetComponent<TransformComponent>());
+				if (const RigidBodyComponent* t_rigidBodyComponent = t_obj->GetComponent<RigidBodyComponent>())
+				{
+					t_objJson["RigidBodyComponent"] = SerializeRigidBodyComponent(*t_rigidBodyComponent);
+				}
 				t_scene.push_back(t_objJson);
 			}
 

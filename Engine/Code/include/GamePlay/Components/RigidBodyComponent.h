@@ -18,9 +18,9 @@ namespace Engine
 	{
 		struct RigidBodyData
 		{
-			uint8_t mBodyType;
-			uint8_t mLayer;
-			uint8_t mColliderType;
+			int mBodyType;
+			int mLayer;
+			int mColliderType;
 			Math::vec3 mPos;
 			Math::vec3 mScale;
 			float mRadius;
@@ -63,7 +63,7 @@ namespace Engine
 			ENGINE_API void AddForce(Math::vec3 a_force) const;
 			ENGINE_API void AddImpulse(Math::vec3 a_impulse) const;
 
-			ENGINE_API void SetFromData(const RigidBodyData& a_data) const {}
+			ENGINE_API void SetFromData(const RigidBodyData& a_data) {}
 
 			ENGINE_API void Destroy();
 
