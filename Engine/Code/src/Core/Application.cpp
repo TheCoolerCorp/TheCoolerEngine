@@ -49,7 +49,7 @@ namespace Engine
 
 
 				std::vector<RHI::IBuffer*> t_vertexBuffers = m_currentScene->GetVertexBuffers();
-				std::vector<RHI::IBuffer*> t_indexBuffers = m_currentScene->GetVertexBuffers();
+				std::vector<RHI::IBuffer*> t_indexBuffers = m_currentScene->GetIndexBuffers();
 				std::vector<uint32_t> t_nbIndices = m_currentScene->GetNBIndices();
 				std::vector<RHI::IObjectDescriptor*> t_descriptors = m_currentScene->GetDescriptors();
 
@@ -99,7 +99,7 @@ namespace Engine
 				* Bind decriptors and sent buffer
 				*/
 				m_renderer->GetUnlitPipeline()->BindObjects(m_renderer->GetCommandPool(), 0, m_renderer->GetSwapChain()->GetCurrentFrame(),
-												t_imageIndex, t_indexBuffers, t_vertexBuffers, t_nbIndices, t_descriptors);
+												t_imageIndex, m_currentScene->GetIndexBuffers(), m_currentScene->GetVertexBuffers(), m_currentScene->GetNBIndices(), m_currentScene->GetDescriptors());
 				t_unlitIndexBuffers.clear();
 				t_unlitVertexBuffers.clear();
 				t_unlitNbIndices.clear();

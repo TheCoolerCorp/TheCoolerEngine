@@ -277,9 +277,8 @@ namespace Engine
 
 
 					VulkanObjectDescriptor* t_objectDescriptor = a_objectsDescriptors.at(i)->CastVulkan();
-
-
-					for (int j = 0; j < t_objectDescriptor->GetSetsCount(); ++j)
+					// TODO : Remove this, test purpose, find issue : Cannot bind mulitple time on a same set, will override previous data sent to shader
+					for (int j = 0; j < 1; ++j)
 					{
 						uint32_t t_descriptorIndex = a_imageIndex;
 
@@ -289,6 +288,16 @@ namespace Engine
 						}
 						vkCmdBindDescriptorSets(t_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_layout, (int)t_objectDescriptor->GetType(), 1, &t_objectDescriptor->GetDescriptorSets(j)[t_descriptorIndex], 0, nullptr);
 					}
+					/*for (int j = 0; j < t_objectDescriptor->GetSetsCount(); ++j)
+					{
+						uint32_t t_descriptorIndex = a_imageIndex;
+
+						if (t_objectDescriptor->GetDescriptorSets(j).size() != t_commandPool->m_commandBuffers[a_commandBufferIndex].size() && !t_objectDescriptor->GetDescriptorSets(j).empty())
+						{
+							t_descriptorIndex = static_cast<uint32_t>(t_objectDescriptor->GetDescriptorSets(j).size()) - 1;
+						}
+						vkCmdBindDescriptorSets(t_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_layout, (int)t_objectDescriptor->GetType(), 1, &t_objectDescriptor->GetDescriptorSets(j)[t_descriptorIndex], 0, nullptr);
+					}*/
 
 					if (a_indicesCount.at(i))
 					{
