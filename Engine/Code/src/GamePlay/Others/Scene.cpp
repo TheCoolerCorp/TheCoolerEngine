@@ -370,6 +370,95 @@ namespace Engine
 				t_json["rigid body"]["collider type"] = t_colliderTypeAny.cast<int>();
 			}
 
+			const meta::data t_posField = t_rigidBodyDataType.data(t_hash("position"));
+			if (t_posField)
+			{
+				meta::any t_posAny = t_posField.get(t_rigidBodyDataHandle);
+				const meta::handle t_posHandle(t_posAny);
+
+				t_json["transform"]["position"] = {
+					{"x", t_posHandle.type().data(t_hash("x")).get(t_posHandle).cast<float>()},
+					{"y", t_posHandle.type().data(t_hash("y")).get(t_posHandle).cast<float>()},
+					{"z", t_posHandle.type().data(t_hash("z")).get(t_posHandle).cast<float>()}
+				};
+			}
+
+			const meta::data t_scaleField = t_rigidBodyDataType.data(t_hash("scale"));
+			if (t_scaleField)
+			{
+				meta::any t_scaleAny = t_scaleField.get(t_rigidBodyDataHandle);
+				const meta::handle t_scaleHandle(t_scaleAny);
+
+				t_json["transform"]["scale"] = {
+					{"x", t_scaleHandle.type().data(t_hash("x")).get(t_scaleHandle).cast<float>()},
+					{"y", t_scaleHandle.type().data(t_hash("y")).get(t_scaleHandle).cast<float>()},
+					{"z", t_scaleHandle.type().data(t_hash("z")).get(t_scaleHandle).cast<float>()}
+				};
+			}
+
+			const meta::data t_radiusTypeField = t_rigidBodyDataType.data(t_hash("radius"));
+			if (t_radiusTypeField)
+			{
+				meta::any t_radiusTypeAny = t_radiusTypeField.get(t_rigidBodyDataHandle);
+				t_json["rigid body"]["radius"] = t_radiusTypeAny.cast<float>();
+			}
+
+			const meta::data t_halfHeightTypeField = t_rigidBodyDataType.data(t_hash("half height"));
+			if (t_halfHeightTypeField)
+			{
+				meta::any t_halfHeightTypeAny = t_halfHeightTypeField.get(t_rigidBodyDataHandle);
+				t_json["rigid body"]["half height"] = t_halfHeightTypeAny.cast<float>();
+			}
+
+			const meta::data t_rotField = t_rigidBodyDataType.data(t_hash("rotation"));
+			if (t_rotField)
+			{
+				meta::any t_rotAny = t_rotField.get(t_rigidBodyDataHandle);
+				const meta::handle t_rotHandle(t_rotAny);
+
+				t_json["rigid body"]["rotation"] = {
+					{"x", t_rotHandle.type().data(t_hash("x")).get(t_rotHandle).cast<float>()},
+					{"y", t_rotHandle.type().data(t_hash("y")).get(t_rotHandle).cast<float>()},
+					{"z", t_rotHandle.type().data(t_hash("z")).get(t_rotHandle).cast<float>()},
+					{"w", t_rotHandle.type().data(t_hash("w")).get(t_rotHandle).cast<float>()}
+				};
+			}
+
+			const meta::data t_massTypeField = t_rigidBodyDataType.data(t_hash("mass"));
+			if (t_massTypeField)
+			{
+				meta::any t_massTypeAny = t_massTypeField.get(t_rigidBodyDataHandle);
+				t_json["rigid body"]["mass"] = t_massTypeAny.cast<float>();
+			}
+
+			const meta::data t_enableTypeField = t_rigidBodyDataType.data(t_hash("enable"));
+			if (t_enableTypeField)
+			{
+				meta::any t_enableTypeAny = t_enableTypeField.get(t_rigidBodyDataHandle);
+				t_json["rigid body"]["enable"] = t_enableTypeAny.cast<bool>();
+			}
+
+			const meta::data t_lockRotXTypeField = t_rigidBodyDataType.data(t_hash("lock rotation X"));
+			if (t_lockRotXTypeField)
+			{
+				meta::any t_lockRotXTypeAny = t_lockRotXTypeField.get(t_rigidBodyDataHandle);
+				t_json["rigid body"]["lock rotation X"] = t_lockRotXTypeAny.cast<bool>();
+			}
+
+			const meta::data t_lockRotYTypeField = t_rigidBodyDataType.data(t_hash("lock rotation Y"));
+			if (t_lockRotYTypeField)
+			{
+				meta::any t_lockRotYTypeAny = t_lockRotYTypeField.get(t_rigidBodyDataHandle);
+				t_json["rigid body"]["lock rotation Y"] = t_lockRotYTypeAny.cast<bool>();
+			}
+
+			const meta::data t_lockRotZTypeField = t_rigidBodyDataType.data(t_hash("lock rotation Z"));
+			if (t_lockRotZTypeField)
+			{
+				meta::any t_lockRotZTypeAny = t_lockRotZTypeField.get(t_rigidBodyDataHandle);
+				t_json["rigid body"]["lock rotation Z"] = t_lockRotZTypeAny.cast<bool>();
+			}
+
 			return t_json;
 		}
 

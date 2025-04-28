@@ -29,9 +29,9 @@ namespace Engine
 				.data<&RigidBodyData::mLockRotX>(t_hash("lock rotation X"))
 				.data<&RigidBodyData::mLockRotY>(t_hash("lock rotation Y"))
 				.data<&RigidBodyData::mLockRotZ>(t_hash("lock rotation Z"));
-
-			meta::reflect<TransformComponent>(t_hash("RigidBodyComponent"))
-				.data<&RigidBodyComponent::SetFromData, &RigidBodyComponent::GetRigidBodyData>(t_hash("RigidBody"));
+			
+			meta::reflect<RigidBodyComponent>(t_hash("RigidBodyComponent"))
+				.data<&RigidBodyComponent::SetFromData, &RigidBodyComponent::GetRigidBodyData>(t_hash("RigidBody")); 
 		}
 
 		ComponentType RigidBodyComponent::Create(int& a_outId, bool a_colliderMesh)
