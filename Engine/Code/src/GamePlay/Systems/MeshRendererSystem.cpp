@@ -93,47 +93,47 @@ namespace Engine
 				Ref<Material> t_material = m_components[m_pendingComponents[i]]->GetMaterial();
 				void* t_newRenderObjectMatrixData = a_updatedMatrix.at(m_pendingComponents.at(i)).second.mElements.data();
 
-				std::vector<std::vector<Core::RHI::DescriptorSetDataType>> m_types;
+				std::vector<Core::RHI::DescriptorSetDataType> m_types;
 				if (m_components.at(m_pendingComponents.at(i))->GetMaterial()->GetType() == UNLIT)
 				{
-					m_types = { {Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_UNIFORM_BUFFER },  {Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_COMBINED_IMAGE_SAMPLER}};
-					t_newRenderObject->Create(a_logicalDevice, a_unlitPipeine, Core::RHI::Object, 2, { 3, 1 }, 1, { a_maxFrame }, m_types);
+					m_types = {Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_UNIFORM_BUFFER , Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_COMBINED_IMAGE_SAMPLER};
+					t_newRenderObject->Create(a_logicalDevice, a_unlitPipeine, Core::RHI::Object, 2, 1, { a_maxFrame }, m_types);
 				}
 				else if (m_components.at(m_pendingComponents.at(i))->GetMaterial()->GetType() == LIT)
 				{
-					m_types = { {Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_UNIFORM_BUFFER },  {Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_COMBINED_IMAGE_SAMPLER, 
-																											Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_COMBINED_IMAGE_SAMPLER, Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_COMBINED_IMAGE_SAMPLER,
-																											Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_COMBINED_IMAGE_SAMPLER, Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_COMBINED_IMAGE_SAMPLER,
-																											Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_UNIFORM_BUFFER, Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_UNIFORM_BUFFER} };
+					m_types = { Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_UNIFORM_BUFFER, Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_COMBINED_IMAGE_SAMPLER,
+								Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_COMBINED_IMAGE_SAMPLER, Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_COMBINED_IMAGE_SAMPLER,
+								Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_COMBINED_IMAGE_SAMPLER, Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_COMBINED_IMAGE_SAMPLER,
+								Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_UNIFORM_BUFFER, Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_UNIFORM_BUFFER};
 
-					t_newRenderObject->Create(a_logicalDevice, a_litPipeine, Core::RHI::Object, 2, { 3, 1 },3, { a_maxFrame, 1, 1 }, m_types);
+					t_newRenderObject->Create(a_logicalDevice, a_litPipeine, Core::RHI::Object, 2,3, { a_maxFrame, 1, 1 }, m_types);
 
 					if (t_material->HasNormal())
 					{
-						t_newRenderObject->SetTexture(a_logicalDevice, 1, t_material->GetNormal()->GetImage(), 2, 1);
+						t_newRenderObject->SetTexture(a_logicalDevice, t_material->GetNormal()->GetImage(), 2, 1);
 					}
 					if (t_material->HasMetallic())
 					{
-						t_newRenderObject->SetTexture(a_logicalDevice, 1, t_material->GetMetallic()->GetImage(), 3, 1);
+						t_newRenderObject->SetTexture(a_logicalDevice,  t_material->GetMetallic()->GetImage(), 3, 1);
 					}
 					if (t_material->HasRoughness())
 					{
-						t_newRenderObject->SetTexture(a_logicalDevice, 1, t_material->GetRoughness()->GetImage(), 4, 1);
+						t_newRenderObject->SetTexture(a_logicalDevice,  t_material->GetRoughness()->GetImage(), 4, 1);
 					}
 					if (t_material->HasAO())
 					{
-						t_newRenderObject->SetTexture(a_logicalDevice, 1, t_material->GetAO()->GetImage(), 5, 1);
+						t_newRenderObject->SetTexture(a_logicalDevice, t_material->GetAO()->GetImage(), 5, 1);
 					}
-					t_newRenderObject->SetUniform(a_logicalDevice, a_physicalDevice, a_commandPool, 1, 1, &t_material->GetMaterialValues(), sizeof(MaterialValues), 6, 1);
-					t_newRenderObject->SetUniform(a_logicalDevice, a_physicalDevice, a_commandPool, 1, 2, &t_material->GetHasTextures(), sizeof(HasMaterialTextures), 7, 1);
+					t_newRenderObject->SetUniform(a_logicalDevice, a_physicalDevice, a_commandPool, 1, &t_material->GetMaterialValues(), sizeof(MaterialValues), 6, 1);
+					t_newRenderObject->SetUniform(a_logicalDevice, a_physicalDevice, a_commandPool, 2, &t_material->GetHasTextures(), sizeof(HasMaterialTextures), 7, 1);
 				}
 				else
 				{
 					LOG_ERROR("Not other type of pipeline has been implemented");
 				}
-				t_newRenderObject->SetUniform(a_logicalDevice, a_physicalDevice, a_commandPool, 0, 0, t_newRenderObjectMatrixData, 16 * sizeof(float), 0, 1);
+				t_newRenderObject->SetUniform(a_logicalDevice, a_physicalDevice, a_commandPool, 0, t_newRenderObjectMatrixData, 16 * sizeof(float), 0, 1);
 
-				t_newRenderObject->SetTexture(a_logicalDevice, 1, t_material->GetAlbedo()->GetImage(), 1, 1);
+				t_newRenderObject->SetTexture(a_logicalDevice, t_material->GetAlbedo()->GetImage(), 1, 1);
 
 				if (m_availableIndexes.empty())
 				{

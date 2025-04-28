@@ -27,8 +27,8 @@ namespace Engine
 		void Camera::Create(Core::Renderer* a_renderer)
 		{
 			m_descriptor = a_renderer->GetInterface()->InstantiateObjectDescriptor();
-			m_descriptor->Create(a_renderer->GetLogicalDevice(), a_renderer->GetUnlitPipeline(), Core::RHI::Camera, 1, { 1 }, 1, { 1 }, { {Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_UNIFORM_BUFFER} });
-			m_descriptor->SetUniform(a_renderer->GetLogicalDevice(), a_renderer->GetPhysicalDevice(), a_renderer->GetCommandPool(), 0,0, m_vp.mElements.data(), 16 * sizeof(float), 0, 1);
+			m_descriptor->Create(a_renderer->GetLogicalDevice(), a_renderer->GetUnlitPipeline(), Core::RHI::Camera, 1, 1, { 1 }, { {Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_UNIFORM_BUFFER} });
+			m_descriptor->SetUniform(a_renderer->GetLogicalDevice(), a_renderer->GetPhysicalDevice(), a_renderer->GetCommandPool(), 0, m_vp.mElements.data(), 16 * sizeof(float), 0, 1);
 		}
 
 		void Camera::Update(Core::Renderer* a_renderer, Core::Window::IInputHandler* a_inputHandler, Core::Window::IWindow* a_window, const float a_deltaTime)

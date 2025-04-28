@@ -55,12 +55,12 @@ namespace Engine
 
 				ENGINE_API virtual GraphicsAPI::VulkanObjectDescriptor* CastVulkan() { return nullptr; }
 
-				ENGINE_API virtual void Create(RHI::ILogicalDevice* a_logicalDevice, RHI::IGraphicPipeline* a_graphicPipeline, RHI::DescriptorSetTarget a_type, uint32_t a_setCount, std::vector<uint32_t> a_subSetCount, uint32_t a_uniformCount, std::vector<uint32_t> a_subUniformCount, std::vector<std::vector<RHI::DescriptorSetDataType>> a_types) = 0;
+				ENGINE_API virtual void Create(RHI::ILogicalDevice* a_logicalDevice, RHI::IGraphicPipeline* a_graphicPipeline, RHI::DescriptorSetTarget a_type, uint32_t a_setCount, uint32_t a_uniformCount, std::vector<uint32_t> a_subUniformCount, std::vector<RHI::DescriptorSetDataType> a_types) = 0;
 
 				ENGINE_API virtual void Destroy(ILogicalDevice* a_logicalDevice) = 0;
 
-				ENGINE_API virtual void SetTexture(RHI::ILogicalDevice* a_logicalDevice, uint32_t a_setIndex, RHI::IImage* a_image, uint32_t a_dstBinding, uint32_t a_count) = 0;
-				ENGINE_API virtual void SetUniform(RHI::ILogicalDevice* a_logicalDevice, RHI::IPhysicalDevice* a_physicalDevice, RHI::ICommandPool* a_commandPool, uint32_t a_setindex, uint32_t a_bufferIndex, void* a_data, uint32_t a_dataSize, uint32_t a_dstBinding, uint32_t a_descriptorCount) = 0;
+				ENGINE_API virtual void SetTexture(RHI::ILogicalDevice* a_logicalDevice, RHI::IImage* a_image, uint32_t a_dstBinding, uint32_t a_count) = 0;
+				ENGINE_API virtual void SetUniform(RHI::ILogicalDevice* a_logicalDevice, RHI::IPhysicalDevice* a_physicalDevice, RHI::ICommandPool* a_commandPool, uint32_t a_bufferIndex, void* a_data, uint32_t a_dataSize, uint32_t a_dstBinding, uint32_t a_descriptorCount) = 0;
 
 				ENGINE_API virtual void UpdateUniforms(RHI::ILogicalDevice* a_logicalDevice, uint32_t a_bufferIndex, void* a_data, uint32_t a_dataSize, int a_imageIndex) = 0;
 

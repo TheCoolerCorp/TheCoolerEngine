@@ -13,38 +13,33 @@ namespace Engine
 	{
 		namespace GraphicsAPI
 		{
-			void VulkanObjectDescriptor::Create(RHI::ILogicalDevice* a_logicalDevice, RHI::IGraphicPipeline* a_graphicPipeline, RHI::DescriptorSetTarget a_type, uint32_t a_setCount, std::vector<uint32_t> a_subSetCount, uint32_t a_uniformCount, std::vector<uint32_t> a_subUniformCount, std::vector<std::vector<RHI::DescriptorSetDataType>> a_types)
+			// Can ha ve only ONE SET, count = number of set (for frame in flight for example), but can have multiple uniform with different size, and type to allocate pool
+			void VulkanObjectDescriptor::Create(RHI::ILogicalDevice* a_logicalDevice, RHI::IGraphicPipeline* a_graphicPipeline, RHI::DescriptorSetTarget a_type, uint32_t a_setCount, uint32_t a_uniformCount, std::vector<uint32_t> a_subUniformCount, std::vector<RHI::DescriptorSetDataType> a_types)
 			{
 				// Type : Common to all object in shader or per object.
 				m_type = a_type;
 
-				if (a_graphicPipeline->GetType() == GamePlay::LIT)
+				if (a_graphicPipeline->GetType() == RHI::PipelineType::Lit)
 				{
 					m_pipelineType = RHI::LitDescriptor;
 				}
 
 				const VkDevice t_device = a_logicalDevice->CastVulkan()->GetVkDevice();
 
-				// Choose the right layout
+				// Choose the right layout (shader set, example : layout(set = 0, binding = ...)
 				const VkDescriptorSetLayout t_layout = ChooseLayout(a_graphicPipeline->CastVulkan()->GetSetLayouts(), a_type);
 
-
-				// Create the pool
-				std::vector<std::vector<VkDescriptorType>> t_types = std::vector<std::vector<VkDescriptorType>>(a_types.size());
-				for (int i = 0; i < t_types.size(); ++i)
+				// Cast RHI type of resources into vulkan, then create the pool
+				std::vector<VkDescriptorType> t_types = std::vector<VkDescriptorType>(a_types.size());
+				for (int i = 0; i < a_types.size(); ++i)
 				{
-
-					t_types[i].resize(a_types[i].size());
-					for (int j = 0; j < t_types[i].size(); ++j)
-					{
-						t_types[i][j] = static_cast<VkDescriptorType>(static_cast<int>(a_types[i][j]));
-					}
+					t_types[i] = static_cast<VkDescriptorType>(static_cast<int>(a_types[i]));
 				}
-				CreatePool(t_device, a_subSetCount, t_types);
+				CreatePool(t_device,a_setCount, t_types);
 				t_types.clear();
 
-				// Create the descriptors
-				CreateDescriptorSets(t_device, t_layout, a_setCount, a_subSetCount);
+				// Create the descriptors and buffers
+				CreateDescriptorSets(t_device, t_layout, a_setCount);
 				CreateBuffers(a_uniformCount, a_subUniformCount);
 			}
 
@@ -67,7 +62,7 @@ namespace Engine
 				DestroyBuffers();
 			}
 
-			void VulkanObjectDescriptor::SetTexture(RHI::ILogicalDevice* a_logicalDevice, uint32_t a_setIndex, RHI::IImage* a_image, uint32_t a_dstBinding, uint32_t a_count)
+			void VulkanObjectDescriptor::SetTexture(RHI::ILogicalDevice* a_logicalDevice, RHI::IImage* a_image, uint32_t a_dstBinding, uint32_t a_count)
 			{
 				const VkDevice t_device = a_logicalDevice->CastVulkan()->GetVkDevice();
 
@@ -76,13 +71,13 @@ namespace Engine
 				t_textureInfo.imageView = a_image->CastVulkan()->GetView();
 				t_textureInfo.sampler = a_image->CastVulkan()->GetSampler();
 
-				for (int i = 0; i < m_sets[a_setIndex].size(); ++i)
+				for (int i = 0; i < m_sets.size(); ++i)
 				{
 
 					VkWriteDescriptorSet texture;
 					texture.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 					texture.pNext = nullptr;
-					texture.dstSet = m_sets[a_setIndex][i];
+					texture.dstSet = m_sets[i];
 					texture.dstBinding = a_dstBinding;
 					texture.dstArrayElement = 0;
 					texture.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
@@ -93,10 +88,8 @@ namespace Engine
 				}
 			}
 
-			void VulkanObjectDescriptor::SetUniform(RHI::ILogicalDevice* a_logicalDevice, RHI::IPhysicalDevice* a_physicalDevice, RHI::ICommandPool* a_commandPool, uint32_t a_setindex, uint32_t a_bufferIndex, void* a_data, uint32_t a_dataSize, uint32_t a_dstBinding, uint32_t a_descriptorCount)
+			void VulkanObjectDescriptor::SetUniform(RHI::ILogicalDevice* a_logicalDevice, RHI::IPhysicalDevice* a_physicalDevice, RHI::ICommandPool* a_commandPool, uint32_t a_bufferIndex, void* a_data, uint32_t a_dataSize, uint32_t a_dstBinding, uint32_t a_descriptorCount)
 			{
-				ASSERT(m_sets[a_setindex].size() == m_uniforms[a_bufferIndex].size(), "Cannot match uniform size and descriptor size");
-
 				const VkDevice t_device = a_logicalDevice->CastVulkan()->GetVkDevice();
 
 				RHI::BufferData t_bufferData;
@@ -108,7 +101,7 @@ namespace Engine
 					m_uniforms[a_bufferIndex][j]->Create(RHI::BufferType::UBO, t_bufferData, a_physicalDevice, a_logicalDevice, a_commandPool);
 				}
 
-				for (int i = 0; i < m_sets[a_setindex].size(); ++i)
+				for (int i = 0; i < m_sets.size(); ++i)
 				{
 					VkDescriptorBufferInfo t_bufferInfo{};
 					t_bufferInfo.buffer = m_uniforms[a_bufferIndex][i]->GetBuffer();
@@ -118,7 +111,7 @@ namespace Engine
 					VkWriteDescriptorSet uniform;
 					uniform.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 					uniform.pNext = nullptr;
-					uniform.dstSet = m_sets[a_setindex][i];
+					uniform.dstSet = m_sets[i];
 					uniform.dstBinding = a_dstBinding;
 					uniform.dstArrayElement = 0;
 					uniform.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
@@ -151,29 +144,14 @@ namespace Engine
 				return VK_NULL_HANDLE;
 			}
 
-			void VulkanObjectDescriptor::CreatePool(VkDevice a_logicalDevice, std::vector<uint32_t> a_subSetCount, std::vector<std::vector<VkDescriptorType>> a_types)
+			void VulkanObjectDescriptor::CreatePool(VkDevice a_logicalDevice, uint32_t a_count , std::vector<VkDescriptorType> a_types)
 			{
-				ASSERT(a_subSetCount.size() == a_types.size(), "Failed to match set count and set type size");
-
-				std::unordered_map<VkDescriptorType, uint32_t> typeCounts;
-				uint32_t t_totalSets = 0;
-
-				for (size_t i = 0; i < a_types.size(); ++i)
-				{
-					for (size_t j = 0; j < a_types[i].size(); ++j)
-					{
-						typeCounts[a_types[i][j]] += a_subSetCount[i];
-					}
-					t_totalSets += a_subSetCount[i];
-				}
-
-
 				std::vector<VkDescriptorPoolSize> t_poolSizes;
-				for (const auto& [type, count] : typeCounts)
+				for (const auto& type : a_types)
 				{
 					VkDescriptorPoolSize t_poolSize{};
 					t_poolSize.type = type;
-					t_poolSize.descriptorCount = count;
+					t_poolSize.descriptorCount = a_count;
 					t_poolSizes.push_back(t_poolSize);
 				}
 
@@ -181,32 +159,23 @@ namespace Engine
 				t_poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
 				t_poolInfo.poolSizeCount = static_cast<uint32_t>(t_poolSizes.size());
 				t_poolInfo.pPoolSizes = t_poolSizes.data();
-				t_poolInfo.maxSets = t_totalSets;
+				t_poolInfo.maxSets = a_count;
 
 				VK_CHECK(vkCreateDescriptorPool(a_logicalDevice, &t_poolInfo, nullptr, &m_pool), "failed to create descriptorPool");
 			}
 
-			void VulkanObjectDescriptor::CreateDescriptorSets(VkDevice a_logicalDevice, VkDescriptorSetLayout a_descriptorSetLayout, uint32_t a_setCount, std::vector<uint32_t> a_subSetCount)
+			void VulkanObjectDescriptor::CreateDescriptorSets(VkDevice a_logicalDevice, VkDescriptorSetLayout a_descriptorSetLayout, uint32_t a_setCount)
 			{
-				if (a_setCount != a_subSetCount.size())
-				{
-					LOG_ERROR("Wrong parameter for descriptor count and list count");
-				}
-
 				m_sets.resize(a_setCount);
-				for (uint32_t i = 0; i < a_setCount; ++i)
-				{
-					m_sets[i].resize(a_subSetCount[i]);
 
-					std::vector<VkDescriptorSetLayout> layouts(m_sets[i].size(), a_descriptorSetLayout);
-					VkDescriptorSetAllocateInfo allocInfo{};
-					allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-					allocInfo.descriptorPool = m_pool;
-					allocInfo.descriptorSetCount = static_cast<uint32_t>(m_sets[i].size());
-					allocInfo.pSetLayouts = layouts.data();
+				std::vector<VkDescriptorSetLayout> layouts(a_setCount, a_descriptorSetLayout);
+				VkDescriptorSetAllocateInfo allocInfo{};
+				allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+				allocInfo.descriptorPool = m_pool;
+				allocInfo.descriptorSetCount = a_setCount;
+				allocInfo.pSetLayouts = layouts.data();
 
-					VK_CHECK(vkAllocateDescriptorSets(a_logicalDevice, &allocInfo, m_sets[i].data()), "Can't allocate descriptor sets");
-				}
+				VK_CHECK(vkAllocateDescriptorSets(a_logicalDevice, &allocInfo, m_sets.data()), "Can't allocate descriptor sets");
 			}
 
 			void VulkanObjectDescriptor::CreateBuffers(uint32_t a_uniformCount, std::vector<uint32_t> a_subUniformCount)
