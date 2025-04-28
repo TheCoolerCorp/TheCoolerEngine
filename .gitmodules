@@ -17,3 +17,9 @@
 [submodule "libs/JoltPhysics"]
 	path = libs/JoltPhysics
 	url = https://github.com/jrouwe/JoltPhysics.git
+[submodule "libs/meta"]
+	path = libs/meta
+	url = https://github.com/skypjack/meta.git
+[submodule "libs/json"]
+	path = libs/json
+	url = https://github.com/nlohmann/json.git
