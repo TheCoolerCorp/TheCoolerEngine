@@ -118,6 +118,7 @@ namespace Editor
 		void Application::RegisterTypes()
 		{
 			Engine::GamePlay::TransformComponent::Register();
+			Engine::GamePlay::RigidBodyComponent::Register();
 		}
 	}
 }

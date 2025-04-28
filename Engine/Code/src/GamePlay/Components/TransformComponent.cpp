@@ -31,7 +31,7 @@ namespace Engine
 				.data<&TransformData::mParentId>(t_hash("parent"));
 
 			meta::reflect<TransformComponent>(t_hash("TransformComponent"))
-				.data<&TransformComponent::Set, &TransformComponent::GetTransformData>(t_hash("transform"));
+				.data<&TransformComponent::Set, &TransformComponent::GetTransformData>(t_hash("Transform"));
 		}
 
 		ComponentType TransformComponent::Create(int& a_outId, bool a_colliderMesh)

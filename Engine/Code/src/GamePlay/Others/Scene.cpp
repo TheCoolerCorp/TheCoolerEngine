@@ -241,94 +241,101 @@ namespace Engine
 
 		json SerializeTransformComponent(const TransformComponent& transform)
 		{
-			json j;
+			json t_json;
 			constexpr std::hash<std::string_view> t_hash{};
 
-			meta::any transformAny{ transform };
+			meta::any t_transformAny{ transform };
 
-			meta::handle transformHandle{ transformAny };
+			const meta::handle transformHandle{ t_transformAny };
 
 			if (!transformHandle)
-				return j;
-
-			meta::data transformDataField = transformHandle.type().data(t_hash("transform"));
-			if (!transformDataField)
-				return j;
-
-			meta::any transformDataAny = transformDataField.get(transformHandle);
-			if (!transformDataAny)
-				return j;
-
-			meta::handle transformDataHandle(transformDataAny);
-
-			const meta::type transformDataType = transformDataHandle.type();
-
-			auto posField = transformDataType.data(t_hash("position"));
-			if (posField)
 			{
-				meta::any posAny = posField.get(transformDataHandle);
-				meta::handle posHandle(posAny);
+				return t_json;
+			}
 
-				j["transform"]["position"] = {
-					{"x", posHandle.type().data(t_hash("x")).get(posHandle).cast<float>()},
-					{"y", posHandle.type().data(t_hash("y")).get(posHandle).cast<float>()},
-					{"z", posHandle.type().data(t_hash("z")).get(posHandle).cast<float>()}
+			const meta::data t_transformDataField = transformHandle.type().data(t_hash("Transform"));
+			if (!t_transformDataField)
+			{
+				return t_json;
+			}
+
+			meta::any t_transformDataAny = t_transformDataField.get(transformHandle);
+			if (!t_transformDataAny)
+			{
+				return t_json;
+			}
+
+			const meta::handle t_transformDataHandle(t_transformDataAny);
+
+			const meta::type t_transformDataType = t_transformDataHandle.type();
+
+			const meta::data t_posField = t_transformDataType.data(t_hash("position"));
+			if (t_posField)
+			{
+				meta::any t_posAny = t_posField.get(t_transformDataHandle);
+				const meta::handle t_posHandle(t_posAny);
+
+				t_json["transform"]["position"] = {
+					{"x", t_posHandle.type().data(t_hash("x")).get(t_posHandle).cast<float>()},
+					{"y", t_posHandle.type().data(t_hash("y")).get(t_posHandle).cast<float>()},
+					{"z", t_posHandle.type().data(t_hash("z")).get(t_posHandle).cast<float>()}
 				};
 			}
 
-			auto rotField = transformDataType.data(t_hash("rotation"));
-			if (rotField)
+			const meta::data t_rotField = t_transformDataType.data(t_hash("rotation"));
+			if (t_rotField)
 			{
-				meta::any rotAny = rotField.get(transformDataHandle);
-				meta::handle rotHandle(rotAny);
+				meta::any t_rotAny = t_rotField.get(t_transformDataHandle);
+				const meta::handle t_rotHandle(t_rotAny);
 
-				j["transform"]["rotation"] = {
-					{"x", rotHandle.type().data(t_hash("x")).get(rotHandle).cast<float>()},
-					{"y", rotHandle.type().data(t_hash("y")).get(rotHandle).cast<float>()},
-					{"z", rotHandle.type().data(t_hash("z")).get(rotHandle).cast<float>()},
-					{"w", rotHandle.type().data(t_hash("w")).get(rotHandle).cast<float>()}
+				t_json["transform"]["rotation"] = {
+					{"x", t_rotHandle.type().data(t_hash("x")).get(t_rotHandle).cast<float>()},
+					{"y", t_rotHandle.type().data(t_hash("y")).get(t_rotHandle).cast<float>()},
+					{"z", t_rotHandle.type().data(t_hash("z")).get(t_rotHandle).cast<float>()},
+					{"w", t_rotHandle.type().data(t_hash("w")).get(t_rotHandle).cast<float>()}
 				};
 			}
 
-			auto scaleField = transformDataType.data(t_hash("scale"));
-			if (scaleField)
+			const meta::data t_scaleField = t_transformDataType.data(t_hash("scale"));
+			if (t_scaleField)
 			{
-				meta::any scaleAny = scaleField.get(transformDataHandle);
-				meta::handle scaleHandle(scaleAny);
+				meta::any t_scaleAny = t_scaleField.get(t_transformDataHandle);
+				const meta::handle t_scaleHandle(t_scaleAny);
 
-				j["transform"]["scale"] = {
-					{"x", scaleHandle.type().data(t_hash("x")).get(scaleHandle).cast<float>()},
-					{"y", scaleHandle.type().data(t_hash("y")).get(scaleHandle).cast<float>()},
-					{"z", scaleHandle.type().data(t_hash("z")).get(scaleHandle).cast<float>()}
+				t_json["transform"]["scale"] = {
+					{"x", t_scaleHandle.type().data(t_hash("x")).get(t_scaleHandle).cast<float>()},
+					{"y", t_scaleHandle.type().data(t_hash("y")).get(t_scaleHandle).cast<float>()},
+					{"z", t_scaleHandle.type().data(t_hash("z")).get(t_scaleHandle).cast<float>()}
 				};
 			}
 
-			auto intField = transformDataType.data(t_hash("parent"));
-			if (intField) {
-				meta::any intAny = intField.get(transformDataHandle);
-				j["transform"]["parent"] = intAny.cast<int>();
+			const meta::data t_parentField = t_transformDataType.data(t_hash("parent"));
+			if (t_parentField) 
+			{
+				meta::any t_parentAny = t_parentField.get(t_transformDataHandle);
+				t_json["transform"]["parent"] = t_parentAny.cast<int>();
 			}
 
-			return j;
+			return t_json;
 		}
 
 		void Scene::Save()
 		{
-			json scene;
+			json t_scene;
 
-			for (const auto& obj : m_objs)
+			for (const auto& t_obj : m_objs)
 			{
-				json objJson;
-				objJson["GameObject"] = obj->GetName();
-				objJson["TransformComponent"] = SerializeTransformComponent(*obj->GetComponent<TransformComponent>());
-				scene.push_back(objJson);
+				json t_objJson;
+				t_objJson["GameObject"] = t_obj->GetName();
+				t_objJson["TransformComponent"] = SerializeTransformComponent(*t_obj->GetComponent<TransformComponent>());
+				t_scene.push_back(t_objJson);
 			}
 
-			std::ofstream file("scene.json");
-			if (file.is_open())
+			std::ofstream t_file("scene.json");
+			if (t_file.is_open())
 			{
-				file << scene.dump(4);
-				file.close();
+				t_file << t_scene.dump(4);
+				t_file.close();
 			}
 		}
 

@@ -16,7 +16,7 @@ namespace Engine
 	namespace Physics
 	{
 		void RigidBody::CreateBoxBody(const BodyType a_type, const CollisionLayer a_layer, const Math::vec3 a_position,
-			const Math::vec3 a_scale, const Math::quat a_rotation, const bool a_enable)
+			const Math::vec3 a_scale, const Math::quat a_rotation, float a_mass, const bool a_enable)
 		{
 			m_scale = a_scale;
 			m_colliderType = ColliderType::BOX;
@@ -33,17 +33,18 @@ namespace Engine
 			const JPH::EMotionType t_motionType = BodyTypeToJPHType(a_type);
 			const JPH::ObjectLayer t_layer = CollisionLayerToJPHLayer(a_layer);
 			const JPH::EActivation t_activation = a_enable ? JPH::EActivation::Activate : JPH::EActivation::DontActivate;
+			SetActive(a_enable);
 
 			JPH::BodyCreationSettings t_bodySettings(new JPH::BoxShape(t_halfExtent), t_position, t_rotation, t_motionType, t_layer);
 			t_bodySettings.mOverrideMassProperties = JPH::EOverrideMassProperties::CalculateInertia;
-			t_bodySettings.mMassPropertiesOverride.mMass = 1.f;
-			m_mass = 1.f;
+			t_bodySettings.mMassPropertiesOverride.mMass = a_mass;
+			m_mass = a_mass;
 			m_body = t_bodyInterface->CreateBody(t_bodySettings);
 			t_bodyInterface->AddBody(m_body->GetID(), t_activation);
 		}
 
 		void RigidBody::CreateSphereBody(const BodyType a_type, const CollisionLayer a_layer, const Math::vec3 a_position, const float a_radius,
-			const Math::quat a_rotation, const bool a_enable)
+			const Math::quat a_rotation, float a_mass, const bool a_enable)
 		{
 			m_radius = a_radius;
 			m_colliderType = ColliderType::SPHERE;
@@ -59,17 +60,18 @@ namespace Engine
 			const JPH::EMotionType t_motionType = BodyTypeToJPHType(a_type);
 			const JPH::ObjectLayer t_layer = CollisionLayerToJPHLayer(a_layer);
 			const JPH::EActivation t_activation = a_enable ? JPH::EActivation::Activate : JPH::EActivation::DontActivate;
+			SetActive(a_enable);
 
 			JPH::BodyCreationSettings t_bodySettings(new JPH::SphereShape(a_radius), t_position, t_rotation, t_motionType, t_layer);
 			t_bodySettings.mOverrideMassProperties = JPH::EOverrideMassProperties::CalculateInertia;
-			t_bodySettings.mMassPropertiesOverride.mMass = 1.f;
-			m_mass = 1.f;
+			t_bodySettings.mMassPropertiesOverride.mMass = a_mass;
+			m_mass = a_mass;
 			m_body = t_bodyInterface->CreateBody(t_bodySettings);
 			t_bodyInterface->AddBody(m_body->GetID(), t_activation);
 		}
 
 		void RigidBody::CreateCapsuleBody(const BodyType a_type, const CollisionLayer a_layer, const Math::vec3 a_position,
-			const float a_halfHeight, const float a_radius, const Math::quat a_rotation, const bool a_enable)
+			const float a_halfHeight, const float a_radius, const Math::quat a_rotation, float a_mass, const bool a_enable)
 		{
 			m_halfHeight = a_halfHeight;
 			m_radius = a_radius;
@@ -86,28 +88,33 @@ namespace Engine
 			const JPH::EMotionType t_motionType = BodyTypeToJPHType(a_type);
 			const JPH::ObjectLayer t_layer = CollisionLayerToJPHLayer(a_layer);
 			const JPH::EActivation t_activation = a_enable ? JPH::EActivation::Activate : JPH::EActivation::DontActivate;
+			SetActive(a_enable);
 
 			JPH::BodyCreationSettings t_bodySettings(new JPH::CapsuleShape(m_halfHeight, m_radius), t_position, t_rotation, t_motionType, t_layer);
 			t_bodySettings.mOverrideMassProperties = JPH::EOverrideMassProperties::CalculateInertia;
-			t_bodySettings.mMassPropertiesOverride.mMass = 1.f;
-			m_mass = 1.f;
+			t_bodySettings.mMassPropertiesOverride.mMass = a_mass;
+			m_mass = a_mass;
 			m_body = t_bodyInterface->CreateBody(t_bodySettings);
 			t_bodyInterface->AddBody(m_body->GetID(), t_activation);
 		}
 
 		void RigidBody::SetActive(const bool a_enable)
 		{
+			if (a_enable == m_isActive)
+				return;
+
 			JPH::BodyInterface* t_bodyInterface = GamePlay::ServiceLocator::GetPhysicsSystem()->GetBodyInterface();
 			const JPH::BodyID t_id = m_body->GetID();
-			if (a_enable && !this->m_isActive)
+
+			m_isActive = a_enable;
+
+			if (a_enable)
 			{
-				this->m_isActive = true;
 				t_bodyInterface->SetObjectLayer(t_id, CollisionLayerToJPHLayer(m_collisionLayer));
 				t_bodyInterface->SetMotionType(t_id, BodyTypeToJPHType(m_bodyType), JPH::EActivation::Activate);
 			}
-			else if (this->m_isActive)
+			else
 			{
-				this->m_isActive = false;
 				t_bodyInterface->SetObjectLayer(t_id, CollisionLayerToJPHLayer(CollisionLayer::DISABLED));
 				t_bodyInterface->SetMotionType(t_id, BodyTypeToJPHType(BodyType::STATIC), JPH::EActivation::DontActivate);
 			}
@@ -189,6 +196,24 @@ namespace Engine
 			GamePlay::ServiceLocator::GetPhysicsSystem()->RemoveConstraint(t_it->second);
 
 			m_lockedRotationAxes.erase(t_it);
+		}
+
+		bool RigidBody::IsRotLockedX() const
+		{
+			const auto t_it = m_lockedRotationAxes.find('x');
+			return t_it != m_lockedRotationAxes.end();
+		}
+
+		bool RigidBody::IsRotLockedY() const
+		{
+			const auto t_it = m_lockedRotationAxes.find('y');
+			return t_it != m_lockedRotationAxes.end();
+		}
+
+		bool RigidBody::IsRotLockedZ() const
+		{
+			const auto t_it = m_lockedRotationAxes.find('z');
+			return t_it != m_lockedRotationAxes.end();
 		}
 
 		JPH::BodyID RigidBody::GetBodyID() const
