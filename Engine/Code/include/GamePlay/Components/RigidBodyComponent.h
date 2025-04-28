@@ -48,6 +48,7 @@ namespace Engine
 
 			ENGINE_API void SetPosition(const Math::vec3& a_pos, bool a_enable = true) const;
 			ENGINE_API void Rotate(const Math::quat& a_rot, bool a_enable = true);
+			ENGINE_API void SetRotation(const Math::quat& a_rot, bool a_enable = true);
 			ENGINE_API void SetDebug(const bool a_debug) { m_debug = a_debug; }
 
 			ENGINE_API void SetActive(const bool a_enable) const { m_rigidBody->SetActive(a_enable); }

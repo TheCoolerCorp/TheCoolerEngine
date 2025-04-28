@@ -49,8 +49,8 @@ namespace Editor::EditorLayer
 		//possible event handling later,,,, maybe
 		//virtual void OnEvent(class Event& event) {}
 
-		const std::string& GetName() const { return m_name; }
-
+		[[nodiscard]] const std::string& GetName() const { return m_name; }
+		[[nodiscard]] Engine::Core::Renderer* GetRenderer() const { return m_renderer; }
 	protected:
 		Core::Application* m_app = nullptr;
 		Engine::Core::Renderer* m_renderer;

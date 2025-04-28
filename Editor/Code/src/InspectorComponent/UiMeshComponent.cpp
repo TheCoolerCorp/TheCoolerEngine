@@ -43,6 +43,10 @@ void Editor::EditorLayer::Ui::UiMeshComponent::UiDraw()
 
 void Editor::EditorLayer::Ui::UiMeshComponent::Destroy()
 {
-	ImGui_ImplVulkan_RemoveTexture(m_dSet);
-	m_dSet = nullptr;
+	if (m_dSet != VK_NULL_HANDLE)
+	{
+		vkDeviceWaitIdle(m_layer->GetRenderer()->GetLogicalDevice()->CastVulkan()->GetVkDevice());
+		ImGui_ImplVulkan_RemoveTexture(m_dSet);
+		m_dSet = VK_NULL_HANDLE;
+	}
 }

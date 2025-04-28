@@ -31,6 +31,7 @@ namespace Editor::EditorLayer::Ui
 		[[nodiscard]] int GetUid() { return m_uid; }
 		[[nodiscard]] const std::string& GetName() const { return m_name; }
 		[[nodiscard]] bool IsClosed() const { return !m_open; }
+		[[nodiscard]] Engine::Core::Renderer* GetRenderer() const { return m_renderer; }
 	protected:
 		std::string m_name;
 		int m_uid;

@@ -36,7 +36,7 @@ void Editor::EditorLayer::Ui::UiTransformComponent::UiDraw()
 	{
 		t_transform->SetRotation(quat(vec3(t_fRot[0], t_fRot[1], t_fRot[2])));
 	}
-	if(ImGui::DragFloat3(("Scale##" + t_uid).c_str(), t_fScale, 0.1f, -FLT_MAX, +FLT_MAX))
+	if(ImGui::DragFloat3(("Scale##" + t_uid).c_str(), t_fScale, 0.1f, 0, +FLT_MAX))
 	{
 		t_transform->SetScale(vec3(t_fScale[0], t_fScale[1], t_fScale[2]));
 	}

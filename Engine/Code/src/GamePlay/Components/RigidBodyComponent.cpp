@@ -254,6 +254,18 @@ namespace Engine
 			m_bodyRot = Math::quat(t_newRot.GetX(), t_newRot.GetY(), t_newRot.GetZ(), t_newRot.GetW());
 		}
 
+		void RigidBodyComponent::SetRotation(const Math::quat& a_rot, bool a_enable)
+		{
+			JPH::BodyInterface* t_bodyInterface = ServiceLocator::GetPhysicsSystem()->GetBodyInterface();
+
+			m_localRot = a_rot;
+
+			const JPH::EActivation t_activation = a_enable ? JPH::EActivation::Activate : JPH::EActivation::DontActivate;
+			t_bodyInterface->SetRotation(m_rigidBody->GetBodyID(), { a_rot.x, a_rot.y, a_rot.z, a_rot.w }, t_activation);
+
+			m_bodyRot = a_rot;
+		}
+
 		void RigidBodyComponent::LockRotation(const char a_axis) const
 		{
 			m_rigidBody->LockRotation(a_axis);

@@ -6,6 +6,7 @@
 #include "../Include/InspectorComponent/UiTransformComponent.h"
 #include "../Include/InspectorComponent/UiMeshComponent.h"
 #include "../Include/UiWindow.h"
+#include "InspectorComponent/UiRigidbodyComponent.h"
 
 Editor::EditorLayer::Ui::InspectorUiWindow::~InspectorUiWindow()
 {
@@ -99,7 +100,7 @@ void Editor::EditorLayer::Ui::InspectorUiWindow::RefreshSelectedObject()
 			//AddComponent(new UiColliderMeshComponent(m_layer, m_selectedObject->GetComponent<ColliderMeshComponent>()));
 			break;
 		case Engine::GamePlay::ComponentType::RIGIDBODY:
-			//AddComponent(new UiRigidbodyComponent(m_layer, m_selectedObject->GetComponent<RigidbodyComponent>()));
+			AddComponent(new UiRigidbodyComponent(m_layer, m_selectedObject->GetComponent<Engine::GamePlay::RigidBodyComponent>()));
 			break;
 		}
 	}

@@ -123,17 +123,17 @@ namespace Editor::EditorLayer::Ui
 
 	void ImGuiLayer::Delete()
 	{
-		if (m_imGui)
-		{
-			//m_imGui->Cleanup();
-			delete m_imGui;
-			m_imGui = nullptr;
-		}
 		//delete every UiWindow
 		for (UiWindow* t_window : m_windows)
 		{
 			t_window->Destroy();
 			delete t_window;
+		}
+		if (m_imGui)
+		{
+			//m_imGui->Cleanup();
+			delete m_imGui;
+			m_imGui = nullptr;
 		}
 		Layer::OnDetach();
 	}
