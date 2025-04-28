@@ -13,16 +13,16 @@ namespace Engine
 		{
 			constexpr std::hash<std::string_view> t_hash{};
 
-			meta::reflect<Math::vec3>(t_hash("Vec3"))
+			meta::reflect<Math::vec3>(t_hash("vec3"))
 				.data<&Math::vec3::x>(t_hash("x"))
 				.data<&Math::vec3::y>(t_hash("y"))
 				.data<&Math::vec3::z>(t_hash("z"));
 
-			meta::reflect<Math::quat>(t_hash("Quat"))
+			meta::reflect<Math::quat>(t_hash("quat"))
 				.data<&Math::quat::x>(t_hash("x"))
 				.data<&Math::quat::y>(t_hash("y"))
-				.data<&Math::quat::y>(t_hash("z"))
-				.data<&Math::quat::z>(t_hash("w"));
+				.data<&Math::quat::z>(t_hash("z"))
+				.data<&Math::quat::w>(t_hash("w"));
 
 			meta::reflect<TransformData>(t_hash("TransformData"))
 				.data<&TransformData::mPos>(t_hash("position"))
