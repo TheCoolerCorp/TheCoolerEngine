@@ -31,7 +31,7 @@ namespace Engine
 			t_mesh->Load(a_renderer);
 			t_texture->Load(a_renderer);
 
-			GameObject* t_object = new GameObject(Math::vec3(0.f), Math::vec3(0.f, Math::ToRadians(270.f), 0.f), Math::vec3(1.f));
+			GameObject* t_object = new GameObject(Math::vec3(0.f,0.f,0.f), Math::vec3(0.f, Math::ToRadians(270.f), 0.f), Math::vec3(1.f));
 			t_object->AddComponent<MeshComponent>();
 			t_object->GetComponent<MeshComponent>()->SetMesh(t_mesh);
 			t_object->GetComponent<MeshComponent>()->GetMaterial()->SetType(UNLIT);
@@ -73,7 +73,7 @@ namespace Engine
 		void Scene::Update(Core::Renderer* a_renderer, Core::Window::IWindow* a_window, Core::Window::IInputHandler* a_inputHandler, float a_deltatime)
 		{
 			m_objs[0]->GetComponent<TransformComponent>()->GetTransform()->Rotate(Math::vec3(0.05f, 0.f,0.f));
-			//m_objs[1]->GetComponent<TransformComponent>()->GetTransform()->SetScale(Math::vec3(0.05f));
+			m_objs[1]->GetComponent<TransformComponent>()->GetTransform()->Rotate(Math::vec3(-0.05f, 0.f, 0.f));
 			//m_objs[1]->GetComponent<TransformComponent>()->GetTransform()->SetPosition(Math::vec3(5.f, 0.f, 0.f));
 			//m_objs[1]->GetComponent<TransformComponent>()->SetParent(m_objs[0]->GetComponentID<TransformComponent>());
 			//m_objs[2]->GetComponent<TransformComponent>()->SetParent(m_objs[1]->GetComponentID<TransformComponent>());

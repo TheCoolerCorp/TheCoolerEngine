@@ -156,12 +156,18 @@ namespace Engine
 
 			void VulkanObjectDescriptor::CreatePool(VkDevice a_logicalDevice, uint32_t a_count , std::vector<VkDescriptorType> a_types)
 			{
+				std::unordered_map<VkDescriptorType, uint32_t> t_types;
+				for (size_t i = 0; i < a_types.size(); ++i)
+				{
+					t_types[a_types[i]] += 1;
+				}
+
 				std::vector<VkDescriptorPoolSize> t_poolSizes;
-				for (const auto& type : a_types)
+				for (const auto& [type, count] : t_types)
 				{
 					VkDescriptorPoolSize t_poolSize{};
 					t_poolSize.type = type;
-					t_poolSize.descriptorCount = a_count;
+					t_poolSize.descriptorCount = count * a_count;
 					t_poolSizes.push_back(t_poolSize);
 				}
 

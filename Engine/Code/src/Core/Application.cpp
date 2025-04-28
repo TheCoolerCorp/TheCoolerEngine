@@ -123,7 +123,7 @@ namespace Engine
 				/*
 				* Bind decriptors and sent buffer
 				*/
-				m_renderer->GetUnlitPipeline()->BindObjects(m_renderer->GetCommandPool(), 0, m_renderer->GetSwapChain()->GetCurrentFrame(),
+				m_renderer->GetLitPipeline()->BindObjects(m_renderer->GetCommandPool(), 0, m_renderer->GetSwapChain()->GetCurrentFrame(),
 					t_imageIndex, t_litIndexBuffers, t_litVertexBuffers, t_litnbIndices, t_litdescriptors);
 
 				t_litIndexBuffers.clear();

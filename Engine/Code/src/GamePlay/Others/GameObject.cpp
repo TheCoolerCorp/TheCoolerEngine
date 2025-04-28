@@ -33,6 +33,7 @@ namespace Engine
 			m_idBitset.set(m_id);*/
 
 			AddComponent<TransformComponent>();
+			GetComponent<TransformComponent>()->Set(a_position, a_rotation, a_scale);
 		}
 
 
