@@ -318,13 +318,17 @@ namespace Engine
 
 			SetLayoutType VulkanGraphicPipeline::GetType(std::string a_string)
 			{
-				if (a_string.find(COMMON))
+				if (a_string.find(COMMON) != std::string::npos)
 				{
 					return Common;
 				}
-				else if (a_string.find(PER))
+				else if (a_string.find(PER) != std::string::npos)
 				{
 					return Per;
+				}
+				else if (a_string.find(LIGHT) != std::string::npos)
+				{
+					return Light;
 				}
 				LOG_CRITICAL("Wrong naming convention in your shader for uniform");
 				return UNDEFINED;

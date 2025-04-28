@@ -37,7 +37,14 @@ namespace Engine
 			t_object->GetComponent<MeshComponent>()->GetMaterial()->SetType(UNLIT);
 			t_object->GetComponent<MeshComponent>()->GetMaterial()->SetAlbedo(t_texture);
 
+			GameObject* t_object2 = new GameObject(Math::vec3(5.f,0.f,0.f), Math::vec3(0.f, Math::ToRadians(270.f), 0.f), Math::vec3(1.f));
+			t_object2->AddComponent<MeshComponent>();
+			t_object2->GetComponent<MeshComponent>()->SetMesh(t_mesh);
+			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetType(LIT);
+			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetAlbedo(t_texture);
+
 			m_objs.push_back(t_object);
+			m_objs.push_back(t_object2);
 
 			/*Ref<Resource::Mesh> t_mesh2 = m_resourceManager->CreateResource<Resource::Mesh>("Assets/Meshes/FinalBaseMesh.obj");
 			t_mesh2->Load(a_renderer);
@@ -129,13 +136,7 @@ namespace Engine
 
 		std::vector<Core::RHI::IObjectDescriptor*> Scene::GetDescriptors()
 		{
-			std::vector<Core::RHI::IObjectDescriptor*> t_objectDescriptors;
-
-			for (int i = 0; i < m_meshRendererSystem->GetDescriptors().size(); ++i)
-			{
-				t_objectDescriptors.push_back(m_meshRendererSystem->GetDescriptors().at(i));
-			}
-			return t_objectDescriptors;
+			return m_meshRendererSystem->GetDescriptors();
 		}
 
 

@@ -101,10 +101,20 @@ namespace Engine
 					m_uniforms[a_bufferIndex][j]->Create(RHI::BufferType::UBO, t_bufferData, a_physicalDevice, a_logicalDevice, a_commandPool);
 				}
 
+
+				ASSERT(m_uniforms[a_bufferIndex].size() == m_sets.size() || m_uniforms[a_bufferIndex].size() == 1, "Cannot match uniform size to DescriptorSet size");
 				for (int i = 0; i < m_sets.size(); ++i)
 				{
 					VkDescriptorBufferInfo t_bufferInfo{};
-					t_bufferInfo.buffer = m_uniforms[a_bufferIndex][i]->GetBuffer();
+
+					if (m_uniforms[a_bufferIndex].size() != m_sets.size())
+					{
+						t_bufferInfo.buffer = m_uniforms[a_bufferIndex][0]->GetBuffer();
+					}
+					else
+					{
+						t_bufferInfo.buffer = m_uniforms[a_bufferIndex][i]->GetBuffer();
+					}
 					t_bufferInfo.offset = 0;
 					t_bufferInfo.range = a_dataSize;
 					

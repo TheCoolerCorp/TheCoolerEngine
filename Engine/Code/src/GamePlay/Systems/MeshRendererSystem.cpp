@@ -88,8 +88,6 @@ namespace Engine
 			{
 				Core::RHI::IObjectDescriptor* t_newRenderObject = apiInterface->InstantiateObjectDescriptor();
 
-				Core::RHI::IImage* t_newRenderObjectTexture = m_components.at(m_pendingComponents.at(i))->GetMaterial()->GetAlbedo()->GetImage();
-
 				Ref<Material> t_material = m_components[m_pendingComponents[i]]->GetMaterial();
 				void* t_newRenderObjectMatrixData = a_updatedMatrix.at(m_pendingComponents.at(i)).second.mElements.data();
 
@@ -97,7 +95,7 @@ namespace Engine
 				if (m_components.at(m_pendingComponents.at(i))->GetMaterial()->GetType() == UNLIT)
 				{
 					m_types = {Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_UNIFORM_BUFFER , Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_COMBINED_IMAGE_SAMPLER};
-					t_newRenderObject->Create(a_logicalDevice, a_unlitPipeine, Core::RHI::Object, 2, 1, { a_maxFrame }, m_types);
+					t_newRenderObject->Create(a_logicalDevice, a_unlitPipeine, Core::RHI::Object, 3, 1, { a_maxFrame }, m_types);
 				}
 				else if (m_components.at(m_pendingComponents.at(i))->GetMaterial()->GetType() == LIT)
 				{
@@ -106,7 +104,7 @@ namespace Engine
 								Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_COMBINED_IMAGE_SAMPLER, Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_COMBINED_IMAGE_SAMPLER,
 								Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_UNIFORM_BUFFER, Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_UNIFORM_BUFFER};
 
-					t_newRenderObject->Create(a_logicalDevice, a_litPipeine, Core::RHI::Object, 2,3, { a_maxFrame, 1, 1 }, m_types);
+					t_newRenderObject->Create(a_logicalDevice, a_litPipeine, Core::RHI::Object, 3,3, { a_maxFrame, 1, 1 }, m_types);
 
 					if (t_material->HasNormal())
 					{

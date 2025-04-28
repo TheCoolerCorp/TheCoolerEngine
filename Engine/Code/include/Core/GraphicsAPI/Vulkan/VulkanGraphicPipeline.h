@@ -12,14 +12,16 @@ namespace Engine
 	{
 		namespace GraphicsAPI
 		{
-			#define COMMON std::string("per")
-			#define PER std::string("common")
+			#define COMMON std::string("common")
+			#define PER std::string("per")
+			#define LIGHT std::string("light")
 
 			enum SetLayoutType : int
 			{
 				Common = 0,
 				Per = 1,
-				UNDEFINED = 2
+				Light = 2,
+				UNDEFINED = 3
 			};
 
 			struct VulkanSetLayout

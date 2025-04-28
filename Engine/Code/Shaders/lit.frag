@@ -33,7 +33,7 @@ layout(set = 2, binding = 0) uniform LightData
     vec3 lightPosition;
     vec3 lightColor;
     float intensity;
-} common_light;
+} light_lhtValues;
 
 
 
@@ -46,6 +46,6 @@ layout(location = 0) out vec4 outColor;
 void main() 
 {
     //outColor = texture(per_albedoMap, fragTexCoord);
-    outColor = vec4(1.0, 0, 0,1 );
+    outColor = vec4(1.0, 0, 0, 1 );
 
 }
