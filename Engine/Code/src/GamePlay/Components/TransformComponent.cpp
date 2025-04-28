@@ -1,11 +1,47 @@
 #include  "GamePlay/Components/TransformComponent.h"
 
+#include <meta/factory.hpp>
+#include <meta/meta.hpp>
+
 #include "Gameplay/ServiceLocator.h"
 
 namespace Engine
 {
 	namespace GamePlay
 	{
+		void TransformComponent::Register()
+		{
+			constexpr std::hash<std::string_view> t_hash{};
+
+			meta::reflect<Math::vec3>(t_hash("Vec3"))
+				.data<&Math::vec3::x>(t_hash("x"))
+				.data<&Math::vec3::y>(t_hash("y"))
+				.data<&Math::vec3::z>(t_hash("z"));
+
+			meta::reflect<Math::quat>(t_hash("Quat"))
+				.data<&Math::quat::x>(t_hash("x"))
+				.data<&Math::quat::y>(t_hash("y"))
+				.data<&Math::quat::y>(t_hash("z"))
+				.data<&Math::quat::z>(t_hash("w"));
+
+			meta::reflect<TransformData>(t_hash("TransformData"))
+				.data<&TransformData::mPos>(t_hash("position"))
+				.data<&TransformData::mRot>(t_hash("rotation"))
+				.data<&TransformData::mScale>(t_hash("scale"));
+
+			meta::reflect<TransformComponent>(t_hash("TransformComponent"))
+				.data<&TransformComponent::Set, &TransformComponent::GetTransformData>(t_hash("transform"));
+
+			/*meta::reflect<TransformComponent>(t_hash("TransformComponent"))
+				.data<&TransformComponent::GetTransformData, &TransformComponent::Set>(t_hash("transform"));
+
+			meta::reflect<TransformComponent>(t_hash("TransformComponent"))
+				.data < &TransformComponent::GetTransformData,
+				[](TransformComponent& obj, const TransformData& data) {
+				obj.Set(data);
+				} > (t_hash("transform"));*/
+		}
+
 		ComponentType TransformComponent::Create(int& a_outId, bool a_colliderMesh)
 		{
 			m_transform = new Math::Transform();
@@ -20,7 +56,7 @@ namespace Engine
 		}
 
 
-		void TransformComponent::Set(Math::vec3 a_pos, Math::quat a_rot, Math::vec3 a_scale)
+		/*void TransformComponent::Set(Math::vec3 a_pos, Math::quat a_rot, Math::vec3 a_scale)
 		{
 			if (m_transform->GetPosition() != a_pos)
 			{
@@ -53,6 +89,28 @@ namespace Engine
 			if (m_transform->GetScale() != a_scale)
 			{
 				m_transform->SetScale(a_scale);
+			}
+		}*/
+
+		void TransformComponent::Set(const TransformData& a_data)
+		{
+			const Math::vec3 t_pos = a_data.mPos;
+			const Math::quat t_rot = a_data.mRot;
+			const Math::vec3 t_scale = a_data.mScale;
+
+			if (m_transform->GetPosition() != t_pos)
+			{
+				m_transform->SetPosition(t_pos);
+			}
+
+			if (m_transform->GetRotation() != Math::quat(t_rot))
+			{
+				m_transform->SetRotation(t_rot);
+			}
+
+			if (m_transform->GetScale() != t_scale)
+			{
+				m_transform->SetScale(t_scale);
 			}
 		}
 
@@ -142,6 +200,19 @@ namespace Engine
 				ServiceLocator::GetTransformSystem()->GetComponent(t_childId)->RemoveParent();
 			}
 			m_childrenIds.clear();
+		}
+
+		TransformData TransformComponent::GetTransformData() const
+		{
+			m_transform->SetGlobalPositionFromMatrix();
+			m_transform->SetGlobalRotationFromMatrix();
+			m_transform->SetGlobalScaleFromMatrix();
+
+			const Math::vec3 t_pos = m_transform->GetGlobalPosition();
+			const Math::quat t_rot = m_transform->GetGlobalRotation();
+			const Math::vec3 t_scale = m_transform->GetGlobalScale();
+
+			return { .mPos= t_pos, .mRot= t_rot, .mScale= t_scale};
 		}
 
 		TransformComponent* TransformComponent::GetComponent(int a_id)

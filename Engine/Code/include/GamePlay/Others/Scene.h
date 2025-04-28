@@ -27,6 +27,7 @@ namespace Engine
 			ENGINE_API void RemoveGameObject(uint32_t a_id);
 			ENGINE_API GameObject* GetGameObject(uint32_t a_id) const { return m_objs[a_id]; }
 			ENGINE_API int GetObjectCount() { return static_cast<int>(m_objs.size()); }
+			ENGINE_API void Save();
 		private:
 			std::vector<GameObject*> m_objs;
 			std::vector<int> m_availableIds;

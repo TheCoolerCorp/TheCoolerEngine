@@ -41,7 +41,7 @@ namespace Engine
 			t_texture->Load(a_renderer);
 
 			GameObject* t_object = new GameObject();
-			t_object->GetComponent<TransformComponent>()->Set(Math::vec3(0.f), Math::vec3(Math::ToRadians(0.f), 0.f, 0.f), Math::vec3(1.f));
+			t_object->GetComponent<TransformComponent>()->Set({ Math::vec3(0.f), Math::quat(Math::vec3(Math::ToRadians(0.f), 0.f, 0.f)), Math::vec3(1.f)});
 			t_object->AddComponent<MeshComponent>();
 			t_object->AddComponent<RigidBodyComponent>();
 			RigidBodyComponent* t_rigidBodyComponent = t_object->GetComponent<RigidBodyComponent>();
@@ -68,7 +68,7 @@ namespace Engine
 			t_texture2->Load(a_renderer);
 
 			GameObject* t_object2 = new GameObject();
-			t_object2->GetComponent<TransformComponent>()->Set(Math::vec3(0.f, 3.f, 0.f), Math::vec3(0.f, 0.f, 0.f), Math::vec3(0.2f));
+			t_object2->GetComponent<TransformComponent>()->Set({ Math::vec3(0.f, 3.f, 0.f), Math::quat(Math::vec3(0.f, 0.f, 0.f)), Math::vec3(0.2f) });
 			t_object2->AddComponent<MeshComponent>();
 			t_object2->AddComponent<RigidBodyComponent>();
 			RigidBodyComponent* t_rigidBodyComponent2 = t_object2->GetComponent<RigidBodyComponent>();
@@ -163,6 +163,8 @@ namespace Engine
 
 		void Scene::Destroy(Core::Renderer* a_renderer)
 		{
+			Save();
+
 			m_meshRendererSystem->Destroy(a_renderer);
 			delete m_meshRendererSystem;
 
@@ -232,7 +234,12 @@ namespace Engine
 				}
 			}
 		}
-		
+
+		void Scene::Save()
+		{
+			
+		}
+
 		void Scene::TestFunc(RigidBodyComponent* a_rigidBodyComponent)
 		{
 			m_objs[1]->GetComponent<RigidBodyComponent>()->AddForce({ 0.f, 10000.f, 0.f });

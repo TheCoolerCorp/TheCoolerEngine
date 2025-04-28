@@ -10,18 +10,28 @@ namespace Engine
 {
 	namespace GamePlay
 	{
+		struct TransformData
+		{
+			Math::vec3 mPos;
+			Math::quat mRot;
+			Math::vec3 mScale;
+		};
+
 		class TransformComponent : public Component
 		{
 		public:
 			TransformComponent() = default;
 			~TransformComponent() override = default;
 
+			ENGINE_API static void Register();
+
 			ENGINE_API ComponentType Create(int& a_outId, bool a_colliderMesh = false);
 
 			ENGINE_API void Destroy();
 
-			ENGINE_API void Set(Math::vec3 a_pos, Math::quat a_rot, Math::vec3 a_scale);
-			ENGINE_API void Set(Math::vec3 a_pos, Math::vec3 a_rot, Math::vec3 a_scale);
+			/*ENGINE_API void Set(Math::vec3 a_pos, Math::quat a_rot, Math::vec3 a_scale);
+			ENGINE_API void Set(Math::vec3 a_pos, Math::vec3 a_rot, Math::vec3 a_scale);*/
+			ENGINE_API void Set(const TransformData& a_data);
 
 			ENGINE_API void Move(Math::vec3 a_pos, Math::quat a_rot, Math::vec3 a_scale);
 			ENGINE_API void Move(Math::vec3 a_pos, Math::vec3 a_rot, Math::vec3 a_scale);
@@ -34,6 +44,7 @@ namespace Engine
 			ENGINE_API void ClearChildren();
 
 			[[nodiscard]] ENGINE_API Math::Transform* GetTransform() const { return m_transform; }
+			[[nodiscard]] ENGINE_API TransformData GetTransformData() const;
 			[[nodiscard]] ENGINE_API int GetID() const { return m_id; }
 			[[nodiscard]] ENGINE_API int GetGameObjectID() const { return m_gameObjectId; }
 			[[nodiscard]] ENGINE_API int GetParentID() const { return m_parentId; }

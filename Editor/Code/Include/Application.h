@@ -35,6 +35,8 @@ namespace Editor
 			void UpdateLayers();
 			void CleanupLayers();
 
+			void RegisterTypes();
+
 		private:
 			Engine::Core::Window::IWindow* m_mainWindow = nullptr;
 			Engine::Core::Window::IInputHandler* m_inputHandler = nullptr;

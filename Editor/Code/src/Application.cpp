@@ -22,6 +22,8 @@ namespace Editor
 	{
 		void Application::Create(const int a_width, const int a_height)
 		{
+			RegisterTypes();
+
 			GraphicsAPI::VulkanRenderPassManager::AddFlag(GraphicsAPI::FLAG_VK_RHI_OVERRIDE_DEFAULT_RENDERPASS);
 
 			m_mainWindow = new Window::GLwindow();
@@ -111,6 +113,11 @@ namespace Editor
 				delete layer;
 			}
 			m_layers.clear();
+		}
+
+		void Application::RegisterTypes()
+		{
+			Engine::GamePlay::TransformComponent::Register();
 		}
 	}
 }
