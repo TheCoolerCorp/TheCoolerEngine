@@ -45,7 +45,7 @@ namespace Engine
 			t_texture->Load(a_renderer);
 
 			GameObject* t_object = new GameObject();
-			t_object->GetComponent<TransformComponent>()->Set({ Math::vec3(0.f), Math::quat(Math::vec3(Math::ToRadians(0.f), 0.f, 0.f)), Math::vec3(1.f)});
+			t_object->GetComponent<TransformComponent>()->Set({ Math::vec3(0.f), Math::quat(Math::vec3(Math::ToRadians(0.f), 0.f, 0.f)), Math::vec3(1.f), -1 });
 			t_object->AddComponent<MeshComponent>();
 			t_object->AddComponent<RigidBodyComponent>();
 			RigidBodyComponent* t_rigidBodyComponent = t_object->GetComponent<RigidBodyComponent>();
@@ -72,7 +72,7 @@ namespace Engine
 			t_texture2->Load(a_renderer);
 
 			GameObject* t_object2 = new GameObject();
-			t_object2->GetComponent<TransformComponent>()->Set({ Math::vec3(0.f, 3.f, 0.f), Math::quat(Math::vec3(0.f, 0.f, 0.f)), Math::vec3(0.2f) });
+			t_object2->GetComponent<TransformComponent>()->Set({ Math::vec3(0.f, 3.f, 0.f), Math::quat(Math::vec3(0.f, 0.f, 0.f)), Math::vec3(0.2f), -1 });
 			t_object2->AddComponent<MeshComponent>();
 			t_object2->AddComponent<RigidBodyComponent>();
 			RigidBodyComponent* t_rigidBodyComponent2 = t_object2->GetComponent<RigidBodyComponent>();
@@ -169,6 +169,12 @@ namespace Engine
 		{
 			Save();
 
+			for (int i = 0; i < m_objs.size(); ++i)
+			{
+				delete m_objs[i];
+			}
+			m_objs.clear();
+
 			m_meshRendererSystem->Destroy(a_renderer);
 			delete m_meshRendererSystem;
 
@@ -181,12 +187,6 @@ namespace Engine
 
 			m_resourceManager->DestroyAll(a_renderer);
 			delete m_resourceManager;
-
-			for (int i = 0; i < m_objs.size(); ++i)
-			{
-				delete m_objs[i];
-			}
-			m_objs.clear();
 		}
 
 		/**
@@ -239,9 +239,97 @@ namespace Engine
 			}
 		}
 
+		json SerializeTransformComponent(const TransformComponent& transform)
+		{
+			json j;
+			constexpr std::hash<std::string_view> t_hash{};
+
+			meta::any transformAny{ transform };
+
+			meta::handle transformHandle{ transformAny };
+
+			if (!transformHandle)
+				return j;
+
+			meta::data transformDataField = transformHandle.type().data(t_hash("transform"));
+			if (!transformDataField)
+				return j;
+
+			meta::any transformDataAny = transformDataField.get(transformHandle);
+			if (!transformDataAny)
+				return j;
+
+			meta::handle transformDataHandle(transformDataAny);
+
+			const meta::type transformDataType = transformDataHandle.type();
+
+			auto posField = transformDataType.data(t_hash("position"));
+			if (posField)
+			{
+				meta::any posAny = posField.get(transformDataHandle);
+				meta::handle posHandle(posAny);
+
+				j["transform"]["position"] = {
+					{"x", posHandle.type().data(t_hash("x")).get(posHandle).cast<float>()},
+					{"y", posHandle.type().data(t_hash("y")).get(posHandle).cast<float>()},
+					{"z", posHandle.type().data(t_hash("z")).get(posHandle).cast<float>()}
+				};
+			}
+
+			auto rotField = transformDataType.data(t_hash("rotation"));
+			if (rotField)
+			{
+				meta::any rotAny = rotField.get(transformDataHandle);
+				meta::handle rotHandle(rotAny);
+
+				j["transform"]["rotation"] = {
+					{"x", rotHandle.type().data(t_hash("x")).get(rotHandle).cast<float>()},
+					{"y", rotHandle.type().data(t_hash("y")).get(rotHandle).cast<float>()},
+					{"z", rotHandle.type().data(t_hash("z")).get(rotHandle).cast<float>()},
+					{"w", rotHandle.type().data(t_hash("w")).get(rotHandle).cast<float>()}
+				};
+			}
+
+			auto scaleField = transformDataType.data(t_hash("scale"));
+			if (scaleField)
+			{
+				meta::any scaleAny = scaleField.get(transformDataHandle);
+				meta::handle scaleHandle(scaleAny);
+
+				j["transform"]["scale"] = {
+					{"x", scaleHandle.type().data(t_hash("x")).get(scaleHandle).cast<float>()},
+					{"y", scaleHandle.type().data(t_hash("y")).get(scaleHandle).cast<float>()},
+					{"z", scaleHandle.type().data(t_hash("z")).get(scaleHandle).cast<float>()}
+				};
+			}
+
+			auto intField = transformDataType.data(t_hash("parent"));
+			if (intField) {
+				meta::any intAny = intField.get(transformDataHandle);
+				j["transform"]["parent"] = intAny.cast<int>();
+			}
+
+			return j;
+		}
+
 		void Scene::Save()
 		{
-			
+			json scene;
+
+			for (const auto& obj : m_objs)
+			{
+				json objJson;
+				objJson["GameObject"] = obj->GetName();
+				objJson["TransformComponent"] = SerializeTransformComponent(*obj->GetComponent<TransformComponent>());
+				scene.push_back(objJson);
+			}
+
+			std::ofstream file("scene.json");
+			if (file.is_open())
+			{
+				file << scene.dump(4);
+				file.close();
+			}
 		}
 
 		void Scene::TestFunc(RigidBodyComponent* a_rigidBodyComponent)

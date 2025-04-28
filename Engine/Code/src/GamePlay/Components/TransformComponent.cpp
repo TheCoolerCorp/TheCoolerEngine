@@ -27,19 +27,11 @@ namespace Engine
 			meta::reflect<TransformData>(t_hash("TransformData"))
 				.data<&TransformData::mPos>(t_hash("position"))
 				.data<&TransformData::mRot>(t_hash("rotation"))
-				.data<&TransformData::mScale>(t_hash("scale"));
+				.data<&TransformData::mScale>(t_hash("scale"))
+				.data<&TransformData::mParentId>(t_hash("parent"));
 
 			meta::reflect<TransformComponent>(t_hash("TransformComponent"))
 				.data<&TransformComponent::Set, &TransformComponent::GetTransformData>(t_hash("transform"));
-
-			/*meta::reflect<TransformComponent>(t_hash("TransformComponent"))
-				.data<&TransformComponent::GetTransformData, &TransformComponent::Set>(t_hash("transform"));
-
-			meta::reflect<TransformComponent>(t_hash("TransformComponent"))
-				.data < &TransformComponent::GetTransformData,
-				[](TransformComponent& obj, const TransformData& data) {
-				obj.Set(data);
-				} > (t_hash("transform"));*/
 		}
 
 		ComponentType TransformComponent::Create(int& a_outId, bool a_colliderMesh)
@@ -54,43 +46,6 @@ namespace Engine
 		{
 			delete m_transform;
 		}
-
-
-		/*void TransformComponent::Set(Math::vec3 a_pos, Math::quat a_rot, Math::vec3 a_scale)
-		{
-			if (m_transform->GetPosition() != a_pos)
-			{
-				m_transform->SetPosition(a_pos);
-			}
-
-			if (m_transform->GetRotation() != a_rot)
-			{
-				m_transform->SetRotation(a_rot);
-			}
-
-			if (m_transform->GetScale() != a_scale)
-			{
-				m_transform->SetScale(a_scale);
-			}
-		}
-
-		void TransformComponent::Set(Math::vec3 a_pos, Math::vec3 a_rot, Math::vec3 a_scale)
-		{
-			if (m_transform->GetPosition() != a_pos)
-			{
-				m_transform->SetPosition(a_pos);
-			}
-
-			if (m_transform->GetRotation() != Math::quat(a_rot))
-			{
-				m_transform->SetRotation(a_rot);
-			}
-
-			if (m_transform->GetScale() != a_scale)
-			{
-				m_transform->SetScale(a_scale);
-			}
-		}*/
 
 		void TransformComponent::Set(const TransformData& a_data)
 		{
@@ -212,7 +167,7 @@ namespace Engine
 			const Math::quat t_rot = m_transform->GetGlobalRotation();
 			const Math::vec3 t_scale = m_transform->GetGlobalScale();
 
-			return { .mPos= t_pos, .mRot= t_rot, .mScale= t_scale};
+			return { .mPos= t_pos, .mRot= t_rot, .mScale= t_scale, .mParentId= m_parentId};
 		}
 
 		TransformComponent* TransformComponent::GetComponent(int a_id)

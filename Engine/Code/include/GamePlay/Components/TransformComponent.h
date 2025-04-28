@@ -15,6 +15,7 @@ namespace Engine
 			Math::vec3 mPos;
 			Math::quat mRot;
 			Math::vec3 mScale;
+			int mParentId;
 		};
 
 		class TransformComponent : public Component
@@ -29,8 +30,6 @@ namespace Engine
 
 			ENGINE_API void Destroy();
 
-			/*ENGINE_API void Set(Math::vec3 a_pos, Math::quat a_rot, Math::vec3 a_scale);
-			ENGINE_API void Set(Math::vec3 a_pos, Math::vec3 a_rot, Math::vec3 a_scale);*/
 			ENGINE_API void Set(const TransformData& a_data);
 
 			ENGINE_API void Move(Math::vec3 a_pos, Math::quat a_rot, Math::vec3 a_scale);
