@@ -2,6 +2,13 @@
 add_library(stb INTERFACE)
 target_include_directories(stb INTERFACE "stb/")
 
+# meta
+add_library(meta INTERFACE)
+target_include_directories(meta INTERFACE "meta/src")
+
+# json
+add_subdirectory(json)
+
 # ASSIMP
 add_subdirectory(assimp)
 
