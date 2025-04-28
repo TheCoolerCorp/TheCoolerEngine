@@ -3,7 +3,6 @@
 
 #include "EngineExport.h"
 
-#include "GamePlay/Components/ComponentsPool.h"
 
 namespace Engine
 {

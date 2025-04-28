@@ -15,10 +15,9 @@
 #include "Core/Interfaces/IGraphicPipeline.h"
 #include "Core/Interfaces/ICommandPool.h"
 #include "Core/Interfaces/IDescriptorPool.h"
-#include "Core/Interfaces/ICameraDescriptor.h"
 #include "Core/Interfaces/IBuffer.h"
-#include "Core/Interfaces/IRenderObject.h"
-
+#include "Core/Interfaces/IObjectDescriptor.h"
+#include "Core/Interfaces/IShader.h"
 namespace Engine
 {
 	namespace Core
@@ -72,10 +71,6 @@ namespace Engine
 
 				ENGINE_API virtual IDescriptorPool* InstantiateDescriptorPool() = 0;
 				ENGINE_API virtual void DestroyDescriptorPool(IDescriptorPool* a_descriptorPool) { delete a_descriptorPool; }
-
-
-				ENGINE_API virtual ICameraDescriptor* InstantiateCameraDescriptor() = 0;
-				ENGINE_API virtual void DestroyCameraDescriptor(ICameraDescriptor* a_cameraDescriptor) { delete a_cameraDescriptor; }
 				
 				ENGINE_API virtual IBuffer* InstantiateBuffer() = 0;
 				ENGINE_API virtual void DestroyBuffer(IBuffer* a_buffer) { delete a_buffer; }
@@ -83,8 +78,11 @@ namespace Engine
 				ENGINE_API virtual IImage* InstantiateImage() = 0;
 				ENGINE_API virtual void DestroyImage(IImage* a_image) { delete a_image; }
 
-				ENGINE_API virtual IRenderObject* InstantiateRenderObject() = 0;
-				ENGINE_API virtual void DestroyRenderObject(IRenderObject* a_renderObject) { delete a_renderObject; }
+				ENGINE_API virtual IObjectDescriptor* InstantiateObjectDescriptor() = 0;
+				ENGINE_API virtual void DestroyObjectDescriptor(IObjectDescriptor* a_objectDescriptor) { delete a_objectDescriptor; }
+
+				ENGINE_API virtual IShader* InstantiateShader() = 0;
+				ENGINE_API virtual void DestroyShader(IShader* a_shader) { delete a_shader; }
 			};
 		}
 	}

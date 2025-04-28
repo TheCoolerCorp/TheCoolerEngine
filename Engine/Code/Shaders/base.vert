@@ -1,13 +1,14 @@
 #version 450
 
-layout(set = 0, binding = 0) uniform CameraUniformBufferObject {
+layout(set = 0, binding = 0) uniform CameraUBO
+{
     mat4 vp;
-} camubo;
+} common_camModel;
 
-layout(set = 1, binding = 0) uniform ObjectUniformBufferObject 
+layout(set = 1, binding = 0) uniform ObjectUBO
 {
     mat4 model;
-} objubo;
+} per_objModel;
 
 layout(location = 0) in vec3 inPosition;
 layout(location = 1) in vec3 inNormal;
@@ -18,7 +19,7 @@ layout(location = 1) out vec2 fragTexCoord;
 
 
 void main() {
-    gl_Position = camubo.vp * objubo.model * vec4(inPosition,  1.0);
+    gl_Position = common_camModel.vp * per_objModel.model * vec4(inPosition,  1.0);
     fragTexCoord = inTexCoord;
     normal = inNormal;
 }

@@ -20,6 +20,10 @@ namespace Engine
 
 	namespace Core
 	{
+		#define BASEVERTEX std::string("Assets/shaders/baseVert.spv")
+		#define UNLITFRAGMENT std::string("Assets/shaders/unlitFrag.spv")
+		#define LITFRAGMENT std::string("Assets/shaders/litFrag.spv")
+
 		enum class RendererType
 		{
 			VULKAN = 0,
@@ -33,16 +37,9 @@ namespace Engine
 			ENGINE_API Renderer() = default;
 			ENGINE_API ~Renderer() = default;
 
-			ENGINE_API void Init(RendererType a_type);
-			ENGINE_API void Create(RendererType a_type, Window::IWindow* a_window);
 			ENGINE_API void LateCreate(RendererType a_type, Window::IWindow* a_window);
-			ENGINE_API void Render(Window::IWindow* a_window,
-			                       const std::unordered_map<int, Core::RHI::IRenderObject*>& a_renderObjects,
-			                       const std::vector<int>& a_ids,
-			                       const std::unordered_map<int, Core::RHI::IBuffer*>& a_vertexBuffers,
-			                       const std::unordered_map<int, Core::RHI::IBuffer*>& a_indexBuffers,
-								   const std::unordered_map<int, uint32_t>& a_nbIndices,
-			                       GamePlay::Camera* camera) const;
+			ENGINE_API void Create(RendererType a_type, Window::IWindow* a_window);
+			ENGINE_API void Init(RendererType a_type);
 			ENGINE_API void WaitIdle() const;
 			ENGINE_API void Destroy();
 
@@ -50,7 +47,8 @@ namespace Engine
 			RHI::ApiInterface* GetInterface() { return m_interface; }
 			RHI::ILogicalDevice* GetLogicalDevice() { return m_logicalDevice; }
 			RHI::IPhysicalDevice* GetPhysicalDevice() { return m_physicalDevice; }
-			RHI::IGraphicPipeline* GetPipeline() { return m_graphicPipeline; }
+			RHI::IGraphicPipeline* GetUnlitPipeline() { return m_unlitPipeline; }
+			RHI::IGraphicPipeline* GetLitPipeline() { return m_litPipeline; }
 			RHI::ICommandPool* GetCommandPool() { return m_commandPool; }
 			RHI::ISwapChain* GetSwapChain() { return m_swapChain; }
 			RHI::ISurface* GetSurface() { return m_surface; }
@@ -71,8 +69,11 @@ namespace Engine
 
 			RHI::ISwapChain* m_swapChain = nullptr;
 			RHI::IRenderPass* m_renderPass = nullptr;
-			RHI::IGraphicPipeline* m_graphicPipeline = nullptr;
+			RHI::IGraphicPipeline* m_unlitPipeline = nullptr;
+			RHI::IGraphicPipeline* m_litPipeline = nullptr;
 			RHI::ICommandPool* m_commandPool = nullptr;
+
+			
 			
 		};
 	}

@@ -15,6 +15,7 @@ add_library(Engine SHARED ${ENGINE_SOURCES})
 #---------------------------------------#
 target_include_directories(Engine PUBLIC "Code/include")
 option(ENGINE_UNIT_TESTS "Option to enable or disable unit tests for engine" OFF)
+#target_include_directories(spir-v PUBLIC ${SPIRV_FILES_LOCATION})
 
 #---------------------------------------#
 #				COMPILE MODE			#

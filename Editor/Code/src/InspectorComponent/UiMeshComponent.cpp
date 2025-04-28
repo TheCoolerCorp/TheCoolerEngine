@@ -10,7 +10,7 @@ Editor::EditorLayer::Ui::UiMeshComponent::~UiMeshComponent()
 void Editor::EditorLayer::Ui::UiMeshComponent::Create()
 {
 	//create image descriptor set
-	m_dSet = ImGui_ImplVulkan_AddTexture(m_meshComp->GetTexture()->GetImage()->CastVulkan()->GetSampler(), m_meshComp->GetTexture()->GetImage()->CastVulkan()->GetView(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+	m_dSet = ImGui_ImplVulkan_AddTexture(m_meshComp->GetMaterial()->GetAlbedo()->GetImage()->CastVulkan()->GetSampler(), m_meshComp->GetMaterial()->GetAlbedo()->GetImage()->CastVulkan()->GetView(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 }
 
 void Editor::EditorLayer::Ui::UiMeshComponent::UiDraw()
@@ -27,15 +27,15 @@ void Editor::EditorLayer::Ui::UiMeshComponent::UiDraw()
 	}
 	if (ImGui::TreeNodeEx(("Texture Info: ##" + std::to_string(m_uid)).c_str(), t_flags))
 	{
-		ImGui::Text(("Path: " + m_meshComp->GetTexture()->GetPath()).c_str());
-		ImGui::Text(("Size: " + std::to_string(m_meshComp->GetTexture()->GetWidth())+"x"+ std::to_string(m_meshComp->GetTexture()->GetHeight())).c_str());
+		ImGui::Text(("Path: " + m_meshComp->GetMaterial()->GetAlbedo()->GetPath()).c_str());
+		ImGui::Text(("Size: " + std::to_string(m_meshComp->GetMaterial()->GetAlbedo()->GetWidth())+"x"+ std::to_string(m_meshComp->GetMaterial()->GetAlbedo()->GetHeight())).c_str());
 		float t_displaySize = ImGui::GetWindowWidth() - 50.f;
 		if (t_displaySize < 10.f)
 			t_displaySize = 10.f;
 		if (t_displaySize > 200.f)
 			t_displaySize = 200.f;
 		ImGui::Image(reinterpret_cast<ImTextureID>(m_dSet), ImVec2{ t_displaySize, t_displaySize });
-		ImGui::SetItemTooltip((std::to_string(m_meshComp->GetTexture()->GetWidth()) + "x" + std::to_string(m_meshComp->GetTexture()->GetHeight())).c_str());
+		ImGui::SetItemTooltip((std::to_string(m_meshComp->GetMaterial()->GetAlbedo()->GetWidth()) + "x" + std::to_string(m_meshComp->GetMaterial()->GetAlbedo()->GetHeight())).c_str());
 		ImGui::TreePop();
 	}
 	

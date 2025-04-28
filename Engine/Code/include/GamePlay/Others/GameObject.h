@@ -16,7 +16,6 @@
 #include "Math/Transform.h"
 #include "GamePlay/Components/Component.h"
 #include "Ressources/ResourceManager.h"
-#include "Gameplay/Components/ComponentsPool.h"
 
 
 #include "Core/Interfaces/ApiInterface.h"
@@ -55,7 +54,7 @@ namespace Engine
 					ComponentClass* t_newComponent = new ComponentClass();
 
 					int id = -1;
-					ComponentType t_componentType = t_newComponent->Create(id, a_colliderMesh);
+					ComponentType t_componentType = t_newComponent->Create(id);
 
 					if (m_compsId.contains(t_componentType))
 					{

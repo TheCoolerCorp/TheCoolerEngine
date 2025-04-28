@@ -104,7 +104,7 @@ namespace Engine
 				m_sceneRenderPass->Create(config);
 				
 				m_sceneRenderPass->SetDrawFunc(
-					[this](const RecordRenderPassinfo& a_info, const std::vector<Core::RHI::IRenderObject*>& a_renderObjects,
+					[this](const RecordRenderPassinfo& a_info, const std::vector<Core::RHI::IObjectDescriptor*>& a_renderObjects,
 						const std::vector<Core::RHI::IBuffer*>& a_vertexBuffers,
 						const std::vector<Core::RHI::IBuffer*>& a_indexBuffers, const std::vector<uint32_t>& a_nbIndices)
 					{
@@ -112,12 +112,12 @@ namespace Engine
 						//TEMPORARY: MAKE RENDERPASS OPTIONALLY STORE REFERENCE TO ITS ASSOCIATED PIPELINE LATER
 						//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 						
-						vkCmdBindPipeline(a_info.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_renderer->GetPipeline()->CastVulkan()->GetPipeline());
+						//vkCmdBindPipeline(a_info.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_renderer->GetPipeline()->CastVulkan()->GetPipeline());
 
 						const VkPipelineLayout t_layout = a_info.graphicPipeline->GetLayout();
 
-						const VkDescriptorSet t_cameraDescriptorSet = a_info.camera->GetDescriptor()->CastVulkan()->GetDescriptorSet();
-						vkCmdBindDescriptorSets(a_info.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, t_layout, 0, 1, &t_cameraDescriptorSet, 0, nullptr);
+						//const VkDescriptorSet t_cameraDescriptorSet = a_info.camera->GetDescriptor()->CastVulkan()->GetDescriptorSet();
+						//vkCmdBindDescriptorSets(a_info.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, t_layout, 0, 1, &t_cameraDescriptorSet, 0, nullptr);
 
 						for (int i = 0; i < a_renderObjects.size(); ++i)
 						{
@@ -141,7 +141,7 @@ namespace Engine
 				);
 			}
 
-			void VulkanRenderPassManager::RecordRenderPasses(const RecordRenderPassinfo& a_info, const std::vector<Core::RHI::IRenderObject*>& a_renderObjects, const std::vector<Core::RHI::IBuffer*>& a_vertexBuffers, const std::vector<Core::RHI::IBuffer*>& a_indexBuffers, const std::vector<uint32_t>& a_nbIndices)
+			void VulkanRenderPassManager::RecordRenderPasses(const RecordRenderPassinfo& a_info, const std::vector<Core::RHI::IObjectDescriptor*>& a_renderObjects, const std::vector<Core::RHI::IBuffer*>& a_vertexBuffers, const std::vector<Core::RHI::IBuffer*>& a_indexBuffers, const std::vector<uint32_t>& a_nbIndices)
 			{
 				std::set<VulkanRenderPass*> t_visited;
 				std::vector<VulkanRenderPass*> t_sortedPasses;
@@ -160,7 +160,7 @@ namespace Engine
 			}
 
 			void VulkanRenderPassManager::RunSceneRenderPass(const RecordRenderPassinfo& a_info,
-				const std::vector<Core::RHI::IRenderObject*>& a_renderObjects,
+				const std::vector<Core::RHI::IObjectDescriptor*>& a_renderObjects,
 				const std::vector<Core::RHI::IBuffer*>& a_vertexBuffers,
 				const std::vector<Core::RHI::IBuffer*>& a_indexBuffers, const std::vector<uint32_t>& a_nbIndices)
 			{
@@ -445,7 +445,7 @@ namespace Engine
 			}
 
 			void VulkanRenderPass::RecordRenderPass(const RecordRenderPassinfo& a_info,
-				const std::vector<Core::RHI::IRenderObject*>& a_renderObjects,
+				const std::vector<Core::RHI::IObjectDescriptor*>& a_renderObjects,
 				const std::vector<Core::RHI::IBuffer*>& a_vertexBuffers,
 				const std::vector<Core::RHI::IBuffer*>& a_indexBuffers, const std::vector<uint32_t>& a_nbIndices)
 			{
@@ -521,7 +521,7 @@ namespace Engine
 			}
 
 			void VulkanRenderPass::SetDrawFunc(
-				std::function<void(RecordRenderPassinfo, const std::vector<Core::RHI::IRenderObject*>&, const std::
+				std::function<void(RecordRenderPassinfo, const std::vector<Core::RHI::IObjectDescriptor*>&, const std::
 				vector<Core::RHI::IBuffer*>&, const std::vector<Core::RHI::IBuffer*>&, const std::vector<uint32_t>&)>
 				a_func)
 			{

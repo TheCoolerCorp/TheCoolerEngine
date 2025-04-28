@@ -6,7 +6,7 @@ namespace Engine
 {
 	namespace GamePlay
 	{
-		ComponentType TransformComponent::Create(int& a_outId, bool a_colliderMesh)
+		ComponentType TransformComponent::Create(int& a_outId)
 		{
 			m_transform = new Math::Transform();
 			m_id = ServiceLocator::GetTransformSystem()->AddComponent(this);
@@ -36,6 +36,7 @@ namespace Engine
 			{
 				m_transform->SetScale(a_scale);
 			}
+			
 		}
 
 		void TransformComponent::Set(Math::vec3 a_pos, Math::vec3 a_rot, Math::vec3 a_scale)

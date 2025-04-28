@@ -46,7 +46,7 @@ namespace Editor
 			m_camera->Create(m_renderer);
 
 			m_currentScene = new Scene();
-			m_currentScene->Create(m_renderer);
+			m_currentScene->Create(m_renderer, a_width, a_height);
 
 			t_imguiLayer->AddWindow(new Ui::SceneGraphUiWindow(m_renderer, t_imguiLayer, m_currentScene));
 			t_imguiLayer->AddWindow(new Ui::InspectorUiWindow(m_renderer, t_imguiLayer));
@@ -62,8 +62,8 @@ namespace Editor
 				m_lastTime = t_now;
 
 				UpdateLayers();
-				m_currentScene->Update(m_renderer, m_deltaTime);
-				m_currentScene->Draw(m_renderer, m_mainWindow, m_camera);
+				m_currentScene->Update(m_renderer, m_mainWindow, m_inputHandler, m_deltaTime);
+				//m_currentScene->Draw(m_renderer, m_mainWindow, m_camera);
 				m_camera->Update(m_renderer, m_inputHandler, m_mainWindow, m_deltaTime);
 				m_mainWindow->PollEvents();
 			}

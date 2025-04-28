@@ -53,13 +53,13 @@ namespace Engine
 
 				// --- Recording ---
 				ENGINE_API void RecordRenderPasses(const RecordRenderPassinfo& a_info,
-					const std::vector<Core::RHI::IRenderObject*>& a_renderObjects,
+					const std::vector<Core::RHI::IObjectDescriptor*>& a_renderObjects,
 					const std::vector<Core::RHI::IBuffer*>& a_vertexBuffers,
 					const std::vector<Core::RHI::IBuffer*>& a_indexBuffers,
 					const std::vector<uint32_t>& a_nbIndices);
 
 				ENGINE_API void RunSceneRenderPass(const RecordRenderPassinfo& a_info,
-					const std::vector<Core::RHI::IRenderObject*>& a_renderObjects,
+					const std::vector<Core::RHI::IObjectDescriptor*>& a_renderObjects,
 					const std::vector<Core::RHI::IBuffer*>& a_vertexBuffers,
 					const std::vector<Core::RHI::IBuffer*>& a_indexBuffers,
 					const std::vector<uint32_t>& a_nbIndices);
@@ -153,7 +153,7 @@ namespace Engine
 
 				// --- Recording ---
 				ENGINE_API void RecordRenderPass(const RecordRenderPassinfo& a_info,
-					const std::vector<Core::RHI::IRenderObject*>& a_renderObjects,
+					const std::vector<Core::RHI::IObjectDescriptor*>& a_renderObjects,
 					const std::vector<Core::RHI::IBuffer*>& a_vertexBuffers,
 					const std::vector<Core::RHI::IBuffer*>& a_indexBuffers,
 					const std::vector<uint32_t>& a_nbIndices);
@@ -163,7 +163,7 @@ namespace Engine
 
 				// --- Draw Control ---
 				ENGINE_API void SetDrawFunc(std::function<void(RecordRenderPassinfo,
-					const std::vector<Core::RHI::IRenderObject*>&,
+					const std::vector<Core::RHI::IObjectDescriptor*>&,
 					const std::vector<Core::RHI::IBuffer*>&,
 					const std::vector<Core::RHI::IBuffer*>&,
 					const std::vector<uint32_t>&)> a_func);
@@ -198,7 +198,7 @@ namespace Engine
 
 				// --- Rendering logic ---
 				std::function<void(RecordRenderPassinfo,
-					const std::vector<Core::RHI::IRenderObject*>&,
+					const std::vector<Core::RHI::IObjectDescriptor*>&,
 					const std::vector<Core::RHI::IBuffer*>&,
 					const std::vector<Core::RHI::IBuffer*>&,
 					const std::vector<uint32_t>&)> m_drawFunc;

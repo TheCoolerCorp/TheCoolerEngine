@@ -8,21 +8,20 @@ namespace Engine
 {
 	namespace GamePlay
 	{
-		ComponentType MeshComponent::Create(int& a_outId, bool a_colliderMesh)
+		ComponentType MeshComponent::Create(int& a_outId)
 		{
-			a_outId = ServiceLocator::GetMeshRendererSystem()->AddComponent(this);
-			return a_colliderMesh ? ComponentType::COLLIDERMESH : ComponentType::MESH;
-		}
+			m_material = CreateRef<Material>();
 
-		void MeshComponent::Update()
-		{
-			// Do nothing for now.
+			a_outId = ServiceLocator::GetMeshRendererSystem()->AddComponent(this);
+			return ComponentType::MESH;
+
 		}
 
 		void MeshComponent::Destroy()
 		{
 			// Just set mesh to nullptr, resource manager handle the resource.
 			m_mesh = nullptr;
+			m_material = nullptr;
 		}
 
 		void MeshComponent::SetMesh(Ref<Resource::Mesh> a_mesh)
@@ -31,10 +30,10 @@ namespace Engine
 			m_mesh = std::move(a_mesh);
 		}
 
-		void MeshComponent::SetTexture(Ref<Resource::Texture> a_texture)
+		void MeshComponent::SetMaterial(Ref<Material> a_material)
 		{
-			// Set the texture to use.
-			m_texture = std::move(a_texture);
+			// Set the material to use.
+			m_material = a_material;
 		}
 
 		MeshComponent* MeshComponent::GetComponent(int a_id)

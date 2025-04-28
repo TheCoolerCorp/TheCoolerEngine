@@ -197,16 +197,16 @@ namespace Editor::EditorLayer::Ui
 		//m_sceneRenderPass->SetFramebuffers(m_renderer->GetSwapChain()->CastVulkan()->GetFramebuffers());
 
 		m_imGuiRenderPass->SetDrawFunc(
-			[this](const RecordRenderPassinfo& a_info, const std::vector<RHI::IRenderObject*>& a_renderObjects,
+			[this](const RecordRenderPassinfo& a_info, const std::vector<RHI::IObjectDescriptor*>& a_renderObjects,
 				const std::vector<RHI::IBuffer*>& a_vertexBuffers,
 				const std::vector<RHI::IBuffer*>& a_indexBuffers, const std::vector<uint32_t>& a_nbIndices)
 			{
-				vkCmdBindPipeline(a_info.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_renderer->GetPipeline()->CastVulkan()->GetPipeline());
+				//vkCmdBindPipeline(a_info.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_renderer->GetPipeline()->CastVulkan()->GetPipeline());
 
 				const VkPipelineLayout t_layout = a_info.graphicPipeline->GetLayout();
 
-				const VkDescriptorSet t_cameraDescriptorSet = a_info.camera->GetDescriptor()->CastVulkan()->GetDescriptorSet();
-				vkCmdBindDescriptorSets(a_info.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, t_layout, 0, 1, &t_cameraDescriptorSet, 0, nullptr);
+				//const VkDescriptorSet t_cameraDescriptorSet = a_info.camera->GetDescriptor()->CastVulkan()->GetDescriptorSet();
+				//vkCmdBindDescriptorSets(a_info.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, t_layout, 0, 1, &t_cameraDescriptorSet, 0, nullptr);
 
 				for (int i = 0; i < a_renderObjects.size(); ++i)
 				{
@@ -278,7 +278,7 @@ namespace Editor::EditorLayer::Ui
 		t_config.dependencyImageLayoutOverride = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 
 		m_imGuiViewportRenderPass->Create(t_config);
-		m_imGuiViewportRenderPass->SetDrawFunc([this](const RecordRenderPassinfo a_info, const std::vector<RHI::IRenderObject*>& a_renderObjects,
+		m_imGuiViewportRenderPass->SetDrawFunc([this](const RecordRenderPassinfo a_info, const std::vector<RHI::IObjectDescriptor*>& a_renderObjects,
 			const std::vector<RHI::IBuffer*>& a_vertexBuffers,
 			const std::vector<RHI::IBuffer*>& a_indexBuffers, const std::vector<uint32_t>& a_nbIndices)
 			{
