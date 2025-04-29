@@ -3,19 +3,21 @@
 #include <utility>
 #include <meta/factory.hpp>
 #include <meta/meta.hpp>
-#include <nlohmann/json.hpp>
-using json = nlohmann::json;
-
 
 #include "Gameplay/ServiceLocator.h"
 #include "GamePlay/Others/GameObject.h"
 #include "Math/TheCoolerMath.h"
+
+using json = nlohmann::ordered_json;
+
 namespace Engine
 {
 	namespace GamePlay
 	{
-		void Scene::Create(Core::Renderer* a_renderer)
+		void Scene::Create(Core::Renderer* a_renderer, const char* a_name)
 		{
+			m_name = a_name;
+
 			m_transformSystem = new TransformSystem;
 
 			m_meshRendererSystem = new MeshRendererSystem;
@@ -102,6 +104,8 @@ namespace Engine
 			t_object3->GetComponent<MeshComponent>()->SetTexture(t_texture);*/
 
 			//m_objs.push_back(t_object3);
+
+			Load();
 		}
 
 		void Scene::Update(Core::Renderer* a_renderer, const float a_deltaTime)
@@ -239,7 +243,58 @@ namespace Engine
 			}
 		}
 
-		json SerializeTransformComponent(const TransformComponent& a_transform)
+		void Scene::Save()
+		{
+			json t_scene;
+
+			for (const auto& t_obj : m_objs)
+			{
+				json t_objJson;
+				t_objJson["GameObject"] = t_obj->GetName();
+				t_objJson["TransformComponent"] = SerializeTransformComponent(*t_obj->GetComponent<TransformComponent>());
+				if (const RigidBodyComponent* t_rigidBodyComponent = t_obj->GetComponent<RigidBodyComponent>())
+				{
+					t_objJson["RigidBodyComponent"] = SerializeRigidBodyComponent(*t_rigidBodyComponent);
+				}
+				t_scene.push_back(t_objJson);
+			}
+
+			std::ofstream t_file(m_name + ".json");
+			if (t_file.is_open())
+			{
+				t_file << t_scene.dump(4);
+				t_file.close();
+			}
+		}
+
+		void Scene::Load()
+		{
+			std::ifstream t_file(m_name + ".json");
+			if (!t_file.is_open())
+			{
+				return;
+			}
+
+			json t_scene;
+			t_file >> t_scene;
+
+			for (const auto& t_entry : t_scene) {
+				std::string t_name = t_entry.at("GameObject").get<std::string>();
+				TransformData t_transform = (DeserializeTransformComponent(t_entry.at("TransformComponent")));
+
+				LOG_DEBUG(t_name);
+				LOG_DEBUG("Transform :");
+				LOG_DEBUG("pos :");
+				t_transform.mPos.Print();
+				LOG_DEBUG("rot :");
+				t_transform.mRot.Print();
+				LOG_DEBUG("scale :");
+				t_transform.mScale.Print();
+				LOG_DEBUG("parent : " + Core::Debugging::ToString(t_transform.mParentId));
+			}
+		}
+
+		nlohmann::ordered_json Scene::SerializeTransformComponent(const TransformComponent& a_transform)
 		{
 			json t_json;
 			constexpr std::hash<std::string_view> t_hash{};
@@ -310,7 +365,7 @@ namespace Engine
 			}
 
 			const meta::data t_parentField = t_transformDataType.data(t_hash("parent"));
-			if (t_parentField) 
+			if (t_parentField)
 			{
 				meta::any t_parentAny = t_parentField.get(t_transformDataHandle);
 				t_json["parent"] = t_parentAny.cast<int>();
@@ -319,7 +374,38 @@ namespace Engine
 			return t_json;
 		}
 
-		json SerializeRigidBodyComponent(const RigidBodyComponent& a_rigidBody)
+		TransformData Scene::DeserializeTransformComponent(const nlohmann::ordered_json& a_json)
+		{
+			TransformData t_outData;
+
+			const auto& t_pos = a_json.at("position");
+			t_outData.mPos = {
+				t_pos.at("x").get<float>(),
+				t_pos.at("y").get<float>(),
+				t_pos.at("z").get<float>()
+			};
+
+			const auto& t_rot = a_json.at("rotation");
+			t_outData.mRot = {
+				t_rot.at("x").get<float>(),
+				t_rot.at("y").get<float>(),
+				t_rot.at("z").get<float>(),
+				t_rot.at("w").get<float>()
+			};
+
+			const auto& t_scale = a_json.at("scale");
+			t_outData.mScale = {
+				t_scale.at("x").get<float>(),
+				t_scale.at("y").get<float>(),
+				t_scale.at("z").get<float>()
+			};
+
+			t_outData.mParentId = a_json.at("parent").get<int>();
+
+			return t_outData;
+		}
+
+		nlohmann::ordered_json Scene::SerializeRigidBodyComponent(const RigidBodyComponent& a_rigidBody)
 		{
 			json t_json;
 			constexpr std::hash<std::string_view> t_hash{};
@@ -460,30 +546,6 @@ namespace Engine
 			}
 
 			return t_json;
-		}
-
-		void Scene::Save()
-		{
-			json t_scene;
-
-			for (const auto& t_obj : m_objs)
-			{
-				json t_objJson;
-				t_objJson["GameObject"] = t_obj->GetName();
-				t_objJson["TransformComponent"] = SerializeTransformComponent(*t_obj->GetComponent<TransformComponent>());
-				if (const RigidBodyComponent* t_rigidBodyComponent = t_obj->GetComponent<RigidBodyComponent>())
-				{
-					t_objJson["RigidBodyComponent"] = SerializeRigidBodyComponent(*t_rigidBodyComponent);
-				}
-				t_scene.push_back(t_objJson);
-			}
-
-			std::ofstream t_file("scene.json");
-			if (t_file.is_open())
-			{
-				t_file << t_scene.dump(4);
-				t_file.close();
-			}
 		}
 
 		void Scene::TestFunc(RigidBodyComponent* a_rigidBodyComponent)
