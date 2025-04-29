@@ -275,7 +275,7 @@ namespace Engine
 				meta::any t_posAny = t_posField.get(t_transformDataHandle);
 				const meta::handle t_posHandle(t_posAny);
 
-				t_json["transform"]["position"] = {
+				t_json["position"] = {
 					{"x", t_posHandle.type().data(t_hash("x")).get(t_posHandle).cast<float>()},
 					{"y", t_posHandle.type().data(t_hash("y")).get(t_posHandle).cast<float>()},
 					{"z", t_posHandle.type().data(t_hash("z")).get(t_posHandle).cast<float>()}
@@ -288,7 +288,7 @@ namespace Engine
 				meta::any t_rotAny = t_rotField.get(t_transformDataHandle);
 				const meta::handle t_rotHandle(t_rotAny);
 
-				t_json["transform"]["rotation"] = {
+				t_json["rotation"] = {
 					{"x", t_rotHandle.type().data(t_hash("x")).get(t_rotHandle).cast<float>()},
 					{"y", t_rotHandle.type().data(t_hash("y")).get(t_rotHandle).cast<float>()},
 					{"z", t_rotHandle.type().data(t_hash("z")).get(t_rotHandle).cast<float>()},
@@ -302,7 +302,7 @@ namespace Engine
 				meta::any t_scaleAny = t_scaleField.get(t_transformDataHandle);
 				const meta::handle t_scaleHandle(t_scaleAny);
 
-				t_json["transform"]["scale"] = {
+				t_json["scale"] = {
 					{"x", t_scaleHandle.type().data(t_hash("x")).get(t_scaleHandle).cast<float>()},
 					{"y", t_scaleHandle.type().data(t_hash("y")).get(t_scaleHandle).cast<float>()},
 					{"z", t_scaleHandle.type().data(t_hash("z")).get(t_scaleHandle).cast<float>()}
@@ -313,7 +313,7 @@ namespace Engine
 			if (t_parentField) 
 			{
 				meta::any t_parentAny = t_parentField.get(t_transformDataHandle);
-				t_json["transform"]["parent"] = t_parentAny.cast<int>();
+				t_json["parent"] = t_parentAny.cast<int>();
 			}
 
 			return t_json;
@@ -353,21 +353,21 @@ namespace Engine
 			if (t_bodyTypeField)
 			{
 				meta::any t_bodyTypeAny = t_bodyTypeField.get(t_rigidBodyDataHandle);
-				t_json["rigid body"]["body type"] = t_bodyTypeAny.cast<int>();
+				t_json["body type"] = t_bodyTypeAny.cast<int>();
 			}
 
 			const meta::data t_layerField = t_rigidBodyDataType.data(t_hash("layer"));
 			if (t_layerField)
 			{
 				meta::any t_layerAny = t_layerField.get(t_rigidBodyDataHandle);
-				t_json["rigid body"]["layer"] = t_layerAny.cast<int>();
+				t_json["layer"] = t_layerAny.cast<int>();
 			}
 
 			const meta::data t_colliderTypeField = t_rigidBodyDataType.data(t_hash("collider type"));
 			if (t_colliderTypeField)
 			{
 				meta::any t_colliderTypeAny = t_colliderTypeField.get(t_rigidBodyDataHandle);
-				t_json["rigid body"]["collider type"] = t_colliderTypeAny.cast<int>();
+				t_json["collider type"] = t_colliderTypeAny.cast<int>();
 			}
 
 			const meta::data t_posField = t_rigidBodyDataType.data(t_hash("position"));
@@ -376,7 +376,7 @@ namespace Engine
 				meta::any t_posAny = t_posField.get(t_rigidBodyDataHandle);
 				const meta::handle t_posHandle(t_posAny);
 
-				t_json["rigid body"]["position"] = {
+				t_json["position"] = {
 					{"x", t_posHandle.type().data(t_hash("x")).get(t_posHandle).cast<float>()},
 					{"y", t_posHandle.type().data(t_hash("y")).get(t_posHandle).cast<float>()},
 					{"z", t_posHandle.type().data(t_hash("z")).get(t_posHandle).cast<float>()}
@@ -389,7 +389,7 @@ namespace Engine
 				meta::any t_scaleAny = t_scaleField.get(t_rigidBodyDataHandle);
 				const meta::handle t_scaleHandle(t_scaleAny);
 
-				t_json["rigid body"]["scale"] = {
+				t_json["scale"] = {
 					{"x", t_scaleHandle.type().data(t_hash("x")).get(t_scaleHandle).cast<float>()},
 					{"y", t_scaleHandle.type().data(t_hash("y")).get(t_scaleHandle).cast<float>()},
 					{"z", t_scaleHandle.type().data(t_hash("z")).get(t_scaleHandle).cast<float>()}
@@ -400,14 +400,14 @@ namespace Engine
 			if (t_radiusTypeField)
 			{
 				meta::any t_radiusTypeAny = t_radiusTypeField.get(t_rigidBodyDataHandle);
-				t_json["rigid body"]["radius"] = t_radiusTypeAny.cast<float>();
+				t_json["radius"] = t_radiusTypeAny.cast<float>();
 			}
 
 			const meta::data t_halfHeightTypeField = t_rigidBodyDataType.data(t_hash("half height"));
 			if (t_halfHeightTypeField)
 			{
 				meta::any t_halfHeightTypeAny = t_halfHeightTypeField.get(t_rigidBodyDataHandle);
-				t_json["rigid body"]["half height"] = t_halfHeightTypeAny.cast<float>();
+				t_json["half height"] = t_halfHeightTypeAny.cast<float>();
 			}
 
 			const meta::data t_rotField = t_rigidBodyDataType.data(t_hash("rotation"));
@@ -416,7 +416,7 @@ namespace Engine
 				meta::any t_rotAny = t_rotField.get(t_rigidBodyDataHandle);
 				const meta::handle t_rotHandle(t_rotAny);
 
-				t_json["rigid body"]["rotation"] = {
+				t_json["rotation"] = {
 					{"x", t_rotHandle.type().data(t_hash("x")).get(t_rotHandle).cast<float>()},
 					{"y", t_rotHandle.type().data(t_hash("y")).get(t_rotHandle).cast<float>()},
 					{"z", t_rotHandle.type().data(t_hash("z")).get(t_rotHandle).cast<float>()},
@@ -428,35 +428,35 @@ namespace Engine
 			if (t_massTypeField)
 			{
 				meta::any t_massTypeAny = t_massTypeField.get(t_rigidBodyDataHandle);
-				t_json["rigid body"]["mass"] = t_massTypeAny.cast<float>();
+				t_json["mass"] = t_massTypeAny.cast<float>();
 			}
 
 			const meta::data t_enableTypeField = t_rigidBodyDataType.data(t_hash("enable"));
 			if (t_enableTypeField)
 			{
 				meta::any t_enableTypeAny = t_enableTypeField.get(t_rigidBodyDataHandle);
-				t_json["rigid body"]["enable"] = t_enableTypeAny.cast<bool>();
+				t_json["enable"] = t_enableTypeAny.cast<bool>();
 			}
 
 			const meta::data t_lockRotXTypeField = t_rigidBodyDataType.data(t_hash("lock rotation X"));
 			if (t_lockRotXTypeField)
 			{
 				meta::any t_lockRotXTypeAny = t_lockRotXTypeField.get(t_rigidBodyDataHandle);
-				t_json["rigid body"]["lock rotation X"] = t_lockRotXTypeAny.cast<bool>();
+				t_json["lock rotation X"] = t_lockRotXTypeAny.cast<bool>();
 			}
 
 			const meta::data t_lockRotYTypeField = t_rigidBodyDataType.data(t_hash("lock rotation Y"));
 			if (t_lockRotYTypeField)
 			{
 				meta::any t_lockRotYTypeAny = t_lockRotYTypeField.get(t_rigidBodyDataHandle);
-				t_json["rigid body"]["lock rotation Y"] = t_lockRotYTypeAny.cast<bool>();
+				t_json["lock rotation Y"] = t_lockRotYTypeAny.cast<bool>();
 			}
 
 			const meta::data t_lockRotZTypeField = t_rigidBodyDataType.data(t_hash("lock rotation Z"));
 			if (t_lockRotZTypeField)
 			{
 				meta::any t_lockRotZTypeAny = t_lockRotZTypeField.get(t_rigidBodyDataHandle);
-				t_json["rigid body"]["lock rotation Z"] = t_lockRotZTypeAny.cast<bool>();
+				t_json["lock rotation Z"] = t_lockRotZTypeAny.cast<bool>();
 			}
 
 			return t_json;
