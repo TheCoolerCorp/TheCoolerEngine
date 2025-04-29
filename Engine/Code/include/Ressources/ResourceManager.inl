@@ -15,7 +15,7 @@ namespace Engine
 
 				if (m_resources.contains(a_path))
 				{
-					return m_resources.at(a_path);
+					return std::dynamic_pointer_cast<Type>(m_resources.at(a_path));
 				}
 
 				Ref<Type> t_resource = CreateRef<Type>();
@@ -36,7 +36,7 @@ namespace Engine
 				return nullptr;
 			}
 
-			return m_resources.at(a_path);
+			return std::dynamic_pointer_cast<Type>(m_resources.at(a_path));
 		}
 	}
 }
