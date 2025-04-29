@@ -301,6 +301,7 @@ namespace Engine
 				if (t_entry.contains("RigidBodyComponent")) 
 				{
 					t_rigidBody = DeserializeRigidBodyComponent(t_entry.at("RigidBodyComponent"));
+					t_hasRigidBody = true;
 				}
 
 				LOG_DEBUG(t_name);
