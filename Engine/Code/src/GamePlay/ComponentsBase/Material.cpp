@@ -1,17 +1,21 @@
 #include "GamePlay/ComponentsBase/Material.h"
 
+#include "GamePlay/ServiceLocator.h"
+#include "Ressources/ResourceManager.h"
+
 namespace Engine
 {
 	namespace GamePlay
 	{
-		void Material::SetAlbedo(Ref<Resource::Texture> a_albedoTexture)
+		void Material::SetAlbedo(const std::string& a_path, Core::Renderer* a_renderer)
 		{
-			m_textures[0] = a_albedoTexture;
+			Resource::ResourceManager* t_resourceManager = ServiceLocator::GetResourceManager();
 
-			if (!m_hasTextures.albdeo)
-			{
-				m_hasTextures.albdeo = true;
-			}
+			Ref<Resource::Texture> t_albedoTexture = t_resourceManager->CreateResource<Resource::Texture>(a_path);
+			t_albedoTexture->Load(a_renderer);
+
+			m_textures[0] = t_albedoTexture;
+			m_hasTextures.albdeo = true;
 		}
 
 		void Material::SetAlbedo(Math::vec3 a_albedoValue)
@@ -22,41 +26,35 @@ namespace Engine
 		void Material::RemoveAlbedo()
 		{
 			m_textures[0] = nullptr;
-
-			if (m_hasTextures.albdeo)
-			{
-				m_hasTextures.albdeo = false;
-			}
+			m_hasTextures.albdeo = false;
 		}
 
-		void Material::SetNormal(Ref<Resource::Texture> a_normalTexture)
+		void Material::SetNormal(const std::string& a_path, Core::Renderer* a_renderer)
 		{
-			m_textures[1] = a_normalTexture;
+			Resource::ResourceManager* t_resourceManager = ServiceLocator::GetResourceManager();
 
-			if (!m_hasTextures.normal)
-			{
-				m_hasTextures.normal = true;
-			}
+			Ref<Resource::Texture> t_normalTexture = t_resourceManager->CreateResource<Resource::Texture>(a_path);
+			t_normalTexture->Load(a_renderer);
+
+			m_textures[1] = t_normalTexture;
+			m_hasTextures.normal = true;
 		}
 
 		void Material::RemoveNormal()
 		{
 			m_textures[1] = nullptr;
-
-			if (m_hasTextures.normal)
-			{
-				m_hasTextures.normal = false;
-			}
+			m_hasTextures.normal = false;
 		}
 
-		void Material::SetMetallic(Ref<Resource::Texture> a_metallicTexture)
+		void Material::SetMetallic(const std::string& a_path, Core::Renderer* a_renderer)
 		{
-			m_textures[2] = a_metallicTexture;
+			Resource::ResourceManager* t_resourceManager = ServiceLocator::GetResourceManager();
 
-			if (!m_hasTextures.metallic)
-			{
-				m_hasTextures.metallic = true;
-			}
+			Ref<Resource::Texture> t_metallicTexture = t_resourceManager->CreateResource<Resource::Texture>(a_path);
+			t_metallicTexture->Load(a_renderer);
+
+			m_textures[2] = t_metallicTexture;
+			m_hasTextures.metallic = true;
 		}
 
 		void Material::SetMetallic(float a_metallicValue)
@@ -67,21 +65,18 @@ namespace Engine
 		void Material::RemoveMetallic()
 		{
 			m_textures[2] = nullptr;
-
-			if (m_hasTextures.metallic)
-			{
-				m_hasTextures.metallic = false;
-			}
+			m_hasTextures.metallic = false;
 		}
 
-		void Material::SetRoughness(Ref<Resource::Texture> a_roughnessTexture)
+		void Material::SetRoughness(const std::string& a_path, Core::Renderer* a_renderer)
 		{
-			m_textures[3] = a_roughnessTexture;
+			Resource::ResourceManager* t_resourceManager = ServiceLocator::GetResourceManager();
 
-			if (!m_hasTextures.roughness)
-			{
-				m_hasTextures.roughness = true;
-			}
+			Ref<Resource::Texture> t_roughnessTexture = t_resourceManager->CreateResource<Resource::Texture>(a_path);
+			t_roughnessTexture->Load(a_renderer);
+
+			m_textures[3] = t_roughnessTexture;
+			m_hasTextures.roughness = true;
 		}
 		void Material::SetRoughness(float a_roughnessValue)
 		{
@@ -91,21 +86,18 @@ namespace Engine
 		void Material::RemoveRoughness()
 		{
 			m_textures[3] = nullptr;
-
-			if (m_hasTextures.roughness)
-			{
-				m_hasTextures.roughness = false;
-			}
+			m_hasTextures.roughness = false;
 		}
 
-		void Material::SetAO(Ref<Resource::Texture> a_aoTexture)
+		void Material::SetAO(const std::string& a_path, Core::Renderer* a_renderer)
 		{
-			m_textures[4] = a_aoTexture;
+			Resource::ResourceManager* t_resourceManager = ServiceLocator::GetResourceManager();
 
-			if (!m_hasTextures.ao)
-			{
-				m_hasTextures.ao = true;
-			}
+			Ref<Resource::Texture> t_aoTexture = t_resourceManager->CreateResource<Resource::Texture>(a_path);
+			t_aoTexture->Load(a_renderer);
+
+			m_textures[4] = t_aoTexture;
+			m_hasTextures.ao = true;
 		}
 
 		void Material::SetAO(float a_aoValue)
@@ -116,11 +108,7 @@ namespace Engine
 		void Material::RemoveAO()
 		{
 			m_textures[4] = nullptr;
-
-			if (m_hasTextures.ao)
-			{
-				m_hasTextures.ao = false;
-			}
+			m_hasTextures.ao = false;
 		}
 	}
 }

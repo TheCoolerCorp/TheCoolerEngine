@@ -23,7 +23,7 @@ namespace Engine
 
 			ENGINE_API void Destroy() override;
 
-			ENGINE_API void SetMesh(Ref<Resource::Mesh> a_mesh);
+			ENGINE_API void SetMesh(const std::string& a_path, Core::Renderer* a_renderer);
 
 			ENGINE_API void SetMaterial(Ref<Material> a_material);
 

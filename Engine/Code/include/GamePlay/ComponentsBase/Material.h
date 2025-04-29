@@ -57,23 +57,23 @@ namespace Engine
 			void Destroy();
 
 
-			ENGINE_API void SetAlbedo(Ref<Resource::Texture> a_albedoTexture);
+			ENGINE_API void SetAlbedo(const std::string& a_path, Core::Renderer* a_renderer);
 			ENGINE_API void SetAlbedo(Math::vec3 a_albedoValue);
 			ENGINE_API void RemoveAlbedo();
 
 			/* If there is no normal texture, compute in shader base on mesh */
-			ENGINE_API void SetNormal(Ref<Resource::Texture> a_normalTexture);
+			ENGINE_API void SetNormal(const std::string& a_path, Core::Renderer* a_renderer);
 			ENGINE_API void RemoveNormal();
 
-			ENGINE_API void SetMetallic(Ref<Resource::Texture> a_metallicTexture);
+			ENGINE_API void SetMetallic(const std::string& a_path, Core::Renderer* a_renderer);
 			ENGINE_API void SetMetallic(float a_metallicValue);
 			ENGINE_API void RemoveMetallic();
 
-			ENGINE_API void SetRoughness(Ref<Resource::Texture> a_roughnessTexture);
+			ENGINE_API void SetRoughness(const std::string& a_path, Core::Renderer* a_renderer);
 			ENGINE_API void SetRoughness(float a_roughnessValue);
 			ENGINE_API void RemoveRoughness();
 
-			ENGINE_API void SetAO(Ref<Resource::Texture> a_aoTexture);
+			ENGINE_API void SetAO(const std::string& a_path, Core::Renderer* a_renderer);
 			ENGINE_API void SetAO(float a_aoValue);
 			ENGINE_API void RemoveAO();
 

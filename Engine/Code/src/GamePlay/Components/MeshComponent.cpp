@@ -24,10 +24,15 @@ namespace Engine
 			m_material = nullptr;
 		}
 
-		void MeshComponent::SetMesh(Ref<Resource::Mesh> a_mesh)
+		void MeshComponent::SetMesh(const std::string& a_path, Core::Renderer* a_renderer)
 		{
+			Resource::ResourceManager* t_resourceManager = ServiceLocator::GetResourceManager();
+
+			Ref<Resource::Mesh> t_mesh = t_resourceManager->CreateResource<Resource::Mesh>(a_path);
+			t_mesh->Load(a_renderer);
+
 			// Set the mesh to use.
-			m_mesh = std::move(a_mesh);
+			m_mesh = std::move(t_mesh);
 		}
 
 		void MeshComponent::SetMaterial(Ref<Material> a_material)

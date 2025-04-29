@@ -33,25 +33,20 @@ namespace Engine
 
 			m_mainCamera = new Camera(Math::vec3(0.f, 1.f, 0.f), Math::vec3(0.f, 0.f, 0.f),
 				Math::vec3(0.f, 1.f, 3.f), Math::ToRadians(70.f),
-				static_cast<float>(a_width) / static_cast<float>(a_height), 0.1f, 100.f, 10.f, 2.f);
+				static_cast<float>(a_width) / static_cast<float>(a_height), 0.1f, 100.f, 10.f, 20.f);
 			m_mainCamera->Create(a_renderer);
-
-			Ref<Resource::Mesh> t_mesh = t_resourceManager->CreateResource<Resource::Mesh>("Assets/Meshes/viking_room.obj");
-			Ref<Resource::Texture> t_texture = t_resourceManager->CreateResource<Resource::Texture>("Assets/Textures/viking_room.png");
-			t_mesh->Load(a_renderer);
-			t_texture->Load(a_renderer);
 
 			GameObject* t_object = new GameObject(Math::vec3(0.f, 0.f, 0.f), Math::vec3(0.f, Math::ToRadians(270.f), 0.f), Math::vec3(1.f));
 			t_object->AddComponent<MeshComponent>();
-			t_object->GetComponent<MeshComponent>()->SetMesh(t_mesh);
+			t_object->GetComponent<MeshComponent>()->SetMesh("Assets/Meshes/viking_room.obj", a_renderer);
 			t_object->GetComponent<MeshComponent>()->GetMaterial()->SetType(UNLIT);
-			t_object->GetComponent<MeshComponent>()->GetMaterial()->SetAlbedo(t_texture);
+			t_object->GetComponent<MeshComponent>()->GetMaterial()->SetAlbedo("Assets/Textures/viking_room.png", a_renderer);
 
 			GameObject* t_object2 = new GameObject(Math::vec3(5.f, 0.f, 0.f), Math::vec3(0.f, Math::ToRadians(270.f), 0.f), Math::vec3(1.f));
 			t_object2->AddComponent<MeshComponent>();
-			t_object2->GetComponent<MeshComponent>()->SetMesh(t_mesh);
+			t_object2->GetComponent<MeshComponent>()->SetMesh("Assets/Meshes/viking_room.obj", a_renderer);
 			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetType(LIT);
-			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetAlbedo(t_texture);
+			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetAlbedo("Assets/Textures/viking_room.png", a_renderer);
 
 			AddGameObject(t_object);
 			AddGameObject(t_object2);
