@@ -4,14 +4,18 @@
 add_library(stb INTERFACE)
 target_include_directories(stb INTERFACE "stb/")
 
+# meta
+add_library(meta INTERFACE)
+target_include_directories(meta INTERFACE "meta/src")
+
+# json
+add_subdirectory(json)
+
 # ASSIMP
 add_subdirectory(assimp)
 
 # GLFW
 add_subdirectory(glfw)
-
-# Refureku
-#add_subdirectory(Refureku/Refureku/Library)
 
 #Jolt
 set(PHYSICS_REPO_ROOT ${CMAKE_SOURCE_DIR}/libs/JoltPhysics)

@@ -12,14 +12,14 @@ namespace Engine
 {
 	namespace Physics
 	{
-		enum class BodyType
+		enum class BodyType : uint8_t
 		{
 			STATIC = 0,
 			KINEMATIC,
 			DYNAMIC
 		};
 
-		enum class CollisionLayer
+		enum class CollisionLayer : uint8_t
 		{
 			NON_MOVING = 0,
 			MOVING,
@@ -27,7 +27,7 @@ namespace Engine
 			DISABLED
 		};
 
-		enum class ColliderType
+		enum class ColliderType : uint8_t
 		{
 			BOX = 0,
 			SPHERE,
@@ -37,9 +37,9 @@ namespace Engine
 		class RigidBody
 		{
 		public:
-			ENGINE_API void CreateBoxBody(BodyType a_type, CollisionLayer a_layer, Math::vec3 a_position, Math::vec3 a_scale, Math::quat a_rotation, bool a_enable);
-			ENGINE_API void CreateSphereBody(BodyType a_type, CollisionLayer a_layer, Math::vec3 a_position, float a_radius, Math::quat a_rotation, bool a_enable);
-			ENGINE_API void CreateCapsuleBody(BodyType a_type, CollisionLayer a_layer, Math::vec3 a_position, float a_halfHeight, float a_radius, Math::quat a_rotation, bool a_enable);
+			ENGINE_API void CreateBoxBody(BodyType a_type, CollisionLayer a_layer, Math::vec3 a_position, Math::vec3 a_scale, Math::quat a_rotation, float a_mass, bool a_enable);
+			ENGINE_API void CreateSphereBody(BodyType a_type, CollisionLayer a_layer, Math::vec3 a_position, float a_radius, Math::quat a_rotation, float a_mass, bool a_enable);
+			ENGINE_API void CreateCapsuleBody(BodyType a_type, CollisionLayer a_layer, Math::vec3 a_position, float a_halfHeight, float a_radius, Math::quat a_rotation, float a_mass, bool a_enable);
 
 			ENGINE_API void SetActive(bool a_enable);
 			ENGINE_API void SetScale(Math::vec3 a_scale);
@@ -51,6 +51,9 @@ namespace Engine
 			ENGINE_API void UnlockRotation(const char a_axis);
 
 			ENGINE_API [[nodiscard]] bool IsTrigger() const { return m_body->IsSensor(); }
+			ENGINE_API [[nodiscard]] bool IsRotLockedX() const;
+			ENGINE_API [[nodiscard]] bool IsRotLockedY() const;
+			ENGINE_API [[nodiscard]] bool IsRotLockedZ() const;
 			ENGINE_API [[nodiscard]] JPH::BodyID GetBodyID() const;
 			ENGINE_API [[nodiscard]] JPH::Body* GetBody() const { return m_body; }
 			ENGINE_API [[nodiscard]] bool IsActive() const { return m_isActive; }

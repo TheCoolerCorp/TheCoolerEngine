@@ -37,6 +37,7 @@ namespace Editor
 			}
 
 			m_logFile << " " << a_message << '\n';
+			m_logFile.flush();
 		}
 
 		void TCLogger::AddLog(const std::string& a_message, const LogLevel a_logLevel, const char* a_file,

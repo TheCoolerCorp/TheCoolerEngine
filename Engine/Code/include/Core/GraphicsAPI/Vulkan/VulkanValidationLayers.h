@@ -13,7 +13,7 @@ namespace Engine
 	{
 		namespace GraphicsAPI
 		{
-			const std::vector<const char*> VALIDATION_LAYERS = {"VK_LAYER_KHRONOS_validation"};
+			const std::vector<const char*> VALIDATION_LAYERS = {"VK_LAYER_KHRONOS_validation", "VK_LAYER_LUNARG_monitor"};
 
 			class VulkanValidationLayers : public RHI::IValidationLayers
 			{

@@ -23,6 +23,8 @@ namespace Editor
 	{
 		void Application::Create(const int a_width, const int a_height)
 		{
+			RegisterTypes();
+
 			GraphicsAPI::VulkanRenderPassManager::AddFlag(GraphicsAPI::FLAG_VK_RHI_OVERRIDE_DEFAULT_RENDERPASS);
 
 			m_mainWindow = new Window::GLwindow();
@@ -46,7 +48,7 @@ namespace Editor
 			m_camera->Create(m_renderer);
 
 			m_currentScene = new Scene();
-			m_currentScene->Create(m_renderer, a_width, a_height);
+			m_currentScene->Create(m_renderer, "MainScene", a_width, a_height);
 
 			t_imguiLayer->AddWindow(new Ui::SceneGraphUiWindow(m_renderer, t_imguiLayer, m_currentScene));
 			t_imguiLayer->AddWindow(new Ui::InspectorUiWindow(m_renderer, t_imguiLayer));
@@ -152,6 +154,12 @@ namespace Editor
 				delete layer;
 			}
 			m_layers.clear();
+		}
+
+		void Application::RegisterTypes()
+		{
+			Engine::GamePlay::TransformComponent::Register();
+			Engine::GamePlay::RigidBodyComponent::Register();
 		}
 	}
 }

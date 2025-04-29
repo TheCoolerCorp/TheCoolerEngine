@@ -16,17 +16,35 @@ namespace Engine
 {
 	namespace GamePlay
 	{
+		struct RigidBodyData
+		{
+			int mBodyType;
+			int mLayer;
+			int mColliderType;
+			Math::vec3 mPos;
+			Math::vec3 mScale;
+			float mRadius;
+			float mHalfHeight;
+			Math::quat mRot;
+			float mMass;
+			bool mEnable;
+			bool mLockRotX;
+			bool mLockRotY;
+			bool mLockRotZ;
+		};
+
 		class RigidBodyComponent : public Component
 		{
 		public:
 			RigidBodyComponent() = default;
 			~RigidBodyComponent() override = default;
 
+			ENGINE_API static void Register();
 			ENGINE_API ComponentType Create(int& a_outId) override;
 
-			ENGINE_API void CreateBoxRigidBody(Physics::BodyType a_type, Physics::CollisionLayer a_layer, Math::vec3 a_position, Math::vec3 a_scale, Math::quat a_rotation, const Math::Transform& a_transform, bool a_enable = true);
-			ENGINE_API void CreateSphereRigidBody(Physics::BodyType a_type, Physics::CollisionLayer a_layer, Math::vec3 a_position, float a_radius, Math::quat a_rotation, const Math::Transform& a_transform, bool a_enable = true);
-			ENGINE_API void CreateCapsuleRigidBody(Physics::BodyType a_type, Physics::CollisionLayer a_layer, Math::vec3 a_position, float a_halfHeight, float a_radius, Math::quat a_rotation, const Math::Transform& a_transform, bool a_enable = true);
+			ENGINE_API void CreateBoxRigidBody(Physics::BodyType a_type, Physics::CollisionLayer a_layer, Math::vec3 a_position, Math::vec3 a_scale, Math::quat a_rotation, const Math::Transform& a_transform, float a_mass = 1.f, bool a_enable = true);
+			ENGINE_API void CreateSphereRigidBody(Physics::BodyType a_type, Physics::CollisionLayer a_layer, Math::vec3 a_position, float a_radius, Math::quat a_rotation, const Math::Transform& a_transform, float a_mass = 1.f, bool a_enable = true);
+			ENGINE_API void CreateCapsuleRigidBody(Physics::BodyType a_type, Physics::CollisionLayer a_layer, Math::vec3 a_position, float a_halfHeight, float a_radius, Math::quat a_rotation, const Math::Transform& a_transform, float a_mass = 1.f, bool a_enable = true);
 
 			ENGINE_API void UpdateFromTransform(const Math::Transform* a_transform, bool a_enable = true);
 			ENGINE_API void UpdateObjectTransform(Math::Transform* a_transform);
@@ -42,7 +60,9 @@ namespace Engine
 
 			ENGINE_API void SetLinearVelocity(Math::vec3 a_velocity) const;
 			ENGINE_API void AddForce(Math::vec3 a_force) const;
-			ENGINE_API void AddImpulse(Math::vec3 a_force) const;
+			ENGINE_API void AddImpulse(Math::vec3 a_impulse) const;
+
+			ENGINE_API void SetFromData(const RigidBodyData& a_data) {}
 
 			ENGINE_API void Destroy();
 
@@ -65,6 +85,7 @@ namespace Engine
 			ENGINE_API [[nodiscard]] Math::quat GetRot() const { return m_bodyRot; }
 			ENGINE_API [[nodiscard]] bool GetDebug() const { return m_debug; }
 			ENGINE_API [[nodiscard]] float GetMass() const { return m_rigidBody->GetMass(); }
+			ENGINE_API [[nodiscard]] RigidBodyData GetRigidBodyData() const;
 
 			ENGINE_API static ComponentType GetType(bool a_colliderMesh = false) { return ComponentType::RIGIDBODY; }
 			ENGINE_API static RigidBodyComponent* GetComponent(uint32_t a_id);

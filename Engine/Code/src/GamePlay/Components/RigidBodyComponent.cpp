@@ -1,6 +1,8 @@
-#include <utility>
-
 #include "GamePlay/Components/RigidBodyComponent.h"
+
+#include <utility>
+#include <meta/factory.hpp>
+#include <meta/meta.hpp>
 
 #include "Gameplay/ServiceLocator.h"
 #include "Core/Logger/Logger.h"
@@ -9,6 +11,29 @@ namespace Engine
 {
 	namespace GamePlay
 	{
+		void RigidBodyComponent::Register()
+		{
+			constexpr std::hash<std::string_view> t_hash{};
+
+			meta::reflect<RigidBodyData>(t_hash("RigidBodyData"))
+				.data<&RigidBodyData::mBodyType>(t_hash("body type"))
+				.data<&RigidBodyData::mLayer>(t_hash("layer"))
+				.data<&RigidBodyData::mColliderType>(t_hash("collider type"))
+				.data<&RigidBodyData::mPos>(t_hash("position"))
+				.data<&RigidBodyData::mScale>(t_hash("scale"))
+				.data<&RigidBodyData::mRadius>(t_hash("radius"))
+				.data<&RigidBodyData::mHalfHeight>(t_hash("half height"))
+				.data<&RigidBodyData::mRot>(t_hash("rotation"))
+				.data<&RigidBodyData::mMass>(t_hash("mass"))
+				.data<&RigidBodyData::mEnable>(t_hash("enable"))
+				.data<&RigidBodyData::mLockRotX>(t_hash("lock rotation X"))
+				.data<&RigidBodyData::mLockRotY>(t_hash("lock rotation Y"))
+				.data<&RigidBodyData::mLockRotZ>(t_hash("lock rotation Z"));
+			
+			meta::reflect<RigidBodyComponent>(t_hash("RigidBodyComponent"))
+				.data<&RigidBodyComponent::SetFromData, &RigidBodyComponent::GetRigidBodyData>(t_hash("RigidBody")); 
+		}
+
 		ComponentType RigidBodyComponent::Create(int& a_outId)
 		{
 			m_rigidBody = new Physics::RigidBody;
@@ -17,7 +42,7 @@ namespace Engine
 		}
 
 		void RigidBodyComponent::CreateBoxRigidBody(Physics::BodyType a_type, Physics::CollisionLayer a_layer, Math::vec3 a_position, Math::vec3 a_scale,
-		                                            Math::quat a_rotation, const Math::Transform& a_transform, const bool a_enable)
+		                                            Math::quat a_rotation, const Math::Transform& a_transform, float a_mass, const bool a_enable)
 		{
 			m_localPos = a_position;
 			m_localRot = a_rotation;
@@ -26,11 +51,11 @@ namespace Engine
 			m_bodyPos = t_pos;
 			m_bodyRot = t_rot;
 
-			m_rigidBody->CreateBoxBody(a_type, a_layer, t_pos, a_scale, t_rot, a_enable);
+			m_rigidBody->CreateBoxBody(a_type, a_layer, t_pos, a_scale, t_rot, a_mass, a_enable);
 		}
 
 		void RigidBodyComponent::CreateSphereRigidBody(Physics::BodyType a_type, Physics::CollisionLayer a_layer,
-			Math::vec3 a_position, float a_radius, Math::quat a_rotation, const Math::Transform& a_transform, bool a_enable)
+			Math::vec3 a_position, float a_radius, Math::quat a_rotation, const Math::Transform& a_transform, float a_mass, bool a_enable)
 		{
 			m_localPos = a_position;
 			m_localRot = a_rotation;
@@ -39,11 +64,11 @@ namespace Engine
 			m_bodyPos = t_pos;
 			m_bodyRot = t_rot;
 
-			m_rigidBody->CreateSphereBody(a_type, a_layer, t_pos, a_radius, t_rot, a_enable);
+			m_rigidBody->CreateSphereBody(a_type, a_layer, t_pos, a_radius, t_rot, a_mass, a_enable);
 		}
 
 		void RigidBodyComponent::CreateCapsuleRigidBody(Physics::BodyType a_type, Physics::CollisionLayer a_layer,
-			Math::vec3 a_position, float a_halfHeight, float a_radius, Math::quat a_rotation, const Math::Transform& a_transform, bool a_enable)
+			Math::vec3 a_position, float a_halfHeight, float a_radius, Math::quat a_rotation, const Math::Transform& a_transform, float a_mass, bool a_enable)
 		{
 			m_localPos = a_position;
 			m_localRot = a_rotation;
@@ -52,13 +77,14 @@ namespace Engine
 			m_bodyPos = t_pos;
 			m_bodyRot = t_rot;
 
-			m_rigidBody->CreateCapsuleBody(a_type, a_layer, t_pos, a_halfHeight, a_radius, t_rot, a_enable);
+			m_rigidBody->CreateCapsuleBody(a_type, a_layer, t_pos, a_halfHeight, a_radius, t_rot, a_mass, a_enable);
 		}
 
 		void RigidBodyComponent::UpdateFromTransform(const Math::Transform* a_transform, const bool a_enable)
 		{
 			JPH::BodyInterface* t_bodyInterface = ServiceLocator::GetPhysicsSystem()->GetBodyInterface();
 			const JPH::EActivation t_activation = a_enable ? JPH::EActivation::Activate : JPH::EActivation::DontActivate;
+			SetActive(a_enable);
 			const JPH::BodyID t_bodyID = m_rigidBody->GetBodyID();
 			const Math::vec3 t_worldPos = a_transform->GetGlobalPosition() + (a_transform->GetGlobalRotation() * m_localPos);
 			const Math::quat t_worldRot = Math::quat::Normalize(a_transform->GetGlobalRotation() * m_localRot);
@@ -214,9 +240,9 @@ namespace Engine
 			ServiceLocator::GetPhysicsSystem()->EnqueueAddForce(m_rigidBody->GetBodyID(), a_force);
 		}
 
-		void RigidBodyComponent::AddImpulse(Math::vec3 a_force) const
+		void RigidBodyComponent::AddImpulse(Math::vec3 a_impulse) const
 		{
-			
+			ServiceLocator::GetPhysicsSystem()->EnqueueAddImpulse(m_rigidBody->GetBodyID(), a_impulse);
 		}
 
 		void RigidBodyComponent::Destroy()
@@ -231,6 +257,7 @@ namespace Engine
 		{
 			JPH::BodyInterface* t_bodyInterface = ServiceLocator::GetPhysicsSystem()->GetBodyInterface();
 			const JPH::EActivation t_activation = a_enable ? JPH::EActivation::Activate : JPH::EActivation::DontActivate;
+			SetActive(a_enable);
 
 			t_bodyInterface->SetPosition(m_rigidBody->GetBodyID(), { a_pos.x, a_pos.y, a_pos.z }, t_activation);
 		}
@@ -249,6 +276,7 @@ namespace Engine
 			t_newRot = t_newRot.Normalized();
 
 			const JPH::EActivation t_activation = a_enable ? JPH::EActivation::Activate : JPH::EActivation::DontActivate;
+			SetActive(a_enable);
 			t_bodyInterface->SetRotation(t_bodyID, t_newRot, t_activation);
 
 			m_bodyRot = Math::quat(t_newRot.GetX(), t_newRot.GetY(), t_newRot.GetZ(), t_newRot.GetW());
@@ -273,6 +301,27 @@ namespace Engine
 		void RigidBodyComponent::UnlockRotation(const char a_axis) const
 		{
 			m_rigidBody->UnlockRotation(a_axis);
+		}
+
+		RigidBodyData RigidBodyComponent::GetRigidBodyData() const
+		{
+			const RigidBodyData t_data = {
+				.mBodyType= static_cast<int>(m_rigidBody->GetBodyType()),
+				.mLayer= static_cast<int>(m_rigidBody->GetLayer()),
+				.mColliderType= static_cast<int>(m_rigidBody->GetColliderType()),
+				.mPos= m_localPos,
+				.mScale= m_rigidBody->GetScale(),
+				.mRadius= m_rigidBody->GetRadius(),
+				.mHalfHeight= m_rigidBody->GetHalfHeight(),
+				.mRot= m_localRot,
+				.mMass= m_rigidBody->GetMass(),
+				.mEnable= m_rigidBody->IsActive(),
+				.mLockRotX= m_rigidBody->IsRotLockedX(),
+				.mLockRotY= m_rigidBody->IsRotLockedY(),
+				.mLockRotZ = m_rigidBody->IsRotLockedZ(),
+			};
+
+			return t_data;
 		}
 
 		RigidBodyComponent* RigidBodyComponent::GetComponent(const uint32_t a_id)
