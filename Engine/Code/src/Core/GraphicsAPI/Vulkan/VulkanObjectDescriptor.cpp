@@ -123,7 +123,6 @@ namespace Engine
 					uniform.dstSet = m_sets[i];
 					uniform.dstBinding = a_dstBinding;
 					uniform.dstArrayElement = 0;
-					uniform.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
 					uniform.descriptorCount = a_descriptorCount;
 					uniform.pBufferInfo = &t_bufferInfo;
 

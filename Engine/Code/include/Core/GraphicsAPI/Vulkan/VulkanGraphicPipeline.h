@@ -14,7 +14,7 @@ namespace Engine
 		{
 			#define COMMON std::string("common")
 			#define PER std::string("per")
-			#define LIGHT std::string("light")
+			#define ULIGHT std::string("light")
 
 			enum SetLayoutType : int
 			{

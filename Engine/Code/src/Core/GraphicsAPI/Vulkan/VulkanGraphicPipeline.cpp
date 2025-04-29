@@ -65,7 +65,7 @@ namespace Engine
 				inputAssembly.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
 				inputAssembly.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
 				inputAssembly.primitiveRestartEnable = VK_FALSE;
-
+				
 				VkPipelineViewportStateCreateInfo viewportState{};
 				viewportState.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
 				viewportState.viewportCount = 1;
@@ -116,8 +116,8 @@ namespace Engine
 
 				std::vector<VkDynamicState> dynamicStates =
 				{
-				VK_DYNAMIC_STATE_VIEWPORT,
-				VK_DYNAMIC_STATE_SCISSOR
+					VK_DYNAMIC_STATE_VIEWPORT,
+					VK_DYNAMIC_STATE_SCISSOR
 				};
 
 				VkPipelineDynamicStateCreateInfo dynamicState {};
@@ -326,7 +326,7 @@ namespace Engine
 				{
 					return Per;
 				}
-				else if (a_string.find(LIGHT) != std::string::npos)
+				else if (a_string.find(ULIGHT) != std::string::npos)
 				{
 					return Light;
 				}

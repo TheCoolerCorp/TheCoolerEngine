@@ -16,7 +16,7 @@ namespace Engine
 			TRANSFORM = 0,
 			MESH = 1,
 			MATERIAL = 2,
-			LIGHT = 3
+			JESUISUNGROSPD = 3
 		};
 
 		class Component
