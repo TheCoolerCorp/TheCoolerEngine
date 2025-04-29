@@ -44,6 +44,7 @@ namespace Editor
 			Engine::Core::Renderer* m_renderer = nullptr;
 
 			Engine::GamePlay::Camera* m_camera = nullptr;
+			Engine::Resource::ResourceManager* m_resourceManager = nullptr;
 
 			Engine::GamePlay::Scene* m_currentScene;
 			std::vector<Engine::GamePlay::Scene*> m_scenes;

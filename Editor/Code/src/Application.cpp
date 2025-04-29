@@ -47,6 +47,10 @@ namespace Editor
 			                                        static_cast<float>(a_width) / static_cast<float>(a_height), 0.1f, 100.f, 10.f, 20.f);
 			m_camera->Create(m_renderer);
 
+			m_resourceManager = new Resource::ResourceManager;
+
+			ServiceLocator::ProvideResourceManager(m_resourceManager);
+
 			m_currentScene = new Scene();
 			m_currentScene->Create(m_renderer, "MainScene", a_width, a_height);
 
@@ -113,6 +117,9 @@ namespace Editor
 
 			m_currentScene->Destroy(m_renderer);
 			delete m_currentScene;
+
+			m_resourceManager->DestroyAll(m_renderer);
+			delete m_resourceManager;
 
 			m_renderer->Destroy();
 			delete m_renderer;

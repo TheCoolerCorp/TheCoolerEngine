@@ -53,7 +53,6 @@ namespace Engine
 			TransformSystem* m_transformSystem = nullptr;
 			MeshRendererSystem* m_meshRendererSystem = nullptr;
 			PhysicsSystem* m_physicsSystem = nullptr;
-			Resource::ResourceManager* m_resourceManager = nullptr;
 		};
 	}	
 }

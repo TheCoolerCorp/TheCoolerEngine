@@ -15,7 +15,7 @@ namespace Engine
 		class ServiceLocator
 		{
 		public:
-			static void ProvideResourceManager(Resource::ResourceManager* a_resourceManager);
+			ENGINE_API static void ProvideResourceManager(Resource::ResourceManager* a_resourceManager);
 			static void ProvideTransformSystem(TransformSystem* a_transformSystem);
 			static void ProvideRendererSystem(MeshRendererSystem* a_meshRendererSystem);
 			static void ProvidePhysicsSystem(PhysicsSystem* a_physicsSystem);

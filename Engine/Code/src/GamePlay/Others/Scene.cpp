@@ -26,9 +26,7 @@ namespace Engine
 			m_physicsSystem = new PhysicsSystem;
 			m_physicsSystem->Create();
 
-			m_resourceManager = new Resource::ResourceManager;
-
-			ServiceLocator::ProvideResourceManager(m_resourceManager);
+			Resource::ResourceManager* t_resourceManager = ServiceLocator::GetResourceManager();
 			ServiceLocator::ProvideTransformSystem(m_transformSystem);
 			ServiceLocator::ProvideRendererSystem(m_meshRendererSystem);
 			ServiceLocator::ProvidePhysicsSystem(m_physicsSystem);
@@ -38,8 +36,8 @@ namespace Engine
 				static_cast<float>(a_width) / static_cast<float>(a_height), 0.1f, 100.f, 10.f, 2.f);
 			m_mainCamera->Create(a_renderer);
 
-			Ref<Resource::Mesh> t_mesh = m_resourceManager->CreateResource<Resource::Mesh>("Assets/Meshes/viking_room.obj");
-			Ref<Resource::Texture> t_texture = m_resourceManager->CreateResource<Resource::Texture>("Assets/Textures/viking_room.png");
+			Ref<Resource::Mesh> t_mesh = t_resourceManager->CreateResource<Resource::Mesh>("Assets/Meshes/viking_room.obj");
+			Ref<Resource::Texture> t_texture = t_resourceManager->CreateResource<Resource::Texture>("Assets/Textures/viking_room.png");
 			t_mesh->Load(a_renderer);
 			t_texture->Load(a_renderer);
 
@@ -64,11 +62,6 @@ namespace Engine
 		void Scene::Update(Core::Renderer* a_renderer, Core::Window::IWindow* a_window, Core::Window::IInputHandler* a_inputHandler, float a_deltatime)
 		{
 			m_objs[0]->GetComponent<TransformComponent>()->GetTransform()->Rotate(Math::quat(Math::vec3(0.01f * a_deltatime, 0.f,0.f)));
-			//m_objs[1]->GetComponent<TransformComponent>()->GetTransform()->SetScale(Math::vec3(0.05f));
-			//m_objs[1]->GetComponent<TransformComponent>()->GetTransform()->SetPosition(Math::vec3(5.f, 0.f, 0.f));
-			//m_objs[1]->GetComponent<TransformComponent>()->SetParent(m_objs[0]->GetComponentID<TransformComponent>());
-			//m_objs[2]->GetComponent<TransformComponent>()->SetParent(m_objs[1]->GetComponentID<TransformComponent>());
-			//m_objs[2]->GetComponent<TransformComponent>()->GetTransform()->Rotate(Math::vec3(0.f, 0.05f, 0.f));
 			m_transformSystem->Update();
 
 			std::vector<std::pair<int, Math::mat4>> t_syncro;
@@ -213,8 +206,6 @@ namespace Engine
 			delete m_physicsSystem;
 			m_physicsSystem = nullptr;
 
-			m_resourceManager->DestroyAll(a_renderer);
-			delete m_resourceManager;
 			m_mainCamera->Destroy(a_renderer);
 			delete m_mainCamera;
 		}

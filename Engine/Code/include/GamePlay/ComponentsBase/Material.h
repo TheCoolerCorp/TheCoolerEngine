@@ -90,7 +90,7 @@ namespace Engine
 			ENGINE_API Ref<Resource::Texture> GetRoughness() { return m_textures[3]; }
 
 			ENGINE_API bool HasAO() { return m_hasTextures.ao; }
-			ENGINE_API Ref<Resource::Texture> GetAO() { return m_textures[3]; }
+			ENGINE_API Ref<Resource::Texture> GetAO() { return m_textures[4]; }
 
 			void SetType(MaterialType a_type) { m_type = a_type; }
 			MaterialType GetType() { return m_type; }
