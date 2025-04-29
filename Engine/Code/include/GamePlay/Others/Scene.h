@@ -36,6 +36,7 @@ namespace Engine
 			static nlohmann::ordered_json SerializeTransformComponent(const TransformComponent& a_transform);
 			static TransformData DeserializeTransformComponent(const nlohmann::ordered_json& a_json);
 			static nlohmann::ordered_json SerializeRigidBodyComponent(const RigidBodyComponent& a_rigidBody);
+			static RigidBodyData DeserializeRigidBodyComponent(const nlohmann::ordered_json& a_json);
 
 			std::vector<GameObject*> m_objs;
 			std::vector<int> m_availableIds;
