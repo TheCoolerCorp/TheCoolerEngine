@@ -376,7 +376,7 @@ namespace Engine
 				meta::any t_posAny = t_posField.get(t_rigidBodyDataHandle);
 				const meta::handle t_posHandle(t_posAny);
 
-				t_json["transform"]["position"] = {
+				t_json["rigid body"]["position"] = {
 					{"x", t_posHandle.type().data(t_hash("x")).get(t_posHandle).cast<float>()},
 					{"y", t_posHandle.type().data(t_hash("y")).get(t_posHandle).cast<float>()},
 					{"z", t_posHandle.type().data(t_hash("z")).get(t_posHandle).cast<float>()}
@@ -389,7 +389,7 @@ namespace Engine
 				meta::any t_scaleAny = t_scaleField.get(t_rigidBodyDataHandle);
 				const meta::handle t_scaleHandle(t_scaleAny);
 
-				t_json["transform"]["scale"] = {
+				t_json["rigid body"]["scale"] = {
 					{"x", t_scaleHandle.type().data(t_hash("x")).get(t_scaleHandle).cast<float>()},
 					{"y", t_scaleHandle.type().data(t_hash("y")).get(t_scaleHandle).cast<float>()},
 					{"z", t_scaleHandle.type().data(t_hash("z")).get(t_scaleHandle).cast<float>()}
