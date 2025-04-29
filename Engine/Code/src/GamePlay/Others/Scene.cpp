@@ -284,7 +284,6 @@ namespace Engine
 				RigidBodyData t_rigidBody = DeserializeRigidBodyComponent(t_entry.at("RigidBodyComponent"));
 
 				LOG_DEBUG(t_name);
-				std::cout << '/n';
 
 				LOG_DEBUG("Transform :");
 				LOG_DEBUG("pos :");
@@ -294,7 +293,6 @@ namespace Engine
 				LOG_DEBUG("scale :");
 				t_transform.mScale.Print();
 				LOG_DEBUG("parent : " + Core::Debugging::ToString(t_transform.mParentId));
-				std::cout << '/n';
 
 				LOG_DEBUG("RigidBody :");
 				LOG_DEBUG("body type :");
@@ -323,10 +321,6 @@ namespace Engine
 				LOG_DEBUG(Core::Debugging::ToString(t_rigidBody.mLockRotY));
 				LOG_DEBUG("lock rotation Z :");
 				LOG_DEBUG(Core::Debugging::ToString(t_rigidBody.mLockRotZ));
-
-				std::cout << '/n';
-				std::cout << '/n';
-				std::cout << '/n';
 			}
 		}
 
