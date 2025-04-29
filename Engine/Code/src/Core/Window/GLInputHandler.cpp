@@ -6,8 +6,8 @@ namespace Engine
 	{
 		namespace Window
 		{
-			std::vector<int>GLInputHandler::m_currentKeyStatus(400, 0);
-			std::vector<int>GLInputHandler::m_currentMouseButtonStatus(50, 0);
+			std::vector<int>GLInputHandler::m_currentKeyStatus(349, 0);
+			std::vector<int>GLInputHandler::m_currentMouseButtonStatus(12, 0);
 			Math::vec2 GLInputHandler::m_cursorPosition = Math::vec2();
 
 			void GLInputHandler::Create(IWindow* a_window)

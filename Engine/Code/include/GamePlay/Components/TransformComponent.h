@@ -21,14 +21,13 @@ namespace Engine
 		class TransformComponent : public Component
 		{
 		public:
-			TransformComponent() = default;
-			~TransformComponent() override = default;
+			ENGINE_API TransformComponent() = default;
+			ENGINE_API ~TransformComponent() override = default;
 
 			ENGINE_API static void Register();
+			ENGINE_API ComponentType Create(int& a_outId) override;
 
-			ENGINE_API ComponentType Create(int& a_outId, bool a_colliderMesh = false);
-
-			ENGINE_API void Destroy();
+			ENGINE_API void Destroy() override;
 
 			ENGINE_API void Set(const TransformData& a_data);
 

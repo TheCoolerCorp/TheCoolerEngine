@@ -120,6 +120,87 @@ namespace Engine
 			}
 		}
 
+		void RigidBody::SetScale(Math::vec3 a_scale)
+		{
+			if (m_colliderType != ColliderType::BOX)
+			{
+				LOG_ERROR("RigidBody::SetScale : Cannot set scale on non-box collider!");
+				return;
+			}
+			if (a_scale.x < 0.f || a_scale.y < 0.f || a_scale.z < 0.f)
+			{
+				LOG_ERROR("RigidBody::SetScale : Scale cannot be negative!");
+				return;
+			}
+
+			m_scale = a_scale;
+			JPH::BodyInterface* t_bodyInterface = GamePlay::ServiceLocator::GetPhysicsSystem()->GetBodyInterface();
+
+			t_bodyInterface->DeactivateBody(m_body->GetID());
+
+			const JPH::Vec3 t_halfExtent = { a_scale.x * 0.5f, a_scale.y * 0.5f, a_scale.z * 0.5f };
+			JPH::Shape* newShape = new JPH::BoxShape(t_halfExtent);
+
+			t_bodyInterface->SetShape(m_body->GetID(), newShape, true, JPH::EActivation::Activate); // 'true' means update mass properties
+
+		}
+
+		void RigidBody::SetRadius(float a_radius)
+		{
+			if (m_colliderType == ColliderType::BOX)
+			{
+				LOG_ERROR("RigidBody::SetRadius : Cannot set radius on box collider!");
+				return;
+			}
+			if (a_radius < 0.f)
+			{
+				LOG_ERROR("RigidBody::SetRadius : Radius cannot be negative!");
+				return;
+			}
+			m_radius = a_radius;
+
+			JPH::BodyInterface* t_bodyInterface = GamePlay::ServiceLocator::GetPhysicsSystem()->GetBodyInterface();
+
+			t_bodyInterface->DeactivateBody(m_body->GetID());
+			JPH::Shape* newShape;
+			switch (m_colliderType)
+			{
+			case ColliderType::BOX:
+				break;
+			case ColliderType::SPHERE:
+				newShape = new JPH::SphereShape(m_radius);
+				break;
+			case ColliderType::CAPSULE:
+				newShape = new JPH::CapsuleShape(m_halfHeight, m_radius);
+				break;
+			}
+			t_bodyInterface->SetShape(m_body->GetID(), newShape, true, JPH::EActivation::Activate); // 'true' means update mass properties
+
+		}
+
+		void RigidBody::SetHalfHeight(float a_halfHeight)
+		{
+			if (m_colliderType != ColliderType::CAPSULE)
+			{
+				LOG_ERROR("RigidBody::SetRadius : Cannot set halfheight on non-capsule collider!");
+				return;
+			}
+			if (a_halfHeight < 0.f)
+			{
+				LOG_ERROR("RigidBody::SetHalfHeight : Halfheight cannot be negative!");
+				return;
+			}
+			m_halfHeight = a_halfHeight;
+
+			JPH::BodyInterface* t_bodyInterface = GamePlay::ServiceLocator::GetPhysicsSystem()->GetBodyInterface();
+			
+			t_bodyInterface->DeactivateBody(m_body->GetID());
+
+            JPH::Shape* newShape =  new JPH::CapsuleShape(m_halfHeight, m_radius);
+
+			t_bodyInterface->SetShape(m_body->GetID(), newShape, true, JPH::EActivation::Activate); // 'true' means update mass properties
+		}
+
 		void RigidBody::SetIsTrigger(const bool a_trigger)
 		{
 			m_collisionLayer = CollisionLayer::TRIGGER;
@@ -275,6 +356,14 @@ namespace Engine
 				return JPH::Layers::DISABLED;
 			}
 			return JPH::Layers::MOVING;
+		}
+
+		void RigidBody::DestroyBody()
+		{
+			JPH::BodyInterface* t_bodyInterface = GamePlay::ServiceLocator::GetPhysicsSystem()->GetBodyInterface();
+			t_bodyInterface->RemoveBody(m_body->GetID());
+			t_bodyInterface->DestroyBody(m_body->GetID());
+			m_body = nullptr;
 		}
 	}
 }

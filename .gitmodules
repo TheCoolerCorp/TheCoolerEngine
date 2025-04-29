@@ -11,6 +11,9 @@
 	path = libs/imgui
 	url = https://github.com/ocornut/imgui.git
 	branch = docking
+	url = https://github.com/KhronosGroup/SPIRV-Reflect.git
+	path = libs/spir-v
+[submodule "libs/spir-v"]
 [submodule "libs/JoltPhysics"]
 	path = libs/JoltPhysics
 	url = https://github.com/jrouwe/JoltPhysics.git

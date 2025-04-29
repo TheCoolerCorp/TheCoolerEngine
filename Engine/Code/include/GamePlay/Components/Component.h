@@ -25,7 +25,10 @@ namespace Engine
 		class Component
 		{
 		public:
-			virtual ~Component() = default;
+			ENGINE_API virtual ~Component() = default;
+
+			ENGINE_API virtual ComponentType Create(int& a_outId) = 0;
+			ENGINE_API virtual void Destroy() = 0;
 		};
 
 	}

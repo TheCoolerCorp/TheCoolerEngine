@@ -37,6 +37,7 @@ namespace Editor
 
 			void RegisterTypes();
 
+			[[nodiscard]] Engine::GamePlay::Scene* GetCurrentScene() const { return m_currentScene; }
 		private:
 			Engine::Core::Window::IWindow* m_mainWindow = nullptr;
 			Engine::Core::Window::IInputHandler* m_inputHandler = nullptr;
@@ -50,6 +51,8 @@ namespace Editor
 			float m_deltaTime = 0.0f;
 
 			std::vector<EditorLayer::Layer*> m_layers;
+
+			void UpdateDeltaTime();
 		};
 	}
 }

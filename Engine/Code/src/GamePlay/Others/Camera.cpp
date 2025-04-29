@@ -11,8 +11,8 @@ namespace Engine
 	namespace GamePlay
 	{
 		Camera::Camera(Math::vec3 a_up, Math::vec3 a_center, Math::vec3 a_eye, float a_fovY, float a_aspect,
-		               float a_near, float a_far, float a_speed, float a_sensitivity) : m_up(a_up), m_center(a_center), m_eye(a_eye), m_fovY(a_fovY),
-		                                            m_aspect(a_aspect), m_near(a_near), m_far(a_far), m_speed(a_speed), m_sensitivity(a_sensitivity)
+			float a_near, float a_far, float a_speed, float a_sensitivity) : m_up(a_up), m_center(a_center), m_eye(a_eye), m_fovY(a_fovY),
+			m_aspect(a_aspect), m_near(a_near), m_far(a_far), m_speed(a_speed), m_sensitivity(a_sensitivity)
 		{
 			m_baseForward = Math::vec3::Normalize(m_center - m_eye);
 			m_currentForward = m_baseForward;
@@ -26,10 +26,9 @@ namespace Engine
 
 		void Camera::Create(Core::Renderer* a_renderer)
 		{
-			m_descriptorPool = a_renderer->GetInterface()->InstantiateDescriptorPool();
-			m_descriptorPool->Create(a_renderer->GetLogicalDevice(), 1);
-			m_descriptor = a_renderer->GetInterface()->InstantiateCameraDescriptor();
-			m_descriptor->Create(a_renderer->GetLogicalDevice(), a_renderer->GetPhysicalDevice(), a_renderer->GetPipeline(), m_descriptorPool, a_renderer->GetCommandPool(), m_vp);
+			m_descriptor = a_renderer->GetInterface()->InstantiateObjectDescriptor();
+			m_descriptor->Create(a_renderer->GetLogicalDevice(), a_renderer->GetUnlitPipeline(), Core::RHI::Camera, 1, 1, { 1 }, { {Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_UNIFORM_BUFFER} });
+			m_descriptor->SetUniform(a_renderer->GetLogicalDevice(), a_renderer->GetPhysicalDevice(), a_renderer->GetCommandPool(), 0, m_vp.mElements.data(), 16 * sizeof(float), 0, 1);
 		}
 
 		void Camera::Update(Core::Renderer* a_renderer, Core::Window::IInputHandler* a_inputHandler, Core::Window::IWindow* a_window, const float a_deltaTime)
@@ -52,15 +51,13 @@ namespace Engine
 				m_needToUpdate = false;
 			}
 
-			m_descriptor->Update(a_renderer->GetLogicalDevice(), m_vp.mElements.data());
+			m_descriptor->UpdateUniforms(a_renderer->GetLogicalDevice(), 0, m_vp.mElements.data(), 16 * sizeof(float), 0);
 		}
 
 		void Camera::Destroy(Core::Renderer* a_renderer)
 		{
 			m_descriptor->Destroy(a_renderer->GetLogicalDevice());
-			delete m_descriptor;
-			m_descriptorPool->Destroy(a_renderer->GetLogicalDevice());
-			delete m_descriptorPool;
+			a_renderer->GetInterface()->DestroyObjectDescriptor(m_descriptor);
 		}
 
 		void Camera::ComputeInputs(Core::Window::IInputHandler* a_inputHandler, Core::Window::IWindow* a_window, const float a_deltaTime)

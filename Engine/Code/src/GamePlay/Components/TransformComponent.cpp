@@ -9,6 +9,7 @@ namespace Engine
 {
 	namespace GamePlay
 	{
+		
 		void TransformComponent::Register()
 		{
 			constexpr std::hash<std::string_view> t_hash{};
@@ -34,7 +35,7 @@ namespace Engine
 				.data<&TransformComponent::Set, &TransformComponent::GetTransformData>(t_hash("Transform"));
 		}
 
-		ComponentType TransformComponent::Create(int& a_outId, bool a_colliderMesh)
+		ComponentType TransformComponent::Create(int& a_outId)
 		{
 			m_transform = new Math::Transform();
 			m_id = ServiceLocator::GetTransformSystem()->AddComponent(this);

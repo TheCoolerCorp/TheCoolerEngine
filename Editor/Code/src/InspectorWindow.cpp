@@ -1,9 +1,12 @@
 #include "InspectorWindow.h"
 
 #include "imgui.h"
-#include "ImGuiLayer.h"
-#include "InspectorComponent/UiInspectorComponent.h"
-#include "InspectorComponent/UiTransformComponent.h"
+#include "../Include/ImGuiLayer.h"
+#include "../Include/InspectorComponent/UiInspectorComponent.h"
+#include "../Include/InspectorComponent/UiTransformComponent.h"
+#include "../Include/InspectorComponent/UiMeshComponent.h"
+#include "../Include/UiWindow.h"
+#include "InspectorComponent/UiRigidbodyComponent.h"
 
 Editor::EditorLayer::Ui::InspectorUiWindow::~InspectorUiWindow()
 {
@@ -19,7 +22,7 @@ void Editor::EditorLayer::Ui::InspectorUiWindow::UiDraw()
 	{
 		RefreshSelectedObject();
 	}
-	ImGui::Begin(m_name.c_str());
+	ImGui::Begin((m_name+"##"+std::to_string(m_uid)).c_str(), &m_open);
 	if (m_selectedObject != nullptr)
 	{
 		ImGui::SeparatorText("Object Info");
@@ -56,6 +59,9 @@ void Editor::EditorLayer::Ui::InspectorUiWindow::UiDraw()
 
 void Editor::EditorLayer::Ui::InspectorUiWindow::Destroy()
 {
+	ClearComponents();
+	m_selectedObject = nullptr;
+	m_open = false; 
 }
 
 
@@ -85,10 +91,16 @@ void Editor::EditorLayer::Ui::InspectorUiWindow::RefreshSelectedObject()
 			AddComponent(new UiTransformComponent(m_layer, m_selectedObject->GetComponent<Engine::GamePlay::TransformComponent>()));
 			break;
 		case Engine::GamePlay::ComponentType::MESH:
-			//AddComponent(new UiMeshComponent(m_layer, m_selectedObject->GetComponent<MeshComponent>()));
+			AddComponent(new UiMeshComponent(m_layer, m_selectedObject->GetComponent<Engine::GamePlay::MeshComponent>()));
 			break;
-		case Engine::GamePlay::ComponentType::MATERIAL:
+		case Engine::GamePlay::ComponentType::MATERIAL: //not implemented yet
 			//AddComponent(new UiMaterialComponent(m_layer, m_selectedObject->GetComponent<MaterialComponent>()));
+			break;
+		case Engine::GamePlay::ComponentType::COLLIDERMESH:
+			//AddComponent(new UiColliderMeshComponent(m_layer, m_selectedObject->GetComponent<ColliderMeshComponent>()));
+			break;
+		case Engine::GamePlay::ComponentType::RIGIDBODY:
+			AddComponent(new UiRigidbodyComponent(m_layer, m_selectedObject->GetComponent<Engine::GamePlay::RigidBodyComponent>()));
 			break;
 		}
 	}

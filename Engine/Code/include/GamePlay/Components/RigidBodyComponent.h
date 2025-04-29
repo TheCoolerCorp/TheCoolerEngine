@@ -40,8 +40,7 @@ namespace Engine
 			~RigidBodyComponent() override = default;
 
 			ENGINE_API static void Register();
-
-			ENGINE_API ComponentType Create(int& a_outId, bool a_colliderMesh = false);
+			ENGINE_API ComponentType Create(int& a_outId) override;
 
 			ENGINE_API void CreateBoxRigidBody(Physics::BodyType a_type, Physics::CollisionLayer a_layer, Math::vec3 a_position, Math::vec3 a_scale, Math::quat a_rotation, const Math::Transform& a_transform, float a_mass = 1.f, bool a_enable = true);
 			ENGINE_API void CreateSphereRigidBody(Physics::BodyType a_type, Physics::CollisionLayer a_layer, Math::vec3 a_position, float a_radius, Math::quat a_rotation, const Math::Transform& a_transform, float a_mass = 1.f, bool a_enable = true);
@@ -69,6 +68,7 @@ namespace Engine
 
 			ENGINE_API void SetPosition(const Math::vec3& a_pos, bool a_enable = true) const;
 			ENGINE_API void Rotate(const Math::quat& a_rot, bool a_enable = true);
+			ENGINE_API void SetRotation(const Math::quat& a_rot, bool a_enable = true);
 			ENGINE_API void SetDebug(const bool a_debug) { m_debug = a_debug; }
 
 			ENGINE_API void SetActive(const bool a_enable) const { m_rigidBody->SetActive(a_enable); }

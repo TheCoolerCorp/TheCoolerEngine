@@ -42,6 +42,9 @@ namespace Engine
 			ENGINE_API void CreateCapsuleBody(BodyType a_type, CollisionLayer a_layer, Math::vec3 a_position, float a_halfHeight, float a_radius, Math::quat a_rotation, float a_mass, bool a_enable);
 
 			ENGINE_API void SetActive(bool a_enable);
+			ENGINE_API void SetScale(Math::vec3 a_scale);
+			ENGINE_API void SetRadius(float a_radius);
+			ENGINE_API void SetHalfHeight(float a_halfHeight);
 			ENGINE_API void SetIsTrigger(bool a_trigger);
 			ENGINE_API void SetMass(float a_mass);
 			ENGINE_API void LockRotation(const char a_axis);
@@ -81,6 +84,8 @@ namespace Engine
 
 			static JPH::EMotionType BodyTypeToJPHType(BodyType a_type);
 			static JPH::ObjectLayer CollisionLayerToJPHLayer(CollisionLayer a_layer);
+
+			void DestroyBody();
 		};
 	}
 }

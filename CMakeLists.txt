@@ -21,7 +21,7 @@ enable_testing()
 add_subdirectory(libs)
 
 find_package(Vulkan REQUIRED)
-
+#find_package(Vulkan REQUIRED )
 #---------------------------------------#
 #			SUBDIRECTORY				#
 #---------------------------------------#
@@ -41,10 +41,8 @@ target_link_libraries(Engine PUBLIC glfw)
 target_link_libraries(Engine PUBLIC Jolt)
 
 target_link_libraries(Engine PUBLIC Vulkan::Vulkan)
-
+target_link_libraries(Engine PUBLIC spir-v)
 target_link_libraries(Engine PUBLIC meta)
-
 target_link_libraries(Engine PUBLIC nlohmann_json)
-
 target_link_libraries(Editor PUBLIC imgui)
 

@@ -19,6 +19,7 @@ namespace Engine
 			class ISwapChain;
 			class ILogicalDevice;
 			class IPhysicalDevice;
+			class ICommandPool;
 
 			class IRenderPass
 			{

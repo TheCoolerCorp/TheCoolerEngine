@@ -43,11 +43,10 @@ namespace Engine
 
 				ENGINE_API int GetMaxFrame() override { return static_cast<int>(m_maxFrame); }
 
-				ENGINE_API uint32_t GetImageIndex() override { return m_imageIndex; }
+				ENGINE_API uint32_t GetCurrentFrame() const override { return m_currentFrame; }
 
-				ENGINE_API uint32_t GetCurrentFrame() override { return m_currentFrame; }
-
-				ENGINE_API void DrawFrame(Window::IWindow* a_window, RHI::ILogicalDevice* a_logicalDevice, RHI::ICommandPool* a_commandPool, RHI::ISurface* a_surface, RHI::IPhysicalDevice* a_physicalDevice, RHI::IRenderPass* a_renderPass, const std::vector<Core::RHI::IRenderObject*>& a_renderObjects, const std::vector<Core::RHI::IBuffer*>& a_vertexBuffers, const std::vector<Core::RHI::IBuffer*>& a_indexBuffers, const std::vector<uint32_t>& a_nbIndices, const GamePlay::Camera* a_camera) override;
+				ENGINE_API void BeginFrame(RHI::ILogicalDevice* a_logicalDevice, uint32_t* outImageIndex) override;
+				ENGINE_API void EndFrame(RHI::ILogicalDevice* a_logicalDevice, RHI::ICommandPool* a_commandPool, RHI::ISurface* a_surface, RHI::IPhysicalDevice* a_physicalDevice, RHI::IRenderPass* a_renderPass, Window::IWindow* a_window, uint32_t a_FrameBufferIndex) override;
 
 				ENGINE_API void AddResizeCallback(const std::function<void(VkExtent2D a_extent)>& a_callback) { m_resizeCallback.push_back(a_callback); }
 

@@ -10,11 +10,12 @@
 
 using json = nlohmann::ordered_json;
 
+#include "Core/GraphicsAPI/Vulkan/VulkanShader.h"
 namespace Engine
 {
 	namespace GamePlay
 	{
-		void Scene::Create(Core::Renderer* a_renderer, const char* a_name)
+		void Scene::Create(Core::Renderer* a_renderer, const char* a_name, int a_width, int a_height)
 		{
 			m_name = a_name;
 
@@ -32,85 +33,37 @@ namespace Engine
 			ServiceLocator::ProvideRendererSystem(m_meshRendererSystem);
 			ServiceLocator::ProvidePhysicsSystem(m_physicsSystem);
 
-			Ref<Resource::Mesh> t_capsuleCollider = m_resourceManager->CreateResource<Resource::Mesh>("Assets/Meshes/WireframeCapsule.obj");
-			t_capsuleCollider->Load(a_renderer);
-			Ref<Resource::Mesh> t_cubeCollider = m_resourceManager->CreateResource<Resource::Mesh>("Assets/Meshes/WireframeCube.obj");
-			t_cubeCollider->Load(a_renderer);
-			Ref<Resource::Mesh> t_sphereCollider = m_resourceManager->CreateResource<Resource::Mesh>("Assets/Meshes/WireframeSphere.obj");
-			t_sphereCollider->Load(a_renderer);
-			Ref<Resource::Texture> t_colliderTexture = m_resourceManager->CreateResource<Resource::Texture>("Assets/Textures/ColliderTexture.png");
-			t_colliderTexture->Load(a_renderer);
+			m_mainCamera = new Camera(Math::vec3(0.f, 1.f, 0.f), Math::vec3(0.f, 0.f, 0.f),
+				Math::vec3(0.f, 1.f, 3.f), Math::ToRadians(70.f),
+				static_cast<float>(a_width) / static_cast<float>(a_height), 0.1f, 100.f, 10.f, 2.f);
+			m_mainCamera->Create(a_renderer);
 
 			Ref<Resource::Mesh> t_mesh = m_resourceManager->CreateResource<Resource::Mesh>("Assets/Meshes/viking_room.obj");
 			Ref<Resource::Texture> t_texture = m_resourceManager->CreateResource<Resource::Texture>("Assets/Textures/viking_room.png");
 			t_mesh->Load(a_renderer);
 			t_texture->Load(a_renderer);
 
-			GameObject* t_object = new GameObject();
-			t_object->GetComponent<TransformComponent>()->Set({ Math::vec3(0.f), Math::quat(Math::vec3(Math::ToRadians(0.f), 0.f, 0.f)), Math::vec3(1.f), -1 });
+			GameObject* t_object = new GameObject(Math::vec3(0.f, 0.f, 0.f), Math::vec3(0.f, Math::ToRadians(270.f), 0.f), Math::vec3(1.f));
 			t_object->AddComponent<MeshComponent>();
-			t_object->AddComponent<RigidBodyComponent>();
-			RigidBodyComponent* t_rigidBodyComponent = t_object->GetComponent<RigidBodyComponent>();
-			if (t_rigidBodyComponent)
-			{
-				t_rigidBodyComponent->CreateBoxRigidBody(Physics::BodyType::STATIC, Physics::CollisionLayer::NON_MOVING, Math::vec3(0.f, 0.f, 0.f), Math::vec3(2.f), Math::quat(Math::vec3(Math::ToRadians(0.f), 0.f, 0.f)), *t_object->GetComponent<TransformComponent>()->GetTransform());
-				t_rigidBodyComponent->SetDebug(true);
-				t_rigidBodyComponent->SetActive(false);
-				t_rigidBodyComponent->SetActive(true);
-			}
-			t_object->AddComponent<MeshComponent>(true);
-			MeshComponent* t_debugMeshComponent = t_object->GetComponent<MeshComponent>(true);
-			t_object->GetComponent<MeshComponent>(true)->SetMesh(t_cubeCollider);
-			t_object->GetComponent<MeshComponent>(true)->SetTexture(t_colliderTexture);
-
 			t_object->GetComponent<MeshComponent>()->SetMesh(t_mesh);
-			t_object->GetComponent<MeshComponent>()->SetTexture(t_texture);
+			t_object->GetComponent<MeshComponent>()->GetMaterial()->SetType(UNLIT);
+			t_object->GetComponent<MeshComponent>()->GetMaterial()->SetAlbedo(t_texture);
+
+			GameObject* t_object2 = new GameObject(Math::vec3(5.f, 0.f, 0.f), Math::vec3(0.f, Math::ToRadians(270.f), 0.f), Math::vec3(1.f));
+			t_object2->AddComponent<MeshComponent>();
+			t_object2->GetComponent<MeshComponent>()->SetMesh(t_mesh);
+			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetType(LIT);
+			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetAlbedo(t_texture);
 
 			AddGameObject(t_object);
-
-			Ref<Resource::Mesh> t_mesh2 = m_resourceManager->CreateResource<Resource::Mesh>("Assets/Meshes/FinalBaseMesh.obj");
-			Ref<Resource::Texture> t_texture2 = m_resourceManager->CreateResource<Resource::Texture>("Assets/Textures/viking_room.png");
-			t_mesh2->Load(a_renderer);
-			t_texture2->Load(a_renderer);
-
-			GameObject* t_object2 = new GameObject();
-			t_object2->GetComponent<TransformComponent>()->Set({ Math::vec3(0.f, 3.f, 0.f), Math::quat(Math::vec3(0.f, 0.f, 0.f)), Math::vec3(0.2f), -1 });
-			t_object2->AddComponent<MeshComponent>();
-			t_object2->AddComponent<RigidBodyComponent>();
-			RigidBodyComponent* t_rigidBodyComponent2 = t_object2->GetComponent<RigidBodyComponent>();
-			if (t_rigidBodyComponent2)
-			{
-				t_rigidBodyComponent2->CreateCapsuleRigidBody(Physics::BodyType::DYNAMIC, Physics::CollisionLayer::MOVING, Math::vec3(0.f, 2.f, 0.f), 1.f, 1.f, Math::quat(Math::vec3(Math::ToRadians(0.f), 0.f, 0.f)), *t_object2->GetComponent<TransformComponent>()->GetTransform());
-				t_rigidBodyComponent2->SetDebug(true);
-				t_rigidBodyComponent2->SetOnCollisionExit([this](RigidBodyComponent* a_rigidBodyComponent) { TestFunc(a_rigidBodyComponent); });
-				t_rigidBodyComponent2->LockRotation('x');
-				t_rigidBodyComponent2->LockRotation('z');
-				//t_rigidBodyComponent2->UnlockRotation('x');
-			}
-			t_object2->AddComponent<MeshComponent>(true);
-			t_object2->GetComponent<MeshComponent>(true)->SetMesh(t_capsuleCollider);
-			t_object2->GetComponent<MeshComponent>(true)->SetTexture(t_colliderTexture);
-
-			t_object2->GetComponent<MeshComponent>()->SetMesh(t_mesh2);
-			t_object2->GetComponent<MeshComponent>()->SetTexture(t_texture2);
-
 			AddGameObject(t_object2);
-
-			/*GameObject* t_object3 = new GameObject(Math::vec3(0.f), Math::vec3(0.f, Math::ToRadians(270.f), 0.f), Math::vec3(1.f));
-			t_object3->AddComponent<MeshComponent>();
-
-
-			t_object3->GetComponent<MeshComponent>()->SetMesh(t_mesh);
-			t_object3->GetComponent<MeshComponent>()->SetTexture(t_texture);*/
-
-			//m_objs.push_back(t_object3);
 
 			Load();
 		}
 
-		void Scene::Update(Core::Renderer* a_renderer, const float a_deltaTime)
+		void Scene::Update(Core::Renderer* a_renderer, Core::Window::IWindow* a_window, Core::Window::IInputHandler* a_inputHandler, float a_deltatime)
 		{
-			m_objs[0]->GetComponent<TransformComponent>()->GetTransform()->Rotate(Math::quat(Math::vec3(0.01f * a_deltaTime, 0.f,0.f)));
+			m_objs[0]->GetComponent<TransformComponent>()->GetTransform()->Rotate(Math::quat(Math::vec3(0.01f * a_deltatime, 0.f,0.f)));
 			//m_objs[1]->GetComponent<TransformComponent>()->GetTransform()->SetScale(Math::vec3(0.05f));
 			//m_objs[1]->GetComponent<TransformComponent>()->GetTransform()->SetPosition(Math::vec3(5.f, 0.f, 0.f));
 			//m_objs[1]->GetComponent<TransformComponent>()->SetParent(m_objs[0]->GetComponentID<TransformComponent>());
@@ -120,6 +73,7 @@ namespace Engine
 
 			std::vector<std::pair<int, Math::mat4>> t_syncro;
 			std::vector<Math::Transform*> t_physicsTransforms;
+			m_mainCamera->Update(a_renderer, a_inputHandler, a_window, a_deltatime);
 
 			for (GameObject* t_obj : m_objs)
 			{
@@ -131,7 +85,7 @@ namespace Engine
 				}
 				t_obj->UpdateColliderMat();
 			}
-			m_physicsSystem->Update(a_deltaTime, t_physicsTransforms);
+			m_physicsSystem->Update(a_deltatime, t_physicsTransforms);
 
 			for (GameObject* t_obj : m_objs)
 			{
@@ -164,10 +118,80 @@ namespace Engine
 			t_syncro.clear();
 		}
 
-		void Scene::Draw(Core::Renderer* a_renderer, Core::Window::IWindow* a_window, Camera* a_camera)
+		/**
+		 * Returns all vertex buffers in the scene, grouped by their pipeline target type.
+		 * @return std::unordered_map with the format <PipelineTarget, std::vector<Core::RHI::IBuffer*>> for fast acess
+		 */
+		std::unordered_map<Core::RHI::DescriptorSetPipelineTarget, std::vector<Core::RHI::IBuffer*>> Scene::GetVertexBuffers()
 		{
-			m_meshRendererSystem->Render(a_renderer, a_window, a_camera);
+			std::unordered_map<Core::RHI::DescriptorSetPipelineTarget, std::vector<Core::RHI::IBuffer*>> t_vertexBuffersMap;
+			for (int i = 0; i < m_meshRendererSystem->GetComponents().size(); ++i)
+			{
+				t_vertexBuffersMap[GetDescriptorTarget(i)].push_back(m_meshRendererSystem->GetComponents().at(i)->GetMesh()->GetVertexBuffer());
+			}
+			return t_vertexBuffersMap;
 		}
+
+		/**
+		 * Returns all index buffers in the scene, grouped by their pipeline target type.
+		 * @return std::unordered_map with the format <PipelineTarget, std::vector<Core::RHI::IBuffer*>> for fast acess
+		 */
+		std::unordered_map<Core::RHI::DescriptorSetPipelineTarget, std::vector<Core::RHI::IBuffer*>> Scene::GetIndexBuffers()
+		{
+			std::unordered_map<Core::RHI::DescriptorSetPipelineTarget, std::vector<Core::RHI::IBuffer*>> t_indexBuffersMap;
+			for (int i = 0; i < m_meshRendererSystem->GetComponents().size(); ++i)
+			{
+				t_indexBuffersMap[GetDescriptorTarget(i)].push_back(m_meshRendererSystem->GetComponents().at(i)->GetMesh()->GetIndexBuffer());
+			}
+			return t_indexBuffersMap;
+		}
+
+		/**
+		 * Returns all indices in the scene, grouped by their pipeline target type.
+		 * @return std::unordered_map with the format <PipelineTarget, std::vector<uint32_t>> for fast acess
+		 */
+		std::unordered_map<Core::RHI::DescriptorSetPipelineTarget, std::vector<uint32_t>>
+		Scene::GetNBIndices()
+		{
+			std::unordered_map<Core::RHI::DescriptorSetPipelineTarget, std::vector<uint32_t>> t_nbIndicesMap;
+			for (int i = 0; i < m_meshRendererSystem->GetComponents().size(); ++i)
+			{
+				t_nbIndicesMap[GetDescriptorTarget(i)].push_back(m_meshRendererSystem->GetComponents().at(i)->GetMesh()->GetNbIndices());
+			}
+			return t_nbIndicesMap;
+		}
+
+		/**
+		 * Returns all descriptors in the scene, grouped by their pipeline target type.
+		 * @return std::unordered_map with the format <PipelineTarget, std::vector<Core::RHI::IObjectDescriptor*>> for fast acess
+		 */
+		std::unordered_map<Core::RHI::DescriptorSetPipelineTarget, std::vector<Core::RHI::IObjectDescriptor*>>
+		Scene::GetDescriptors()
+		{
+			std::unordered_map<Core::RHI::DescriptorSetPipelineTarget, std::vector<Core::RHI::IObjectDescriptor*>> t_descriptorsMap;
+			std::vector<Core::RHI::IObjectDescriptor*>& t_descriptors = m_meshRendererSystem->GetDescriptors();
+			for(auto & t_descriptor : t_descriptors)
+			{
+				t_descriptorsMap[t_descriptor->GetPipelineTargetType()].push_back(t_descriptor);
+			}
+			return t_descriptorsMap;
+		}
+
+		/**
+		 * Returns the decriptor's pipeline target type at the specified index.
+		 * @param a_idx the index of the descriptor
+		 * @return the descriptor's pipeline target type
+		 */
+		Core::RHI::DescriptorSetPipelineTarget Scene::GetDescriptorTarget(int a_idx)
+		{
+			if ( Core::RHI::IObjectDescriptor* t_descriptor = m_meshRendererSystem->GetDescriptor(a_idx))
+			{
+				return t_descriptor->GetPipelineTargetType();
+			}
+			LOG_ERROR("Tired to get descriptor at an invalid index!");
+			return Core::RHI::DescriptorSetPipelineTarget::LitDescriptor;
+		}
+
 
 		void Scene::Destroy(Core::Renderer* a_renderer)
 		{
@@ -191,6 +215,8 @@ namespace Engine
 
 			m_resourceManager->DestroyAll(a_renderer);
 			delete m_resourceManager;
+			m_mainCamera->Destroy(a_renderer);
+			delete m_mainCamera;
 		}
 
 		/**
@@ -625,11 +651,6 @@ namespace Engine
 			t_outData.mLockRotZ = a_json.at("lock rotation Z").get<bool>();
 
 			return t_outData;
-		}
-
-		void Scene::TestFunc(RigidBodyComponent* a_rigidBodyComponent)
-		{
-			m_objs[1]->GetComponent<RigidBodyComponent>()->AddForce({ 0.f, 10000.f, 0.f });
 		}
 	}
 }

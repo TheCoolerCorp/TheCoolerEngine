@@ -7,6 +7,9 @@
 #include "Core/GraphicsAPI/Vulkan/VulkanLogicalDevice.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanPhysicalDevice.h"
 #include "Core/Renderer/Renderer.h"
+#include "Core/GraphicsAPI/Vulkan/VulkanGraphicPipeline.h"
+#include "Core/Interfaces/IObjectDescriptor.h"
+#include "Core/Interfaces/IBuffer.h"
 
 
 namespace Engine
@@ -100,48 +103,15 @@ namespace Engine
 				config.createOwnFramebuffers = false;
 
 				m_sceneRenderPass = new VulkanRenderPass(t_device, a_renderer);
-				
+
 				m_sceneRenderPass->Create(config);
-				
-				m_sceneRenderPass->SetDrawFunc(
-					[this](const RecordRenderPassinfo& a_info, const std::vector<Core::RHI::IRenderObject*>& a_renderObjects,
-						const std::vector<Core::RHI::IBuffer*>& a_vertexBuffers,
-						const std::vector<Core::RHI::IBuffer*>& a_indexBuffers, const std::vector<uint32_t>& a_nbIndices)
-					{
-						//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-						//TEMPORARY: MAKE RENDERPASS OPTIONALLY STORE REFERENCE TO ITS ASSOCIATED PIPELINE LATER
-						//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-						
-						vkCmdBindPipeline(a_info.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_renderer->GetPipeline()->CastVulkan()->GetPipeline());
-
-						const VkPipelineLayout t_layout = a_info.graphicPipeline->GetLayout();
-
-						const VkDescriptorSet t_cameraDescriptorSet = a_info.camera->GetDescriptor()->CastVulkan()->GetDescriptorSet();
-						vkCmdBindDescriptorSets(a_info.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, t_layout, 0, 1, &t_cameraDescriptorSet, 0, nullptr);
-
-						for (int i = 0; i < a_renderObjects.size(); ++i)
-						{
-							if (a_vertexBuffers.at(i)->CastVulkan()->GetBuffer() != nullptr)
-							{
-								VkBuffer t_vertexBuffer = a_vertexBuffers.at(i)->CastVulkan()->GetBuffer();
-								constexpr VkDeviceSize t_offsets[] = { 0 };
-								vkCmdBindVertexBuffers(a_info.commandBuffer, 0, 1, &t_vertexBuffer, t_offsets);
-							}
-
-							if (a_indexBuffers.at(i)->CastVulkan()->GetBuffer() != nullptr)
-							{
-								vkCmdBindIndexBuffer(a_info.commandBuffer, a_indexBuffers.at(i)->CastVulkan()->GetBuffer(), 0, VK_INDEX_TYPE_UINT32);
-							}
-
-							vkCmdBindDescriptorSets(a_info.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, t_layout, 1, 1, &a_renderObjects.at(i)->CastVulkan()->GetDescriptorSets()[a_info.imageIndex], 0, nullptr);
-
-							vkCmdDrawIndexed(a_info.commandBuffer, a_nbIndices.at(i), 1, 0, 0, 0);
-						}
-					}
-				);
 			}
 
-			void VulkanRenderPassManager::RecordRenderPasses(const RecordRenderPassinfo& a_info, const std::vector<Core::RHI::IRenderObject*>& a_renderObjects, const std::vector<Core::RHI::IBuffer*>& a_vertexBuffers, const std::vector<Core::RHI::IBuffer*>& a_indexBuffers, const std::vector<uint32_t>& a_nbIndices)
+			void VulkanRenderPassManager::RecordRenderPasses(RecordRenderPassinfo& a_info,
+				std::unordered_map<RHI::DescriptorSetPipelineTarget, std::vector<RHI::IBuffer*>>& a_vertexBuffers,
+				std::unordered_map<RHI::DescriptorSetPipelineTarget, std::vector<RHI::IBuffer*>>& a_indexBuffers,
+				std::unordered_map<RHI::DescriptorSetPipelineTarget, std::vector<uint32_t>>& a_nbIndices,
+				std::unordered_map<RHI::DescriptorSetPipelineTarget, std::vector<RHI::IObjectDescriptor*>>& a_descriptors)
 			{
 				std::set<VulkanRenderPass*> t_visited;
 				std::vector<VulkanRenderPass*> t_sortedPasses;
@@ -155,16 +125,17 @@ namespace Engine
 
 				for (VulkanRenderPass* t_pass : t_sortedPasses)
 				{
-					t_pass->RecordRenderPass(a_info, a_renderObjects, a_vertexBuffers, a_indexBuffers, a_nbIndices);
+					t_pass->RecordRenderPass(a_info, a_vertexBuffers, a_indexBuffers, a_nbIndices, a_descriptors);
 				}
 			}
 
-			void VulkanRenderPassManager::RunSceneRenderPass(const RecordRenderPassinfo& a_info,
-				const std::vector<Core::RHI::IRenderObject*>& a_renderObjects,
-				const std::vector<Core::RHI::IBuffer*>& a_vertexBuffers,
-				const std::vector<Core::RHI::IBuffer*>& a_indexBuffers, const std::vector<uint32_t>& a_nbIndices)
+			void VulkanRenderPassManager::RunSceneRenderPass(RecordRenderPassinfo& a_info,
+				std::unordered_map<RHI::DescriptorSetPipelineTarget, std::vector<RHI::IBuffer*>>& a_vertexBuffers,
+				std::unordered_map<RHI::DescriptorSetPipelineTarget, std::vector<RHI::IBuffer*>>& a_indexBuffers,
+				std::unordered_map<RHI::DescriptorSetPipelineTarget, std::vector<uint32_t>>& a_nbIndices,
+				std::unordered_map<RHI::DescriptorSetPipelineTarget, std::vector<RHI::IObjectDescriptor*>>& a_descriptors)
 			{
-				m_sceneRenderPass->RecordRenderPass(a_info, a_renderObjects, a_vertexBuffers, a_indexBuffers, a_nbIndices);
+				m_sceneRenderPass->RecordRenderPass(a_info, a_vertexBuffers, a_indexBuffers, a_nbIndices, a_descriptors);
 			}
 
 			void VulkanRenderPassManager::ResolveDependencies(VulkanRenderPass* a_pass,
@@ -444,18 +415,18 @@ namespace Engine
 					VulkanImage::CreateSampler(&m_sampler, t_logicalDevice, t_physicalDevice);
 			}
 
-			void VulkanRenderPass::RecordRenderPass(const RecordRenderPassinfo& a_info,
-				const std::vector<Core::RHI::IRenderObject*>& a_renderObjects,
-				const std::vector<Core::RHI::IBuffer*>& a_vertexBuffers,
-				const std::vector<Core::RHI::IBuffer*>& a_indexBuffers, const std::vector<uint32_t>& a_nbIndices)
+			void VulkanRenderPass::RecordRenderPass(RecordRenderPassinfo& a_info,
+				std::unordered_map<RHI::DescriptorSetPipelineTarget, std::vector<RHI::IBuffer*>>& a_vertexBuffers,
+				std::unordered_map<RHI::DescriptorSetPipelineTarget, std::vector<RHI::IBuffer*>>& a_indexBuffers,
+				std::unordered_map<RHI::DescriptorSetPipelineTarget, std::vector<uint32_t>>& a_nbIndices,
+				std::unordered_map<RHI::DescriptorSetPipelineTarget, std::vector<RHI::IObjectDescriptor*>>& a_descriptors)
 			{
-				Begin(a_info.commandBuffer, a_info.imageIndex, a_info.currentFrame);
-				//Check if the function has been set before calling it
-				if (m_drawFunc == nullptr)
-					LOG_ERROR("Tried to record render pass with no draw function set!");
-				else
-					m_drawFunc(a_info, a_renderObjects, a_vertexBuffers, a_indexBuffers, a_nbIndices);
-				End(a_info.commandBuffer);
+				VkCommandBuffer t_commandBuffer = a_info.renderer->GetCommandPool()->CastVulkan()->m_commandBuffers[a_info.commandPoolIndex][a_info.currentFrame];
+				Begin(t_commandBuffer, a_info.imageIndex, a_info.currentFrame);
+				RunPipelineDrawFuncs(a_info, a_vertexBuffers, a_indexBuffers, a_nbIndices, a_descriptors);
+				if (m_drawFunc)
+					m_drawFunc(a_info, a_vertexBuffers, a_indexBuffers, a_nbIndices, a_descriptors);
+				End(t_commandBuffer);
 				
 			}
 
@@ -521,9 +492,11 @@ namespace Engine
 			}
 
 			void VulkanRenderPass::SetDrawFunc(
-				std::function<void(RecordRenderPassinfo, const std::vector<Core::RHI::IRenderObject*>&, const std::
-				vector<Core::RHI::IBuffer*>&, const std::vector<Core::RHI::IBuffer*>&, const std::vector<uint32_t>&)>
-				a_func)
+				std::function<void(RecordRenderPassinfo&,
+					std::unordered_map<RHI::DescriptorSetPipelineTarget, std::vector<RHI::IBuffer*>>&,
+					std::unordered_map<RHI::DescriptorSetPipelineTarget, std::vector<RHI::IBuffer*>>&,
+					std::unordered_map<RHI::DescriptorSetPipelineTarget, std::vector<uint32_t>>&,
+					std::unordered_map<RHI::DescriptorSetPipelineTarget, std::vector<RHI::IObjectDescriptor*>>&)> a_func)
 			{
 				m_drawFunc = std::move(a_func);
 			}
@@ -657,10 +630,7 @@ namespace Engine
 				t_imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 
 				// Create image
-				if (vkCreateImage(m_device, &t_imageInfo, nullptr, &m_depthAttachmentResource.image) != VK_SUCCESS)
-				{
-					throw std::runtime_error("Failed to create attachment image");
-				}
+				VK_CHECK(vkCreateImage(m_device, &t_imageInfo, nullptr, &m_depthAttachmentResource.image), "Failed to create attachment image")
 
 				// Allocate memory
 				VkMemoryRequirements t_memRequirements;
@@ -671,10 +641,7 @@ namespace Engine
 				t_allocInfo.allocationSize = t_memRequirements.size;
 				t_allocInfo.memoryTypeIndex = VulkanBuffer::FindMemoryType(t_memRequirements.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, m_renderer->GetPhysicalDevice()->CastVulkan()->GetVkPhysicalDevice());
 
-				if (vkAllocateMemory(m_device, &t_allocInfo, nullptr, &m_depthAttachmentResource.memory) != VK_SUCCESS)
-				{
-					throw std::runtime_error("Failed to allocate image memory");
-				}
+				VK_CHECK(vkAllocateMemory(m_device, &t_allocInfo, nullptr, &m_depthAttachmentResource.memory), "Failed to allocate image memory")
 
 				vkBindImageMemory(m_device, m_depthAttachmentResource.image, m_depthAttachmentResource.memory, 0);
 
@@ -690,10 +657,7 @@ namespace Engine
 				t_viewInfo.subresourceRange.baseArrayLayer = 0;
 				t_viewInfo.subresourceRange.layerCount = 1;
 
-				if (vkCreateImageView(m_device, &t_viewInfo, nullptr, &m_depthAttachmentResource.view) != VK_SUCCESS)
-				{
-					throw std::runtime_error("Failed to create image view");
-				}
+				VK_CHECK(vkCreateImageView(m_device, &t_viewInfo, nullptr, &m_depthAttachmentResource.view), "Failed to create image view!")
 			}
 
 			void VulkanRenderPass::CreateAttachment(const RenderPassAttachment& a_attachment, uint32_t a_index)
@@ -749,6 +713,19 @@ namespace Engine
 				VK_CHECK(vkCreateImageView(m_device, &t_viewInfo, nullptr, &m_attachmentResources[a_index].view), "Failed to create image view")
 
 				
+			}
+
+			void VulkanRenderPass::RunPipelineDrawFuncs(RecordRenderPassinfo& a_info,
+				std::unordered_map<RHI::DescriptorSetPipelineTarget, std::vector<RHI::IBuffer*>>& a_vertexBuffers,
+				std::unordered_map<RHI::DescriptorSetPipelineTarget, std::vector<RHI::IBuffer*>>& a_indexBuffers,
+				std::unordered_map<RHI::DescriptorSetPipelineTarget, std::vector<uint32_t>>& a_nbIndices,
+				std::unordered_map<RHI::DescriptorSetPipelineTarget, std::vector<RHI::IObjectDescriptor*>>& a_descriptors)
+			{
+				for (VulkanGraphicPipeline* t_graphicPipeline : m_graphicPipelines)
+				{
+					if (t_graphicPipeline)
+						t_graphicPipeline->CallDrawFunc(a_info, a_vertexBuffers, a_indexBuffers, a_nbIndices, a_descriptors);
+				}
 			}
 		}
 	}

@@ -24,11 +24,23 @@ namespace Editor::EditorLayer::Ui
 		virtual void Create() = 0;
 		virtual void UiDraw() = 0;
 		virtual void Destroy() = 0;
+
+		void SetName(std::string a_name) { m_name = std::move(a_name); }
+		void SetUid(int a_uid) { m_uid = a_uid; }
+
+		[[nodiscard]] int GetUid() { return m_uid; }
+		[[nodiscard]] const std::string& GetName() const { return m_name; }
+		[[nodiscard]] bool IsClosed() const { return !m_open; }
+		[[nodiscard]] Engine::Core::Renderer* GetRenderer() const { return m_renderer; }
 	protected:
 		std::string m_name;
+		int m_uid;
+
+		//if false, the window will be closed and deleted during the layers update call
+		bool m_open = true;
 
 		Engine::Core::Renderer* m_renderer;
-		Editor::EditorLayer::Ui::ImGuiLayer* m_layer;
+		ImGuiLayer* m_layer;
 	};
 }
 

@@ -1,6 +1,7 @@
 #include "Core/Renderer/Renderer.h"
 #include "Core/Logger/Logger.h"
 #include "GamePlay/Others/GameObject.h"
+#include "GamePlay/Others/Scene.h"
 #include "Ressources/Texture.h"
 #include "Ressources/Mesh.h"
 namespace Engine
@@ -21,7 +22,8 @@ namespace Engine
 			m_logicalDevice = m_interface->InstantiateLogicalDevice();
 			m_swapChain = m_interface->InstantiateSwapChain();
 			m_renderPass = m_interface->InstantiateRenderPass();
-			m_graphicPipeline = m_interface->InstantiateGraphicPipeline();
+			m_unlitPipeline = m_interface->InstantiateGraphicPipeline();
+			m_litPipeline = m_interface->InstantiateGraphicPipeline();
 			m_commandPool = m_interface->InstantiateCommandPool();
 		}
 
@@ -45,13 +47,11 @@ namespace Engine
 			m_surface->SetupInfo(m_physicalDevice);
 			
 			m_swapChain->Create(m_surface, a_window, m_physicalDevice, m_logicalDevice);
-			
 			m_renderPass->Create(this);
 			m_renderPass->CastVulkan()->CreateDefaultRenderPass(this);
+
 			
-			
-			m_commandPool->Create(m_physicalDevice, m_surface, m_logicalDevice);
-			m_swapChain->CreateFramebuffers(m_logicalDevice, m_physicalDevice, m_renderPass, m_commandPool);
+
 
 			
 			m_swapChain->CreateSyncObjects(m_logicalDevice);
@@ -59,19 +59,60 @@ namespace Engine
 
 		void Renderer::LateCreate(RendererType a_type, Window::IWindow* a_window)
 		{
-			m_graphicPipeline->Create(m_logicalDevice, m_renderPass);
-			m_commandPool->CreateCommandBuffer(m_logicalDevice, m_swapChain, m_renderPass, m_graphicPipeline);
-		}
+			RHI::IShader* t_vertexShader = m_interface->InstantiateShader();
+			RHI::IShader* t_unlitFragmentShader = m_interface->InstantiateShader();
+			RHI::IShader* t_litFragmentShader = m_interface->InstantiateShader();
+			t_vertexShader->Create(BASEVERTEX, m_logicalDevice);
+			t_unlitFragmentShader->Create(UNLITFRAGMENT, m_logicalDevice);
+			t_litFragmentShader->Create(LITFRAGMENT, m_logicalDevice);
+			std::array<RHI::IShader*, 2> t_unlitVertAndFrag = { t_vertexShader, t_unlitFragmentShader };
+			std::array<RHI::IShader*, 2> t_litVertAndFrag = { t_vertexShader, t_litFragmentShader };
 
-		void Renderer::Render(Window::IWindow* a_window,
-		                      const std::unordered_map<int, Core::RHI::IRenderObject*>& a_renderObjects,
-		                      const std::vector<int>& a_ids, const std::unordered_map<int, Core::RHI::IBuffer*>& a_vertexBuffers,
-		                      const std::unordered_map<int, Core::RHI::IBuffer*>& a_indexBuffers, const std::unordered_map<int, uint32_t>& a_nbIndices,
-		                      GamePlay::Camera* camera) const
-		{
-			//m_swapChain->DrawFrame(a_window, m_logicalDevice, m_commandPool, m_surface, m_physicalDevice, m_renderPass, a_renderObjects, a_vertexBuffers, a_indexBuffers, a_nbIndices, camera);
-		}
+			m_unlitPipeline->Create(m_logicalDevice, m_renderPass, RHI::Unlit, t_unlitVertAndFrag);
+			m_unlitPipeline->CastVulkan()->SetDrawFunc([this](const GraphicsAPI::RecordRenderPassinfo& info, 
+				std::unordered_map<RHI::DescriptorSetPipelineTarget, std::vector<RHI::IBuffer*>>& a_vertexBuffers,
+				std::unordered_map<RHI::DescriptorSetPipelineTarget, std::vector<RHI::IBuffer*>>& a_indexBuffers,
+				std::unordered_map<RHI::DescriptorSetPipelineTarget, std::vector<uint32_t>>& a_nbIndices,
+				std::unordered_map<RHI::DescriptorSetPipelineTarget, std::vector<RHI::IObjectDescriptor*>>& a_descriptors)
+				{
+					m_unlitPipeline->Bind(info.renderer->GetCommandPool(), 0, info.renderer->GetSwapChain());
 
+					info.renderer->GetUnlitPipeline()->BindSingleDescriptors(info.renderer->GetCommandPool(), 0, info.renderer->GetSwapChain()->GetCurrentFrame(),
+						info.imageIndex, { info.scene->GetCameraDescriptor() });
+
+					info.renderer->GetUnlitPipeline()->BindObjects(info.renderer->GetCommandPool(), 0, info.renderer->GetSwapChain()->GetCurrentFrame(),
+						info.imageIndex, a_indexBuffers[RHI::UnlitDescriptor], a_vertexBuffers[RHI::UnlitDescriptor], a_nbIndices[RHI::UnlitDescriptor], a_descriptors[RHI::UnlitDescriptor]);
+				});
+
+			m_litPipeline->Create(m_logicalDevice, m_renderPass, RHI::Lit, t_litVertAndFrag);
+			m_litPipeline->CastVulkan()->SetDrawFunc([this](const GraphicsAPI::RecordRenderPassinfo& info,
+					std::unordered_map<RHI::DescriptorSetPipelineTarget, std::vector<RHI::IBuffer*>>& a_vertexBuffers,
+					std::unordered_map<RHI::DescriptorSetPipelineTarget, std::vector<RHI::IBuffer*>>& a_indexBuffers,
+					std::unordered_map<RHI::DescriptorSetPipelineTarget, std::vector<uint32_t>>& a_nbIndices,
+					std::unordered_map<RHI::DescriptorSetPipelineTarget, std::vector<RHI::IObjectDescriptor*>>& a_descriptors)
+				{
+					m_litPipeline->Bind(info.renderer->GetCommandPool(), 0, info.renderer->GetSwapChain());
+
+					info.renderer->GetLitPipeline()->BindSingleDescriptors(info.renderer->GetCommandPool(), 0, info.renderer->GetSwapChain()->GetCurrentFrame(),
+						info.imageIndex, { info.scene->GetCameraDescriptor() });
+
+					info.renderer->GetLitPipeline()->BindObjects(info.renderer->GetCommandPool(), 0, info.renderer->GetSwapChain()->GetCurrentFrame(),
+						info.imageIndex, a_indexBuffers[RHI::LitDescriptor], a_vertexBuffers[RHI::LitDescriptor], a_nbIndices[RHI::LitDescriptor], a_descriptors[RHI::LitDescriptor]);
+
+				}
+			);
+			t_vertexShader->Destroy(m_logicalDevice);
+			t_unlitFragmentShader->Destroy(m_logicalDevice);
+			t_litFragmentShader->Destroy(m_logicalDevice);
+			m_interface->DestroyShader(t_vertexShader);
+			m_interface->DestroyShader(t_unlitFragmentShader);
+			m_interface->DestroyShader(t_litFragmentShader);
+
+			m_commandPool = m_interface->InstantiateCommandPool();
+			m_commandPool->Create(m_physicalDevice, m_surface, m_logicalDevice);
+			m_swapChain->CreateFramebuffers(m_logicalDevice, m_physicalDevice, m_renderPass, m_commandPool);
+			m_commandPool->CreateCommandBuffer(m_logicalDevice, m_swapChain->GetMaxFrame());
+		}
 		void Renderer::WaitIdle() const
 		{
 			m_logicalDevice->WaitIdle();
@@ -83,8 +124,10 @@ namespace Engine
 			m_commandPool->Destroy(m_logicalDevice);
 			m_interface->DestroyCommandPool(m_commandPool);
 
-			m_graphicPipeline->Destroy(m_logicalDevice);
-			m_interface->DestroyGraphicPipeline(m_graphicPipeline);
+			m_unlitPipeline->Destroy(m_logicalDevice);
+			m_interface->DestroyGraphicPipeline(m_unlitPipeline);
+			m_litPipeline->Destroy(m_logicalDevice);
+			m_interface->DestroyGraphicPipeline(m_litPipeline);
 
 			m_renderPass->Destroy(m_logicalDevice);
 			m_interface->DestroyRenderPass(m_renderPass);

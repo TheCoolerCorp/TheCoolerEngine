@@ -18,8 +18,7 @@ namespace Engine
 
 		namespace RHI
 		{
-			class ICameraDescriptor;
-			class IDescriptorPool;
+			class IObjectDescriptor;
 		}
 
 		class Renderer;
@@ -37,7 +36,7 @@ namespace Engine
 			ENGINE_API void Update(Core::Renderer* a_renderer, Core::Window::IInputHandler* a_inputHandler, Core::Window::IWindow* a_window, const float a_deltaTime);
 			ENGINE_API void Destroy(Core::Renderer* a_renderer);
 
-			ENGINE_API Core::RHI::ICameraDescriptor* GetDescriptor() const { return m_descriptor; }
+			ENGINE_API Core::RHI::IObjectDescriptor* GetDescriptor() const { return m_descriptor; }
 
 		private:
 			void ComputeInputs(Core::Window::IInputHandler* a_inputHandler, Core::Window::IWindow* a_window, float a_deltaTime);
@@ -62,8 +61,7 @@ namespace Engine
 			bool m_needToUpdate = false;
 			bool m_hasClicked = false;
 
-			Core::RHI::ICameraDescriptor* m_descriptor{};
-			Core::RHI::IDescriptorPool* m_descriptorPool{};
+			Core::RHI::IObjectDescriptor* m_descriptor{};
 		};
 	}
 }
