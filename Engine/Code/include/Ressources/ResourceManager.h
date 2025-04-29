@@ -22,47 +22,19 @@ namespace Engine
 		{
 		public:
 			template<typename Type, typename... Args>
-			Ref<Type> CreateResource(Args&&... args)
-			{
-				static_assert(std::is_base_of<IResource, Type>::value);
-				static_assert(!std::is_same<IResource, Type>::value);
-				static_assert(std::is_member_function_pointer<decltype(&Type::Create)>::value);
+			Ref<Type> CreateResource(const std::string& a_path, Args&&... a_args);
 
-				Ref<Type> t_resource = CreateRef<Type>();
-				t_resource->Create(std::forward<Args>(args)...);
-
-				for (auto& t_toFindResource : m_resources | std::views::values)
-				{
-					if (t_toFindResource == t_resource)
-					{
-						return t_resource;
-					}
-				}
-
-				int t_id = -1;
-				const int t_resourcesSize = static_cast<int>(m_resources.size());
-
-				if (t_resourcesSize != 0)
-				{
-					t_id = t_resourcesSize;
-				}
-				else
-				{
-					t_id = 0;
-				}
-
-				m_resources.emplace(t_id, t_resource);
-
-				return t_resource;
-			}
+			template<typename Type, typename... Args>
+			Ref<Type> GetResource(const std::string& a_path, Args&&... a_args);
 
 			ENGINE_API void DestroyAll(Core::Renderer* a_renderer);
 
 		private:
-			std::unordered_map<int, Ref<IResource>> m_resources;
+			std::unordered_map<std::string, Ref<IResource>> m_resources;
 		};
-
 	}
 }
+
+#include "ResourceManager.inl"
 
 #endif 

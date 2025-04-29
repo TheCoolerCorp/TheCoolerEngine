@@ -1,3 +1,6 @@
+#ifndef LOGGER_INL
+#define LOGGER_INL
+
 #include <filesystem>
 #include <iomanip>
 #include <string>
@@ -52,3 +55,4 @@ namespace Engine
 		}
 	}
 }
+#endif // LOGGER_INL

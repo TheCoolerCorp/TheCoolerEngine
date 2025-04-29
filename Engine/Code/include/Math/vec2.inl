@@ -1,3 +1,6 @@
+#ifndef VEC2_INL
+#define VEC2_INL
+
 namespace Engine
 {
     namespace Math
@@ -165,3 +168,4 @@ namespace Engine
         }
     }
 }
+#endif // VEC2_INL

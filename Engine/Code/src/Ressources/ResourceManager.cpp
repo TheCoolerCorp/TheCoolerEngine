@@ -12,6 +12,7 @@ namespace Engine
 				resource->Destroy();
 				resource.reset();
 			}
+			m_resources.clear();
 		}
 	}
 }

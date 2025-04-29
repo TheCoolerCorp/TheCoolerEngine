@@ -1,3 +1,6 @@
+#ifndef QUAT_INL
+#define QUAT_INL
+
 namespace Engine
 {
     namespace Math
@@ -160,3 +163,4 @@ namespace Engine
         }
     }
 }
+#endif // QUAT_INL

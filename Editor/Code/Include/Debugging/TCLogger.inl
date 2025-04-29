@@ -1,3 +1,6 @@
+#ifndef TCLOGGER_INL
+#define TCLOGGER_INL
+
 namespace Editor
 {
 	namespace Debugging
@@ -28,3 +31,4 @@ namespace Editor
 		}
 	}
 }
+#endif // TCLOGGER_INL

@@ -1,3 +1,6 @@
+#ifndef MAT4_INL
+#define MAT4_INL
+
 namespace Engine
 {
     namespace Math
@@ -115,3 +118,4 @@ namespace Engine
         }
     }
 }
+#endif // MAT4_INL
