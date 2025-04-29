@@ -11,9 +11,6 @@
 	path = libs/imgui
 	url = https://github.com/ocornut/imgui.git
 	branch = docking
-[submodule "libs/Refureku"]
-	path = libs/Refureku
-	url = https://github.com/jsoysouvanh/Refureku.git
 [submodule "libs/JoltPhysics"]
 	path = libs/JoltPhysics
 	url = https://github.com/jrouwe/JoltPhysics.git
