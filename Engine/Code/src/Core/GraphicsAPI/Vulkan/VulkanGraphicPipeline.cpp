@@ -209,6 +209,8 @@ namespace Engine
 				pipelineInfo.pDepthStencilState = &depthStencil;
 
 				VK_CHECK(vkCreateGraphicsPipelines(a_logicalDevice->CastVulkan()->GetVkDevice(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_pipeline), "Failed to create graphic pipeline");
+
+				a_renderPass->CastVulkan()->GetSceneRenderPass()->AddPipelineDependency(this);
 			}
 
 			void VulkanGraphicPipeline::Destroy(RHI::ILogicalDevice* a_logicalDevice)
@@ -230,7 +232,7 @@ namespace Engine
 					const VkCommandBuffer t_commandBuffer = t_commandPool->m_commandBuffers[a_commandBufferIndex][a_swapChain->GetCurrentFrame()];
 					vkCmdBindPipeline(t_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_pipeline);
 
-					VkViewport t_viewport;
+					/*VkViewport t_viewport;
 					t_viewport.x = 0.0f;
 					t_viewport.y = 0.0f;
 					t_viewport.width = static_cast<float>(a_swapChain->CastVulkan()->GetExtent2D().width);
@@ -242,7 +244,7 @@ namespace Engine
 					VkRect2D t_scissor;
 					t_scissor.offset = { .x = 0, .y = 0 };
 					t_scissor.extent = a_swapChain->CastVulkan()->GetExtent2D();
-					vkCmdSetScissor(t_commandBuffer, 0, 1, &t_scissor);
+					vkCmdSetScissor(t_commandBuffer, 0, 1, &t_scissor);*/
 				}
 			}
 

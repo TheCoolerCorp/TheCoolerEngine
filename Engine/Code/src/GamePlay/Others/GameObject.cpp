@@ -45,6 +45,8 @@ namespace Engine
 
 		void GameObject::UpdateColliderMat()
 		{
+			if (!GetComponent<RigidBodyComponent>())
+				return;
 			const Physics::ColliderType t_colliderType = GetComponent<RigidBodyComponent>()->GetColliderType();
 			GetComponent<TransformComponent>()->GetTransform()->SetGlobalPositionFromMatrix();
 			const Math::vec3 t_pos = GetComponent<RigidBodyComponent>()->GetPos();

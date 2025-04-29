@@ -45,8 +45,6 @@ namespace Engine
 
 				ENGINE_API uint32_t GetCurrentFrame() const override { return m_currentFrame; }
 
-				ENGINE_API void DrawFrame(Window::IWindow* a_window, RHI::ILogicalDevice* a_logicalDevice, RHI::ICommandPool* a_commandPool, RHI::ISurface* a_surface, RHI::IPhysicalDevice* a_physicalDevice, RHI::IRenderPass* a_renderPass, const std::vector<Core::RHI::IObjectDescriptor*>& a_renderObjects, const std::vector<Core::RHI::IBuffer*>& a_vertexBuffers, const std::vector<Core::RHI::IBuffer*>& a_indexBuffers, const std::vector<uint32_t>& a_nbIndices, const GamePlay::Camera* a_camera) override;
-
 				ENGINE_API void BeginFrame(RHI::ILogicalDevice* a_logicalDevice, uint32_t* outImageIndex) override;
 				ENGINE_API void EndFrame(RHI::ILogicalDevice* a_logicalDevice, RHI::ICommandPool* a_commandPool, RHI::ISurface* a_surface, RHI::IPhysicalDevice* a_physicalDevice, RHI::IRenderPass* a_renderPass, Window::IWindow* a_window, uint32_t a_FrameBufferIndex) override;
 

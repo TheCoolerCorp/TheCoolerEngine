@@ -30,6 +30,7 @@ namespace Engine
 
 			std::vector<MeshComponent*>& GetComponents() { return m_components; }
 			std::vector<Core::RHI::IObjectDescriptor*>& GetDescriptors() { return m_objectsDescriptors; }
+			[[nodiscard]] Core::RHI::IObjectDescriptor* GetDescriptor(int a_idx);
 
 		private:
 			std::vector<MeshComponent*> m_components;

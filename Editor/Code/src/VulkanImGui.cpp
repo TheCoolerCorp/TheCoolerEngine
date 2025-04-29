@@ -22,9 +22,8 @@ static void check_vk_result(VkResult err)
 }
 namespace Editor::EditorLayer::Ui
 {
-	VulkanImGui::VulkanImGui(Engine::Core::Renderer* a_renderer): RHIImGui(a_renderer)
+	VulkanImGui::VulkanImGui(Renderer* a_renderer): RHIImGui(a_renderer), m_viewportWindowExtent(), m_pool(nullptr)
 	{
-		
 	}
 
 	VulkanImGui::~VulkanImGui()
@@ -138,7 +137,7 @@ namespace Editor::EditorLayer::Ui
 		RenderPassConfig t_config{};
 
 		// Color attachment setup
-		RenderPassAttachment t_colorAttachment{};
+		RenderPassAttachment t_colorAttachment;
 		t_colorAttachment.format = imageFormat;
 		t_colorAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 		t_colorAttachment.finalLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
@@ -148,7 +147,7 @@ namespace Editor::EditorLayer::Ui
 		t_colorAttachment.isDepth = false;
 
 		// Depth attachment setup
-		RenderPassAttachment t_depthAttachment{};
+		RenderPassAttachment t_depthAttachment;
 		t_depthAttachment.format = m_renderer->GetPhysicalDevice()->CastVulkan()->FindSupportedFormat(
 			{ VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT },
 			VK_IMAGE_TILING_OPTIMAL,
@@ -173,7 +172,7 @@ namespace Editor::EditorLayer::Ui
 		t_config.subpasses.push_back(subpass);
 
 		// Dependency
-		VkSubpassDependency dependency{};
+		VkSubpassDependency dependency;
 		dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
 		dependency.dstSubpass = 0;
 		dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
@@ -196,38 +195,6 @@ namespace Editor::EditorLayer::Ui
 		m_imGuiRenderPass->Create(t_config);
 		//m_sceneRenderPass->SetFramebuffers(m_renderer->GetSwapChain()->CastVulkan()->GetFramebuffers());
 
-		m_imGuiRenderPass->SetDrawFunc(
-			[this](const RecordRenderPassinfo& a_info, const std::vector<RHI::IObjectDescriptor*>& a_renderObjects,
-				const std::vector<RHI::IBuffer*>& a_vertexBuffers,
-				const std::vector<RHI::IBuffer*>& a_indexBuffers, const std::vector<uint32_t>& a_nbIndices)
-			{
-				//vkCmdBindPipeline(a_info.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_renderer->GetPipeline()->CastVulkan()->GetPipeline());
-
-				const VkPipelineLayout t_layout = a_info.graphicPipeline->GetLayout();
-
-				//const VkDescriptorSet t_cameraDescriptorSet = a_info.camera->GetDescriptor()->CastVulkan()->GetDescriptorSet();
-				//vkCmdBindDescriptorSets(a_info.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, t_layout, 0, 1, &t_cameraDescriptorSet, 0, nullptr);
-
-				for (int i = 0; i < a_renderObjects.size(); ++i)
-				{
-					if (a_vertexBuffers.at(i)->CastVulkan()->GetBuffer() != nullptr)
-					{
-						VkBuffer t_vertexBuffer = a_vertexBuffers.at(i)->CastVulkan()->GetBuffer();
-						constexpr VkDeviceSize t_offsets[] = { 0 };
-						vkCmdBindVertexBuffers(a_info.commandBuffer, 0, 1, &t_vertexBuffer, t_offsets);
-					}
-
-					if (a_indexBuffers.at(i)->CastVulkan()->GetBuffer() != nullptr)
-					{
-						vkCmdBindIndexBuffer(a_info.commandBuffer, a_indexBuffers.at(i)->CastVulkan()->GetBuffer(), 0, VK_INDEX_TYPE_UINT32);
-					}
-
-					vkCmdBindDescriptorSets(a_info.commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, t_layout, 1, 1, &a_renderObjects.at(i)->CastVulkan()->GetDescriptorSets()[a_info.imageIndex], 0, nullptr);
-
-					vkCmdDrawIndexed(a_info.commandBuffer, a_nbIndices.at(i), 1, 0, 0, 0);
-				}
-			}
-		);
 
 		VulkanRenderPassManager* t_manager = m_renderer->GetRenderPass()->CastVulkan();
 		t_manager->SetSceneRenderPass(m_imGuiRenderPass);
@@ -253,17 +220,13 @@ namespace Editor::EditorLayer::Ui
 
 		t_config.extent = t_extent;
 
-		VkAttachmentReference t_colorRef = {};
-		t_colorRef.attachment = 0;
-		t_colorRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-
 		SubpassConfig subpassConfig{};
 		subpassConfig.colorAttachmentIndices = { 0 };
 		subpassConfig.depthAttachmentIndex = -1; //no depth
 
 		t_config.subpasses.push_back(subpassConfig);
 
-		VkSubpassDependency t_dependency = {};
+		VkSubpassDependency t_dependency;
 		t_dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
 		t_dependency.dstSubpass = 0;
 		t_dependency.srcStageMask = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
@@ -278,12 +241,15 @@ namespace Editor::EditorLayer::Ui
 		t_config.dependencyImageLayoutOverride = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 
 		m_imGuiViewportRenderPass->Create(t_config);
-		m_imGuiViewportRenderPass->SetDrawFunc([this](const RecordRenderPassinfo a_info, const std::vector<RHI::IObjectDescriptor*>& a_renderObjects,
-			const std::vector<RHI::IBuffer*>& a_vertexBuffers,
-			const std::vector<RHI::IBuffer*>& a_indexBuffers, const std::vector<uint32_t>& a_nbIndices)
+		m_imGuiViewportRenderPass->SetDrawFunc([this](RecordRenderPassinfo& a_info,
+			std::unordered_map<RHI::DescriptorSetPipelineTarget, std::vector<RHI::IBuffer*>>& a_vertexBuffers,
+			std::unordered_map<RHI::DescriptorSetPipelineTarget, std::vector<RHI::IBuffer*>>& a_indexBuffers,
+			std::unordered_map<RHI::DescriptorSetPipelineTarget, std::vector<uint32_t>>& a_nbIndices,
+			std::unordered_map<RHI::DescriptorSetPipelineTarget, std::vector<RHI::IObjectDescriptor*>>& a_descriptors)
 			{
+				VkCommandBuffer t_commandBuffer = a_info.renderer->GetCommandPool()->CastVulkan()->m_commandBuffers[a_info.commandPoolIndex][a_info.currentFrame];
 				m_imguiLayer->OnUiRender();
-				ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), a_info.commandBuffer);
+				ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), t_commandBuffer);
 			}
 		);
 		m_imGuiViewportRenderPass->AddDependency(m_imGuiRenderPass);
@@ -299,8 +265,6 @@ namespace Editor::EditorLayer::Ui
 
 		VulkanRenderPassManager* t_manager = m_renderer->GetRenderPass()->CastVulkan();
 		t_manager->AddRenderPass(m_imGuiViewportRenderPass);
-
-
 	}
 
 	void VulkanImGui::NewFrame()

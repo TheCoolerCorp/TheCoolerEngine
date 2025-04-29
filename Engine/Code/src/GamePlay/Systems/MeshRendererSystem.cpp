@@ -83,6 +83,15 @@ namespace Engine
 			}
 		}
 
+		Core::RHI::IObjectDescriptor* MeshRendererSystem::GetDescriptor(int a_idx)
+		{
+			if (a_idx >= static_cast<int>(m_objectsDescriptors.size()) || a_idx < 0)
+			{
+				return nullptr;
+			}
+			return m_objectsDescriptors[a_idx];
+		}
+
 		void MeshRendererSystem::CreatePendingComponentsDescriptors(Core::RHI::ApiInterface* apiInterface, Core::RHI::ILogicalDevice* a_logicalDevice, Core::RHI::IPhysicalDevice* a_physicalDevice, Core::RHI::ISurface* a_surface, Core::RHI::ICommandPool* a_commandPool, Core::RHI::IGraphicPipeline* a_unlitPipeine, Core::RHI::IGraphicPipeline* a_litPipeine, uint32_t a_maxFrame, std::vector<std::pair<int, Math::mat4>>& a_updatedMatrix)
 		{
 			for (int i = 0; i < m_pendingComponents.size(); ++i)

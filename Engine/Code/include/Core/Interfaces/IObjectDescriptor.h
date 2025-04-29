@@ -1,9 +1,10 @@
 #ifndef IOBJECTDESCRIPTOR_H
 #define IOBJECTDESCRIPTOR_H
 
-#include "EngineExport.h"
+#include <cstdint>
+#include <vector>
 
-#include "Core/Interfaces/IGraphicPipeline.h"
+#include "EngineExport.h"
 
 namespace Engine
 {

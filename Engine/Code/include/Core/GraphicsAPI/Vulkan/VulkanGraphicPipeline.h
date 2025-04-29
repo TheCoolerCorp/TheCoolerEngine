@@ -1,11 +1,15 @@
 #ifndef VULKANGRAPHICPIPELINE_H
 #define VULKANGRAPHICPIPELINE_H
 
+#include <functional>
+
 #include "EngineExport.h"
+#include "VulkanRenderPass.h"
 #include "Core/Logger/Logger.h"
 #include "Core/GraphicsAPI/Vulkan/VulkanUtils.h"
 #include "Core/Utils.h"
 #include "Core/Interfaces/IGraphicPipeline.h"
+
 namespace Engine
 {
 	namespace Core
@@ -54,6 +58,22 @@ namespace Engine
 
 				ENGINE_API std::vector<VulkanSetLayout> GetSetLayouts() const { return m_setslayouts; }
 
+				ENGINE_API void SetDrawFunc(const std::function<void(RecordRenderPassinfo&,
+					std::unordered_map<RHI::DescriptorSetPipelineTarget, std::vector<RHI::IBuffer*>>&,
+					std::unordered_map<RHI::DescriptorSetPipelineTarget, std::vector<RHI::IBuffer*>>&,
+					std::unordered_map<RHI::DescriptorSetPipelineTarget, std::vector<uint32_t>>&,
+					std::unordered_map<RHI::DescriptorSetPipelineTarget, std::vector<RHI::IObjectDescriptor*>>&)>& a_func)
+				{ m_drawFunc = a_func; }
+				ENGINE_API void CallDrawFunc(RecordRenderPassinfo& a_info,
+					std::unordered_map<RHI::DescriptorSetPipelineTarget, std::vector<RHI::IBuffer*>>& a_vertexBuffers,
+					std::unordered_map<RHI::DescriptorSetPipelineTarget, std::vector<RHI::IBuffer*>>& a_indexBuffers,
+					std::unordered_map<RHI::DescriptorSetPipelineTarget, std::vector<uint32_t>>& a_nbIndices,
+					std::unordered_map<RHI::DescriptorSetPipelineTarget, std::vector<RHI::IObjectDescriptor*>>& a_descriptors)
+				{
+					if (m_drawFunc)
+						m_drawFunc(a_info, a_vertexBuffers, a_indexBuffers, a_nbIndices, a_descriptors);
+				}
+
 			private:
 				SetLayoutType GetType(std::string a_string);
 
@@ -61,6 +81,14 @@ namespace Engine
 				VkPipelineLayout m_layout = VK_NULL_HANDLE;
 
 				std::vector<VulkanSetLayout> m_setslayouts = std::vector<VulkanSetLayout>();
+
+				//the callback used to bind the pipeline 
+				std::function<void(RecordRenderPassinfo&, 
+					std::unordered_map<RHI::DescriptorSetPipelineTarget, std::vector<RHI::IBuffer*>>&, 
+					std::unordered_map<RHI::DescriptorSetPipelineTarget, std::vector<RHI::IBuffer*>>&, 
+					std::unordered_map<RHI::DescriptorSetPipelineTarget, std::vector<uint32_t>>&,
+					std::unordered_map<RHI::DescriptorSetPipelineTarget, std::vector<RHI::IObjectDescriptor*>>&)>
+				m_drawFunc = nullptr;
 			};
 		}
 	}

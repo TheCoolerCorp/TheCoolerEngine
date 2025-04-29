@@ -1,6 +1,7 @@
 #include "Core/Renderer/Renderer.h"
 #include "Core/Logger/Logger.h"
 #include "GamePlay/Others/GameObject.h"
+#include "GamePlay/Others/Scene.h"
 #include "Ressources/Texture.h"
 #include "Ressources/Mesh.h"
 namespace Engine
@@ -68,8 +69,38 @@ namespace Engine
 			std::array<RHI::IShader*, 2> t_litVertAndFrag = { t_vertexShader, t_litFragmentShader };
 
 			m_unlitPipeline->Create(m_logicalDevice, m_renderPass, RHI::Unlit, t_unlitVertAndFrag);
-			m_litPipeline->Create(m_logicalDevice, m_renderPass, RHI::Lit, t_litVertAndFrag);
+			m_unlitPipeline->CastVulkan()->SetDrawFunc([this](const GraphicsAPI::RecordRenderPassinfo& info, 
+				std::unordered_map<RHI::DescriptorSetPipelineTarget, std::vector<RHI::IBuffer*>>& a_vertexBuffers,
+				std::unordered_map<RHI::DescriptorSetPipelineTarget, std::vector<RHI::IBuffer*>>& a_indexBuffers,
+				std::unordered_map<RHI::DescriptorSetPipelineTarget, std::vector<uint32_t>>& a_nbIndices,
+				std::unordered_map<RHI::DescriptorSetPipelineTarget, std::vector<RHI::IObjectDescriptor*>>& a_descriptors)
+				{
+					m_unlitPipeline->Bind(info.renderer->GetCommandPool(), 0, info.renderer->GetSwapChain());
 
+					info.renderer->GetUnlitPipeline()->BindSingleDescriptors(info.renderer->GetCommandPool(), 0, info.renderer->GetSwapChain()->GetCurrentFrame(),
+						info.imageIndex, { info.scene->GetCameraDescriptor() });
+
+					info.renderer->GetUnlitPipeline()->BindObjects(info.renderer->GetCommandPool(), 0, info.renderer->GetSwapChain()->GetCurrentFrame(),
+						info.imageIndex, a_indexBuffers[RHI::UnlitDescriptor], a_vertexBuffers[RHI::UnlitDescriptor], a_nbIndices[RHI::UnlitDescriptor], a_descriptors[RHI::UnlitDescriptor]);
+				});
+
+			m_litPipeline->Create(m_logicalDevice, m_renderPass, RHI::Lit, t_litVertAndFrag);
+			m_litPipeline->CastVulkan()->SetDrawFunc([this](const GraphicsAPI::RecordRenderPassinfo& info,
+					std::unordered_map<RHI::DescriptorSetPipelineTarget, std::vector<RHI::IBuffer*>>& a_vertexBuffers,
+					std::unordered_map<RHI::DescriptorSetPipelineTarget, std::vector<RHI::IBuffer*>>& a_indexBuffers,
+					std::unordered_map<RHI::DescriptorSetPipelineTarget, std::vector<uint32_t>>& a_nbIndices,
+					std::unordered_map<RHI::DescriptorSetPipelineTarget, std::vector<RHI::IObjectDescriptor*>>& a_descriptors)
+				{
+					m_litPipeline->Bind(info.renderer->GetCommandPool(), 0, info.renderer->GetSwapChain());
+
+					info.renderer->GetLitPipeline()->BindSingleDescriptors(info.renderer->GetCommandPool(), 0, info.renderer->GetSwapChain()->GetCurrentFrame(),
+						info.imageIndex, { info.scene->GetCameraDescriptor() });
+
+					info.renderer->GetLitPipeline()->BindObjects(info.renderer->GetCommandPool(), 0, info.renderer->GetSwapChain()->GetCurrentFrame(),
+						info.imageIndex, a_indexBuffers[RHI::LitDescriptor], a_vertexBuffers[RHI::LitDescriptor], a_nbIndices[RHI::LitDescriptor], a_descriptors[RHI::LitDescriptor]);
+
+				}
+			);
 			t_vertexShader->Destroy(m_logicalDevice);
 			t_unlitFragmentShader->Destroy(m_logicalDevice);
 			t_litFragmentShader->Destroy(m_logicalDevice);

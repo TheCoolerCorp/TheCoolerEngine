@@ -49,6 +49,8 @@ namespace Editor
 			float m_deltaTime = 0.0f;
 
 			std::vector<EditorLayer::Layer*> m_layers;
+
+			void UpdateDeltaTime();
 		};
 	}
 }
