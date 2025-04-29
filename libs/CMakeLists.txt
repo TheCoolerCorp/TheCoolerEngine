@@ -15,9 +15,6 @@ add_subdirectory(assimp)
 # GLFW
 add_subdirectory(glfw)
 
-# Refureku
-#add_subdirectory(Refureku/Refureku/Library)
-
 #Jolt
 set(PHYSICS_REPO_ROOT ${CMAKE_SOURCE_DIR}/libs/JoltPhysics)
 
