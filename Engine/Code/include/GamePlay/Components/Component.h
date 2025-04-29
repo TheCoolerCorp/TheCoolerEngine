@@ -3,8 +3,6 @@
 
 #include "EngineExport.h"
 
-#include <iostream>
-#include <string>
 #include <filesystem>
 //#include <Refureku/Refureku.h>
 //#include "Component.rfkh.h"
@@ -13,11 +11,12 @@ namespace Engine
 {
 	namespace GamePlay
 	{
-		enum class ComponentType
+		enum class ComponentType : std::uint8_t
 		{
 			TRANSFORM = 0,
 			MESH = 1,
-			MATERIAL = 2
+			MATERIAL = 2,
+			LIGHT = 3
 		};
 
 		class Component

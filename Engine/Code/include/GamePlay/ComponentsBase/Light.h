@@ -1,0 +1,40 @@
+#ifndef LIGHT_H
+#define LIGHT_H
+
+#include "EngineExport.h"
+
+#include "Math/vec3.h"
+
+namespace Engine
+{
+	namespace GamePlay
+	{
+		/*
+		 *  Just point light for now, no directionnal
+		 */
+		class Light
+		{
+		public:
+			ENGINE_API Light() = default;
+			ENGINE_API Light(Math::vec3 a_position, Math::vec3 a_color, float a_intensity) : m_position(a_position), m_color(a_color), m_intensity(a_intensity) {}
+
+			ENGINE_API ~Light() = default;
+
+			ENGINE_API Math::vec3& GetPosition() { return m_position; }
+			ENGINE_API void SetPosition(Math::vec3 a_position) { m_position = a_position; }
+
+			ENGINE_API Math::vec3& GetColor() { return m_color; }
+			ENGINE_API void SetColor(Math::vec3 a_color) { m_color = a_color; }
+
+			ENGINE_API float& GetIntensisty() { return m_intensity; }
+			ENGINE_API void SetPosition(float a_intensity) { m_intensity = a_intensity; }
+
+		private:
+			Math::vec3 m_position = {0.f, 0.f, 0.f};
+			Math::vec3 m_color = { 1.f, 1.f, 1.f };
+			float m_intensity = 0.5f;
+		};
+	}
+}
+
+#endif

@@ -1,5 +1,7 @@
 #include "GamePlay/Systems/MeshRendererSystem.h"
 
+#include "Math/Transform.h"
+
 //#include "GamePlay/Others/Camera.h"
 
 namespace Engine
@@ -11,7 +13,7 @@ namespace Engine
 			// DO NOTHING FOR NOW
 		}
 
-		void MeshRendererSystem::Update(Core::Renderer* a_renderer, std::vector<std::pair<int, Math::mat4>> a_updatedMatrix)
+		void MeshRendererSystem::Update(Core::Renderer* a_renderer, std::vector < std::pair<int, Math::UniformMatrixs>> a_updatedMatrix)
 		{
 			Core::RHI::ILogicalDevice* t_logicalDevice = a_renderer->GetLogicalDevice();
 			Core::RHI::IPhysicalDevice* t_physicalDevice = a_renderer->GetPhysicalDevice();
@@ -25,7 +27,7 @@ namespace Engine
 
 			for (int i = 0; i < a_updatedMatrix.size(); ++i)
 			{
-				m_objectsDescriptors[a_updatedMatrix[i].first]->UpdateUniforms(t_logicalDevice, 0,a_updatedMatrix[i].second.mElements.data(), 16 * sizeof(float), a_renderer->GetSwapChain()->GetCurrentFrame());
+				m_objectsDescriptors[a_updatedMatrix[i].first]->UpdateUniforms(t_logicalDevice, 0, &a_updatedMatrix[i].second, sizeof(Math::UniformMatrixs), a_renderer->GetSwapChain()->GetCurrentFrame());
 			}
 
 		}
@@ -82,14 +84,14 @@ namespace Engine
 			}
 		}
 
-		void MeshRendererSystem::CreatePendingComponentsDescriptors(Core::RHI::ApiInterface* apiInterface, Core::RHI::ILogicalDevice* a_logicalDevice, Core::RHI::IPhysicalDevice* a_physicalDevice, Core::RHI::ISurface* a_surface, Core::RHI::ICommandPool* a_commandPool, Core::RHI::IGraphicPipeline* a_unlitPipeine, Core::RHI::IGraphicPipeline* a_litPipeine, uint32_t a_maxFrame, std::vector<std::pair<int, Math::mat4>>& a_updatedMatrix)
+		void MeshRendererSystem::CreatePendingComponentsDescriptors(Core::RHI::ApiInterface* apiInterface, Core::RHI::ILogicalDevice* a_logicalDevice, Core::RHI::IPhysicalDevice* a_physicalDevice, Core::RHI::ISurface* a_surface, Core::RHI::ICommandPool* a_commandPool, Core::RHI::IGraphicPipeline* a_unlitPipeine, Core::RHI::IGraphicPipeline* a_litPipeine, uint32_t a_maxFrame, std::vector<std::pair<int, Math::UniformMatrixs>>& a_updatedMatrix)
 		{
 			for (int i = 0; i < m_pendingComponents.size(); ++i)
 			{
 				Core::RHI::IObjectDescriptor* t_newRenderObject = apiInterface->InstantiateObjectDescriptor();
 
 				Ref<Material> t_material = m_components[m_pendingComponents[i]]->GetMaterial();
-				void* t_newRenderObjectMatrixData = a_updatedMatrix.at(m_pendingComponents.at(i)).second.mElements.data();
+				void* t_newRenderObjectMatrixData = &a_updatedMatrix.at(m_pendingComponents.at(i)).second;
 
 				std::vector<Core::RHI::DescriptorSetDataType> m_types;
 				if (m_components.at(m_pendingComponents.at(i))->GetMaterial()->GetType() == UNLIT)
@@ -129,7 +131,7 @@ namespace Engine
 				{
 					LOG_ERROR("Not other type of pipeline has been implemented");
 				}
-				t_newRenderObject->SetUniform(a_logicalDevice, a_physicalDevice, a_commandPool, 0, t_newRenderObjectMatrixData, 16 * sizeof(float), 0, 1);
+				t_newRenderObject->SetUniform(a_logicalDevice, a_physicalDevice, a_commandPool, 0, t_newRenderObjectMatrixData, sizeof(Math::UniformMatrixs), 0, 1);
 
 				t_newRenderObject->SetTexture(a_logicalDevice, t_material->GetAlbedo()->GetImage(), 1, 1);
 

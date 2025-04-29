@@ -13,7 +13,6 @@ namespace Engine
 	{
 		namespace GraphicsAPI
 		{
-			// Can ha ve only ONE SET, count = number of set (for frame in flight for example), but can have multiple uniform with different size, and type to allocate pool
 			void VulkanObjectDescriptor::Create(RHI::ILogicalDevice* a_logicalDevice, RHI::IGraphicPipeline* a_graphicPipeline, RHI::DescriptorSetTarget a_type, uint32_t a_setCount, uint32_t a_uniformCount, std::vector<uint32_t> a_subUniformCount, std::vector<RHI::DescriptorSetDataType> a_types)
 			{
 				// Type : Common to all object in shader or per object.

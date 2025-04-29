@@ -8,6 +8,7 @@
 #include "Core/Renderer/Renderer.h"
 #include "Core/Interfaces/IObjectDescriptor.h"
 #include "Math/mat4.h"
+#include "GamePlay/Components/TransformComponent.h"
 
 
 namespace Engine
@@ -21,7 +22,7 @@ namespace Engine
 			ENGINE_API ~MeshRendererSystem() override = default;
 
 			ENGINE_API void Create(Core::Renderer* a_renderer);
-			ENGINE_API void Update(Core::Renderer* a_renderer, std::vector<std::pair<int, Math::mat4>> a_updatedMatrix);
+			ENGINE_API void Update(Core::Renderer* a_renderer, std::vector < std::pair<int, Math::UniformMatrixs>> a_updatedMatrix);
 			ENGINE_API void Destroy(Core::Renderer* a_renderer);
 
 			ENGINE_API uint32_t AddComponent(MeshComponent* a_meshComponent);
@@ -39,7 +40,7 @@ namespace Engine
 
 			std::vector<int> m_pendingComponents;
 
-			void CreatePendingComponentsDescriptors(Core::RHI::ApiInterface* apiInterface, Core::RHI::ILogicalDevice* a_logicalDevice, Core::RHI::IPhysicalDevice* a_physicalDevice, Core::RHI::ISurface* a_surface, Core::RHI::ICommandPool* a_commandPool, Core::RHI::IGraphicPipeline* a_unlitPipeline, Core::RHI::IGraphicPipeline* a_litPipeine, uint32_t a_maxFrame,std::vector<std::pair<int, Math::mat4>>& a_updatedMatrix);
+			void CreatePendingComponentsDescriptors(Core::RHI::ApiInterface* apiInterface, Core::RHI::ILogicalDevice* a_logicalDevice, Core::RHI::IPhysicalDevice* a_physicalDevice, Core::RHI::ISurface* a_surface, Core::RHI::ICommandPool* a_commandPool, Core::RHI::IGraphicPipeline* a_unlitPipeline, Core::RHI::IGraphicPipeline* a_litPipeine, uint32_t a_maxFrame, std::vector<std::pair<int, Math::UniformMatrixs>>& a_updatedMatrix);
 		};
 	}
 }

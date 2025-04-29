@@ -83,16 +83,19 @@ namespace Engine
 			m_transformSystem->Update();
 
 			m_mainCamera->Update(a_renderer, a_inputHandler, a_window, a_deltatime);
-			std::vector<std::pair<int, Math::mat4>> syncro;
+			std::vector<std::pair<int, Math::UniformMatrixs>> syncro;
 
 			for (int i = 0; i < m_objs.size(); ++i)
 			{
-				uint32_t t_meshId = m_objs[i]->GetComponentID<MeshComponent>();
+				int t_meshId = m_objs[i]->GetComponentID<MeshComponent>();
 				if (t_meshId != -1)
 				{
 					Math::mat4 t_matrix = m_objs[i]->GetComponent<TransformComponent>()->GetTransform()->GetTransformMatrix();
 					t_matrix.Transpose(); // transpose ici
-					syncro.push_back({ t_meshId, t_matrix });
+					Math::mat4 t_normalMatrix = m_objs[i]->GetComponent<TransformComponent>()->GetTransform()->GetNormalMatrix();
+					t_normalMatrix.Transpose();
+					syncro.push_back({ t_meshId, {t_matrix, t_normalMatrix } });
+
 				}
 			}
 			m_meshRendererSystem->Update(a_renderer, syncro);
