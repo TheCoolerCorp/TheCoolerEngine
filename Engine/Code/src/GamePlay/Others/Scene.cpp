@@ -296,9 +296,17 @@ namespace Engine
 			t_file >> t_scene;
 
 			for (const auto& t_entry : t_scene) {
+				bool t_hasRigidBody = false;
+
 				std::string t_name = t_entry.at("GameObject").get<std::string>();
+
 				TransformData t_transform = DeserializeTransformComponent(t_entry.at("TransformComponent"));
-				RigidBodyData t_rigidBody = DeserializeRigidBodyComponent(t_entry.at("RigidBodyComponent"));
+
+				RigidBodyData t_rigidBody{};
+				if (t_entry.contains("RigidBodyComponent")) 
+				{
+					t_rigidBody = DeserializeRigidBodyComponent(t_entry.at("RigidBodyComponent"));
+				}
 
 				LOG_DEBUG(t_name);
 
@@ -311,33 +319,36 @@ namespace Engine
 				t_transform.mScale.Print();
 				LOG_DEBUG("parent : " + Core::Debugging::ToString(t_transform.mParentId));
 
-				LOG_DEBUG("RigidBody :");
-				LOG_DEBUG("body type :");
-				LOG_DEBUG(Core::Debugging::ToString(t_rigidBody.mBodyType));
-				LOG_DEBUG("layer :");
-				LOG_DEBUG(Core::Debugging::ToString(t_rigidBody.mLayer));
-				LOG_DEBUG("collider type :");
-				LOG_DEBUG(Core::Debugging::ToString(t_rigidBody.mColliderType));
-				LOG_DEBUG("pos :");
-				t_rigidBody.mPos.Print();
-				LOG_DEBUG("scale :");
-				t_rigidBody.mScale.Print();
-				LOG_DEBUG("radius :");
-				LOG_DEBUG(Core::Debugging::ToString(t_rigidBody.mRadius));
-				LOG_DEBUG("half height :");
-				LOG_DEBUG(Core::Debugging::ToString(t_rigidBody.mHalfHeight));
-				LOG_DEBUG("rot :");
-				t_rigidBody.mRot.Print();
-				LOG_DEBUG("mass :");
-				LOG_DEBUG(Core::Debugging::ToString(t_rigidBody.mMass));
-				LOG_DEBUG("enable :");
-				LOG_DEBUG(Core::Debugging::ToString(t_rigidBody.mEnable));
-				LOG_DEBUG("lock rotation X :");
-				LOG_DEBUG(Core::Debugging::ToString(t_rigidBody.mLockRotX));
-				LOG_DEBUG("lock rotation Y :");
-				LOG_DEBUG(Core::Debugging::ToString(t_rigidBody.mLockRotY));
-				LOG_DEBUG("lock rotation Z :");
-				LOG_DEBUG(Core::Debugging::ToString(t_rigidBody.mLockRotZ));
+				if (t_hasRigidBody)
+				{
+					LOG_DEBUG("RigidBody :");
+					LOG_DEBUG("body type :");
+					LOG_DEBUG(Core::Debugging::ToString(t_rigidBody.mBodyType));
+					LOG_DEBUG("layer :");
+					LOG_DEBUG(Core::Debugging::ToString(t_rigidBody.mLayer));
+					LOG_DEBUG("collider type :");
+					LOG_DEBUG(Core::Debugging::ToString(t_rigidBody.mColliderType));
+					LOG_DEBUG("pos :");
+					t_rigidBody.mPos.Print();
+					LOG_DEBUG("scale :");
+					t_rigidBody.mScale.Print();
+					LOG_DEBUG("radius :");
+					LOG_DEBUG(Core::Debugging::ToString(t_rigidBody.mRadius));
+					LOG_DEBUG("half height :");
+					LOG_DEBUG(Core::Debugging::ToString(t_rigidBody.mHalfHeight));
+					LOG_DEBUG("rot :");
+					t_rigidBody.mRot.Print();
+					LOG_DEBUG("mass :");
+					LOG_DEBUG(Core::Debugging::ToString(t_rigidBody.mMass));
+					LOG_DEBUG("enable :");
+					LOG_DEBUG(Core::Debugging::ToString(t_rigidBody.mEnable));
+					LOG_DEBUG("lock rotation X :");
+					LOG_DEBUG(Core::Debugging::ToString(t_rigidBody.mLockRotX));
+					LOG_DEBUG("lock rotation Y :");
+					LOG_DEBUG(Core::Debugging::ToString(t_rigidBody.mLockRotY));
+					LOG_DEBUG("lock rotation Z :");
+					LOG_DEBUG(Core::Debugging::ToString(t_rigidBody.mLockRotZ));
+				}
 			}
 		}
 
