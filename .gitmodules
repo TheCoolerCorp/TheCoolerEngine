@@ -20,3 +20,6 @@
 [submodule "libs/json"]
 	path = libs/json
 	url = https://github.com/nlohmann/json.git
+[submodule "libs/spir-v"]
+	path = libs/spir-v
+	url = https://github.com/KhronosGroup/SPIRV-Reflect.git
