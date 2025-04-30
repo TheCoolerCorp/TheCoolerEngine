@@ -10,29 +10,14 @@ namespace Engine
 {
     namespace Resource
     {
-        void Texture::Create(std::string a_path)
+        void Texture::Create(const std::string a_path)
         {
-            int texWidth, texHeight, texChannels;
-            stbi_uc* pixels = stbi_load(a_path.c_str(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
-
-            if (!pixels) 
-            {
-                LOG_ERROR("Can't load image");
-            }
-
-            m_width = texWidth;
-            m_height = texHeight;
-            m_data = pixels;
-
             m_path = a_path;
         }
 
         void Texture::Destroy()
         {
-            if (m_data)
-            {
-				delete m_data;
-            }
+	        delete m_data;
         }
 
         void Texture::Load(Core::Renderer* a_renderer)
@@ -41,6 +26,18 @@ namespace Engine
             {
                 return;
             }
+
+            int t_texWidth, t_texHeight, t_texChannels;
+            stbi_uc* t_pixels = stbi_load(m_path.c_str(), &t_texWidth, &t_texHeight, &t_texChannels, STBI_rgb_alpha);
+
+            if (!t_pixels)
+            {
+                LOG_ERROR("Can't load image");
+            }
+
+            m_width = t_texWidth;
+            m_height = t_texHeight;
+            m_data = t_pixels;
 
             Core::RHI::ApiInterface* t_interface = a_renderer->GetInterface();
             Core::RHI::IPhysicalDevice* t_physicalDevice = a_renderer->GetPhysicalDevice();

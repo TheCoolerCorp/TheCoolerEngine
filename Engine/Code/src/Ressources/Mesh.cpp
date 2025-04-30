@@ -8,21 +8,6 @@ namespace Engine
 	{
 		void Mesh::Create(const std::string a_path)
 		{
-            Assimp::Importer t_importer{};
-            const aiScene* t_scene = t_importer.ReadFile(a_path, aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_PreTransformVertices);
-            if (!t_scene || !t_scene->mRootNode)
-            {
-                std::cout << "ERROR::ASSIMP::" << t_importer.GetErrorString() << '\n';
-                return;
-            }
-            std::string t_directory = a_path.substr(0, a_path.find_last_of('/'));
-
-            for (unsigned int i = 0; i < t_scene->mNumMeshes; ++i)
-            {
-                const aiMesh* t_mesh = t_scene->mMeshes[i];
-                ProcessMesh(t_mesh);
-            }
-
             m_path = a_path;
 		}
 
@@ -38,6 +23,21 @@ namespace Engine
             if (m_isLoaded)
             {
             	return;
+            }
+
+            Assimp::Importer t_importer{};
+            const aiScene* t_scene = t_importer.ReadFile(m_path, aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_PreTransformVertices);
+            if (!t_scene || !t_scene->mRootNode)
+            {
+                LOG_ERROR("ERROR::ASSIMP::" + Core::Debugging::ToString(t_importer.GetErrorString()));
+                return;
+            }
+            std::string t_directory = m_path.substr(0, m_path.find_last_of('/'));
+
+            for (unsigned int i = 0; i < t_scene->mNumMeshes; ++i)
+            {
+                const aiMesh* t_mesh = t_scene->mMeshes[i];
+                ProcessMesh(t_mesh);
             }
 
             Core::RHI::ApiInterface* t_interface = a_renderer->GetInterface();
