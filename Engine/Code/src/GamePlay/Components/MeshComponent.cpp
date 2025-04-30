@@ -12,7 +12,7 @@ namespace Engine
 		{
 			m_material = CreateRef<Material>();
 
-			a_outId = ServiceLocator::GetMeshRendererSystem()->AddComponent(this);
+			a_outId = ServiceLocator::GetRendererSystem()->AddComponent(this);
 			return ComponentType::MESH;
 
 		}
@@ -43,12 +43,12 @@ namespace Engine
 
 		MeshComponent* MeshComponent::GetComponent(int a_id)
 		{
-			return ServiceLocator::GetMeshRendererSystem()->GetComponent(a_id);
+			return ServiceLocator::GetRendererSystem()->GetMeshComponent(a_id);
 		}
 
 		void MeshComponent::RemoveComponent(int a_id)
 		{
-			ServiceLocator::GetMeshRendererSystem()->RemoveComponent(a_id);
+			ServiceLocator::GetRendererSystem()->RemoveMeshComponent(a_id);
 		}
 	}
 }

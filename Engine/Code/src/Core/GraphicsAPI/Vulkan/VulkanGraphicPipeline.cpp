@@ -328,7 +328,7 @@ namespace Engine
 				{
 					return Per;
 				}
-				else if (a_string.find(LIGHT) != std::string::npos)
+				else if (a_string.find(ULIGHT) != std::string::npos)
 				{
 					return Light;
 				}
