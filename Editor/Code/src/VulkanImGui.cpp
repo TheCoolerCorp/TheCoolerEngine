@@ -106,18 +106,18 @@ namespace Editor::EditorLayer::Ui
 
 	void VulkanImGui::Update()
 	{
-		if (m_viewportWindowResized)
-		{
-			if (m_viewportWindowExtent.height <= 0 || m_viewportWindowExtent.width <= 0)
-				return;
-			const VkDevice t_device = m_renderer->GetLogicalDevice()->CastVulkan()->GetVkDevice();
+		//if (m_viewportWindowResized)
+		//{
+		//	if (m_viewportWindowExtent.height <= 0 || m_viewportWindowExtent.width <= 0)
+		//		return;
+		//	const VkDevice t_device = m_renderer->GetLogicalDevice()->CastVulkan()->GetVkDevice();
 
-			vkDeviceWaitIdle(t_device);
+		//	vkDeviceWaitIdle(t_device);
 
-			m_viewportWindowResized = false;
-			m_imGuiRenderPass->RecreateFrameBuffer(m_viewportWindowExtent);
-			RecreateSceneImageDescriptorSets(m_viewportWindowExtent);
-		}
+		//	m_viewportWindowResized = false;
+		//	m_imGuiRenderPass->RecreateFrameBuffer(m_viewportWindowExtent);
+		//	RecreateSceneImageDescriptorSets(m_viewportWindowExtent);
+		//}
 	}
 
 	void VulkanImGui::SetupRenderPasses()
@@ -203,42 +203,65 @@ namespace Editor::EditorLayer::Ui
 	void VulkanImGui::SetupImGuiRenderPass()
 	{
 		m_imGuiViewportRenderPass = new VulkanRenderPass(m_renderer->GetLogicalDevice()->CastVulkan()->GetVkDevice(), m_renderer);
-		VkExtent2D t_extent = m_renderer->GetSwapChain()->CastVulkan()->GetExtent2D();
 		VkFormat t_imageFormat = m_renderer->GetSwapChain()->CastVulkan()->GetImageFormat();
+		VkExtent2D t_extent = m_renderer->GetSwapChain()->CastVulkan()->GetExtent2D();
+		VkDevice t_device = m_renderer->GetLogicalDevice()->CastVulkan()->GetVkDevice();
 
+		RenderPassConfig t_config{};
 
-		RenderPassConfig t_config = {};
-		t_config.attachments.push_back({
-			.format = t_imageFormat,
-			.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED,
-			.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR,
-			.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
-			.storeOp = VK_ATTACHMENT_STORE_OP_STORE,
-			.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT,
-			.isDepth = false
-			});
+		// Color attachment setup
+		RenderPassAttachment t_colorAttachment;
+		t_colorAttachment.format = t_imageFormat;
+		t_colorAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+		t_colorAttachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
+		t_colorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+		t_colorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+		t_colorAttachment.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+		t_colorAttachment.isDepth = false;
 
+		// Depth attachment setup
+		RenderPassAttachment t_depthAttachment;
+		t_depthAttachment.format = m_renderer->GetPhysicalDevice()->CastVulkan()->FindSupportedFormat(
+			{ VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT },
+			VK_IMAGE_TILING_OPTIMAL,
+			VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT
+		);
+		t_depthAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+		t_depthAttachment.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+		t_depthAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
+		t_depthAttachment.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+		t_depthAttachment.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
+		t_depthAttachment.isDepth = true;
+
+		// Add attachments to config
+		t_config.attachments.push_back(t_colorAttachment); // index 0
+		t_config.attachments.push_back(t_depthAttachment); // index 1
+
+		// Subpass setup
+		SubpassConfig t_subpass{};
+		t_subpass.colorAttachmentIndices = { 0 };
+		t_subpass.depthAttachmentIndex = 1;
+
+		t_config.subpasses.push_back(t_subpass);
+
+		// Dependency
+		VkSubpassDependency dependency;
+		dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
+		dependency.dstSubpass = 0;
+		dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
+		dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT | VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
+		dependency.srcAccessMask = 0;
+		dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
+		dependency.dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT;
+
+		t_config.dependencies.push_back(dependency);
+
+		// Extent
 		t_config.extent = t_extent;
-
-		SubpassConfig subpassConfig{};
-		subpassConfig.colorAttachmentIndices = { 0 };
-		subpassConfig.depthAttachmentIndex = -1; //no depth
-
-		t_config.subpasses.push_back(subpassConfig);
-
-		VkSubpassDependency t_dependency;
-		t_dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
-		t_dependency.dstSubpass = 0;
-		t_dependency.srcStageMask = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
-		t_dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-		t_dependency.srcAccessMask = 0;
-		t_dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
-		t_dependency.dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT;
-
-		t_config.dependencies.push_back(t_dependency);
+		t_config.setViewportAndScissor = true;
 		t_config.useSwapChainFramebuffers = true;
-		t_config.createOwnFramebuffers = true;
-		t_config.dependencyImageLayoutOverride = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+		t_config.createOwnFramebuffers = false;
+		t_config.setResizeCallback = true;
 
 		m_imGuiViewportRenderPass->Create(t_config);
 		m_imGuiViewportRenderPass->SetDrawFunc([this](RecordRenderPassinfo& a_info,
@@ -248,18 +271,18 @@ namespace Editor::EditorLayer::Ui
 			std::unordered_map<RHI::DescriptorSetPipelineTarget, std::vector<RHI::IObjectDescriptor*>>& a_descriptors)
 			{
 				VkCommandBuffer t_commandBuffer = a_info.renderer->GetCommandPool()->CastVulkan()->m_commandBuffers[a_info.commandPoolIndex][a_info.currentFrame];
-				m_imguiLayer->OnUiRender();
+				//m_imguiLayer->OnUiRender();
 				ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), t_commandBuffer);
 			}
 		);
 		m_imGuiViewportRenderPass->AddDependency(m_imGuiRenderPass);
-		std::vector<VkImageView> t_imageViews = m_renderer->GetSwapChain()->CastVulkan()->GetImageViews();
-		std::vector<std::vector<VkImageView>> t_imageViews2;
-		for (auto& t_imageView : t_imageViews)
-		{
-			t_imageViews2.push_back({t_imageView});
-		}
-		m_imGuiViewportRenderPass->CreateFramebuffers(t_imageViews2);
+		//std::vector<VkImageView> t_imageViews = m_renderer->GetSwapChain()->CastVulkan()->GetImageViews();
+		//std::vector<std::vector<VkImageView>> t_imageViews2;
+		//for (auto& t_imageView : t_imageViews)
+		//{
+		//	t_imageViews2.push_back({t_imageView});
+		//}
+		//m_imGuiViewportRenderPass->CreateFramebuffers(t_imageViews2);
 
 		
 
@@ -287,7 +310,16 @@ namespace Editor::EditorLayer::Ui
 		if (m_viewportWindowExtent.width != t_extent.width || m_viewportWindowExtent.height != t_extent.height)
 		{
 			m_viewportWindowExtent = t_extent;
-			m_viewportWindowResized = true;
+			if (m_viewportWindowExtent.height <= 0 || m_viewportWindowExtent.width <= 0)
+				return;
+			const VkDevice t_device = m_renderer->GetLogicalDevice()->CastVulkan()->GetVkDevice();
+
+			vkDeviceWaitIdle(t_device);
+
+			m_viewportWindowResized = false;
+			m_imGuiRenderPass->RecreateFrameBuffer(m_viewportWindowExtent);
+			RecreateSceneImageDescriptorSets(m_viewportWindowExtent);
+			//m_viewportWindowResized = true;
 		}
 		ImGui::Image(reinterpret_cast<ImTextureID>(m_dset[t_swapchain->GetCurrentFrame()]), ImVec2{ t_viewportPanelSize.x, t_viewportPanelSize.y });
 	}

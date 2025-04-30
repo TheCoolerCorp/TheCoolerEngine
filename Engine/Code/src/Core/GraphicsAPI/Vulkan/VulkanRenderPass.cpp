@@ -101,6 +101,7 @@ namespace Engine
 				config.setViewportAndScissor = true;
 				config.useSwapChainFramebuffers = true;
 				config.createOwnFramebuffers = false;
+				config.setResizeCallback = true;
 
 				m_sceneRenderPass = new VulkanRenderPass(t_device, a_renderer);
 
@@ -322,13 +323,14 @@ namespace Engine
 					CreateAttachments();
 					CreateFramebuffers();
 				}
-				if (m_config.createOwnFramebuffers && m_config.setResizeCallback)
+				if (m_config.setResizeCallback)
 				{
 					VulkanSwapchain* swapchain = m_renderer->GetSwapChain()->CastVulkan();
 					swapchain->AddResizeCallback([this](VkExtent2D a_extent)
 						{
 							m_config.extent = a_extent;
-							RecreateFrameBuffer(a_extent);
+							if (m_config.createOwnFramebuffers)
+								RecreateFrameBuffer(a_extent);
 						});
 					
 				}

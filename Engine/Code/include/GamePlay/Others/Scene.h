@@ -4,7 +4,7 @@
 #include "EngineExport.h"
 
 #include "Gameplay/Systems/TransformSystem.h"
-#include "Gameplay/Systems/MeshRendererSystem.h"
+#include "Gameplay/Systems/RenderSystem.h"
 #include "Core/Renderer/Renderer.h"
 #include "Ressources/ResourceManager.h"
 #include "GamePlay/Others/GameObject.h"
@@ -53,7 +53,7 @@ namespace Engine
 
 			std::string m_name{};
 			TransformSystem* m_transformSystem = nullptr;
-			MeshRendererSystem* m_meshRendererSystem = nullptr;
+			RenderSystem* m_renderSystem = nullptr;
 			PhysicsSystem* m_physicsSystem = nullptr;
 		};
 	}	

@@ -19,7 +19,8 @@ namespace Engine
 			MESH = 1,
 			MATERIAL = 2,
 			RIGIDBODY = 3,
-			COLLIDERMESH = 4
+			COLLIDERMESH = 4,
+			LIGHT = 5
 		};
 
 		class Component
