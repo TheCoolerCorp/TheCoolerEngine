@@ -75,8 +75,8 @@ vec3 Radiance(vec3 lightDir)
 {
     float distance = length(lightDir);
     float attenuation = 1.0 / (distance * distance);
-    //vec3 radiance = light_lhtValues.color * attenuation * light_lhtValues.intensity;
-    vec3 radiance = light_lhtValues.color * attenuation * 0.75;
+    vec3 radiance = light_lhtValues.color * attenuation * light_lhtValues.intensity;
+    //vec3 radiance = light_lhtValues.color * attenuation * 0.75;
 
     return radiance;
 }

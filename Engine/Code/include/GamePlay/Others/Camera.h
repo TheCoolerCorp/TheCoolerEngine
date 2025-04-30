@@ -29,7 +29,7 @@ namespace Engine
 		struct CameraData
 		{
 			Math::mat4 m_vp;
-			Math::vec3 m_pos;
+			alignas(16)Math::vec3 m_pos;
 		};
 		class Camera
 		{

@@ -32,7 +32,7 @@ namespace Engine
 			t_albedoTexture->Load(a_renderer);
 
 			m_textures[0] = t_albedoTexture;
-			m_hasTextures.albdeo = true;
+			m_hasTextures.albdeo = static_cast<uint32_t>(true);
 
 			if (!m_empty->IsLoaded())
 			{
@@ -48,7 +48,7 @@ namespace Engine
 		void Material::RemoveAlbedo()
 		{
 			m_textures[0] = nullptr;
-			m_hasTextures.albdeo = false;
+			m_hasTextures.albdeo = static_cast<uint32_t>(false);
 		}
 
 		void Material::SetNormal(const std::string& a_path, Core::Renderer* a_renderer)

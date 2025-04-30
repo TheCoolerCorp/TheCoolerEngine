@@ -12,9 +12,9 @@ namespace Engine
 		struct LightData
 		{
 		public:
-			Math::vec3 m_position = { 0.f, 0.f, 0.f };
-			Math::vec3 m_color = { 1.f, 1.f, 1.f };
-			float m_intensity = 1.f;
+			alignas(16)Math::vec3 m_position = { 0.f, 0.f, 0.f };
+			alignas(16)Math::vec3 m_color = { 1.f, 1.f, 1.f };
+			float m_intensity = 100.f;
 		};
 
 		/*

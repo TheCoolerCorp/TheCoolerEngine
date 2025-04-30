@@ -48,6 +48,8 @@ namespace Engine
 			t_object2->GetComponent<MeshComponent>()->SetMesh("Assets/Meshes/viking_room.obj", a_renderer);
 			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetType(LIT);
 			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetAlbedo("Assets/Textures/viking_room.png", a_renderer);
+			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetMetallic(1.f);
+			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetRoughness(0.2f);
 
 
 			LightGO* t_light = new LightGO(Math::vec3(10.f, 0.f, 0.f), Math::vec3(0.f, 0.f, 0.f), Math::vec3(1.f));

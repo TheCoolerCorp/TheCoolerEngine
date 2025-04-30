@@ -35,11 +35,11 @@ namespace Engine
 
 		struct HasMaterialTextures
 		{
-			bool albdeo = false;
-			bool normal = false;
-			bool metallic = false;
-			bool roughness = false;
-			bool ao = false;
+			uint32_t albdeo = 0;
+			uint32_t normal = 0;
+			uint32_t metallic = 0;
+			uint32_t roughness = 0;
+			uint32_t ao = 0;
 		};
 
 		enum MaterialType
