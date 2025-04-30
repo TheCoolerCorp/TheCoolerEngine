@@ -38,15 +38,15 @@ namespace Engine
 
 			GameObject* t_object = new GameObject(Math::vec3(0.f, 0.f, 0.f), Math::vec3(0.f, Math::ToRadians(270.f), 0.f), Math::vec3(1.f));
 			t_object->AddComponent<MeshComponent>();
-			t_object->GetComponent<MeshComponent>()->SetMesh("Assets/Meshes/viking_room.obj", a_renderer);
-			t_object->GetComponent<MeshComponent>()->GetMaterial()->SetType(UNLIT);
 			t_object->GetComponent<MeshComponent>()->GetMaterial()->SetAlbedo("Assets/Textures/viking_room.png", a_renderer);
+			t_object->GetComponent<MeshComponent>()->GetMaterial()->SetType(UNLIT);
+			t_object->GetComponent<MeshComponent>()->SetMesh("Assets/Meshes/viking_room.obj", a_renderer);
 
 			GameObject* t_object2 = new GameObject(Math::vec3(5.f, 0.f, 0.f), Math::vec3(0.f, Math::ToRadians(270.f), 0.f), Math::vec3(1.f));
 			t_object2->AddComponent<MeshComponent>();
-			t_object2->GetComponent<MeshComponent>()->SetMesh("Assets/Meshes/viking_room.obj", a_renderer);
-			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetType(LIT);
 			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetAlbedo("Assets/Textures/viking_room.png", a_renderer);
+			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetType(LIT);
+			t_object2->GetComponent<MeshComponent>()->SetMesh("Assets/Meshes/viking_room.obj", a_renderer);
 
 			AddGameObject(t_object);
 			AddGameObject(t_object2);
