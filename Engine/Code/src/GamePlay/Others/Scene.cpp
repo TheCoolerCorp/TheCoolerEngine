@@ -310,9 +310,9 @@ namespace Engine
 				}
 
 				MeshData t_mesh{};
-				if (t_entry.contains("RigidMeshComponent"))
+				if (t_entry.contains("MeshComponent"))
 				{
-					t_mesh = DeserializeMeshComponent(t_entry.at("RigidMeshComponent"));
+					t_mesh = DeserializeMeshComponent(t_entry.at("MeshComponent"));
 					t_hasMesh = true;
 				}
 
@@ -356,6 +356,17 @@ namespace Engine
 					LOG_DEBUG(Core::Debugging::ToString(t_rigidBody.mLockRotY));
 					LOG_DEBUG("lock rotation Z :");
 					LOG_DEBUG(Core::Debugging::ToString(t_rigidBody.mLockRotZ));
+				}
+
+				if (t_hasMesh)
+				{
+					LOG_DEBUG("Mesh :");
+					LOG_DEBUG("Mesh path : " + t_mesh.mMeshPath);
+					LOG_DEBUG("Albedo path : " + t_mesh.mAlbedoPath);
+					LOG_DEBUG("Normal path : " + t_mesh.mNormalPath);
+					LOG_DEBUG("Metallic path : " + t_mesh.mMetallicPath);
+					LOG_DEBUG("Roughness path : " + t_mesh.mRoughnessPath);
+					LOG_DEBUG("AO path : " + t_mesh.mAOPath);
 				}
 			}
 		}
@@ -740,8 +751,19 @@ namespace Engine
 
 		MeshData Scene::DeserializeMeshComponent(const nlohmann::ordered_json& a_json)
 		{
-			MeshData t_meshData = {
-			};
+			MeshData t_meshData;
+
+			t_meshData.mMeshPath = a_json.at("mesh").get<std::string>();
+
+			t_meshData.mAlbedoPath = a_json.at("albedo").get<std::string>();
+
+			t_meshData.mNormalPath = a_json.at("normal").get<std::string>();
+
+			t_meshData.mMetallicPath = a_json.at("metallic").get<std::string>();
+
+			t_meshData.mRoughnessPath = a_json.at("roughness").get<std::string>();
+
+			t_meshData.mAOPath = a_json.at("ao").get<std::string>();
 
 			return t_meshData;
 		}
