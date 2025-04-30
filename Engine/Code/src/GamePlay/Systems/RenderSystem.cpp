@@ -1,4 +1,4 @@
-#include "GamePlay/Systems/MeshRendererSystem.h"
+#include "GamePlay/Systems/RenderSystem.h"
 
 //#include "GamePlay/Others/Camera.h"
 
@@ -6,12 +6,12 @@ namespace Engine
 {
 	namespace GamePlay
 	{
-		void MeshRendererSystem::Create(Core::Renderer* a_renderer)
+		void RenderSystem::Create(Core::Renderer* a_renderer)
 		{
 			// DO NOTHING FOR NOW
 		}
 
-		void MeshRendererSystem::Update(Core::Renderer* a_renderer, std::vector<std::pair<int, Math::mat4>> a_updatedMatrix)
+		void RenderSystem::Update(Core::Renderer* a_renderer, std::vector<std::pair<int, Math::mat4>> a_updatedMatrix)
 		{
 			Core::RHI::ILogicalDevice* t_logicalDevice = a_renderer->GetLogicalDevice();
 			Core::RHI::IPhysicalDevice* t_physicalDevice = a_renderer->GetPhysicalDevice();
@@ -22,16 +22,21 @@ namespace Engine
 			int t_maxFrame = a_renderer->GetSwapChain()->GetMaxFrame();
 
 			CreatePendingComponentsDescriptors(a_renderer->GetInterface(), t_logicalDevice, t_physicalDevice, t_surface, t_commandPool, t_unlitPipeline, t_litPipeline,t_maxFrame, a_updatedMatrix);
+			CreatePendingLightComponentsDescriptors(a_renderer->GetInterface(), t_logicalDevice, t_physicalDevice, t_surface, t_commandPool, t_litPipeline, 1);
 
 			for (int i = 0; i < a_updatedMatrix.size(); ++i)
 			{
 				m_objectsDescriptors[a_updatedMatrix[i].first]->UpdateUniforms(t_logicalDevice, 0,a_updatedMatrix[i].second.mElements.data(), 16 * sizeof(float), a_renderer->GetSwapChain()->GetCurrentFrame());
 			}
-
+			for (int i = 0; i < m_lightsDescriptors.size(); ++i)
+			{
+				m_lightsDescriptors[i]->UpdateUniforms(t_logicalDevice, 0, &m_lightComponents[m_lightsPendingComponents[i]]->GetLight().GetData(), sizeof(LightData), 0);
+			}
 		}
 
-		void MeshRendererSystem::Destroy(Core::Renderer* a_renderer)
+		void RenderSystem::Destroy(Core::Renderer* a_renderer)
 		{
+			// Destroy Meshes
 			for (int i = 0; i < m_components.size(); ++i)
 			{
 				auto& comp = m_components[i];
@@ -41,9 +46,25 @@ namespace Engine
 				delete comp;
 			}
 			m_components.clear();
+			m_availableIndexes.clear();
+			m_pendingComponents.clear();
+
+			// Destroy lights
+			for (int i = 0; i < m_lightComponents.size(); ++i)
+			{
+				auto& comp = m_lightComponents[i];
+				comp->Destroy();
+				m_lightsDescriptors[i]->Destroy(a_renderer->GetLogicalDevice());
+				a_renderer->GetInterface()->DestroyObjectDescriptor(m_lightsDescriptors[i]);
+				delete comp;
+			}
+			m_lightComponents.clear();
+			m_lightsAvailableIndexes.clear();
+			m_lightsPendingComponents.clear();
 		}
 
-		int MeshRendererSystem::AddComponent(MeshComponent* a_meshComponent)
+
+		int RenderSystem::AddComponent(MeshComponent* a_meshComponent)
 		{
 			if (m_availableIndexes.empty())
 			{
@@ -65,7 +86,49 @@ namespace Engine
 			// ADD PENDING INDEX
 		}
 
-		MeshComponent* MeshRendererSystem::GetComponent(const int a_id) const
+		int RenderSystem::AddComponent(LightComponent* a_lightComponent)
+		{
+			if (m_availableIndexes.empty())
+			{
+				m_lightComponents.emplace_back(a_lightComponent);
+				const int t_nbComps = static_cast<int>(m_lightsPendingComponents.size() - 1);
+				m_lightsPendingComponents.push_back(t_nbComps);
+				return t_nbComps;
+			}
+			for (const int t_availableIndex : m_availableIndexes)
+			{
+				if (m_lightComponents.at(t_availableIndex) == nullptr)
+				{
+					m_lightComponents.at(t_availableIndex) = a_lightComponent;
+					m_lightsPendingComponents.push_back(t_availableIndex);
+					return t_availableIndex;
+				}
+			}
+			return -1;
+			// ADD PENDING INDEX
+		}
+
+		void RenderSystem::RemoveMeshComponent(const int a_id)
+		{
+			if (m_components.at(a_id) != nullptr && a_id < m_components.size())
+			{
+				m_components.at(a_id)->Destroy();
+				delete m_components.at(a_id);
+				m_availableIndexes.push_back(a_id);
+			}
+		}
+
+		void RenderSystem::RemoveLightComponent(const int a_id)
+		{
+			if (m_lightComponents.at(a_id) != nullptr && a_id < m_lightComponents.size())
+			{
+				m_lightComponents.at(a_id)->Destroy();
+				delete m_lightComponents.at(a_id);
+				m_availableIndexes.push_back(a_id);
+			}
+		}
+
+		MeshComponent* RenderSystem::GetMeshComponent(const int a_id) const
 		{
 			if (a_id >= static_cast<int>(m_components.size()))
 			{
@@ -74,16 +137,7 @@ namespace Engine
 			return m_components.at(a_id);
 		}
 
-		void MeshRendererSystem::RemoveComponent(const int a_id)
-		{
-			if (m_components.at(a_id) != nullptr && a_id < m_components.size())
-			{
-				delete m_components.at(a_id);
-				m_availableIndexes.push_back(a_id);
-			}
-		}
-
-		Core::RHI::IObjectDescriptor* MeshRendererSystem::GetDescriptor(int a_idx)
+		Core::RHI::IObjectDescriptor* RenderSystem::GetMeshDescriptor(int a_idx)
 		{
 			if (a_idx >= static_cast<int>(m_objectsDescriptors.size()) || a_idx < 0)
 			{
@@ -92,7 +146,27 @@ namespace Engine
 			return m_objectsDescriptors[a_idx];
 		}
 
-		void MeshRendererSystem::CreatePendingComponentsDescriptors(Core::RHI::ApiInterface* apiInterface, Core::RHI::ILogicalDevice* a_logicalDevice, Core::RHI::IPhysicalDevice* a_physicalDevice, Core::RHI::ISurface* a_surface, Core::RHI::ICommandPool* a_commandPool, Core::RHI::IGraphicPipeline* a_unlitPipeine, Core::RHI::IGraphicPipeline* a_litPipeine, uint32_t a_maxFrame, std::vector<std::pair<int, Math::mat4>>& a_updatedMatrix)
+		LightComponent* RenderSystem::GetLightComponent(const int a_id) const
+		{
+			if (a_id >= static_cast<int>(m_lightComponents.size()))
+			{
+				return nullptr;
+			}
+			return m_lightComponents.at(a_id);
+		}
+
+		Core::RHI::IObjectDescriptor* RenderSystem::GetLightDescriptor(int a_idx)
+		{
+			if (a_idx >= static_cast<int>(m_lightComponents.size()) || a_idx < 0)
+			{
+				return nullptr;
+			}
+			return m_lightsDescriptors[a_idx];
+		}
+
+		void RenderSystem::CreatePendingComponentsDescriptors(Core::RHI::ApiInterface* apiInterface, Core::RHI::ILogicalDevice* a_logicalDevice, 
+			Core::RHI::IPhysicalDevice* a_physicalDevice, Core::RHI::ISurface* a_surface, Core::RHI::ICommandPool* a_commandPool, Core::RHI::IGraphicPipeline* a_unlitPipeine, 
+			Core::RHI::IGraphicPipeline* a_litPipeine, uint32_t a_maxFrame, std::vector<std::pair<int, Math::mat4>>& a_updatedMatrix)
 		{
 			for (int i = 0; i < m_pendingComponents.size(); ++i)
 			{
@@ -156,6 +230,19 @@ namespace Engine
 				}
 			}
 			m_pendingComponents.clear();
+		}
+
+		void RenderSystem::CreatePendingLightComponentsDescriptors(Core::RHI::ApiInterface* apiInterface, Core::RHI::ILogicalDevice* a_logicalDevice,
+			Core::RHI::IPhysicalDevice* a_physicalDevice, Core::RHI::ISurface* a_surface, Core::RHI::ICommandPool* a_commandPool,
+			Core::RHI::IGraphicPipeline* a_litPipeine, uint32_t a_count)
+		{
+			for (int i = 0; i < m_lightsPendingComponents.size(); ++i)
+			{
+				Core::RHI::IObjectDescriptor* t_newLightObject = apiInterface->InstantiateObjectDescriptor();
+
+				t_newLightObject->Create(a_logicalDevice, a_litPipeine, Core::RHI::Lights, 1, 1, { a_count }, { Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_UNIFORM_BUFFER });
+				t_newLightObject->SetUniform(a_logicalDevice, a_physicalDevice, a_commandPool, 0, &m_lightComponents[m_lightsPendingComponents[i]]->GetLight().GetData(), sizeof(LightData), 0, 1);
+			}
 		}
 	}
 }

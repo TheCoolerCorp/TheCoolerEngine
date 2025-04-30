@@ -21,14 +21,14 @@ namespace Engine
 
 			m_transformSystem = new TransformSystem;
 
-			m_meshRendererSystem = new MeshRendererSystem;
+			m_renderSystem = new RenderSystem;
 
 			m_physicsSystem = new PhysicsSystem;
 			m_physicsSystem->Create();
 
 			Resource::ResourceManager* t_resourceManager = ServiceLocator::GetResourceManager();
 			ServiceLocator::ProvideTransformSystem(m_transformSystem);
-			ServiceLocator::ProvideRendererSystem(m_meshRendererSystem);
+			ServiceLocator::ProvideRenderSystem(m_renderSystem);
 			ServiceLocator::ProvidePhysicsSystem(m_physicsSystem);
 
 			m_mainCamera = new Camera(Math::vec3(0.f, 1.f, 0.f), Math::vec3(0.f, 0.f, 0.f),
@@ -100,7 +100,7 @@ namespace Engine
 					t_syncro.emplace_back(t_colliderMeshId, t_matrix);
 				}
 			}
-			m_meshRendererSystem->Update(a_renderer, t_syncro);
+			m_renderSystem->Update(a_renderer, t_syncro);
 
 			t_physicsTransforms.clear();
 			t_syncro.clear();
@@ -113,9 +113,9 @@ namespace Engine
 		std::unordered_map<Core::RHI::DescriptorSetPipelineTarget, std::vector<Core::RHI::IBuffer*>> Scene::GetVertexBuffers()
 		{
 			std::unordered_map<Core::RHI::DescriptorSetPipelineTarget, std::vector<Core::RHI::IBuffer*>> t_vertexBuffersMap;
-			for (int i = 0; i < m_meshRendererSystem->GetComponents().size(); ++i)
+			for (int i = 0; i < m_renderSystem->GetMeshComponents().size(); ++i)
 			{
-				t_vertexBuffersMap[GetDescriptorTarget(i)].push_back(m_meshRendererSystem->GetComponents().at(i)->GetMesh()->GetVertexBuffer());
+				t_vertexBuffersMap[GetDescriptorTarget(i)].push_back(m_renderSystem->GetMeshComponents().at(i)->GetMesh()->GetVertexBuffer());
 			}
 			return t_vertexBuffersMap;
 		}
@@ -127,9 +127,9 @@ namespace Engine
 		std::unordered_map<Core::RHI::DescriptorSetPipelineTarget, std::vector<Core::RHI::IBuffer*>> Scene::GetIndexBuffers()
 		{
 			std::unordered_map<Core::RHI::DescriptorSetPipelineTarget, std::vector<Core::RHI::IBuffer*>> t_indexBuffersMap;
-			for (int i = 0; i < m_meshRendererSystem->GetComponents().size(); ++i)
+			for (int i = 0; i < m_renderSystem->GetMeshComponents().size(); ++i)
 			{
-				t_indexBuffersMap[GetDescriptorTarget(i)].push_back(m_meshRendererSystem->GetComponents().at(i)->GetMesh()->GetIndexBuffer());
+				t_indexBuffersMap[GetDescriptorTarget(i)].push_back(m_renderSystem->GetMeshComponents().at(i)->GetMesh()->GetIndexBuffer());
 			}
 			return t_indexBuffersMap;
 		}
@@ -142,9 +142,9 @@ namespace Engine
 		Scene::GetNBIndices()
 		{
 			std::unordered_map<Core::RHI::DescriptorSetPipelineTarget, std::vector<uint32_t>> t_nbIndicesMap;
-			for (int i = 0; i < m_meshRendererSystem->GetComponents().size(); ++i)
+			for (int i = 0; i < m_renderSystem->GetMeshComponents().size(); ++i)
 			{
-				t_nbIndicesMap[GetDescriptorTarget(i)].push_back(m_meshRendererSystem->GetComponents().at(i)->GetMesh()->GetNbIndices());
+				t_nbIndicesMap[GetDescriptorTarget(i)].push_back(m_renderSystem->GetMeshComponents().at(i)->GetMesh()->GetNbIndices());
 			}
 			return t_nbIndicesMap;
 		}
@@ -157,7 +157,7 @@ namespace Engine
 		Scene::GetDescriptors()
 		{
 			std::unordered_map<Core::RHI::DescriptorSetPipelineTarget, std::vector<Core::RHI::IObjectDescriptor*>> t_descriptorsMap;
-			std::vector<Core::RHI::IObjectDescriptor*>& t_descriptors = m_meshRendererSystem->GetDescriptors();
+			std::vector<Core::RHI::IObjectDescriptor*>& t_descriptors = m_renderSystem->GetMeshDescriptors();
 			for(auto & t_descriptor : t_descriptors)
 			{
 				t_descriptorsMap[t_descriptor->GetPipelineTargetType()].push_back(t_descriptor);
@@ -172,7 +172,7 @@ namespace Engine
 		 */
 		Core::RHI::DescriptorSetPipelineTarget Scene::GetDescriptorTarget(int a_idx)
 		{
-			if ( Core::RHI::IObjectDescriptor* t_descriptor = m_meshRendererSystem->GetDescriptor(a_idx))
+			if ( Core::RHI::IObjectDescriptor* t_descriptor = m_renderSystem->GetMeshDescriptor(a_idx))
 			{
 				return t_descriptor->GetPipelineTargetType();
 			}
@@ -191,8 +191,8 @@ namespace Engine
 			}
 			m_objs.clear();
 
-			m_meshRendererSystem->Destroy(a_renderer);
-			delete m_meshRendererSystem;
+			m_renderSystem->Destroy(a_renderer);
+			delete m_renderSystem;
 
 			m_transformSystem->Destroy();
 			delete m_transformSystem;
