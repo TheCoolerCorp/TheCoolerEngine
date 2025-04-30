@@ -112,6 +112,48 @@ namespace Editor::EditorLayer::Ui
 					ImGui::EndMenu();
 				}
 				ImGui::EndMenu();
+				
+			}
+			if (ImGui::BeginMenu("Scene"))
+			{
+				if (ImGui::MenuItem("Save Scene"))
+				{
+					//m_app->GetCurrentScene()->SaveScene();
+				}
+				if (ImGui::MenuItem("Load Scene"))
+				{
+					//m_app->GetCurrentScene()->LoadScene();
+				}
+				ImGui::Separator();
+				if (ImGui::BeginMenu("Add Object"))
+				{
+					if (ImGui::MenuItem("Empty Object"))
+					{
+						m_app->GetCurrentScene()->AddGameObject(Engine::GamePlay::GameObjectType::OBJECTTYPE_EMPTY);
+					}
+					if (ImGui::MenuItem("Camera"))
+					{
+						m_app->GetCurrentScene()->AddGameObject(Engine::GamePlay::GameObjectType::OBJECTTYPE_CAMERA);
+					}
+					if (ImGui::MenuItem("Cube"))
+					{
+						m_app->GetCurrentScene()->AddGameObject(Engine::GamePlay::GameObjectType::OBJECTTYPE_CUBE);
+					}
+					if (ImGui::MenuItem("Sphere"))
+					{
+						m_app->GetCurrentScene()->AddGameObject(Engine::GamePlay::GameObjectType::OBJECTTYPE_SPHERE);
+					}
+					if (ImGui::MenuItem("Plane"))
+					{
+						m_app->GetCurrentScene()->AddGameObject(Engine::GamePlay::GameObjectType::OBJECTTYPE_PLANE);
+					}
+					if (ImGui::MenuItem("Light"))
+					{
+						m_app->GetCurrentScene()->AddGameObject(Engine::GamePlay::GameObjectType::OBJECTTYPE_LIGHT);
+					}
+					ImGui::EndMenu();
+				}
+				ImGui::EndMenu();
 			}
 			ImGui::EndMainMenuBar();
 		}

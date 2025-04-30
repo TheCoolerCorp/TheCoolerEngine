@@ -17,6 +17,7 @@ namespace Engine
 	{
 		void Scene::Create(Core::Renderer* a_renderer, const char* a_name, int a_width, int a_height)
 		{
+			m_renderer = a_renderer;
 			m_name = a_name;
 
 			m_transformSystem = new TransformSystem;
@@ -234,6 +235,50 @@ namespace Engine
 					a_object->AddChild(a_id);
 				}
 			}
+		}
+
+		GameObject* Scene::AddGameObject(GameObjectType a_type, uint32_t a_parentTransformId,
+			std::vector<uint32_t> a_childTransformIds)
+		{
+			GameObject* t_object = nullptr;
+			switch (a_type)
+			{
+			case OBJECTTYPE_EMPTY:
+				t_object = new GameObject();
+				t_object->SetName("Empty");
+				break;
+			case OBJECTTYPE_CUBE:
+				t_object = new GameObject(Math::vec3(0.f, 0.f, 0.f), Math::vec3(0.f, 0.f, 0.f), Math::vec3(1.f));
+				t_object->SetName("Cube");
+				t_object->AddComponent<MeshComponent>();
+				t_object->GetComponent<MeshComponent>()->SetMesh("Assets/Meshes/BaseObjects/Cube.obj", m_renderer);
+				break;
+			case OBJECTTYPE_SPHERE:
+				t_object = new GameObject(Math::vec3(0.f, 0.f, 0.f), Math::vec3(0.f, 0.f, 0.f), Math::vec3(1.f));
+				t_object->SetName("Sphere");
+				t_object->AddComponent<MeshComponent>();
+				t_object->GetComponent<MeshComponent>()->SetMesh("Assets/Meshes/BaseObjects/Sphere.obj", m_renderer);
+				break;
+			case OBJECTTYPE_PLANE:
+				t_object = new GameObject(Math::vec3(0.f, 0.f, 0.f), Math::vec3(0.f, 0.f, 0.f), Math::vec3(1.f));
+				t_object->SetName("Plane");
+				t_object->AddComponent<MeshComponent>();
+				t_object->GetComponent<MeshComponent>()->SetMesh("Assets/Meshes/BaseObjects/plane.obj", m_renderer);
+				break;
+			case OBJECTTYPE_LIGHT:
+				break;
+			case OBJECTTYPE_CAMERA:
+				break;
+			default:
+				break;
+			}
+			if (t_object && a_type != OBJECTTYPE_EMPTY)
+			{
+				t_object->GetComponent<MeshComponent>()->GetMaterial()->SetAlbedo("Assets/Textures/BaseObjectTexture.png", m_renderer);
+				t_object->GetComponent<MeshComponent>()->GetMaterial()->SetType(UNLIT);
+			}
+			AddGameObject(t_object, a_parentTransformId, a_childTransformIds);
+			return t_object;
 		}
 
 		/**
