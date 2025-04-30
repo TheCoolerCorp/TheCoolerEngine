@@ -6,6 +6,7 @@
 
 #include "Gameplay/ServiceLocator.h"
 #include "GamePlay/Others/GameObject.h"
+#include "GamePlay/Others/LightGO.h"
 #include "Math/TheCoolerMath.h"
 
 using json = nlohmann::ordered_json;
@@ -48,8 +49,12 @@ namespace Engine
 			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetType(LIT);
 			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetAlbedo("Assets/Textures/viking_room.png", a_renderer);
 
+			LightGO* t_light = new LightGO(Math::vec3(5.f, 0.f, 0.f), Math::vec3(0.f, Math::ToRadians(270.f), 0.f), Math::vec3(1.f));
+
 			AddGameObject(t_object);
 			AddGameObject(t_object2);
+			// DON'T ADD MORE THAN ONE LIGHT FOR ONE
+			AddGameObject(t_light);
 
 			Load();
 		}
@@ -83,21 +88,6 @@ namespace Engine
 					Math::mat4 t_matrix = t_obj->GetComponent<TransformComponent>()->GetTransform()->GetTransformMatrix();
 					t_matrix.Transpose();
 					t_syncro.emplace_back(t_meshId, t_matrix);
-				}
-				const int t_colliderMeshId = t_obj->GetComponentID<MeshComponent>(true);
-				if (std::cmp_not_equal(t_colliderMeshId, -1))
-				{
-					Math::mat4 t_matrix;
-					if (t_obj->GetComponent<RigidBodyComponent>()->GetDebug())
-					{
-						t_matrix = t_obj->GetColliderMat();
-						t_matrix.Transpose();
-					}
-					else
-					{
-						t_matrix = Math::mat4(false);
-					}
-					t_syncro.emplace_back(t_colliderMeshId, t_matrix);
 				}
 			}
 			m_renderSystem->Update(a_renderer, t_syncro);
@@ -163,6 +153,11 @@ namespace Engine
 				t_descriptorsMap[t_descriptor->GetPipelineTargetType()].push_back(t_descriptor);
 			}
 			return t_descriptorsMap;
+		}
+
+		std::vector<Core::RHI::IObjectDescriptor*> Scene::GetLightsDescriptors()
+		{
+			return m_renderSystem->GetLightDescriptors();
 		}
 
 		/**

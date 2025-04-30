@@ -87,7 +87,7 @@ namespace Engine
 			ENGINE_API [[nodiscard]] float GetMass() const { return m_rigidBody->GetMass(); }
 			ENGINE_API [[nodiscard]] RigidBodyData GetRigidBodyData() const;
 
-			ENGINE_API static ComponentType GetType(bool a_colliderMesh = false) { return ComponentType::RIGIDBODY; }
+			ENGINE_API static ComponentType GetType() { return ComponentType::RIGIDBODY; }
 			ENGINE_API static RigidBodyComponent* GetComponent(uint32_t a_id);
 
 		private:

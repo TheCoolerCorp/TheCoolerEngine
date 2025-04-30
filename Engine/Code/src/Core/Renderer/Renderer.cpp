@@ -77,8 +77,12 @@ namespace Engine
 				{
 					m_unlitPipeline->Bind(info.renderer->GetCommandPool(), 0, info.renderer->GetSwapChain());
 
+					std::vector<RHI::IObjectDescriptor*> m_descriptors = info.scene->GetLightsDescriptors();
+					// TODO : CHANGE LATER TO HANDLE MULTIPLE LIGHTS AND DIFFERENT CAMERA FOR SCENE MODE (Editor or play)
+					m_descriptors.emplace_back(info.scene->GetCameraDescriptor());
+					
 					info.renderer->GetUnlitPipeline()->BindSingleDescriptors(info.renderer->GetCommandPool(), 0, info.renderer->GetSwapChain()->GetCurrentFrame(),
-						info.imageIndex, { info.scene->GetCameraDescriptor() });
+						info.imageIndex, m_descriptors);
 
 					info.renderer->GetUnlitPipeline()->BindObjects(info.renderer->GetCommandPool(), 0, info.renderer->GetSwapChain()->GetCurrentFrame(),
 						info.imageIndex, a_indexBuffers[RHI::UnlitDescriptor], a_vertexBuffers[RHI::UnlitDescriptor], a_nbIndices[RHI::UnlitDescriptor], a_descriptors[RHI::UnlitDescriptor]);

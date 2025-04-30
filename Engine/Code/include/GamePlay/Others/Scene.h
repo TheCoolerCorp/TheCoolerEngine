@@ -28,6 +28,7 @@ namespace Engine
 			[[nodiscard]] ENGINE_API std::unordered_map<Core::RHI::DescriptorSetPipelineTarget, std::vector<Core::RHI::IBuffer*>> GetIndexBuffers();
 			[[nodiscard]] ENGINE_API std::unordered_map<Core::RHI::DescriptorSetPipelineTarget, std::vector<uint32_t>> GetNBIndices();
 			[[nodiscard]] ENGINE_API std::unordered_map<Core::RHI::DescriptorSetPipelineTarget, std::vector<Core::RHI::IObjectDescriptor*>> GetDescriptors();
+			[[nodiscard]] ENGINE_API std::vector<Core::RHI::IObjectDescriptor*> GetLightsDescriptors();
 			[[nodiscard]] ENGINE_API Core::RHI::DescriptorSetPipelineTarget GetDescriptorTarget(int a_idx);
 
 			ENGINE_API Core::RHI::IObjectDescriptor* GetCameraDescriptor() { return m_mainCamera->GetDescriptor(); }
@@ -38,7 +39,8 @@ namespace Engine
 			ENGINE_API [[nodiscard]] std::string& GetName() { return m_name; }
 			ENGINE_API void Save();
 			ENGINE_API void Load();
-
+			ENGINE_API void SetMode(bool a_mode) { m_isPlaying = a_mode; }
+			ENGINE_API bool IsPlaying() { return m_isPlaying; }
 		private:
 			static nlohmann::ordered_json SerializeTransformComponent(const TransformComponent& a_transform);
 			static TransformData DeserializeTransformComponent(const nlohmann::ordered_json& a_json);
@@ -53,6 +55,8 @@ namespace Engine
 			TransformSystem* m_transformSystem = nullptr;
 			RenderSystem* m_renderSystem = nullptr;
 			PhysicsSystem* m_physicsSystem = nullptr;
+
+			bool m_isPlaying = false;
 		};
 	}	
 }

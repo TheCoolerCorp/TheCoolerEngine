@@ -27,7 +27,7 @@ namespace Engine
 
 			ENGINE_API void SetMaterial(Ref<Material> a_material);
 
-			ENGINE_API static ComponentType GetType(bool a_colliderMesh = false) { return a_colliderMesh ? ComponentType::COLLIDERMESH : ComponentType::MESH; }
+			ENGINE_API static ComponentType GetType() { return ComponentType::MESH; }
 
 			ENGINE_API static MeshComponent* GetComponent(int a_id);
 

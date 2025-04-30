@@ -16,9 +16,16 @@ namespace Engine
 			ENGINE_API ~LightComponent() override = default;
 
 			ENGINE_API ComponentType Create(int& a_outID) override;
+			ENGINE_API void SetLight(Light& a_light);
 			ENGINE_API void Destroy() override;
 
 			ENGINE_API Light& GetLight() { return m_light; }
+
+			ENGINE_API static ComponentType GetType() { return ComponentType::LIGHT; }
+			
+			ENGINE_API static LightComponent* GetComponent(int a_id);
+
+			ENGINE_API static void RemoveComponent(int a_id);
 
 		private:
 			Light m_light;
