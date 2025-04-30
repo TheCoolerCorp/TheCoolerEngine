@@ -49,6 +49,7 @@ namespace Engine
 			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetType(LIT);
 			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetAlbedo("Assets/Textures/viking_room.png", a_renderer);
 
+
 			LightGO* t_light = new LightGO(Math::vec3(10.f, 0.f, 0.f), Math::vec3(0.f, 0.f, 0.f), Math::vec3(1.f));
 
 			AddGameObject(t_object);

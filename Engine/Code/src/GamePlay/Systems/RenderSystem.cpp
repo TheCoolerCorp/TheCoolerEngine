@@ -192,22 +192,37 @@ namespace Engine
 
 					t_newRenderObject->Create(a_logicalDevice, a_litPipeine, Core::RHI::Object, 3,3, { a_maxFrame, 1, 1 }, m_types);
 
-					// Empty texture
 					if (t_material->HasNormal())
 					{
 						t_newRenderObject->SetTexture(a_logicalDevice, t_material->GetNormal()->GetImage(), 2, 1);
+					}
+					else
+					{
+						t_newRenderObject->SetTexture(a_logicalDevice, t_material->GetEmpty()->GetImage(), 2, 1);
 					}
 					if (t_material->HasMetallic())
 					{
 						t_newRenderObject->SetTexture(a_logicalDevice,  t_material->GetMetallic()->GetImage(), 3, 1);
 					}
+					else
+					{
+						t_newRenderObject->SetTexture(a_logicalDevice, t_material->GetEmpty()->GetImage(), 3, 1);
+					}
 					if (t_material->HasRoughness())
 					{
 						t_newRenderObject->SetTexture(a_logicalDevice,  t_material->GetRoughness()->GetImage(), 4, 1);
 					}
+					else
+					{
+						t_newRenderObject->SetTexture(a_logicalDevice, t_material->GetEmpty()->GetImage(), 4, 1);
+					}
 					if (t_material->HasAO())
 					{
 						t_newRenderObject->SetTexture(a_logicalDevice, t_material->GetAO()->GetImage(), 5, 1);
+					}
+					else
+					{
+						t_newRenderObject->SetTexture(a_logicalDevice, t_material->GetEmpty()->GetImage(), 5, 1);
 					}
 					t_newRenderObject->SetUniform(a_logicalDevice, a_physicalDevice, a_commandPool, 1, &t_material->GetMaterialValues(), sizeof(MaterialValues), 6, 1);
 					t_newRenderObject->SetUniform(a_logicalDevice, a_physicalDevice, a_commandPool, 2, &t_material->GetHasTextures(), sizeof(HasMaterialTextures), 7, 1);

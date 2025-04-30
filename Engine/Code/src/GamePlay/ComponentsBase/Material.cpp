@@ -12,23 +12,16 @@ namespace Engine
 		{
 			Resource::ResourceManager* t_resourceManager = ServiceLocator::GetResourceManager();
 
-			//Ref<Resource::Texture> t_albedoTexture = t_resourceManager->CreateResource<Resource::Texture>(DefaultMaterial);
-			//m_textures[0] = t_albedoTexture;
-			//m_hasTextures.albdeo = true;
+			Ref<Resource::Texture> t_defaultTexture = t_resourceManager->CreateResource<Resource::Texture>(DefaultMaterial);
+			m_empty = t_defaultTexture;
 		}
 
 		Material::Material(MaterialType a_type) : m_type(a_type)
 		{
-			//Resource::ResourceManager* t_resourceManager = ServiceLocator::GetResourceManager();
+			Resource::ResourceManager* t_resourceManager = ServiceLocator::GetResourceManager();
 
-			//Ref<Resource::Texture> t_albedoTexture = t_resourceManager->CreateResource<Resource::Texture>(DefaultMaterial);
-
-			//m_textures[0] = t_albedoTexture;
-			//m_hasTextures.albdeo = true;
-			//if (a_type == LIT)
-			//{
-			//	
-			//}
+			Ref<Resource::Texture> t_defaultTexture = t_resourceManager->CreateResource<Resource::Texture>(DefaultMaterial);
+			m_empty = t_defaultTexture;
 		}
 
 		void Material::SetAlbedo(const std::string& a_path, Core::Renderer* a_renderer)
@@ -40,6 +33,11 @@ namespace Engine
 
 			m_textures[0] = t_albedoTexture;
 			m_hasTextures.albdeo = true;
+
+			if (!m_empty->IsLoaded())
+			{
+				m_empty->Load(a_renderer);
+			}
 		}
 
 		void Material::SetAlbedo(Math::vec3 a_albedoValue)

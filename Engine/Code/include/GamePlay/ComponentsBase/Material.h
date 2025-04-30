@@ -93,6 +93,8 @@ namespace Engine
 			ENGINE_API bool HasAO() { return m_hasTextures.ao; }
 			ENGINE_API Ref<Resource::Texture> GetAO() { return m_textures[4]; }
 
+			ENGINE_API Ref<Resource::Texture> GetEmpty() { return m_empty; }
+
 			void SetType(MaterialType a_type) { m_type = a_type; }
 			MaterialType GetType() { return m_type; }
 			HasMaterialTextures& GetHasTextures() { return m_hasTextures; }
@@ -103,6 +105,7 @@ namespace Engine
 			std::vector<Ref<Resource::Texture>> m_textures = std::vector<Ref<Resource::Texture>>(5);
 			MaterialValues m_values;
 			HasMaterialTextures m_hasTextures;
+			Ref<Resource::Texture> m_empty;
 		};
 	}
 }
