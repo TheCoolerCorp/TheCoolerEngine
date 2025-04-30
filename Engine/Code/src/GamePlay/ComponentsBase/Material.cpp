@@ -7,6 +7,30 @@ namespace Engine
 {
 	namespace GamePlay
 	{
+
+		Material::Material()
+		{
+			Resource::ResourceManager* t_resourceManager = ServiceLocator::GetResourceManager();
+
+			//Ref<Resource::Texture> t_albedoTexture = t_resourceManager->CreateResource<Resource::Texture>(DefaultMaterial);
+			//m_textures[0] = t_albedoTexture;
+			//m_hasTextures.albdeo = true;
+		}
+
+		Material::Material(MaterialType a_type) : m_type(a_type)
+		{
+			//Resource::ResourceManager* t_resourceManager = ServiceLocator::GetResourceManager();
+
+			//Ref<Resource::Texture> t_albedoTexture = t_resourceManager->CreateResource<Resource::Texture>(DefaultMaterial);
+
+			//m_textures[0] = t_albedoTexture;
+			//m_hasTextures.albdeo = true;
+			//if (a_type == LIT)
+			//{
+			//	
+			//}
+		}
+
 		void Material::SetAlbedo(const std::string& a_path, Core::Renderer* a_renderer)
 		{
 			Resource::ResourceManager* t_resourceManager = ServiceLocator::GetResourceManager();

@@ -22,13 +22,17 @@ namespace Engine
 			const Math::mat4 t_view = Math::mat4::View(m_up, m_center, m_eye);
 			m_vp = t_proj * t_view;
 			m_vp.Transpose();
+			m_data.m_vp = m_vp;
+			m_data.m_pos = m_eye;
+
+
 		}
 
 		void Camera::Create(Core::Renderer* a_renderer)
 		{
 			m_descriptor = a_renderer->GetInterface()->InstantiateObjectDescriptor();
 			m_descriptor->Create(a_renderer->GetLogicalDevice(), a_renderer->GetUnlitPipeline(), Core::RHI::Camera, 1, 1, { 1 }, { {Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_UNIFORM_BUFFER} });
-			m_descriptor->SetUniform(a_renderer->GetLogicalDevice(), a_renderer->GetPhysicalDevice(), a_renderer->GetCommandPool(), 0, m_vp.mElements.data(), 16 * sizeof(float), 0, 1);
+			m_descriptor->SetUniform(a_renderer->GetLogicalDevice(), a_renderer->GetPhysicalDevice(), a_renderer->GetCommandPool(), 0, &m_data, sizeof(CameraData), 0, 1);
 		}
 
 		void Camera::Update(Core::Renderer* a_renderer, Core::Window::IInputHandler* a_inputHandler, Core::Window::IWindow* a_window, const float a_deltaTime)
@@ -48,10 +52,12 @@ namespace Engine
 				const Math::mat4 t_view = Math::mat4::View(m_up, m_center, m_eye);
 				m_vp = t_proj * t_view;
 				m_vp.Transpose();
+				m_data.m_vp = m_vp;
+				m_data.m_pos = m_eye;
 				m_needToUpdate = false;
 			}
 
-			m_descriptor->UpdateUniforms(a_renderer->GetLogicalDevice(), 0, m_vp.mElements.data(), 16 * sizeof(float), 0);
+			m_descriptor->UpdateUniforms(a_renderer->GetLogicalDevice(), 0, &m_data, sizeof(CameraData), 0);
 		}
 
 		void Camera::Destroy(Core::Renderer* a_renderer)

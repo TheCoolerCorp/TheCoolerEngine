@@ -22,6 +22,7 @@ namespace Engine
 			:m_name(std::move(a_name))
 		{
 			AddComponent<TransformComponent>();
+			GetComponent<TransformComponent>()->Set({ a_position, Math::quat(a_rotation), a_scale, -1 });
 			m_colliderMat = GetComponent<TransformComponent>()->GetTransform()->GetTransformMatrix();
 		}
 

@@ -8,7 +8,7 @@
 #include "GamePlay/Components/LightComponent.h"
 #include "Core/Interfaces/IObjectDescriptor.h"
 
-#include "Math/mat4.h"
+#include "Math/Transform.h"
 
 
 namespace Engine
@@ -25,7 +25,7 @@ namespace Engine
 			 * Init, update and destroy part of the system
 			 */
 			ENGINE_API void Create(Core::Renderer* a_renderer);
-			ENGINE_API void Update(Core::Renderer* a_renderer, std::vector<std::pair<int, Math::mat4>> a_updatedMatrix);
+			ENGINE_API void Update(Core::Renderer* a_renderer, std::vector<std::pair<int, Math::UniformMatrixs>> a_updatedMatrix, std::vector<std::pair<int, Math::vec3>> a_lightsUpdate);
 			ENGINE_API void Destroy(Core::Renderer* a_renderer);
 
 			/*
@@ -78,9 +78,9 @@ namespace Engine
 			std::vector<int> m_lightsPendingComponents;
 
 
-			void CreatePendingComponentsDescriptors(Core::RHI::ApiInterface* apiInterface, Core::RHI::ILogicalDevice* a_logicalDevice, 
-				Core::RHI::IPhysicalDevice* a_physicalDevice, Core::RHI::ISurface* a_surface, Core::RHI::ICommandPool* a_commandPool, 
-				Core::RHI::IGraphicPipeline* a_unlitPipeline, Core::RHI::IGraphicPipeline* a_litPipeine, uint32_t a_maxFrame,std::vector<std::pair<int, Math::mat4>>& a_updatedMatrix);
+			void CreatePendingComponentsDescriptors(Core::RHI::ApiInterface* apiInterface, Core::RHI::ILogicalDevice* a_logicalDevice,
+				Core::RHI::IPhysicalDevice* a_physicalDevice, Core::RHI::ISurface* a_surface, Core::RHI::ICommandPool* a_commandPool, Core::RHI::IGraphicPipeline* a_unlitPipeine,
+				Core::RHI::IGraphicPipeline* a_litPipeine, uint32_t a_maxFrame, std::vector<std::pair<int, Math::UniformMatrixs>>& a_updatedMatrix);
 
 			void CreatePendingLightComponentsDescriptors(Core::RHI::ApiInterface* apiInterface, Core::RHI::ILogicalDevice* a_logicalDevice,
 				Core::RHI::IPhysicalDevice* a_physicalDevice, Core::RHI::ISurface* a_surface, Core::RHI::ICommandPool* a_commandPool,

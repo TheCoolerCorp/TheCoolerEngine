@@ -1,5 +1,7 @@
 #include "GamePlay/Systems/RenderSystem.h"
 
+#include "Math/Transform.h"
+
 //#include "GamePlay/Others/Camera.h"
 
 namespace Engine
@@ -11,7 +13,7 @@ namespace Engine
 			// DO NOTHING FOR NOW
 		}
 
-		void RenderSystem::Update(Core::Renderer* a_renderer, std::vector<std::pair<int, Math::mat4>> a_updatedMatrix)
+		void RenderSystem::Update(Core::Renderer* a_renderer, std::vector<std::pair<int,Math::UniformMatrixs>> a_updatedMatrix, std::vector<std::pair<int, Math::vec3>> a_lightsUpdate)
 		{
 			Core::RHI::ILogicalDevice* t_logicalDevice = a_renderer->GetLogicalDevice();
 			Core::RHI::IPhysicalDevice* t_physicalDevice = a_renderer->GetPhysicalDevice();
@@ -26,11 +28,12 @@ namespace Engine
 
 			for (int i = 0; i < a_updatedMatrix.size(); ++i)
 			{
-				m_objectsDescriptors[a_updatedMatrix[i].first]->UpdateUniforms(t_logicalDevice, 0,a_updatedMatrix[i].second.mElements.data(), 16 * sizeof(float), a_renderer->GetSwapChain()->GetCurrentFrame());
+				m_objectsDescriptors[a_updatedMatrix[i].first]->UpdateUniforms(t_logicalDevice, 0, &a_updatedMatrix[i].second, sizeof(Math::UniformMatrixs), a_renderer->GetSwapChain()->GetCurrentFrame());
 			}
-			for (int i = 0; i < m_lightsDescriptors.size(); ++i)
+			for (int i = 0; i < a_lightsUpdate.size(); ++i)
 			{
-				m_lightsDescriptors[i]->UpdateUniforms(t_logicalDevice, 0, &m_lightComponents[m_lightsPendingComponents[i]]->GetLight().GetData(), sizeof(LightData), 0);
+				m_lightComponents[a_lightsUpdate[i].first]->GetLight().SetPosition(a_lightsUpdate[i].second);
+				m_lightsDescriptors[i]->UpdateUniforms(t_logicalDevice, 0, &m_lightComponents[i]->GetLight().GetData(), sizeof(LightData), 0);
 			}
 		}
 
@@ -91,7 +94,7 @@ namespace Engine
 			if (m_availableIndexes.empty())
 			{
 				m_lightComponents.emplace_back(a_lightComponent);
-				const int t_nbComps = static_cast<int>(m_lightsPendingComponents.size() - 1);
+				const int t_nbComps = static_cast<int>(m_lightComponents.size() - 1);
 				m_lightsPendingComponents.push_back(t_nbComps);
 				return t_nbComps;
 			}
@@ -166,14 +169,13 @@ namespace Engine
 
 		void RenderSystem::CreatePendingComponentsDescriptors(Core::RHI::ApiInterface* apiInterface, Core::RHI::ILogicalDevice* a_logicalDevice, 
 			Core::RHI::IPhysicalDevice* a_physicalDevice, Core::RHI::ISurface* a_surface, Core::RHI::ICommandPool* a_commandPool, Core::RHI::IGraphicPipeline* a_unlitPipeine, 
-			Core::RHI::IGraphicPipeline* a_litPipeine, uint32_t a_maxFrame, std::vector<std::pair<int, Math::mat4>>& a_updatedMatrix)
+			Core::RHI::IGraphicPipeline* a_litPipeine, uint32_t a_maxFrame, std::vector<std::pair<int, Math::UniformMatrixs>>& a_updatedMatrix)
 		{
 			for (int i = 0; i < m_pendingComponents.size(); ++i)
 			{
 				Core::RHI::IObjectDescriptor* t_newRenderObject = apiInterface->InstantiateObjectDescriptor();
 
 				Ref<Material> t_material = m_components[m_pendingComponents[i]]->GetMaterial();
-				void* t_newRenderObjectMatrixData = a_updatedMatrix.at(m_pendingComponents.at(i)).second.mElements.data();
 
 				std::vector<Core::RHI::DescriptorSetDataType> m_types;
 				if (m_components.at(m_pendingComponents.at(i))->GetMaterial()->GetType() == UNLIT)
@@ -190,6 +192,7 @@ namespace Engine
 
 					t_newRenderObject->Create(a_logicalDevice, a_litPipeine, Core::RHI::Object, 3,3, { a_maxFrame, 1, 1 }, m_types);
 
+					// Empty texture
 					if (t_material->HasNormal())
 					{
 						t_newRenderObject->SetTexture(a_logicalDevice, t_material->GetNormal()->GetImage(), 2, 1);
@@ -213,7 +216,7 @@ namespace Engine
 				{
 					LOG_ERROR("Not other type of pipeline has been implemented");
 				}
-				t_newRenderObject->SetUniform(a_logicalDevice, a_physicalDevice, a_commandPool, 0, t_newRenderObjectMatrixData, 16 * sizeof(float), 0, 1);
+				t_newRenderObject->SetUniform(a_logicalDevice, a_physicalDevice, a_commandPool, 0, &a_updatedMatrix.at(m_pendingComponents.at(i)).second, sizeof(Math::UniformMatrixs), 0, 1);
 
 				t_newRenderObject->SetTexture(a_logicalDevice, t_material->GetAlbedo()->GetImage(), 1, 1);
 
@@ -242,7 +245,20 @@ namespace Engine
 
 				t_newLightObject->Create(a_logicalDevice, a_litPipeine, Core::RHI::Lights, 1, 1, { a_count }, { Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_UNIFORM_BUFFER });
 				t_newLightObject->SetUniform(a_logicalDevice, a_physicalDevice, a_commandPool, 0, &m_lightComponents[m_lightsPendingComponents[i]]->GetLight().GetData(), sizeof(LightData), 0, 1);
+
+				if (m_lightsAvailableIndexes.empty())
+				{
+					m_lightsDescriptors.push_back(t_newLightObject);
+				}
+				else
+				{
+					if (m_lightsDescriptors.at(m_lightsAvailableIndexes.at(i)) == nullptr)
+					{
+						m_lightsDescriptors.at(m_lightsAvailableIndexes.at(i)) = t_newLightObject;
+					}
+				}
 			}
+			m_lightsPendingComponents.clear();
 		}
 	}
 }

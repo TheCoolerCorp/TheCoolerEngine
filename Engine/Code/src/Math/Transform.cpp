@@ -53,5 +53,13 @@ namespace Engine
 		{
 			m_globalScale = vec3::GetScale(m_transform);
 		}
+
+		UniformMatrixs& Transform::GetUniformsMatrixs()
+		{
+			m_uniforms = { m_transform, m_normalMatrix };
+			m_uniforms.m_transform.Transpose();
+			m_uniforms.m_normalMatrix.Transpose();
+			return m_uniforms;
+		}
 	}
 }

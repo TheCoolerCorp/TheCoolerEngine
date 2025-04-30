@@ -45,7 +45,7 @@ namespace Engine
 			ENGINE_API mat4 GetTransformMatrix() const { return m_transform; }
 			ENGINE_API mat4 GetNormalMatrix() const { return m_normalMatrix; }
 
-			ENGINE_API UniformMatrixs& GetUniformsMatrixs() { m_uniforms = { m_transform, m_normalMatrix };  return m_uniforms; }
+			ENGINE_API UniformMatrixs& GetUniformsMatrixs();
 
 			ENGINE_API bool GetNeedToUpdate() const { return m_needUpdate; }
 
