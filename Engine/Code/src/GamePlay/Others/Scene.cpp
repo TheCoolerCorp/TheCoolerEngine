@@ -51,7 +51,7 @@ namespace Engine
 			AddGameObject(t_object);
 			AddGameObject(t_object2);
 
-			Load();
+			Load(a_renderer);
 		}
 
 		void Scene::Update(Core::Renderer* a_renderer, Core::Window::IWindow* a_window, Core::Window::IInputHandler* a_inputHandler, float a_deltatime)
@@ -268,6 +268,10 @@ namespace Engine
 				{
 					t_objJson["RigidBodyComponent"] = SerializeRigidBodyComponent(*t_rigidBodyComponent);
 				}
+				if (const MeshComponent* t_meshComponent = t_obj->GetComponent<MeshComponent>())
+				{
+					t_objJson["MeshComponent"] = SerializeMeshComponent(*t_meshComponent);
+				}
 				t_scene.push_back(t_objJson);
 			}
 
@@ -279,7 +283,7 @@ namespace Engine
 			}
 		}
 
-		void Scene::Load()
+		void Scene::Load(Core::Renderer* a_renderer)
 		{
 			std::ifstream t_file(m_name + ".json");
 			if (!t_file.is_open())
@@ -292,6 +296,7 @@ namespace Engine
 
 			for (const auto& t_entry : t_scene) {
 				bool t_hasRigidBody = false;
+				bool t_hasMesh = false;
 
 				std::string t_name = t_entry.at("GameObject").get<std::string>();
 
@@ -302,6 +307,13 @@ namespace Engine
 				{
 					t_rigidBody = DeserializeRigidBodyComponent(t_entry.at("RigidBodyComponent"));
 					t_hasRigidBody = true;
+				}
+
+				MeshData t_mesh{};
+				if (t_entry.contains("RigidMeshComponent"))
+				{
+					t_mesh = DeserializeMeshComponent(t_entry.at("RigidMeshComponent"));
+					t_hasMesh = true;
 				}
 
 				LOG_DEBUG(t_name);
@@ -649,6 +661,89 @@ namespace Engine
 			t_outData.mLockRotZ = a_json.at("lock rotation Z").get<bool>();
 
 			return t_outData;
+		}
+
+		nlohmann::ordered_json Scene::SerializeMeshComponent(const MeshComponent& a_mesh)
+		{
+			json t_json;
+			constexpr std::hash<std::string_view> t_hash{};
+
+			meta::any t_meshAny{ a_mesh };
+
+			const meta::handle t_meshHandle{ t_meshAny };
+
+			if (!t_meshHandle)
+			{
+				return t_json;
+			}
+
+			const meta::data t_meshDataField = t_meshHandle.type().data(t_hash("Mesh"));
+			if (!t_meshDataField)
+			{
+				return t_json;
+			}
+
+			meta::any t_meshDataAny = t_meshDataField.get(t_meshHandle);
+			if (!t_meshDataAny)
+			{
+				return t_json;
+			}
+
+			const meta::handle t_meshDataHandle(t_meshDataAny);
+
+			const meta::type t_meshDataType = t_meshDataHandle.type();
+
+			const meta::data t_meshField = t_meshDataType.data(t_hash("mesh"));
+			if (t_meshField)
+			{
+				meta::any t_meshAny = t_meshField.get(t_meshDataHandle);
+				t_json["mesh"] = t_meshAny.cast<std::string>();
+			}
+
+			const meta::data t_albedoField = t_meshDataType.data(t_hash("albedo"));
+			if (t_albedoField)
+			{
+				meta::any t_albedoAny = t_albedoField.get(t_meshDataHandle);
+				t_json["albedo"] = t_albedoAny.cast<std::string>();
+			}
+
+			const meta::data t_normalField = t_meshDataType.data(t_hash("normal"));
+			if (t_normalField)
+			{
+				meta::any t_normalAny = t_normalField.get(t_meshDataHandle);
+				t_json["normal"] = t_normalAny.cast<std::string>();
+			}
+
+			const meta::data t_metallicField = t_meshDataType.data(t_hash("metallic"));
+			if (t_metallicField)
+			{
+				meta::any t_metallicAny = t_metallicField.get(t_meshDataHandle);
+				t_json["metallic"] = t_metallicAny.cast<std::string>();
+			}
+
+			const meta::data t_roughnessField = t_meshDataType.data(t_hash("roughness"));
+			if (t_roughnessField)
+			{
+				meta::any t_roughnessAny = t_roughnessField.get(t_meshDataHandle);
+				t_json["roughness"] = t_roughnessAny.cast<std::string>();
+			}
+
+			const meta::data t_AOField = t_meshDataType.data(t_hash("ao"));
+			if (t_AOField)
+			{
+				meta::any t_AOAny = t_AOField.get(t_meshDataHandle);
+				t_json["ao"] = t_AOAny.cast<std::string>();
+			}
+
+			return t_json;
+		}
+
+		MeshData Scene::DeserializeMeshComponent(const nlohmann::ordered_json& a_json)
+		{
+			MeshData t_meshData = {
+			};
+
+			return t_meshData;
 		}
 	}
 }

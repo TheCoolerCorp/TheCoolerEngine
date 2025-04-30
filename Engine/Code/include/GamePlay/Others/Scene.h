@@ -37,13 +37,15 @@ namespace Engine
 			ENGINE_API [[nodiscard]] int GetObjectCount() const { return static_cast<int>(m_objs.size()); }
 			ENGINE_API [[nodiscard]] std::string& GetName() { return m_name; }
 			ENGINE_API void Save();
-			ENGINE_API void Load();
+			ENGINE_API void Load(Core::Renderer* a_renderer);
 
 		private:
 			static nlohmann::ordered_json SerializeTransformComponent(const TransformComponent& a_transform);
 			static TransformData DeserializeTransformComponent(const nlohmann::ordered_json& a_json);
 			static nlohmann::ordered_json SerializeRigidBodyComponent(const RigidBodyComponent& a_rigidBody);
 			static RigidBodyData DeserializeRigidBodyComponent(const nlohmann::ordered_json& a_json);
+			static nlohmann::ordered_json SerializeMeshComponent(const MeshComponent& a_mesh);
+			static MeshData DeserializeMeshComponent(const nlohmann::ordered_json& a_json);
 
 			std::vector<GameObject*> m_objs;
 			std::vector<int> m_availableIds;
