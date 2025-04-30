@@ -1,6 +1,8 @@
-#include <utility>
-
 #include  "GamePlay/Components/Meshcomponent.h"
+
+#include <utility>
+#include <meta/factory.hpp>
+#include <meta/meta.hpp>
 
 #include "GamePlay/ServiceLocator.h"
 
@@ -8,6 +10,22 @@ namespace Engine
 {
 	namespace GamePlay
 	{
+		void MeshComponent::Register()
+		{
+			constexpr std::hash<std::string_view> t_hash{};
+
+			meta::reflect<MeshData>(t_hash("MeshData"))
+				.data<&MeshData::mMeshPath>(t_hash("mesh"))
+				.data<&MeshData::mAlbedoPath>(t_hash("albedo"))
+				.data<&MeshData::mNormalPath>(t_hash("normal"))
+				.data<&MeshData::mMetallicPath>(t_hash("metallic"))
+				.data<&MeshData::mRoughnessPath>(t_hash("roughness"))
+				.data<&MeshData::mAOPath>(t_hash("ao"));
+
+			meta::reflect<MeshComponent>(t_hash("MeshComponent"))
+				.data<&MeshComponent::SetFromData, &MeshComponent::GetData>(t_hash("Mesh"));
+		}
+
 		ComponentType MeshComponent::Create(int& a_outId)
 		{
 			m_material = CreateRef<Material>();
@@ -44,6 +62,35 @@ namespace Engine
 		MeshComponent* MeshComponent::GetComponent(int a_id)
 		{
 			return ServiceLocator::GetMeshRendererSystem()->GetComponent(a_id);
+		}
+
+		MeshData MeshComponent::GetData()
+		{
+			Ref<Resource::Texture> t_albedoTexture = m_material->GetAlbedo();
+			std::string t_albedoPath = t_albedoTexture ? t_albedoTexture->GetPath() : "";
+
+			Ref<Resource::Texture> t_normalTexture = m_material->GetNormal();
+			std::string t_normalPath = t_normalTexture ? t_normalTexture->GetPath() : "";
+
+			Ref<Resource::Texture> t_metallicTexture = m_material->GetMetallic();
+			std::string t_metallicPath = t_metallicTexture ? t_metallicTexture->GetPath() : "";
+
+			Ref<Resource::Texture> t_roughnessTexture = m_material->GetRoughness();
+			std::string t_roughnessPath = t_roughnessTexture ? t_roughnessTexture->GetPath() : "";
+
+			Ref<Resource::Texture> t_AOTexture = m_material->GetAO();
+			std::string t_AOPath = t_AOTexture ? t_AOTexture->GetPath() : "";
+
+			MeshData t_data = {
+				.mMeshPath= m_mesh->GetPath(),
+				.mAlbedoPath= t_albedoPath,
+				.mNormalPath= t_normalPath,
+				.mMetallicPath= t_metallicPath,
+				.mRoughnessPath= t_roughnessPath,
+				.mAOPath= t_AOPath
+			};
+
+			return t_data;
 		}
 
 		void MeshComponent::RemoveComponent(int a_id)

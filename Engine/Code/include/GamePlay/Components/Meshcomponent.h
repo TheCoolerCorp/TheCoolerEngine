@@ -13,23 +13,38 @@ namespace Engine
 {
 	namespace GamePlay
 	{
+		struct MeshData
+		{
+			std::string mMeshPath;
+			std::string mAlbedoPath;
+			std::string mNormalPath;
+			std::string mMetallicPath;
+			std::string mRoughnessPath;
+			std::string mAOPath;
+		};
+
 		class MeshComponent : public Component 
 		{
 		public:
 			ENGINE_API MeshComponent() = default;
 			ENGINE_API ~MeshComponent() override = default;
 
+			ENGINE_API static void Register();
 			ENGINE_API ComponentType Create(int& a_outId) override;
 
 			ENGINE_API void Destroy() override;
 
 			ENGINE_API void SetMesh(const std::string& a_path, Core::Renderer* a_renderer);
 
+			ENGINE_API void SetFromData(const MeshData& a_data) {}
+
 			ENGINE_API void SetMaterial(Ref<Material> a_material);
 
 			ENGINE_API static ComponentType GetType(bool a_colliderMesh = false) { return a_colliderMesh ? ComponentType::COLLIDERMESH : ComponentType::MESH; }
 
 			ENGINE_API static MeshComponent* GetComponent(int a_id);
+
+			ENGINE_API MeshData GetData();
 
 			ENGINE_API static void RemoveComponent(int a_id);
 

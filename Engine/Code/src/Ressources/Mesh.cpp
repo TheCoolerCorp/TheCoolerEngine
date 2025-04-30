@@ -6,7 +6,7 @@ namespace Engine
 {
 	namespace Resource
 	{
-		void Mesh::Create(std::string a_path)
+		void Mesh::Create(const std::string a_path)
 		{
             Assimp::Importer t_importer{};
             const aiScene* t_scene = t_importer.ReadFile(a_path, aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_PreTransformVertices);
