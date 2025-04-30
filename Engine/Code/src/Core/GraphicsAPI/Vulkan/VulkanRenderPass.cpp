@@ -505,6 +505,8 @@ namespace Engine
 
 			void VulkanRenderPass::RecreateFrameBuffer(const VkExtent2D a_extent)
 			{
+				if (!this)
+					return;
 				//set the new extent
 				m_config.extent = a_extent;
 

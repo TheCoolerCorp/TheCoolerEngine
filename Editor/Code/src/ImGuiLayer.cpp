@@ -1,9 +1,12 @@
 #include "ImGuiLayer.h"
+
+#include "FileExplorerWindow.h"
 #include "VulkanImGui.h"
 #include "Core/Renderer/Renderer.h"
 
 #include "imgui.h"
 #include "imgui_internal.h"
+#include "LoggerWindow.h"
 #include "../Include/Application.h"
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_vulkan.h"
@@ -81,9 +84,11 @@ namespace Editor::EditorLayer::Ui
 			{
 				if (ImGui::BeginMenu("Add Window"))
 				{
-					if (ImGui::MenuItem("Viewport"))
+					if (ImGui::MenuItem("Logger"))
 					{
-						
+						UiLoggerWindow* t_window = new UiLoggerWindow(m_renderer, this);
+						t_window->SetName("Logger");
+						AddWindow(t_window);
 					}
 					if (ImGui::MenuItem("Scene Graph"))
 					{
@@ -95,6 +100,12 @@ namespace Editor::EditorLayer::Ui
 					{
 						InspectorUiWindow* t_window = new InspectorUiWindow(m_renderer, this);
 						t_window->SetName("Inspector");
+						AddWindow(t_window);
+					}
+					if (ImGui::MenuItem("Explorer"))
+					{
+						FileExplorerWindow* t_window = new FileExplorerWindow(m_renderer, this);
+						t_window->SetName("File Explorer");
 						AddWindow(t_window);
 					}
 					ImGui::EndMenu();
