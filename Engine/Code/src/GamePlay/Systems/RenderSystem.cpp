@@ -13,6 +13,11 @@ namespace Engine
 
 		void RenderSystem::Update(Core::Renderer* a_renderer, std::vector<std::pair<int, Math::mat4>> a_updatedMatrix)
 		{
+			if (a_updatedMatrix.empty())
+			{
+				return;
+			}
+
 			Core::RHI::ILogicalDevice* t_logicalDevice = a_renderer->GetLogicalDevice();
 			Core::RHI::IPhysicalDevice* t_physicalDevice = a_renderer->GetPhysicalDevice();
 			Core::RHI::ISurface* t_surface = a_renderer->GetSurface();
@@ -168,8 +173,15 @@ namespace Engine
 			Core::RHI::IPhysicalDevice* a_physicalDevice, Core::RHI::ISurface* a_surface, Core::RHI::ICommandPool* a_commandPool, Core::RHI::IGraphicPipeline* a_unlitPipeine, 
 			Core::RHI::IGraphicPipeline* a_litPipeine, uint32_t a_maxFrame, std::vector<std::pair<int, Math::mat4>>& a_updatedMatrix)
 		{
+			std::vector<int> t_componentsToErase;
+
 			for (int i = 0; i < m_pendingComponents.size(); ++i)
 			{
+				if (!m_components[m_pendingComponents[i]]->GetMesh()->IsLoaded())
+				{
+					continue;
+				}
+
 				Core::RHI::IObjectDescriptor* t_newRenderObject = apiInterface->InstantiateObjectDescriptor();
 
 				Ref<Material> t_material = m_components[m_pendingComponents[i]]->GetMaterial();
@@ -228,8 +240,15 @@ namespace Engine
 						m_objectsDescriptors.at(m_availableIndexes.at(i)) = t_newRenderObject;
 					}
 				}
+
+				t_componentsToErase.push_back(i);
 			}
-			m_pendingComponents.clear();
+
+			for (int i : t_componentsToErase)
+			{
+				m_pendingComponents.erase(std::ranges::remove(m_pendingComponents, i).begin(), m_pendingComponents.end());
+			}
+			t_componentsToErase.clear();
 		}
 
 		void RenderSystem::CreatePendingLightComponentsDescriptors(Core::RHI::ApiInterface* apiInterface, Core::RHI::ILogicalDevice* a_logicalDevice,

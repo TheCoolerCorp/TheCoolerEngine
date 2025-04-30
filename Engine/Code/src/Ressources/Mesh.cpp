@@ -20,10 +20,12 @@ namespace Engine
 
         void Mesh::Load(Core::Renderer* a_renderer)
 		{
-            if (m_isLoaded)
+            if (m_isLoaded || m_isLoading)
             {
             	return;
             }
+
+            m_isLoading = true;
 
             Assimp::Importer t_importer{};
             const aiScene* t_scene = t_importer.ReadFile(m_path, aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_PreTransformVertices);
@@ -56,6 +58,7 @@ namespace Engine
             m_indexBuffer->Create(Core::RHI::BufferType::INDEX, t_bufferData, t_physicalDevice, t_logicalDevice, t_commandPool);
 
             m_isLoaded = true;
+            m_isLoading = false;
 
             //m_vertices.clear();
             //m_indexes.clear();

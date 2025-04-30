@@ -78,7 +78,7 @@ namespace Engine
 			for (GameObject* t_obj : m_objs)
 			{
 				const int t_meshId = t_obj->GetComponentID<MeshComponent>();
-				if (std::cmp_not_equal(t_meshId, -1))
+				if (std::cmp_not_equal(t_meshId, -1) && t_obj->GetComponent<MeshComponent>()->GetMesh()->IsLoaded())
 				{
 					Math::mat4 t_matrix = t_obj->GetComponent<TransformComponent>()->GetTransform()->GetTransformMatrix();
 					t_matrix.Transpose();
@@ -115,7 +115,12 @@ namespace Engine
 			std::unordered_map<Core::RHI::DescriptorSetPipelineTarget, std::vector<Core::RHI::IBuffer*>> t_vertexBuffersMap;
 			for (int i = 0; i < m_renderSystem->GetMeshComponents().size(); ++i)
 			{
-				t_vertexBuffersMap[GetDescriptorTarget(i)].push_back(m_renderSystem->GetMeshComponents().at(i)->GetMesh()->GetVertexBuffer());
+				MeshComponent* t_meshComponent = m_renderSystem->GetMeshComponents().at(i);
+				if (!t_meshComponent->GetMesh()->IsLoaded())
+				{
+					continue;
+				}
+				t_vertexBuffersMap[GetDescriptorTarget(i)].push_back(t_meshComponent->GetMesh()->GetVertexBuffer());
 			}
 			return t_vertexBuffersMap;
 		}
@@ -129,7 +134,12 @@ namespace Engine
 			std::unordered_map<Core::RHI::DescriptorSetPipelineTarget, std::vector<Core::RHI::IBuffer*>> t_indexBuffersMap;
 			for (int i = 0; i < m_renderSystem->GetMeshComponents().size(); ++i)
 			{
-				t_indexBuffersMap[GetDescriptorTarget(i)].push_back(m_renderSystem->GetMeshComponents().at(i)->GetMesh()->GetIndexBuffer());
+				MeshComponent* t_meshComponent = m_renderSystem->GetMeshComponents().at(i);
+				if (!t_meshComponent->GetMesh()->IsLoaded())
+				{
+					continue;
+				}
+				t_indexBuffersMap[GetDescriptorTarget(i)].push_back(t_meshComponent->GetMesh()->GetIndexBuffer());
 			}
 			return t_indexBuffersMap;
 		}
@@ -144,7 +154,12 @@ namespace Engine
 			std::unordered_map<Core::RHI::DescriptorSetPipelineTarget, std::vector<uint32_t>> t_nbIndicesMap;
 			for (int i = 0; i < m_renderSystem->GetMeshComponents().size(); ++i)
 			{
-				t_nbIndicesMap[GetDescriptorTarget(i)].push_back(m_renderSystem->GetMeshComponents().at(i)->GetMesh()->GetNbIndices());
+				MeshComponent* t_meshComponent = m_renderSystem->GetMeshComponents().at(i);
+				if (!t_meshComponent->GetMesh()->IsLoaded())
+				{
+					continue;
+				}
+				t_nbIndicesMap[GetDescriptorTarget(i)].push_back(t_meshComponent->GetMesh()->GetNbIndices());
 			}
 			return t_nbIndicesMap;
 		}

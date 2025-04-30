@@ -4,10 +4,16 @@ namespace Engine
 {
 	namespace GamePlay
 	{
+		Core::Multithread::ThreadPool* ServiceLocator::m_threadPool = nullptr;
 		Resource::ResourceManager* ServiceLocator::m_resourceManager = nullptr;
 		TransformSystem* ServiceLocator::m_transformSystem = nullptr;
 		RenderSystem* ServiceLocator::m_meshRendererSystem = nullptr;
 		PhysicsSystem* ServiceLocator::m_physicsSystem = nullptr;
+
+		void ServiceLocator::ProvideThreadPool(Core::Multithread::ThreadPool* a_threadPool)
+		{
+			m_threadPool = a_threadPool;
+		}
 
 		void ServiceLocator::ProvideResourceManager(Resource::ResourceManager* a_resourceManager)
 		{
@@ -27,6 +33,11 @@ namespace Engine
 		void ServiceLocator::ProvidePhysicsSystem(PhysicsSystem* a_physicsSystem)
 		{
 			m_physicsSystem = a_physicsSystem;
+		}
+
+		Core::Multithread::ThreadPool* ServiceLocator::GetThreadPool()
+		{
+			return m_threadPool;
 		}
 
 		Resource::ResourceManager* ServiceLocator::GetResourceManager()

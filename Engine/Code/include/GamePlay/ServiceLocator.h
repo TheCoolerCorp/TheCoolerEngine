@@ -8,6 +8,10 @@
 #include "GamePlay/Systems/RenderSystem.h"
 #include "GamePlay/Systems/PhysicsSystem.h"
 
+namespace Engine::Core::Multithread {
+	class ThreadPool;
+}
+
 namespace Engine
 {
 	namespace GamePlay
@@ -15,17 +19,20 @@ namespace Engine
 		class ServiceLocator
 		{
 		public:
+			ENGINE_API static void ProvideThreadPool(Core::Multithread::ThreadPool* a_threadPool);
 			ENGINE_API static void ProvideResourceManager(Resource::ResourceManager* a_resourceManager);
-			static void ProvideTransformSystem(TransformSystem* a_transformSystem);
-			static void ProvideRenderSystem(RenderSystem* a_meshRendererSystem);
-			static void ProvidePhysicsSystem(PhysicsSystem* a_physicsSystem);
+			ENGINE_API static void ProvideTransformSystem(TransformSystem* a_transformSystem);
+			ENGINE_API static void ProvideRenderSystem(RenderSystem* a_meshRendererSystem);
+			ENGINE_API static void ProvidePhysicsSystem(PhysicsSystem* a_physicsSystem);
 
+			ENGINE_API static Core::Multithread::ThreadPool* GetThreadPool();
 			ENGINE_API static Resource::ResourceManager* GetResourceManager();
 			ENGINE_API static TransformSystem* GetTransformSystem();
 			ENGINE_API static RenderSystem* GetRendererSystem();
 			ENGINE_API static PhysicsSystem* GetPhysicsSystem();
 
 		private:
+			static Core::Multithread::ThreadPool* m_threadPool;
 			static Resource::ResourceManager* m_resourceManager;
 			static TransformSystem* m_transformSystem;
 			static RenderSystem* m_meshRendererSystem;

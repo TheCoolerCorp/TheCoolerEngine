@@ -168,6 +168,7 @@ namespace Engine
 
 			VkCommandBuffer VulkanCommandPool::BeginSingleTimeCommands(const VkDevice a_device, const VkCommandPool a_commandPool)
 			{
+				m_commandsMutex.lock();
 				VkCommandBufferAllocateInfo t_allocInfo{};
 				t_allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
 				t_allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
@@ -199,6 +200,7 @@ namespace Engine
 				vkQueueWaitIdle(a_queue);
 
 				vkFreeCommandBuffers(a_logicalDevice, a_commandPool, 1, &a_commandBuffer);
+				m_commandsMutex.unlock();
 			}
 		}
 	}

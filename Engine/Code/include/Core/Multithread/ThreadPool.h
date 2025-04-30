@@ -9,6 +9,8 @@
 #include <condition_variable>
 #include <atomic>
 
+#include "EngineExport.h"
+
 namespace Engine
 {
 	namespace Core
@@ -18,12 +20,12 @@ namespace Engine
 			class ThreadPool
 			{
 			public:
-				ThreadPool() : ThreadPool(10) {}
-				explicit ThreadPool(uint32_t a_nbThreads);
-				~ThreadPool();
+				ENGINE_API ThreadPool() : ThreadPool(10) {}
+				ENGINE_API explicit ThreadPool(uint32_t a_nbThreads);
+				ENGINE_API ~ThreadPool();
 
-				void Enqueue(std::function<void()> const& a_func);
-				void WaitUntilFinished();
+				ENGINE_API void Enqueue(std::function<void()> const& a_func);
+				ENGINE_API void WaitUntilFinished();
 
 			private:
 				void CheckQueue();

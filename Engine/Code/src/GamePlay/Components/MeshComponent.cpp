@@ -47,7 +47,7 @@ namespace Engine
 			Resource::ResourceManager* t_resourceManager = ServiceLocator::GetResourceManager();
 
 			Ref<Resource::Mesh> t_mesh = t_resourceManager->CreateResource<Resource::Mesh>(a_path);
-			t_mesh->Load(a_renderer);
+			t_mesh->LoadAsync(a_renderer);
 
 			// Set the mesh to use.
 			m_mesh = std::move(t_mesh);

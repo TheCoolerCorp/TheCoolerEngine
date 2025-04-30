@@ -36,6 +36,9 @@ namespace Engine
 				ENGINE_API virtual void EndCommand(uint32_t a_commandBufferIndex, uint32_t a_currentFrame) = 0;
 
 				ENGINE_API virtual GraphicsAPI::VulkanCommandPool* CastVulkan() { LOG_ERROR("Try to return wrong cast type : VulkanCommandPool!"); return nullptr; }
+
+			protected:
+				static std::mutex m_commandsMutex;
 			};
 		}
 	}

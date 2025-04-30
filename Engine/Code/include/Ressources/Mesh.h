@@ -52,8 +52,6 @@ namespace Engine
 		private:
 			void ProcessMesh(const aiMesh* a_mesh);
 
-			bool m_isLoaded = false;
-
 			std::string m_path;
 
 			std::vector<Vertex> m_vertices;

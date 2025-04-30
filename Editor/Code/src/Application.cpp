@@ -2,7 +2,6 @@
 
 #include "Core/Window/GLInputHandler.h"
 #include "GamePlay/Others/GameObject.h"
-#include "GamePlay/Components/MAterialComponent.h"
 #include "GamePlay/Components/Meshcomponent.h"
 #include "GamePlay/Others/Scene.h"
 #include "Math/TheCoolerMath.h"
@@ -48,7 +47,6 @@ namespace Editor
 			m_camera->Create(m_renderer);
 
 			m_resourceManager = new Resource::ResourceManager;
-
 			ServiceLocator::ProvideResourceManager(m_resourceManager);
 
 			m_currentScene = new Scene();

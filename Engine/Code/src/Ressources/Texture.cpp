@@ -22,10 +22,12 @@ namespace Engine
 
         void Texture::Load(Core::Renderer* a_renderer)
         {
-            if (m_isLoaded)
+            if (m_isLoaded || m_isLoading)
             {
                 return;
             }
+
+            m_isLoading = true;
 
             int t_texWidth, t_texHeight, t_texChannels;
             stbi_uc* t_pixels = stbi_load(m_path.c_str(), &t_texWidth, &t_texHeight, &t_texChannels, STBI_rgb_alpha);
@@ -55,6 +57,7 @@ namespace Engine
             m_image->Create(Core::RHI::ImageType::TEXTURE, t_imageData, t_physicalDevice, t_logicalDevice, t_commandPool);
 
             m_isLoaded = true;
+            m_isLoading = false;
             //delete m_data;
         }
 
