@@ -51,6 +51,7 @@ namespace Editor::EditorLayer::Ui
 			m_availableIds.push_back(t_index);
 			break;
 		}
+		OnUiRender();
 	}
 
 	void ImGuiLayer::OnUiRender()

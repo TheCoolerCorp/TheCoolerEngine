@@ -353,9 +353,10 @@ namespace Engine
 			{
 				const VkDevice t_device = a_logicalDevice->CastVulkan()->GetVkDevice();
 
+				vkDeviceWaitIdle(t_device);
+
 				a_window->ResizeFramebuffer();
 
-				vkDeviceWaitIdle(t_device);
 
 				CleanupSwapChain(t_device);
 
