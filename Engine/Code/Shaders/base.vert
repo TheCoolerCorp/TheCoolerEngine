@@ -8,6 +8,7 @@ layout(set = 0, binding = 0) uniform CameraUBO
 layout(set = 1, binding = 0) uniform ObjectUBO
 {
     mat4 model;
+    mat4 normalMatrix;
 } per_objModel;
 
 layout(location = 0) in vec3 inPosition;
@@ -16,10 +17,17 @@ layout(location = 2) in vec2 inTexCoord;
 
 layout(location = 0) out vec3 normal;
 layout(location = 1) out vec2 fragTexCoord;
+layout(location = 2) out vec3 worldPos;
 
 
-void main() {
-    gl_Position = common_camModel.vp * per_objModel.model * vec4(inPosition,  1.0);
+void main() 
+{
+    worldPos = vec3(per_objModel.model * vec4(inPosition, 1.0));
+
+    vec3 t_normal = mat3(per_objModel.normalMatrix) * inNormal;
+    normal = normalize(t_normal);
+
     fragTexCoord = inTexCoord;
-    normal = inNormal;
+
+    gl_Position = common_camModel.vp * per_objModel.model * vec4(inPosition,  1.0);
 }
