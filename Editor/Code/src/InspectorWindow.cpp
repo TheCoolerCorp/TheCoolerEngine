@@ -102,6 +102,9 @@ void Editor::EditorLayer::Ui::InspectorUiWindow::RefreshSelectedObject()
 		case Engine::GamePlay::ComponentType::RIGIDBODY:
 			AddComponent(new UiRigidbodyComponent(m_layer, m_selectedObject->GetComponent<Engine::GamePlay::RigidBodyComponent>()));
 			break;
+		case Engine::GamePlay::ComponentType::LIGHT:
+			//AddComponent(new UiLightComponent(m_layer, m_selectedObject->GetComponent<LightComponent>()));
+			break;
 		}
 	}
 }
@@ -135,6 +138,7 @@ void Editor::EditorLayer::Ui::InspectorUiWindow::AddComponent(InspectorComponent
 		return;
 	m_objectComponents.push_back(a_component);
 	a_component->SetUid(static_cast<int>(m_objectComponents.size())-1);
+	a_component->SetInspectorWindow(this);
 	a_component->Create();
 
 }

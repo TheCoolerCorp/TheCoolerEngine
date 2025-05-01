@@ -25,6 +25,7 @@ namespace Editor::EditorLayer::Ui
 		std::filesystem::path m_currentPath;
 		static std::filesystem::path m_rootPath;
 		static ImGuiTexture* m_folderTexture;
+		static ImGuiTexture* m_imageTexture;
 		static ImGuiTexture* m_fileTexture;
 		void DrawFileInfo();
 
@@ -32,8 +33,13 @@ namespace Editor::EditorLayer::Ui
 		void DrawFileTreeRecursive(const std::filesystem::path& a_path);
 
 		bool HasChildDirectories(const std::filesystem::path& a_path);
+		bool IsImage(const std::filesystem::path& a_path);
+
+		std::filesystem::path TruncatePathToRoot(const std::filesystem::path& a_path);
 
 		void DrawTextCentered(std::string a_text);
+		void DrawFileImage(const std::filesystem::directory_entry& a_path);
+		void AddImageDragDropSource(const std::filesystem::path& a_path);
 	};
 }
 

@@ -31,6 +31,8 @@ namespace Editor::EditorLayer::Ui
 		Engine::GamePlay::MeshComponent* m_meshComp = nullptr;
 
 		VkDescriptorSet m_dSet;
+
+		void AddDragDropImageTarget();
 	};
 }
 

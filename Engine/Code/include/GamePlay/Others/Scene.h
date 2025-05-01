@@ -47,6 +47,7 @@ namespace Engine
 			ENGINE_API [[nodiscard]] GameObject* GetGameObject(const uint32_t a_id) const { return m_objs[a_id]; }
 			ENGINE_API [[nodiscard]] int GetObjectCount() const { return static_cast<int>(m_objs.size()); }
 			ENGINE_API [[nodiscard]] std::string& GetName() { return m_name; }
+			ENGINE_API [[nodiscard]] RenderSystem* GetRenderSystem() { return m_renderSystem; }
 			ENGINE_API void Save();
 			ENGINE_API void Load(Core::Renderer* a_renderer);
 

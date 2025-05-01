@@ -49,7 +49,7 @@ namespace Engine
 			std::vector<MeshComponent*>& GetMeshComponents() { return m_components; }
 			ENGINE_API MeshComponent* GetMeshComponent(int a_id) const;
 			std::vector<Core::RHI::IObjectDescriptor*>& GetMeshDescriptors() { return m_objectsDescriptors; }
-			[[nodiscard]] Core::RHI::IObjectDescriptor* GetMeshDescriptor(int a_idx);
+			ENGINE_API [[nodiscard]] Core::RHI::IObjectDescriptor* GetMeshDescriptor(int a_idx);
 
 			/*
 			* Light part getters

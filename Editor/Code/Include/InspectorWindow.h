@@ -23,7 +23,7 @@ namespace Editor::EditorLayer::Ui
 		void UiDraw() override;
 		void Destroy() override;
 
-
+		Engine::GamePlay::GameObject* GetSelectedObject() { return m_selectedObject; }
 		
 	private:
 		

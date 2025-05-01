@@ -2,6 +2,9 @@
 
 #include "imgui.h"
 #include "backends/imgui_impl_vulkan.h"
+#include "Core/Interfaces/IObjectDescriptor.h"
+#include "GamePlay/Others/Scene.h"
+#include "GamePlay/Systems/RenderSystem.h"
 
 Editor::EditorLayer::Ui::UiMeshComponent::~UiMeshComponent()
 {
@@ -35,6 +38,7 @@ void Editor::EditorLayer::Ui::UiMeshComponent::UiDraw()
 		if (t_displaySize > 200.f)
 			t_displaySize = 200.f;
 		ImGui::Image(reinterpret_cast<ImTextureID>(m_dSet), ImVec2{ t_displaySize, t_displaySize });
+		AddDragDropImageTarget();
 		ImGui::SetItemTooltip((std::to_string(m_meshComp->GetMaterial()->GetAlbedo()->GetWidth()) + "x" + std::to_string(m_meshComp->GetMaterial()->GetAlbedo()->GetHeight())).c_str());
 		ImGui::TreePop();
 	}
@@ -48,5 +52,22 @@ void Editor::EditorLayer::Ui::UiMeshComponent::Destroy()
 		vkDeviceWaitIdle(m_layer->GetRenderer()->GetLogicalDevice()->CastVulkan()->GetVkDevice());
 		ImGui_ImplVulkan_RemoveTexture(m_dSet);
 		m_dSet = VK_NULL_HANDLE;
+	}
+}
+
+void Editor::EditorLayer::Ui::UiMeshComponent::AddDragDropImageTarget()
+{
+	if (ImGui::BeginDragDropTarget())
+	{
+		if (const ImGuiPayload* t_payload = ImGui::AcceptDragDropPayload("IMAGE_PATH_PAYLOAD"))
+		{
+			const char* t_path = static_cast<const char*>(t_payload->Data);
+			m_meshComp->GetMaterial()->SetAlbedo(t_path, m_layer->GetRenderer());
+			int t_id = m_window->GetSelectedObject()->GetId();
+			vkDeviceWaitIdle(m_layer->GetRenderer()->GetLogicalDevice()->CastVulkan()->GetVkDevice());
+			m_layer->GetScene()->GetRenderSystem()->GetMeshDescriptor(t_id)->SetTexture(
+				m_layer->GetRenderer()->GetLogicalDevice(), m_meshComp->GetMaterial()->GetAlbedo()->GetImage(), 1, 1);
+		}
+		ImGui::EndDragDropTarget();
 	}
 }

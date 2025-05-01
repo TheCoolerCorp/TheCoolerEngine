@@ -7,6 +7,7 @@
 std::filesystem::path Editor::EditorLayer::Ui::FileExplorerWindow::m_rootPath;
 Editor::EditorLayer::Ui::ImGuiTexture* Editor::EditorLayer::Ui::FileExplorerWindow::m_folderTexture = nullptr;
 Editor::EditorLayer::Ui::ImGuiTexture* Editor::EditorLayer::Ui::FileExplorerWindow::m_fileTexture = nullptr;
+Editor::EditorLayer::Ui::ImGuiTexture* Editor::EditorLayer::Ui::FileExplorerWindow::m_imageTexture = nullptr;
 
 Editor::EditorLayer::Ui::FileExplorerWindow::~FileExplorerWindow()
 {
@@ -21,6 +22,10 @@ void Editor::EditorLayer::Ui::FileExplorerWindow::Create()
 	if (!m_fileTexture)
 	{
 		m_fileTexture = new ImGuiTexture(m_renderer, "Assets/Textures/Ui/BlankFileIcon.png");
+	}
+	if (!m_imageTexture)
+	{
+		m_imageTexture = new ImGuiTexture(m_renderer, "Assets/Textures/Ui/ImageIcon.png");
 	}
 	m_rootPath = std::filesystem::current_path();
 	for (const auto& entry : std::filesystem::directory_iterator(m_rootPath)) {
@@ -82,6 +87,10 @@ void Editor::EditorLayer::Ui::FileExplorerWindow::Destroy()
 {
 }
 
+/**
+ * Draws the content of m_currentPath (the currently selected folder) in a ImGui table
+ * With an image illustrating its type and its name. Folders can be double clicked to acess its child
+ */
 void Editor::EditorLayer::Ui::FileExplorerWindow::DrawFileInfo()
 {
 	int t_filesPerColumn = static_cast<int>(ImGui::GetContentRegionAvail().x / 100);
@@ -105,10 +114,11 @@ void Editor::EditorLayer::Ui::FileExplorerWindow::DrawFileInfo()
 			const auto& t_path = t_entry.path();
 			std::string t_filename = t_path.filename().string();
 			ImGui::BeginChild((std::to_string(t_row) + std::to_string(t_column)).c_str(), ImVec2{ 100,100 });
-			if (t_entry.is_directory())
-				m_folderTexture->DrawTexture({ 50.f, 50.f }, true);
-			else
-				m_fileTexture->DrawTexture({ 50.f, 50.f }, true);
+			if (IsImage(t_path)) //if image, create a drag and drop source which carries the image's path
+			{
+				AddImageDragDropSource(t_path);
+			}
+			DrawFileImage(t_entry);
 			DrawTextCentered(t_filename);
 			ImGui::EndChild();
 			if (t_entry.is_directory() && ImGui::IsItemClicked(ImGuiMouseButton_Left) && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
@@ -213,10 +223,53 @@ bool Editor::EditorLayer::Ui::FileExplorerWindow::HasChildDirectories(const std:
 	return false;
 }
 
+bool Editor::EditorLayer::Ui::FileExplorerWindow::IsImage(const std::filesystem::path& a_path)
+{
+	std::string t_extension = a_path.extension().string();
+	std::ranges::transform(t_extension, t_extension.begin(), ::tolower);
+	return (t_extension == ".png" || t_extension == ".jpg" || t_extension == ".jpeg" || t_extension == ".bmp");
+}
+
+/**
+ * Truncates the path specified in a_path to the root path.
+ * For example, if we start with a path that is
+ * "C:\School\Git\2024_gp_2028_gp_2028_projet_moteur-thecoolerengine\Assets\Textures\BaseObjectTexture.png"
+ * This function will return
+ * "Assets\Textures\BaseObjectTexture.png"
+ */
+std::filesystem::path Editor::EditorLayer::Ui::FileExplorerWindow::TruncatePathToRoot(const std::filesystem::path& a_path)
+{
+	return std::filesystem::relative(a_path, m_rootPath.parent_path());
+}
+
 void Editor::EditorLayer::Ui::FileExplorerWindow::DrawTextCentered(std::string a_text)
 {
 	float t_width = ImGui::GetContentRegionAvail().x;
 	float t_offsetx = std::max((t_width - ImGui::CalcTextSize(a_text.c_str()).x) * 0.5f, 0.5f);
 	ImGui::SetCursorPosX(ImGui::GetCursorPosX()+t_offsetx);
 	ImGui::TextUnformatted(a_text.c_str());
+}
+
+/**
+ * Draws the icon of the type of file given in a_path
+ */
+void Editor::EditorLayer::Ui::FileExplorerWindow::DrawFileImage(const std::filesystem::directory_entry& a_path)
+{
+	if (a_path.is_directory())
+		m_folderTexture->DrawTexture({ 50.f, 50.f }, true);
+	else if (IsImage(a_path.path()))
+		m_imageTexture->DrawTexture({ 50.f, 50.f }, true);
+	else
+		m_fileTexture->DrawTexture({ 50.f, 50.f }, true);
+}
+
+void Editor::EditorLayer::Ui::FileExplorerWindow::AddImageDragDropSource(const std::filesystem::path& a_path)
+{
+	if (ImGui::BeginDragDropSource())
+	{
+		std::filesystem::path t_path = TruncatePathToRoot(a_path);
+		ImGui::SetDragDropPayload("IMAGE_PATH_PAYLOAD", t_path.string().c_str(), t_path.string().size() + 1);
+		ImGui::Text(a_path.filename().string().c_str());
+		ImGui::EndDragDropSource();
+	}
 }
