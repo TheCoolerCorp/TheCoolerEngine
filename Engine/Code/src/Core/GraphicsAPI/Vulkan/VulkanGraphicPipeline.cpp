@@ -227,9 +227,9 @@ namespace Engine
 			{
 				const VulkanCommandPool* t_commandPool = a_commandPool->CastVulkan();
 
-				if (!t_commandPool->m_commandBuffers[a_commandBufferIndex].empty())
+				if (!t_commandPool->mCommandBuffers[a_commandBufferIndex].empty())
 				{
-					const VkCommandBuffer t_commandBuffer = t_commandPool->m_commandBuffers[a_commandBufferIndex][a_swapChain->GetCurrentFrame()];
+					const VkCommandBuffer t_commandBuffer = t_commandPool->mCommandBuffers[a_commandBufferIndex][a_swapChain->GetCurrentFrame()];
 					vkCmdBindPipeline(t_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_pipeline);
 
 					/*VkViewport t_viewport;
@@ -253,12 +253,12 @@ namespace Engine
 			{
 				const VulkanCommandPool* t_commandPool = a_commandPool->CastVulkan();
 
-				if (t_commandPool->m_commandBuffers[a_commandBufferIndex].empty())
+				if (t_commandPool->mCommandBuffers[a_commandBufferIndex].empty())
 				{
 					return;
 				}
 
-				const VkCommandBuffer t_commandBuffer = t_commandPool->m_commandBuffers[a_commandBufferIndex][a_currentFrame];
+				const VkCommandBuffer t_commandBuffer = t_commandPool->mCommandBuffers[a_commandBufferIndex][a_currentFrame];
 				const VkDeviceSize t_offsets[] = { 0 };
 
 				for (int i = 0; i < a_objectsDescriptors.size(); ++i)
@@ -281,7 +281,7 @@ namespace Engine
 					VulkanObjectDescriptor* t_objectDescriptor = a_objectsDescriptors.at(i)->CastVulkan();
 
 					uint32_t t_descriptorIndex = a_imageIndex;
-					if (t_objectDescriptor->GetDescriptorSets().size() != t_commandPool->m_commandBuffers[a_commandBufferIndex].size() && !t_objectDescriptor->GetDescriptorSets().empty())
+					if (t_objectDescriptor->GetDescriptorSets().size() != t_commandPool->mCommandBuffers[a_commandBufferIndex].size() && !t_objectDescriptor->GetDescriptorSets().empty())
 					{
 						t_descriptorIndex = static_cast<uint32_t>(t_objectDescriptor->GetDescriptorSets().size()) - 1;
 					}
@@ -298,19 +298,19 @@ namespace Engine
 			{
 				const VulkanCommandPool* t_commandPool = a_commandPool->CastVulkan();
 
-				if (t_commandPool->m_commandBuffers[a_commandBufferIndex].empty())
+				if (t_commandPool->mCommandBuffers[a_commandBufferIndex].empty())
 				{
 					return;
 				}
 
-				const VkCommandBuffer t_commandBuffer = t_commandPool->m_commandBuffers[a_commandBufferIndex][a_currentFrame];
+				const VkCommandBuffer t_commandBuffer = t_commandPool->mCommandBuffers[a_commandBufferIndex][a_currentFrame];
 
 				for (int i = 0; i < a_objectsDescriptors.size(); ++i)
 				{
 					VulkanObjectDescriptor* t_objectDescriptor = a_objectsDescriptors.at(i)->CastVulkan();
 
 					uint32_t t_descriptorIndex = a_imageIndex;
-					if (t_objectDescriptor->GetDescriptorSets().size() != t_commandPool->m_commandBuffers[a_commandBufferIndex].size() && !t_objectDescriptor->GetDescriptorSets().empty())
+					if (t_objectDescriptor->GetDescriptorSets().size() != t_commandPool->mCommandBuffers[a_commandBufferIndex].size() && !t_objectDescriptor->GetDescriptorSets().empty())
 					{
 						t_descriptorIndex = static_cast<uint32_t>(t_objectDescriptor->GetDescriptorSets().size()) - 1;
 					}

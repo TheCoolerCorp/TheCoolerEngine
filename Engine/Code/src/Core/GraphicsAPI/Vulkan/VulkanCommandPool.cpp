@@ -70,14 +70,14 @@ namespace Engine
 
 					t_commandBuffers[i] = t_commandBuffer;
 				}
-				m_commandBuffers.push_back(t_commandBuffers);
+				mCommandBuffers.push_back(t_commandBuffers);
 			}
 
 			void VulkanCommandPool::BeginCommand(uint32_t a_commandBufferIndex, uint32_t a_currentFrame)
 			{
-				if (m_commandBuffers[a_commandBufferIndex].size() != 0)
+				if (mCommandBuffers[a_commandBufferIndex].size() != 0)
 				{
-					VkCommandBuffer t_commandBuffer = m_commandBuffers[a_commandBufferIndex][a_currentFrame];
+					VkCommandBuffer t_commandBuffer = mCommandBuffers[a_commandBufferIndex][a_currentFrame];
 					VkCommandBufferBeginInfo t_beginInfo{};
 					t_beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 
@@ -87,9 +87,9 @@ namespace Engine
 
 			void VulkanCommandPool::EndCommand(uint32_t a_commandBufferIndex, uint32_t a_currentFrame)
 			{
-				if (m_commandBuffers[a_commandBufferIndex].size() != 0)
+				if (mCommandBuffers[a_commandBufferIndex].size() != 0)
 				{
-					VkCommandBuffer t_commandBuffer = m_commandBuffers[a_commandBufferIndex][a_currentFrame];
+					VkCommandBuffer t_commandBuffer = mCommandBuffers[a_commandBufferIndex][a_currentFrame];
 
 					VK_CHECK(vkEndCommandBuffer(t_commandBuffer), "failed to end recording command buffer!");
 				}

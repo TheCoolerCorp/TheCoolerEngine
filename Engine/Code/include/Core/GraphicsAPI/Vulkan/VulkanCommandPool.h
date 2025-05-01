@@ -58,8 +58,8 @@ namespace Engine
 				ENGINE_API static VkCommandBuffer BeginSingleTimeCommands(VkDevice a_device, VkCommandPool a_commandPool);
 				ENGINE_API static void EndSingleTimeCommands(VkCommandBuffer a_commandBuffer, VkCommandPool a_commandPool, VkDevice a_logicalDevice, VkQueue a_queue);
 
-				std::vector<std::vector<std::tuple<VkCommandBuffer, VkRenderPass, VulkanGraphicPipeline*>>> mCommandBuffers{};
-				std::vector<std::vector<VkCommandBuffer>> m_commandBuffers{}; // one for each frame and can have multiple sets
+				//std::vector<std::vector<std::tuple<VkCommandBuffer, VkRenderPass, VulkanGraphicPipeline*>>> mCommandBuffers{};
+				std::vector<std::vector<VkCommandBuffer>> mCommandBuffers{}; // one for each frame and can have multiple sets
 
 				
 			private:

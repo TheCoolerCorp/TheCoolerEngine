@@ -212,9 +212,9 @@ namespace Engine
 			{
 				std::vector<VkCommandBuffer> t_commandBuffers;
 
-				for (int i = 0; i < a_commandPool->CastVulkan()->m_commandBuffers.size(); ++i)
+				for (int i = 0; i < a_commandPool->CastVulkan()->mCommandBuffers.size(); ++i)
 				{
-					const VkCommandBuffer t_commandBuffer = a_commandPool->CastVulkan()->m_commandBuffers[i][m_currentFrame];
+					const VkCommandBuffer t_commandBuffer = a_commandPool->CastVulkan()->mCommandBuffers[i][m_currentFrame];
 					t_commandBuffers.push_back(t_commandBuffer);
 				}
 

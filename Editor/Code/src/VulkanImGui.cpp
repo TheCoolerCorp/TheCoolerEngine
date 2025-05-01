@@ -270,7 +270,7 @@ namespace Editor::EditorLayer::Ui
 			std::unordered_map<RHI::DescriptorSetPipelineTarget, std::vector<uint32_t>>& a_nbIndices,
 			std::unordered_map<RHI::DescriptorSetPipelineTarget, std::vector<RHI::IObjectDescriptor*>>& a_descriptors)
 			{
-				VkCommandBuffer t_commandBuffer = a_info.renderer->GetCommandPool()->CastVulkan()->m_commandBuffers[a_info.commandPoolIndex][a_info.currentFrame];
+				VkCommandBuffer t_commandBuffer = a_info.renderer->GetCommandPool()->CastVulkan()->mCommandBuffers[a_info.commandPoolIndex][a_info.currentFrame];
 				//m_imguiLayer->OnUiRender();
 				ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), t_commandBuffer);
 			}
