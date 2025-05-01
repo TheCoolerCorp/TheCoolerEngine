@@ -328,6 +328,8 @@ namespace Engine
 					VulkanSwapchain* swapchain = m_renderer->GetSwapChain()->CastVulkan();
 					swapchain->AddResizeCallback([this](VkExtent2D a_extent)
 						{
+							if (!this)
+								return;
 							m_config.extent = a_extent;
 							if (m_config.createOwnFramebuffers)
 								RecreateFrameBuffer(a_extent);
@@ -505,6 +507,8 @@ namespace Engine
 
 			void VulkanRenderPass::RecreateFrameBuffer(const VkExtent2D a_extent)
 			{
+				if (!this)
+					return;
 				//set the new extent
 				m_config.extent = a_extent;
 
