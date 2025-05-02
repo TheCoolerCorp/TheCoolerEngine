@@ -52,6 +52,7 @@ namespace Engine
 				VkDescriptorSetLayout ChooseLayout(std::vector<VulkanSetLayout> a_layouts, RHI::DescriptorSetTarget a_type);
 				void CreatePool(VkDevice a_logicalDevice, uint32_t a_count, std::vector<VkDescriptorType> a_types);
 				void CreateDescriptorSets(VkDevice a_logicalDevice, VkDescriptorSetLayout a_descriptorSetLayout, uint32_t a_setCount);
+				
 
 				void CreateBuffers(uint32_t a_uniformCount, std::vector<uint32_t> a_subUniformCount);
 				void DestroyBuffers();
