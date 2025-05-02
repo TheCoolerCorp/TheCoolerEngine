@@ -186,8 +186,6 @@ namespace Engine
 					continue;
 				}
 
-				bool t_needToErase = true;
-
 				Core::RHI::IObjectDescriptor* t_newRenderObject = apiInterface->InstantiateObjectDescriptor();
 
 				Ref<Material> t_material = m_components[m_pendingComponents[i]]->GetMaterial();
@@ -242,17 +240,25 @@ namespace Engine
 				t_newRenderObject->SetUniform(a_logicalDevice, a_physicalDevice, a_commandPool, 0, t_newRenderObjectMatrixData, 16 * sizeof(float), 0, 1);
 
 				Ref<Resource::Texture> t_albedo = t_material->GetAlbedo();
-				if (t_albedo->IsCreated())
+				if (t_albedo)
 				{
-					t_newRenderObject->SetTexture(a_logicalDevice, t_albedo->GetImage(), 1, 1);
+					if (t_albedo->IsCreated())
+					{
+						t_newRenderObject->SetTexture(a_logicalDevice, t_albedo->GetImage(), 1, 1);
+
+					}
+					else
+					{
+						const Ref<Resource::Texture> t_defaultTexture = ServiceLocator::GetResourceManager()->GetResource<Resource::Texture>("Assets/Textures/DefaultTexture.png");
+						t_newRenderObject->SetTexture(a_logicalDevice, t_defaultTexture->GetImage(), 1, 1);
+						t_albedo->CreateImage(a_renderer);
+					}
 				}
 				else
 				{
-					//t_needToErase = false;
-					Ref<Resource::Texture> t_defaultTexture = ServiceLocator::GetResourceManager()->GetResource<Resource::Texture>("Assets/Textures/DefaultTexture.png");
-					LOG_DEBUG(typeid(*t_defaultTexture).name());
+					const Ref<Resource::Texture> t_defaultTexture = ServiceLocator::GetResourceManager()->GetResource<Resource::Texture>("Assets/Textures/DefaultTexture.png");
+					t_material->SetAlbedo(t_defaultTexture);
 					t_newRenderObject->SetTexture(a_logicalDevice, t_defaultTexture->GetImage(), 1, 1);
-					t_albedo->CreateImage(a_renderer);
 				}
 
 				if (m_availableIndexes.empty())
@@ -267,10 +273,7 @@ namespace Engine
 					}
 				}
 
-				if (t_needToErase)
-				{
-					t_componentsToErase.push_back(i);
-				}
+				t_componentsToErase.push_back(i);
 			}
 
 			for (int i : t_componentsToErase)

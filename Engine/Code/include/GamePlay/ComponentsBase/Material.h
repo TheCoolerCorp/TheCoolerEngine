@@ -58,6 +58,7 @@ namespace Engine
 
 
 			ENGINE_API void SetAlbedo(const std::string& a_path, Core::Renderer* a_renderer);
+			ENGINE_API void SetAlbedo(const Ref<Resource::Texture>& a_albedoTexture);
 			ENGINE_API void SetAlbedo(Math::vec3 a_albedoValue);
 			ENGINE_API void RemoveAlbedo();
 

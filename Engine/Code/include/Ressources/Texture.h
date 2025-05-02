@@ -31,6 +31,7 @@ namespace Engine
 
 			ENGINE_API void Load() override;
 			ENGINE_API void CreateImage(Core::Renderer* a_renderer); // Creates the image, don't forget to check yourself if it's not already created/creating
+			ENGINE_API void CreateImageAsync(Core::Renderer* a_renderer);
 			ENGINE_API void Unload(Core::Renderer* a_renderer) override;
 
 			ENGINE_API int GetWidth() const { return m_width; }

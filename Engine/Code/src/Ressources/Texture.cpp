@@ -5,6 +5,8 @@
 
 #include "Core/GraphicsAPI/Vulkan/VulkanLogicalDevice.h"
 #include "Core/Renderer/Renderer.h"
+#include "Gameplay/ServiceLocator.h"
+#include "Core/Multithread/ThreadPool.h"
 
 namespace Engine
 {
@@ -73,6 +75,21 @@ namespace Engine
 
             m_isCreated.store(true, std::memory_order_release);
             m_isCreating.store(false, std::memory_order_release);
+        }
+
+        void Texture::CreateImageAsync(Core::Renderer* a_renderer)
+        {
+            Core::Multithread::ThreadPool* t_threadPool = GamePlay::ServiceLocator::GetThreadPool();
+            if (t_threadPool)
+            {
+                auto CreateImageLambda = [this, a_renderer]()
+                    {
+                        this->CreateImage(a_renderer);
+                    };
+                t_threadPool->Enqueue(CreateImageLambda);
+                return;
+            }
+            CreateImage(a_renderer);
         }
 
         void Texture::Unload(Core::Renderer* a_renderer)
