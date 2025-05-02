@@ -77,6 +77,7 @@ namespace Engine
 			std::vector<int> m_lightsAvailableIndexes;
 			std::vector<int> m_lightsPendingComponents;
 
+			Core::Renderer* m_renderer = nullptr;
 
 			void CreatePendingComponentsDescriptors(Core::RHI::ApiInterface* apiInterface, Core::RHI::ILogicalDevice* a_logicalDevice,
 				Core::RHI::IPhysicalDevice* a_physicalDevice, Core::RHI::ISurface* a_surface, Core::RHI::ICommandPool* a_commandPool, Core::RHI::IGraphicPipeline* a_unlitPipeine,

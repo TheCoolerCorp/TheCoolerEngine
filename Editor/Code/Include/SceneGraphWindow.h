@@ -24,11 +24,14 @@ namespace Editor::EditorLayer::Ui
 		void UiDraw() override;
 		void DrawObject(int a_transformId);
 		void Destroy() override;
+
+		void NotifyObjectRemoved(Engine::GamePlay::GameObject* a_object) override;
 	private:
 		Engine::GamePlay::Scene* m_scene;
 		Engine::GamePlay::TransformSystem* m_transformSystem = nullptr;
 
 		void CreateNameTextField(Engine::GamePlay::GameObject* a_object);
+		void AddPopupContext(Engine::GamePlay::GameObject* a_object);
 	};
 }
 #endif

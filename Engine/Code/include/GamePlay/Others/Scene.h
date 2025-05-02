@@ -53,6 +53,7 @@ namespace Engine
 			ENGINE_API void Load(Core::Renderer* a_renderer);
 			ENGINE_API void SetMode(bool a_mode) { m_isPlaying = a_mode; }
 			ENGINE_API bool IsPlaying() { return m_isPlaying; }
+			ENGINE_API bool HasObject(int a_id);
 		private:
 			static nlohmann::ordered_json SerializeTransformComponent(const TransformComponent& a_transform);
 			static TransformData DeserializeTransformComponent(const nlohmann::ordered_json& a_json);
@@ -62,6 +63,7 @@ namespace Engine
 			static MeshData DeserializeMeshComponent(const nlohmann::ordered_json& a_json);
 
 			std::vector<GameObject*> m_objs;
+			std::vector<int> m_deletionQueue;
 			std::vector<int> m_availableIds;
 			Camera* m_mainCamera;
 			Core::Renderer* m_renderer = nullptr;

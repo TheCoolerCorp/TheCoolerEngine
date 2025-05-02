@@ -32,6 +32,7 @@ namespace Editor::EditorLayer::Ui
 		void SetSelectedGameObject(Engine::GamePlay::GameObject* a_object) { m_selectedGameObject = a_object; }
 		Engine::GamePlay::GameObject* GetSelectedGameObject() const { return m_selectedGameObject; }
 
+		void NotifyObjectRemoved(Engine::GamePlay::GameObject* a_object);
 	private:
 		Engine::GamePlay::GameObject* m_selectedGameObject = nullptr;
 		RHIImGui* m_imGui = nullptr;

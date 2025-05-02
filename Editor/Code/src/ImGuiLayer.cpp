@@ -35,6 +35,7 @@ namespace Editor::EditorLayer::Ui
 	void ImGuiLayer::OnUpdate(float a_deltaTime)
 	{
 		Layer::OnUpdate(a_deltaTime);
+		
 		m_imGui->Update();
 		std::vector<int> t_indexesToDelete;
 		for (UiWindow* t_window : m_windows)
@@ -211,6 +212,21 @@ namespace Editor::EditorLayer::Ui
 			m_windows.push_back(a_window);
 			a_window->Create();
 			a_window->SetUid(static_cast<int>(m_windows.size()) - 1);
+		}
+	}
+
+	void ImGuiLayer::NotifyObjectRemoved(Engine::GamePlay::GameObject* a_object)
+	{
+		if (m_selectedGameObject)
+		{
+			if (a_object->GetId() == m_selectedGameObject->GetId())
+				m_selectedGameObject = nullptr;
+		}
+		for (UiWindow* t_window : m_windows)
+		{
+			if (t_window == nullptr)
+				continue;
+			t_window->NotifyObjectRemoved(a_object);
 		}
 	}
 

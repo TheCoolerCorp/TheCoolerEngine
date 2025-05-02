@@ -15,6 +15,8 @@ namespace Engine
 		{
 			for (TransformComponent* t_component : m_components)
 			{
+				if (!t_component)
+					continue;
 				int t_componentParentId = t_component->GetParentID();
 				Math::Transform* t_transform = t_component->GetTransform();
 
@@ -67,6 +69,8 @@ namespace Engine
 		{
 			for (TransformComponent* t_component : m_components)
 			{
+				if (!t_component)
+					continue;
 				t_component->Destroy();
 				delete t_component;
 			}
