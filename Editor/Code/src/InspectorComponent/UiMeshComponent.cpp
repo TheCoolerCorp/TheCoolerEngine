@@ -37,6 +37,35 @@ void Editor::EditorLayer::Ui::UiMeshComponent::UiDraw()
 	}
 	if (ImGui::TreeNodeEx(("Texture Info: ##" + std::to_string(m_uid)).c_str(), t_flags))
 	{
+		//ImGui::Combo for the material type
+		int t_itemSelectedIdx = 0;
+		if (m_material->GetType() == Engine::GamePlay::LIT)
+			t_itemSelectedIdx = 1;
+
+		const char* t_items[] = { "Unlit", "Lit" };
+
+		if (ImGui::BeginCombo(("Material Type##"+std::to_string(m_uid)).c_str(), t_items[t_itemSelectedIdx]))
+		{
+			for (int n = 0; n < IM_ARRAYSIZE(t_items); n++)
+			{
+				const bool t_isSelected = (t_itemSelectedIdx == n);
+				if (ImGui::Selectable(t_items[n], t_isSelected))
+				{
+					t_itemSelectedIdx = n;
+					if (t_itemSelectedIdx == 0)
+						m_material->SetType(Engine::GamePlay::UNLIT);
+					else
+						m_material->SetType(Engine::GamePlay::LIT);
+				}
+
+				// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+				if (t_isSelected)
+				{
+					ImGui::SetItemDefaultFocus();
+				}
+			}
+			ImGui::EndCombo();
+		}
 		DrawImageInfo(ALBEDO);
 		if (m_material->GetType() == Engine::GamePlay::LIT)
 		{
@@ -137,6 +166,7 @@ void Editor::EditorLayer::Ui::UiMeshComponent::DrawImageInfo(ImageType a_type)
 			m_material->RemoveAO();
 			break;
 		}
+		m_material->SetNeedUpdate(true);
 		m_isOutOfDate = true;
 	}
 	
