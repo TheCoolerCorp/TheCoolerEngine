@@ -263,6 +263,11 @@ namespace Engine
 
 				for (int i = 0; i < a_objectsDescriptors.size(); ++i)
 				{
+					if (!a_vertexBuffers.at(i))
+					{
+						continue;
+					}
+
 					if (a_vertexBuffers.at(i)->CastVulkan()->GetBuffer() != nullptr)
 					{
 						VkBuffer t_vertexBuffer = a_vertexBuffers.at(i)->CastVulkan()->GetBuffer();

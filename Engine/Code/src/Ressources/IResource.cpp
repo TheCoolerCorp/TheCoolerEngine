@@ -7,19 +7,19 @@ namespace Engine
 {
 	namespace Resource
 	{
-		void IResource::LoadAsync(Core::Renderer* a_renderer)
+		void IResource::LoadAsync()
 		{
 			Core::Multithread::ThreadPool* t_threadPool =  GamePlay::ServiceLocator::GetThreadPool();
 			if (t_threadPool)
 			{
-				auto LoadLambda = [this, a_renderer]()
+				auto LoadLambda = [this]()
 					{
-						this->Load(a_renderer);
+						this->Load();
 					};
 				t_threadPool->Enqueue(LoadLambda);
 				return;
 			}
-			Load(a_renderer);
+			Load();
 		}
 	}
 }

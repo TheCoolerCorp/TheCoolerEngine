@@ -31,6 +31,10 @@ namespace Engine
 			ServiceLocator::ProvideRenderSystem(m_renderSystem);
 			ServiceLocator::ProvidePhysicsSystem(m_physicsSystem);
 
+			Ref<Resource::Texture> t_defaultTexture= t_resourceManager->CreateResource<Resource::Texture>("Assets/Textures/DefaultTexture.png");
+			t_defaultTexture->Load();
+			t_defaultTexture->CreateImage(a_renderer);
+
 			m_mainCamera = new Camera(Math::vec3(0.f, 1.f, 0.f), Math::vec3(0.f, 0.f, 0.f),
 				Math::vec3(0.f, 1.f, 3.f), Math::ToRadians(70.f),
 				static_cast<float>(a_width) / static_cast<float>(a_height), 0.1f, 100.f, 10.f, 20.f);
@@ -191,7 +195,7 @@ namespace Engine
 			{
 				return t_descriptor->GetPipelineTargetType();
 			}
-			LOG_ERROR("Tired to get descriptor at an invalid index!");
+			LOG_ERROR("Tried to get descriptor at an invalid index!");
 			return Core::RHI::DescriptorSetPipelineTarget::LitDescriptor;
 		}
 

@@ -83,6 +83,12 @@ namespace Editor
 				t_info.imageIndex = t_imageIndex;
 				t_info.currentFrame = m_renderer->GetSwapChain()->GetCurrentFrame();
 
+				for (int i = 0; i < m_currentScene->GetObjectCount(); ++i)
+				{
+					GameObject* t_obj = m_currentScene->GetGameObject(i);
+					t_obj->GetComponent<MeshComponent>()->GetMesh()->BindBuffers(m_renderer);
+				}
+
 				std::unordered_map<RHI::DescriptorSetPipelineTarget, std::vector<RHI::IBuffer*>> t_vertexBuffers = m_currentScene->GetVertexBuffers();
 				std::unordered_map<RHI::DescriptorSetPipelineTarget, std::vector<RHI::IBuffer*>> t_indexBuffers = m_currentScene->GetIndexBuffers();
 				std::unordered_map<RHI::DescriptorSetPipelineTarget, std::vector<uint32_t>> t_nbIndices = m_currentScene->GetNBIndices();

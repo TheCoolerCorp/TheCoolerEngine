@@ -18,14 +18,14 @@ namespace Engine
 		}
 
 
-        void Mesh::Load(Core::Renderer* a_renderer)
+        void Mesh::Load()
 		{
-            if (m_isLoaded || m_isLoading)
+            if (m_isLoaded.load(std::memory_order_acquire) || m_isLoading.load(std::memory_order_acquire))
             {
             	return;
             }
 
-            m_isLoading = true;
+            m_isLoading.store(true, std::memory_order_release);
 
             Assimp::Importer t_importer{};
             const aiScene* t_scene = t_importer.ReadFile(m_path, aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_PreTransformVertices);
@@ -42,6 +42,18 @@ namespace Engine
                 ProcessMesh(t_mesh);
             }
 
+            m_isLoaded.store(true, std::memory_order_release);
+            m_isLoading.store(false, std::memory_order_release);
+		}
+
+        void Mesh::BindBuffers(Core::Renderer* a_renderer)
+		{
+            if (m_isBound.load(std::memory_order_acquire) || m_isBinding.load(std::memory_order_acquire) || !m_isLoaded.load(std::memory_order_acquire))
+            {
+                return;
+            }
+            m_isBinding.store(true, std::memory_order_release);
+
             Core::RHI::ApiInterface* t_interface = a_renderer->GetInterface();
             Core::RHI::IPhysicalDevice* t_physicalDevice = a_renderer->GetPhysicalDevice();
             Core::RHI::ILogicalDevice* t_logicalDevice = a_renderer->GetLogicalDevice();
@@ -57,11 +69,11 @@ namespace Engine
             m_vertexBuffer->Create(Core::RHI::BufferType::VERTEX, t_bufferData, t_physicalDevice, t_logicalDevice, t_commandPool);
             m_indexBuffer->Create(Core::RHI::BufferType::INDEX, t_bufferData, t_physicalDevice, t_logicalDevice, t_commandPool);
 
-            m_isLoaded = true;
-            m_isLoading = false;
-
             //m_vertices.clear();
             //m_indexes.clear();
+
+            m_isBound.store(true, std::memory_order_release);
+            m_isBinding.store(false, std::memory_order_release);
 		}
 
         void Mesh::Unload(Core::Renderer* a_renderer)
@@ -79,6 +91,7 @@ namespace Engine
             delete m_indexBuffer;
 
             m_isLoaded = false;
+            m_isBound = false;
 		}
 
         void Mesh::ProcessMesh(const aiMesh* mesh)

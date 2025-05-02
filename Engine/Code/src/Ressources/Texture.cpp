@@ -20,14 +20,14 @@ namespace Engine
 	        delete m_data;
         }
 
-        void Texture::Load(Core::Renderer* a_renderer)
+        void Texture::Load()
         {
-            if (m_isLoaded || m_isLoading)
+            if (m_isLoaded.load(std::memory_order_acquire) || m_isLoading.load(std::memory_order_acquire))
             {
                 return;
             }
 
-            m_isLoading = true;
+            m_isLoading.store(true, std::memory_order_release);
 
             int t_texWidth, t_texHeight, t_texChannels;
             stbi_uc* t_pixels = stbi_load(m_path.c_str(), &t_texWidth, &t_texHeight, &t_texChannels, STBI_rgb_alpha);
@@ -40,6 +40,19 @@ namespace Engine
             m_width = t_texWidth;
             m_height = t_texHeight;
             m_data = t_pixels;
+
+            m_isLoaded.store(true, std::memory_order_release);
+            m_isLoading.store(false, std::memory_order_release);
+        }
+
+        void Texture::CreateImage(Core::Renderer* a_renderer)
+        {
+            if (m_isCreated.load(std::memory_order_acquire) || m_isCreating.load(std::memory_order_acquire) || !m_isLoaded.load(std::memory_order_acquire))
+            {
+                return;
+            }
+
+            m_isCreating.store(true, std::memory_order_release);
 
             Core::RHI::ApiInterface* t_interface = a_renderer->GetInterface();
             Core::RHI::IPhysicalDevice* t_physicalDevice = a_renderer->GetPhysicalDevice();
@@ -56,9 +69,10 @@ namespace Engine
 
             m_image->Create(Core::RHI::ImageType::TEXTURE, t_imageData, t_physicalDevice, t_logicalDevice, t_commandPool);
 
-            m_isLoaded = true;
-            m_isLoading = false;
             //delete m_data;
+
+            m_isCreated.store(true, std::memory_order_release);
+            m_isCreating.store(false, std::memory_order_release);
         }
 
         void Texture::Unload(Core::Renderer* a_renderer)
@@ -74,6 +88,7 @@ namespace Engine
             delete m_image;
 
             m_isLoaded = false;
+            m_isCreated = false;
         }
 
     }

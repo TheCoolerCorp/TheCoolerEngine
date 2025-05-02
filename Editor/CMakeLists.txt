@@ -24,7 +24,7 @@ target_link_libraries(Editor PRIVATE Engine)
 #				COMPILE MODE			#
 #---------------------------------------#
 if(MSVC)
-    target_compile_options(Editor PUBLIC /W4 /WX)
+    target_compile_options(Editor PUBLIC /W3 /WX)
 else()
     target_compile_options(Editor PUBLIC -Wall -Wextra -Wpedantic)
 endif()

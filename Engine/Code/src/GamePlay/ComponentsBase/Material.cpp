@@ -12,7 +12,8 @@ namespace Engine
 			Resource::ResourceManager* t_resourceManager = ServiceLocator::GetResourceManager();
 
 			Ref<Resource::Texture> t_albedoTexture = t_resourceManager->CreateResource<Resource::Texture>(a_path);
-			t_albedoTexture->LoadAsync(a_renderer);
+			t_albedoTexture->LoadAsync();
+			t_albedoTexture->CreateImage(a_renderer);
 
 			m_textures[0] = t_albedoTexture;
 			m_hasTextures.albdeo = true;
@@ -34,7 +35,8 @@ namespace Engine
 			Resource::ResourceManager* t_resourceManager = ServiceLocator::GetResourceManager();
 
 			Ref<Resource::Texture> t_normalTexture = t_resourceManager->CreateResource<Resource::Texture>(a_path);
-			t_normalTexture->LoadAsync(a_renderer);
+			t_normalTexture->LoadAsync();
+			t_normalTexture->CreateImage(a_renderer);
 
 			m_textures[1] = t_normalTexture;
 			m_hasTextures.normal = true;
@@ -51,7 +53,8 @@ namespace Engine
 			Resource::ResourceManager* t_resourceManager = ServiceLocator::GetResourceManager();
 
 			Ref<Resource::Texture> t_metallicTexture = t_resourceManager->CreateResource<Resource::Texture>(a_path);
-			t_metallicTexture->LoadAsync(a_renderer);
+			t_metallicTexture->LoadAsync();
+			t_metallicTexture->CreateImage(a_renderer);
 
 			m_textures[2] = t_metallicTexture;
 			m_hasTextures.metallic = true;
@@ -73,7 +76,8 @@ namespace Engine
 			Resource::ResourceManager* t_resourceManager = ServiceLocator::GetResourceManager();
 
 			Ref<Resource::Texture> t_roughnessTexture = t_resourceManager->CreateResource<Resource::Texture>(a_path);
-			t_roughnessTexture->LoadAsync(a_renderer);
+			t_roughnessTexture->LoadAsync();
+			t_roughnessTexture->CreateImage(a_renderer);
 
 			m_textures[3] = t_roughnessTexture;
 			m_hasTextures.roughness = true;
@@ -94,7 +98,8 @@ namespace Engine
 			Resource::ResourceManager* t_resourceManager = ServiceLocator::GetResourceManager();
 
 			Ref<Resource::Texture> t_aoTexture = t_resourceManager->CreateResource<Resource::Texture>(a_path);
-			t_aoTexture->Load(a_renderer);
+			t_aoTexture->Load();
+			t_aoTexture->CreateImage(a_renderer);
 
 			m_textures[4] = t_aoTexture;
 			m_hasTextures.ao = true;
