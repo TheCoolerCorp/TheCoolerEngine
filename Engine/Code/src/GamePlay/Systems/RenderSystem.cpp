@@ -50,9 +50,12 @@ namespace Engine
 				if (auto& comp = m_components[i])
 				{
 					comp->Destroy();
+					delete comp;
+				}
+				if (m_objectsDescriptors[i])
+				{
 					m_objectsDescriptors[i]->Destroy(a_renderer->GetLogicalDevice());
 					a_renderer->GetInterface()->DestroyObjectDescriptor(m_objectsDescriptors[i]);
-					delete comp;
 				}
 			}
 			m_components.clear();
@@ -65,9 +68,12 @@ namespace Engine
 				if (auto& comp = m_lightComponents[i])
 				{
 					comp->Destroy();
+					delete comp;
+				}
+				if (m_lightsDescriptors[i])
+				{
 					m_lightsDescriptors[i]->Destroy(a_renderer->GetLogicalDevice());
 					a_renderer->GetInterface()->DestroyObjectDescriptor(m_lightsDescriptors[i]);
-					delete comp;
 				}
 			}
 			m_lightComponents.clear();
@@ -86,17 +92,12 @@ namespace Engine
 				m_pendingComponents.push_back(t_nbComps);
 				return t_nbComps;
 			}
-			for (const int t_availableIndex : m_availableIndexes)
-			{
-				if (m_components.at(t_availableIndex) == nullptr)
-				{
-					m_components.at(t_availableIndex) = a_meshComponent;
-					a_meshComponent->SetUid(t_availableIndex);
-					m_pendingComponents.push_back(t_availableIndex);
-					return t_availableIndex;
-				}
-			}
-			return -1;
+			int t_index = m_availableIndexes.back();
+			m_availableIndexes.pop_back();
+			a_meshComponent->SetUid(t_index);
+			m_pendingComponents.push_back(t_index);
+
+			return t_index;
 			// ADD PENDING INDEX
 		}
 
@@ -129,7 +130,7 @@ namespace Engine
 				vkDeviceWaitIdle(m_renderer->GetLogicalDevice()->CastVulkan()->GetVkDevice());
 				if (m_components.at(a_id)->GetMesh() != nullptr)
 				{
-					m_components.at(a_id)->GetMesh()->Unload(m_renderer);
+					//m_components.at(a_id)->GetMesh()->Unload(m_renderer);
 				}
 				m_components.at(a_id)->Destroy();
 				delete m_components.at(a_id);

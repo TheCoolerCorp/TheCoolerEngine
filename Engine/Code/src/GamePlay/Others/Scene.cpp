@@ -38,30 +38,22 @@ namespace Engine
 				static_cast<float>(a_width) / static_cast<float>(a_height), 0.1f, 100.f, 10.f, 20.f);
 			m_mainCamera->Create(a_renderer);
 
-			//GameObject* t_object = new GameObject(Math::vec3(0.f, 0.f, 0.f), Math::vec3(0.f, Math::ToRadians(270.f), Math::ToRadians(270.f)), Math::vec3(1.f), "Unlit");
-			//t_object->AddComponent<MeshComponent>();
-			//t_object->GetComponent<MeshComponent>()->GetMaterial()->SetAlbedo("Assets/Textures/viking_room.png", a_renderer);
-			//t_object->GetComponent<MeshComponent>()->GetMaterial()->Create(UNLIT);
-			//t_object->GetComponent<MeshComponent>()->SetMesh("Assets/Meshes/viking_room.obj", a_renderer);
-
-			GameObject* t_object2 = new GameObject(Math::vec3(5.f, 0.f, 0.f), Math::vec3(0.f, Math::ToRadians(270.f), Math::ToRadians(270.f)), Math::vec3(1.f), "Lit");
+		
+			/*GameObject* t_object2 = new GameObject(Math::vec3(5.f, 0.f, 0.f), Math::vec3(0.f, Math::ToRadians(270.f), Math::ToRadians(270.f)), Math::vec3(1.f), "Lit");
 			t_object2->AddComponent<MeshComponent>();
 			t_object2->GetComponent<MeshComponent>()->SetMesh("Assets/Meshes/BaseObjects/sphere.obj", a_renderer);
 			t_object2->GetComponent<MeshComponent>()->GetMaterial()->Create(LIT);
-			//t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetAlbedo("Assets/Textures/viking_room.png", a_renderer);
-			//t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetMetallic(1.f);
-			//t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetRoughness(0.2f);
 			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetAlbedo("Assets/Textures/metal_plate_diff_2k.png", a_renderer);
 			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetNormal("Assets/Textures/metal_plate_nor_dx_2k.png", a_renderer);
 			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetMetallic("Assets/Textures/metal_plate_metal_2k.png", a_renderer);
 			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetRoughness("Assets/Textures/metal_plate_rough_2k.png", a_renderer);
-			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetAO("Assets/Textures/metal_plate_ao_2k.png", a_renderer);
+			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetAO("Assets/Textures/metal_plate_ao_2k.png", a_renderer);*/
 
 			LightGO* t_light = new LightGO(Math::vec3(10.f, 0.f, 0.f), Math::vec3(0.f, 0.f, 0.f), Math::vec3(1.f));
 
 
 			//AddGameObject(t_object);
-			AddGameObject(t_object2);
+			//AddGameObject(t_object2);
 			//// DON'T ADD MORE THAN ONE LIGHT FOR ONE
 			AddGameObject(t_light);
 
@@ -304,8 +296,10 @@ namespace Engine
 				t_object->GetComponent<MeshComponent>()->SetMesh("Assets/Meshes/BaseObjects/plane.obj", m_renderer);
 				break;
 			case OBJECTTYPE_LIGHT:
+				return nullptr;
 				break;
 			case OBJECTTYPE_CAMERA:
+				return nullptr;
 				break;
 			default:
 				break;

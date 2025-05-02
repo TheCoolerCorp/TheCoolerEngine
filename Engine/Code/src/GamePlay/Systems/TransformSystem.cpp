@@ -85,15 +85,10 @@ namespace Engine
 				m_components.emplace_back(a_component);
 				return static_cast<int>(m_components.size()) - 1u;
 			}
-			for (const int t_availableIndex : m_availableIds)
-			{
-				if (m_components.at(t_availableIndex) == nullptr)
-				{
-					m_components.at(t_availableIndex) = a_component;
-					return t_availableIndex;
-				}
-			}
-			return -1;
+			int t_index = m_availableIds.back();
+			m_availableIds.pop_back();
+			m_components.at(t_index) = a_component;
+			return t_index;
 		}
 
 		TransformComponent* TransformSystem::GetComponent(int a_id)
