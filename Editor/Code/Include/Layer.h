@@ -2,6 +2,11 @@
 #define LAYERBASE_H
 #include <string>
 
+namespace Engine::GamePlay
+{
+	class Scene;
+}
+
 namespace Editor::Core
 {
 	class Application;
@@ -51,6 +56,7 @@ namespace Editor::EditorLayer
 
 		[[nodiscard]] const std::string& GetName() const { return m_name; }
 		[[nodiscard]] Engine::Core::Renderer* GetRenderer() const { return m_renderer; }
+		[[nodiscard]] Engine::GamePlay::Scene* GetScene();
 	protected:
 		Core::Application* m_app = nullptr;
 		Engine::Core::Renderer* m_renderer;

@@ -76,7 +76,7 @@ namespace Engine
 				std::unordered_map<RHI::DescriptorSetPipelineTarget, std::vector<RHI::IObjectDescriptor*>>& a_descriptors)
 				{
 					m_unlitPipeline->Bind(info.renderer->GetCommandPool(), 0, info.renderer->GetSwapChain());
-
+					
 					info.renderer->GetUnlitPipeline()->BindSingleDescriptors(info.renderer->GetCommandPool(), 0, info.renderer->GetSwapChain()->GetCurrentFrame(),
 						info.imageIndex, { info.scene->GetCameraDescriptor() });
 
@@ -91,10 +91,14 @@ namespace Engine
 					std::unordered_map<RHI::DescriptorSetPipelineTarget, std::vector<uint32_t>>& a_nbIndices,
 					std::unordered_map<RHI::DescriptorSetPipelineTarget, std::vector<RHI::IObjectDescriptor*>>& a_descriptors)
 				{
+					std::vector<RHI::IObjectDescriptor*> m_descriptors = info.scene->GetLightsDescriptors();
+					// TODO : CHANGE LATER TO HANDLE MULTIPLE LIGHTS AND DIFFERENT CAMERA FOR SCENE MODE (Editor or play)
+					m_descriptors.emplace_back(info.scene->GetCameraDescriptor());
+
 					m_litPipeline->Bind(info.renderer->GetCommandPool(), 0, info.renderer->GetSwapChain());
 
 					info.renderer->GetLitPipeline()->BindSingleDescriptors(info.renderer->GetCommandPool(), 0, info.renderer->GetSwapChain()->GetCurrentFrame(),
-						info.imageIndex, { info.scene->GetCameraDescriptor() });
+						info.imageIndex, m_descriptors);
 
 					info.renderer->GetLitPipeline()->BindObjects(info.renderer->GetCommandPool(), 0, info.renderer->GetSwapChain()->GetCurrentFrame(),
 						info.imageIndex, a_indexBuffers[RHI::LitDescriptor], a_vertexBuffers[RHI::LitDescriptor], a_nbIndices[RHI::LitDescriptor], a_descriptors[RHI::LitDescriptor]);

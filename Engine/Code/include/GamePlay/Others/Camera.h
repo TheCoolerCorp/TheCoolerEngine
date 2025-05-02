@@ -26,6 +26,11 @@ namespace Engine
 
 	namespace GamePlay
 	{
+		struct CameraData
+		{
+			Math::mat4 m_vp;
+			alignas(16)Math::vec3 m_pos;
+		};
 		class Camera
 		{
 		public:
@@ -61,6 +66,7 @@ namespace Engine
 			bool m_needToUpdate = false;
 			bool m_hasClicked = false;
 
+			CameraData m_data;
 			Core::RHI::IObjectDescriptor* m_descriptor{};
 		};
 	}

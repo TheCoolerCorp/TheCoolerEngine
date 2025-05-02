@@ -3,6 +3,7 @@
 
 #include <vector>
 
+#include "imgui.h"
 #include "Layer.h"
 #include "RHIImGui.h"
 #include "GamePlay/Others/GameObject.h"
@@ -36,6 +37,9 @@ namespace Editor::EditorLayer::Ui
 		RHIImGui* m_imGui = nullptr;
 		std::vector<UiWindow*> m_windows;
 		std::vector<int> m_availableIds;
+
+		void SetupImGuiStyle();
+		ImVec4 ToSrgb(ImVec4 rgba);
 	};
 }
 

@@ -21,7 +21,7 @@ namespace Engine
 
 				m_window = glfwCreateWindow(m_width, m_height, "TheCoolerEngine", nullptr, nullptr);
 				glfwSetWindowUserPointer(m_window, this);
-
+				glfwMaximizeWindow(m_window);
 				glfwSetFramebufferSizeCallback(m_window, FramebufferResizeCallback);
 			}
 

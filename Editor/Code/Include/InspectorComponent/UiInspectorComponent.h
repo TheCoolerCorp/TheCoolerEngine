@@ -1,5 +1,6 @@
 #ifndef UIINSPECTORCOMPONENT_H
 #define UIINSPECTORCOMPONENT_H
+#include "InspectorWindow.h"
 #include "../ImGuiLayer.h"
 
 namespace Editor::EditorLayer::Ui
@@ -23,9 +24,11 @@ namespace Editor::EditorLayer::Ui
 		 * @param a_uid the unique id
 		 */
 		void SetUid(int a_uid) { m_uid = a_uid; }
+		void SetInspectorWindow(InspectorUiWindow* a_window) { m_window = a_window; }
 	protected:
 		int m_uid;
 
+		InspectorUiWindow* m_window = nullptr;
 		ImGuiLayer* m_layer = nullptr;
 	};
 }

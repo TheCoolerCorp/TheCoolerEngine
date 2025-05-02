@@ -310,7 +310,7 @@ namespace Editor::EditorLayer::Ui
 		if (m_viewportWindowExtent.width != t_extent.width || m_viewportWindowExtent.height != t_extent.height)
 		{
 			m_viewportWindowExtent = t_extent;
-			if (m_viewportWindowExtent.height <= 0 || m_viewportWindowExtent.width <= 0)
+			if (m_viewportWindowExtent.height <= 0 || m_viewportWindowExtent.width <= 0 || m_viewportWindowExtent.height >= 3000 || m_viewportWindowExtent.width >= 3000)
 				return;
 			const VkDevice t_device = m_renderer->GetLogicalDevice()->CastVulkan()->GetVkDevice();
 

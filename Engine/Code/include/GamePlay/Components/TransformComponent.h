@@ -51,7 +51,7 @@ namespace Engine
 			ENGINE_API static TransformComponent* GetComponent(int a_id);
 			ENGINE_API static void RemoveComponent(int a_id);
 
-			ENGINE_API static ComponentType GetType(bool a_colliderMesh = false) { return ComponentType::TRANSFORM; }
+			ENGINE_API static ComponentType GetType() { return ComponentType::TRANSFORM; }
 
 		private:
 			Math::Transform* m_transform = nullptr;

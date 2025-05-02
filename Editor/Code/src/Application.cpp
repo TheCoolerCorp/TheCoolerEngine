@@ -1,5 +1,6 @@
 #include "Application.h"
 
+#include "FileExplorerWindow.h"
 #include "Core/Window/GLInputHandler.h"
 #include "GamePlay/Others/GameObject.h"
 #include "GamePlay/Components/Meshcomponent.h"
@@ -55,6 +56,7 @@ namespace Editor
 			t_imguiLayer->AddWindow(new Ui::SceneGraphUiWindow(m_renderer, t_imguiLayer, m_currentScene));
 			t_imguiLayer->AddWindow(new Ui::InspectorUiWindow(m_renderer, t_imguiLayer));
 			t_imguiLayer->AddWindow(new Ui::UiLoggerWindow(m_renderer, t_imguiLayer));
+			t_imguiLayer->AddWindow(new Ui::FileExplorerWindow(m_renderer, t_imguiLayer));
 		}
 
 		void Application::Run()
