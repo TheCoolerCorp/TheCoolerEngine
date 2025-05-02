@@ -18,6 +18,7 @@ namespace Engine
             if (!pixels) 
             {
                 LOG_ERROR("Can't load image");
+                LOG_ERROR(stbi_failure_reason());
             }
 
             m_width = texWidth;
