@@ -2,6 +2,7 @@
 #define TRANSFORM_H
 
 #include "EngineExport.h"
+#include "../../../../libs/imgui/imgui.h"
 
 #include "Math/vec3.h"
 #include "Math/quat.h"
@@ -11,6 +12,12 @@ namespace Engine
 {
 	namespace Math
 	{
+		struct UniformMatrixs
+		{
+			mat4 m_transform;
+			mat4 m_normalMatrix;
+		};
+
 		class Transform
 		{
 		public:
@@ -36,6 +43,9 @@ namespace Engine
 			ENGINE_API vec3 GetGlobalScale() const { return m_globalScale; }
 
 			ENGINE_API mat4 GetTransformMatrix() const { return m_transform; }
+			ENGINE_API mat4 GetNormalMatrix() const { return m_normalMatrix; }
+
+			ENGINE_API UniformMatrixs& GetUniformsMatrixs();
 
 			ENGINE_API bool GetNeedToUpdate() const { return m_needUpdate; }
 
@@ -49,7 +59,7 @@ namespace Engine
 			ENGINE_API void SetScale(const vec3 a_scale) { m_scale = a_scale; m_needUpdate = true; }
 			ENGINE_API void SetGlobalScaleFromMatrix();
 
-			ENGINE_API void SetMatrix(const mat4& a_matrix) { m_transform = a_matrix; }
+			ENGINE_API void SetMatrix(const mat4& a_matrix) { m_transform = a_matrix; m_normalMatrix = m_transform; m_normalMatrix.Inverse();m_normalMatrix.Transpose();}
 
 			ENGINE_API void SetNeedToUpdate(const bool a_needToUpdate) { m_needUpdate = a_needToUpdate; }
 
@@ -62,6 +72,9 @@ namespace Engine
 			quat m_globalRot;
 			vec3 m_globalScale;
 			mat4 m_transform;
+			mat4 m_normalMatrix;
+
+			UniformMatrixs m_uniforms;
 		};
 	}
 }

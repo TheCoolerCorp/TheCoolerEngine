@@ -11,19 +11,9 @@ namespace Engine
 {
 	namespace GamePlay
 	{
-		//std::bitset<INT32_MAX> GameObject::m_idBitset{};
-
 		GameObject::GameObject(std::string a_name)
 			:m_name(std::move(a_name))
 		{
-			//m_id = Utils::GenerateRandomInt(0, INT32_MAX);
-
-			//while (m_idBitset[m_id])
-			//{
-			//	m_id = Utils::GenerateRandomInt(0, INT32_MAX);
-			//}
-			//m_idBitset.set(m_id);
-
 			AddComponent<TransformComponent>();
 			m_colliderMat = GetComponent<TransformComponent>()->GetTransform()->GetTransformMatrix();
 		}
@@ -31,15 +21,8 @@ namespace Engine
 		GameObject::GameObject( Math::vec3 a_position, Math::vec3 a_rotation, Math::vec3 a_scale, std::string a_name)
 			:m_name(std::move(a_name))
 		{
-			/*m_id = Utils::GenerateRandomInt(0, INT32_MAX);
-
-			while (m_idBitset[m_id])
-			{
-				m_id = Utils::GenerateRandomInt(0, INT32_MAX);
-			}
-			m_idBitset.set(m_id);*/
-
 			AddComponent<TransformComponent>();
+			GetComponent<TransformComponent>()->Set({ a_position, Math::quat(a_rotation), a_scale, -1 });
 			m_colliderMat = GetComponent<TransformComponent>()->GetTransform()->GetTransformMatrix();
 		}
 
@@ -79,44 +62,6 @@ namespace Engine
 			RemoveParent();
 			ClearChildren();
 		}
-
-
-		/*void GameObject::Create(Core::RHI::ApiInterface* a_interface, GameObjectinfo a_info)
-		{
-			m_descriptorPool = a_interface->InstantiateDescriptorPool();
-			m_descriptorPool->Create(a_info.mLogicalDevice, a_info.mSize);
-			m_descriptor = a_interface->InstantiateObjectDescriptor();
-			m_descriptor->Create(a_info.mLogicalDevice, a_info.mPhysicalDevice, a_info.mGraphicPipeline, m_descriptorPool, a_info.mCommandPool, this, a_info.mSize);
-		}
-
-		void GameObject::Update(int a_frameIndex, Engine::Core::RHI::ILogicalDevice* a_logicalDevice)
-		{
-			m_transform.UpdateMatrix();
-			m_descriptor->Update(a_frameIndex, a_logicalDevice, m_transform.GetModel().mElements.data());
-		}
-		void GameObject::Destroy(Core::RHI::ApiInterface* a_interface, Core::RHI::ILogicalDevice* a_logicalDevice)
-		{
-			m_descriptor->Destroy(a_logicalDevice);
-			m_descriptorPool->Destroy(a_logicalDevice);
-			a_interface->DestroyObjectDescriptor(m_descriptor);
-			a_interface->DestroyDescriptorPool(m_descriptorPool);
-			for (const auto& t_component : m_components)
-			{
-				t_component->Destroy(a_logicalDevice);
-			}
-			m_components.clear();
-		}
-
-		GameObjectData GameObject::SubmitData()
-		{
-			return {
-				.mVertexBuffer= GetComponent<MeshComponent>()->GetMesh()->GetVertexBuffer(),
-				.mIndexBuffer= GetComponent<MeshComponent>()->GetMesh()->GetIndexBuffer(),
-				.mImage= GetComponent<TextureComponent>()->GetTexture()->GetImage(),
-				.mDescriptor= m_descriptor, 
-				.mNbIndices= GetComponent<MeshComponent>()->GetMesh()->GetNbIndices()
-			};
-		}*/
 
 		void GameObject::SetId(int a_id)
 		{

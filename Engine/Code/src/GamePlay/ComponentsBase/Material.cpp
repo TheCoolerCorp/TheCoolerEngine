@@ -7,6 +7,23 @@ namespace Engine
 {
 	namespace GamePlay
 	{
+
+		Material::Material()
+		{
+			Resource::ResourceManager* t_resourceManager = ServiceLocator::GetResourceManager();
+
+			Ref<Resource::Texture> t_defaultTexture = t_resourceManager->CreateResource<Resource::Texture>(DefaultMaterial);
+			m_empty = t_defaultTexture;
+		}
+
+		Material::Material(MaterialType a_type) : m_type(a_type)
+		{
+			Resource::ResourceManager* t_resourceManager = ServiceLocator::GetResourceManager();
+
+			Ref<Resource::Texture> t_defaultTexture = t_resourceManager->CreateResource<Resource::Texture>(DefaultMaterial);
+			m_empty = t_defaultTexture;
+		}
+
 		void Material::SetAlbedo(const std::string& a_path, Core::Renderer* a_renderer)
 		{
 			Resource::ResourceManager* t_resourceManager = ServiceLocator::GetResourceManager();
@@ -15,7 +32,12 @@ namespace Engine
 			t_albedoTexture->Load(a_renderer);
 
 			m_textures[0] = t_albedoTexture;
-			m_hasTextures.albdeo = true;
+			m_hasTextures.albdeo = static_cast<uint32_t>(true);
+
+			if (!m_empty->IsLoaded())
+			{
+				m_empty->Load(a_renderer);
+			}
 		}
 
 		void Material::SetAlbedo(Math::vec3 a_albedoValue)
@@ -26,7 +48,7 @@ namespace Engine
 		void Material::RemoveAlbedo()
 		{
 			m_textures[0] = nullptr;
-			m_hasTextures.albdeo = false;
+			m_hasTextures.albdeo = static_cast<uint32_t>(false);
 		}
 
 		void Material::SetNormal(const std::string& a_path, Core::Renderer* a_renderer)

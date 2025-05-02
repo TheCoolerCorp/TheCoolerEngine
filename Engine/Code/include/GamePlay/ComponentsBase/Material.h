@@ -10,6 +10,7 @@ namespace Engine
 {
 	namespace GamePlay
 	{
+		#define DefaultMaterial std::string("Assets/Textures/ColliderTexture.png")
 		/* When uploading material textures into descriptor for vulkan push at index + 1 (Index 0 is use by the model matrix) */
 		/*
  		 *  0 = albedo
@@ -34,11 +35,11 @@ namespace Engine
 
 		struct HasMaterialTextures
 		{
-			bool albdeo = false;
-			bool normal = false;
-			bool metallic = false;
-			bool roughness = false;
-			bool ao = false;
+			uint32_t albdeo = 0;
+			uint32_t normal = 0;
+			uint32_t metallic = 0;
+			uint32_t roughness = 0;
+			uint32_t ao = 0;
 		};
 
 		enum MaterialType
@@ -50,8 +51,8 @@ namespace Engine
 		class Material
 		{
 		public:
-			ENGINE_API Material() = default;
-			ENGINE_API Material(MaterialType a_type) : m_type(a_type) {}
+			ENGINE_API Material();
+			ENGINE_API Material(MaterialType a_type);
 			ENGINE_API ~Material() = default;
 
 			void Destroy();
@@ -92,6 +93,8 @@ namespace Engine
 			ENGINE_API bool HasAO() { return m_hasTextures.ao; }
 			ENGINE_API Ref<Resource::Texture> GetAO() { return m_textures[4]; }
 
+			ENGINE_API Ref<Resource::Texture> GetEmpty() { return m_empty; }
+
 			void SetType(MaterialType a_type) { m_type = a_type; }
 			MaterialType GetType() { return m_type; }
 			HasMaterialTextures& GetHasTextures() { return m_hasTextures; }
@@ -102,6 +105,7 @@ namespace Engine
 			std::vector<Ref<Resource::Texture>> m_textures = std::vector<Ref<Resource::Texture>>(5);
 			MaterialValues m_values;
 			HasMaterialTextures m_hasTextures;
+			Ref<Resource::Texture> m_empty;
 		};
 	}
 }

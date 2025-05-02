@@ -6,6 +6,7 @@
 
 #include "Gameplay/ServiceLocator.h"
 #include "GamePlay/Others/GameObject.h"
+#include "GamePlay/Others/LightGO.h"
 #include "Math/TheCoolerMath.h"
 
 using json = nlohmann::ordered_json;
@@ -37,30 +38,38 @@ namespace Engine
 				static_cast<float>(a_width) / static_cast<float>(a_height), 0.1f, 100.f, 10.f, 20.f);
 			m_mainCamera->Create(a_renderer);
 
-			GameObject* t_object = new GameObject(Math::vec3(0.f, 0.f, 0.f), Math::vec3(0.f, Math::ToRadians(270.f), 0.f), Math::vec3(1.f));
+			GameObject* t_object = new GameObject(Math::vec3(0.f, 0.f, 0.f), Math::vec3(0.f, Math::ToRadians(270.f), Math::ToRadians(270.f)), Math::vec3(1.f), "Unlit");
 			t_object->AddComponent<MeshComponent>();
 			t_object->GetComponent<MeshComponent>()->GetMaterial()->SetAlbedo("Assets/Textures/viking_room.png", a_renderer);
 			t_object->GetComponent<MeshComponent>()->GetMaterial()->SetType(UNLIT);
 			t_object->GetComponent<MeshComponent>()->SetMesh("Assets/Meshes/viking_room.obj", a_renderer);
 
-			GameObject* t_object2 = new GameObject(Math::vec3(5.f, 0.f, 0.f), Math::vec3(0.f, Math::ToRadians(270.f), 0.f), Math::vec3(1.f));
+			GameObject* t_object2 = new GameObject(Math::vec3(5.f, 0.f, 0.f), Math::vec3(0.f, Math::ToRadians(270.f), Math::ToRadians(270.f)), Math::vec3(1.f), "Lit");
 			t_object2->AddComponent<MeshComponent>();
-			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetAlbedo("Assets/Textures/viking_room.png", a_renderer);
-			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetType(LIT);
 			t_object2->GetComponent<MeshComponent>()->SetMesh("Assets/Meshes/viking_room.obj", a_renderer);
+			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetType(LIT);
+			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetAlbedo("Assets/Textures/viking_room.png", a_renderer);
+			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetMetallic(1.f);
+			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetRoughness(0.2f);
+
+			LightGO* t_light = new LightGO(Math::vec3(10.f, 0.f, 0.f), Math::vec3(0.f, 0.f, 0.f), Math::vec3(1.f));
+
 
 			AddGameObject(t_object);
 			AddGameObject(t_object2);
+			// DON'T ADD MORE THAN ONE LIGHT FOR ONE
+			AddGameObject(t_light);
 
 			Load(a_renderer);
 		}
 
 		void Scene::Update(Core::Renderer* a_renderer, Core::Window::IWindow* a_window, Core::Window::IInputHandler* a_inputHandler, float a_deltatime)
 		{
-			m_objs[0]->GetComponent<TransformComponent>()->GetTransform()->Rotate(Math::quat(Math::vec3(0.01f * a_deltatime, 0.f,0.f)));
+			//m_objs[0]->GetComponent<TransformComponent>()->GetTransform()->Rotate(Math::quat(Math::vec3(0.01f * a_deltatime, 0.f,0.f)));
 			m_transformSystem->Update();
 
-			std::vector<std::pair<int, Math::mat4>> t_syncro;
+			std::vector<std::pair<int, Math::UniformMatrixs>> t_syncro;
+			std::vector<std::pair<int, Math::vec3>> t_lightSyncro;
 			std::vector<Math::Transform*> t_physicsTransforms;
 			m_mainCamera->Update(a_renderer, a_inputHandler, a_window, a_deltatime);
 
@@ -81,27 +90,16 @@ namespace Engine
 				const int t_meshId = t_obj->GetComponentID<MeshComponent>();
 				if (std::cmp_not_equal(t_meshId, -1))
 				{
-					Math::mat4 t_matrix = t_obj->GetComponent<TransformComponent>()->GetTransform()->GetTransformMatrix();
-					t_matrix.Transpose();
-					t_syncro.emplace_back(t_meshId, t_matrix);
+					t_syncro.emplace_back(t_meshId, t_obj->GetComponent<TransformComponent>()->GetTransform()->GetUniformsMatrixs());
 				}
-				const int t_colliderMeshId = t_obj->GetComponentID<MeshComponent>(true);
-				if (std::cmp_not_equal(t_colliderMeshId, -1))
+
+				const int t_lightId = t_obj->GetComponentID<LightComponent>();
+				if (std::cmp_not_equal(t_lightId, -1))
 				{
-					Math::mat4 t_matrix;
-					if (t_obj->GetComponent<RigidBodyComponent>()->GetDebug())
-					{
-						t_matrix = t_obj->GetColliderMat();
-						t_matrix.Transpose();
-					}
-					else
-					{
-						t_matrix = Math::mat4(false);
-					}
-					t_syncro.emplace_back(t_colliderMeshId, t_matrix);
+					t_lightSyncro.emplace_back(t_lightId, t_obj->GetComponent<TransformComponent>()->GetTransform()->GetGlobalPosition());
 				}
 			}
-			m_renderSystem->Update(a_renderer, t_syncro);
+			m_renderSystem->Update(a_renderer, t_syncro, t_lightSyncro);
 
 			t_physicsTransforms.clear();
 			t_syncro.clear();
@@ -164,6 +162,11 @@ namespace Engine
 				t_descriptorsMap[t_descriptor->GetPipelineTargetType()].push_back(t_descriptor);
 			}
 			return t_descriptorsMap;
+		}
+
+		std::vector<Core::RHI::IObjectDescriptor*> Scene::GetLightsDescriptors()
+		{
+			return m_renderSystem->GetLightDescriptors();
 		}
 
 		/**
