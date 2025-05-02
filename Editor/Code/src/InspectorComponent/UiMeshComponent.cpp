@@ -40,6 +40,17 @@ void Editor::EditorLayer::Ui::UiMeshComponent::UiDraw()
 		ImGui::Image(reinterpret_cast<ImTextureID>(m_dSet), ImVec2{ t_displaySize, t_displaySize });
 		AddDragDropImageTarget();
 		ImGui::SetItemTooltip((std::to_string(m_meshComp->GetMaterial()->GetAlbedo()->GetWidth()) + "x" + std::to_string(m_meshComp->GetMaterial()->GetAlbedo()->GetHeight())).c_str());
+		if (ImGui::Button("Test"))
+		{
+			m_meshComp->GetMaterial()->SetType(Engine::GamePlay::LIT);
+			m_meshComp->GetMaterial()->SetMetallic(1.f);
+			m_meshComp->GetMaterial()->SetRoughness(0.2f);
+		}
+		if (ImGui::Button("Test2"))
+		{
+			m_meshComp->GetMaterial()->SetType(Engine::GamePlay::UNLIT);
+		}
+
 		ImGui::TreePop();
 	}
 	

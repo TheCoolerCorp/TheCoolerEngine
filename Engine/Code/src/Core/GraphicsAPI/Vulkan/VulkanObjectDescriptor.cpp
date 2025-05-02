@@ -50,8 +50,9 @@ namespace Engine
 
 				m_sets.clear();
 
+				vkDeviceWaitIdle(t_logicalDevice);
 				vkDestroyDescriptorPool(t_logicalDevice, m_pool, nullptr);
-
+				
 				for (int i = 0; i < m_uniforms.size(); ++i)
 				{
 					for (int j = 0; j < m_uniforms[i].size(); ++j)

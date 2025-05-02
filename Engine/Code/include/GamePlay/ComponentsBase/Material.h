@@ -55,6 +55,7 @@ namespace Engine
 			ENGINE_API Material(MaterialType a_type);
 			ENGINE_API ~Material() = default;
 
+			void Create(MaterialType a_type) { m_type = a_type; }
 			void Destroy();
 
 
