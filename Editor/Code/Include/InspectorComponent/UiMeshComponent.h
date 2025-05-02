@@ -16,6 +16,15 @@ namespace Editor::EditorLayer::Ui
 	*/
 	class UiMeshComponent : public InspectorComponent
 	{
+		enum ImageType : std::uint8_t
+		{
+			ALBEDO,
+			NORMAL,
+			METALLIC,
+			ROUGHNESS,
+			AMBIENTOCCLUSION
+		};
+
 	public:
 		UiMeshComponent(ImGuiLayer* a_layer, Engine::GamePlay::MeshComponent* a_meshComp)
 			: InspectorComponent(a_layer), m_meshComp(a_meshComp)
@@ -28,11 +37,25 @@ namespace Editor::EditorLayer::Ui
 		void Destroy() override;
 
 	private:
+		bool m_isOutOfDate = false;
+
 		Engine::GamePlay::MeshComponent* m_meshComp = nullptr;
 
-		VkDescriptorSet m_dSet;
+		std::unordered_map<ImageType, VkDescriptorSet> m_imageSets;
+		Engine::Ref<Engine::GamePlay::Material> m_material;
 
-		void AddDragDropImageTarget();
+		void CreateImageDescriptorSets();
+		void ClearImageDescriptorSets();
+		void RefreshImageDescriptorSets();
+
+		void DrawImageInfo(ImageType a_type);
+		void AddDragDropImageTarget(ImageType a_type);
+
+		bool HasImage(ImageType a_type);
+
+		[[nodiscard]] std::string GetPath(ImageType a_type);
+		[[nodiscard]] std::string GetSize(ImageType a_type);
+		[[nodiscard]] std::string ToString(ImageType a_type);
 	};
 }
 
