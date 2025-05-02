@@ -30,6 +30,8 @@ namespace Engine
 			ENGINE_API void DestroyAll(Core::Renderer* a_renderer);
 
 		private:
+			std::string NormalizePath(const std::string& a_path);
+
 			std::unordered_map<std::string, Ref<IResource>> m_resources;
 		};
 	}

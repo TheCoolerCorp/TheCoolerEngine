@@ -10,7 +10,7 @@ namespace Engine
 {
 	namespace GamePlay
 	{
-		#define DefaultMaterial std::string("Assets/Textures/ColliderTexture.png")
+		#define DefaultMaterial std::string("Assets/Textures/DefaultTexture.png")
 		/* When uploading material textures into descriptor for vulkan push at index + 1 (Index 0 is use by the model matrix) */
 		/*
  		 *  0 = albedo

@@ -12,7 +12,7 @@ namespace Engine
 		{
 			Resource::ResourceManager* t_resourceManager = ServiceLocator::GetResourceManager();
 
-			Ref<Resource::Texture> t_defaultTexture = t_resourceManager->CreateResource<Resource::Texture>(DefaultMaterial);
+			Ref<Resource::Texture> t_defaultTexture = t_resourceManager->GetResource<Resource::Texture>(DefaultMaterial);
 			m_empty = t_defaultTexture;
 		}
 
@@ -20,7 +20,7 @@ namespace Engine
 		{
 			Resource::ResourceManager* t_resourceManager = ServiceLocator::GetResourceManager();
 
-			Ref<Resource::Texture> t_defaultTexture = t_resourceManager->CreateResource<Resource::Texture>(DefaultMaterial);
+			Ref<Resource::Texture> t_defaultTexture = t_resourceManager->GetResource<Resource::Texture>(DefaultMaterial);
 			m_empty = t_defaultTexture;
 		}
 
