@@ -39,6 +39,7 @@ namespace Engine
 			ENGINE_API unsigned char* GetData() const { if (m_data) { return m_data; } LOG_ERROR("No image data."); return nullptr; }
 
 			[[nodiscard]] ENGINE_API bool IsCreated() const { return m_isCreated.load(std::memory_order_acquire); }
+			[[nodiscard]] ENGINE_API bool IsCreating() const { return m_isCreating.load(std::memory_order_acquire); }
 
 			[[nodiscard]] ENGINE_API Core::RHI::IImage* GetImage() const { return m_image; }
 			[[nodiscard]] ENGINE_API const std::string& GetPath() const { return m_path; }

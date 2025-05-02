@@ -79,6 +79,11 @@ namespace Engine
 
         void Texture::CreateImageAsync(Core::Renderer* a_renderer)
         {
+            if (IsCreating() || IsCreated())
+            {
+                return;
+            }
+
             Core::Multithread::ThreadPool* t_threadPool = GamePlay::ServiceLocator::GetThreadPool();
             if (t_threadPool)
             {

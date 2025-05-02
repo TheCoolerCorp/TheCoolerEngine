@@ -42,7 +42,7 @@ namespace Engine
 				m_lightsDescriptors[i]->UpdateUniforms(t_logicalDevice, 0, &m_lightComponents[i]->GetLight().GetData(), sizeof(LightData), 0);
 			}
 
-			UpdateMaterial(a_renderer->GetInterface(), t_logicalDevice, t_physicalDevice, t_surface, t_commandPool, t_unlitPipeline, t_litPipeline, t_maxFrame, a_materialUpdate, a_updatedMatrix);
+			UpdateMaterial(a_renderer, t_logicalDevice, t_physicalDevice, t_surface, t_commandPool, t_unlitPipeline, t_litPipeline, t_maxFrame, a_materialUpdate, a_updatedMatrix);
 		}
 
 		void RenderSystem::Destroy(Core::Renderer* a_renderer)
@@ -352,15 +352,18 @@ namespace Engine
 			m_lightsPendingComponents.clear();
 		}
 
-		void RenderSystem::UpdateMaterial(Core::RHI::ApiInterface* apiInterface, Core::RHI::ILogicalDevice* a_logicalDevice,
+		void RenderSystem::UpdateMaterial(Core::Renderer* a_renderer, Core::RHI::ILogicalDevice* a_logicalDevice,
 			Core::RHI::IPhysicalDevice* a_physicalDevice, Core::RHI::ISurface* a_surface, Core::RHI::ICommandPool* a_commandPool, Core::RHI::IGraphicPipeline* a_unlitPipeine,
 			Core::RHI::IGraphicPipeline* a_litPipeine, uint32_t a_maxFrame, std::vector<int>& a_indexes, std::vector<std::pair<int, Math::UniformMatrixs>>& a_updatedMatrix)
 		{
+			Core::RHI::ApiInterface* apiInterface = a_renderer->GetInterface();
+
 			for (int i = 0; i < a_indexes.size(); ++i)
 			{
 				Core::RHI::IObjectDescriptor* t_newRenderObject = apiInterface->InstantiateObjectDescriptor();
 
 				Ref<Material> t_material = m_components[a_indexes[i]]->GetMaterial();
+				t_material->SetNeedUpdate(false);
 
 				std::vector<Core::RHI::DescriptorSetDataType> m_types;
 				if (t_material->GetType() == UNLIT)
@@ -379,7 +382,15 @@ namespace Engine
 
 					if (t_material->HasNormal())
 					{
-						t_newRenderObject->SetTexture(a_logicalDevice, t_material->GetNormal()->GetImage(), 2, 1);
+						Ref<Resource::Texture> t_normal = t_material->GetNormal();
+						if (!t_normal->IsCreated())
+						{
+							t_normal->CreateImage(a_renderer);
+						}
+						else
+						{
+							t_newRenderObject->SetTexture(a_logicalDevice, t_normal->GetImage(), 2, 1);
+						}
 					}
 					else
 					{
@@ -387,7 +398,15 @@ namespace Engine
 					}
 					if (t_material->HasMetallic())
 					{
-						t_newRenderObject->SetTexture(a_logicalDevice, t_material->GetMetallic()->GetImage(), 3, 1);
+						Ref<Resource::Texture> t_metallic = t_material->GetMetallic();
+						if (!t_metallic->IsCreated())
+						{
+							t_metallic->CreateImage(a_renderer);
+						}
+						else
+						{
+							t_newRenderObject->SetTexture(a_logicalDevice, t_metallic->GetImage(), 3, 1);
+						}
 					}
 					else
 					{
@@ -395,7 +414,15 @@ namespace Engine
 					}
 					if (t_material->HasRoughness())
 					{
-						t_newRenderObject->SetTexture(a_logicalDevice, t_material->GetRoughness()->GetImage(), 4, 1);
+						Ref<Resource::Texture> t_roughness = t_material->GetRoughness();
+						if (!t_roughness->IsCreated())
+						{
+							t_roughness->CreateImage(a_renderer);
+						}
+						else
+						{
+							t_newRenderObject->SetTexture(a_logicalDevice, t_roughness->GetImage(), 3, 1);
+						}
 					}
 					else
 					{
@@ -403,7 +430,15 @@ namespace Engine
 					}
 					if (t_material->HasAO())
 					{
-						t_newRenderObject->SetTexture(a_logicalDevice, t_material->GetAO()->GetImage(), 5, 1);
+						Ref<Resource::Texture> t_ao = t_material->GetAO();
+						if (!t_ao->IsCreated())
+						{
+							t_ao->CreateImage(a_renderer);
+						}
+						else
+						{
+							t_newRenderObject->SetTexture(a_logicalDevice, t_ao->GetImage(), 3, 1);
+						}
 					}
 					else
 					{
@@ -418,13 +453,33 @@ namespace Engine
 				}
 				t_newRenderObject->SetUniform(a_logicalDevice, a_physicalDevice, a_commandPool, 0, &a_updatedMatrix.at(a_indexes[i]).second, sizeof(Math::UniformMatrixs), 0, 1);
 
-				t_newRenderObject->SetTexture(a_logicalDevice, t_material->GetAlbedo()->GetImage(), 1, 1);
+				Ref<Resource::Texture> t_albedo = t_material->GetAlbedo();
+				if (t_albedo)
+				{
+					if (t_albedo->IsCreated())
+					{
+						t_newRenderObject->SetTexture(a_logicalDevice, t_albedo->GetImage(), 1, 1);
+
+					}
+					else
+					{
+						const Ref<Resource::Texture> t_defaultTexture = ServiceLocator::GetResourceManager()->GetResource<Resource::Texture>("Assets/Textures/DefaultTexture.png");
+						t_newRenderObject->SetTexture(a_logicalDevice, t_defaultTexture->GetImage(), 1, 1);
+						t_albedo->CreateImage(a_renderer);
+						t_material->SetNeedUpdate(true);
+					}
+				}
+				else
+				{
+					const Ref<Resource::Texture> t_defaultTexture = ServiceLocator::GetResourceManager()->GetResource<Resource::Texture>("Assets/Textures/DefaultTexture.png");
+					t_material->SetAlbedo(t_defaultTexture);
+					t_newRenderObject->SetTexture(a_logicalDevice, t_defaultTexture->GetImage(), 1, 1);
+				}
 
 				m_objectsDescriptors[a_indexes[i]]->Destroy(a_logicalDevice);
 				delete m_objectsDescriptors[a_indexes[i]];
 
 				m_objectsDescriptors[a_indexes[i]] = t_newRenderObject;
-				t_material->SetNeedUpdate(false);
 			}
 		}
 	}

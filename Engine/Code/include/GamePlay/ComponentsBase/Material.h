@@ -110,7 +110,7 @@ namespace Engine
 			MaterialValues m_values;
 			HasMaterialTextures m_hasTextures;
 			Ref<Resource::Texture> m_empty;
-			bool m_needUpdate = false;
+			bool m_needUpdate = true;
 		};
 	}
 }
