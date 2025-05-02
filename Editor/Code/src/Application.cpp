@@ -88,6 +88,10 @@ namespace Editor
 				for (int i = 0; i < m_currentScene->GetObjectCount(); ++i)
 				{
 					GameObject* t_obj = m_currentScene->GetGameObject(i);
+					if (!t_obj->HasComponent<MeshComponent>())
+					{
+						continue;
+					}
 					t_obj->GetComponent<MeshComponent>()->GetMesh()->BindBuffers(m_renderer);
 				}
 

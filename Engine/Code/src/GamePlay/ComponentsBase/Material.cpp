@@ -33,11 +33,6 @@ namespace Engine
 
 			m_textures[0] = t_albedoTexture;
 			m_hasTextures.albdeo = static_cast<uint32_t>(true);
-
-			if (!m_empty->IsLoaded())
-			{
-				m_empty->Load(a_renderer);
-			}
 		}
 
 		void Material::SetAlbedo(const Ref<Resource::Texture>& a_albedoTexture)

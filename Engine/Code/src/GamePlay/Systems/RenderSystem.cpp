@@ -175,9 +175,9 @@ namespace Engine
 			return m_lightsDescriptors[a_idx];
 		}
 
-		void RenderSystem::CreatePendingComponentsDescriptors(Core::Renderer* a_renderer, Core::RHI::ILogicalDevice* a_logicalDevice, 
-			Core::RHI::IPhysicalDevice* a_physicalDevice, Core::RHI::ISurface* a_surface, Core::RHI::ICommandPool* a_commandPool, Core::RHI::IGraphicPipeline* a_unlitPipeine, 
-			Core::RHI::IGraphicPipeline* a_litPipeine, uint32_t a_maxFrame, std::vector<std::pair<int, Math::UniformMatrixs>>& a_updatedMatrix)
+		void RenderSystem::CreatePendingComponentsDescriptors(Core::Renderer* a_renderer, Core::RHI::ILogicalDevice* a_logicalDevice,
+			Core::RHI::IPhysicalDevice* a_physicalDevice, Core::RHI::ISurface* a_surface, Core::RHI::ICommandPool* a_commandPool,
+			Core::RHI::IGraphicPipeline* a_unlitPipeline, Core::RHI::IGraphicPipeline* a_litPipeine, uint32_t a_maxFrame, std::vector<std::pair<int, Math::UniformMatrixs>>& a_updatedMatrix)
 		{
 			Core::RHI::ApiInterface* apiInterface = a_renderer->GetInterface();
 
@@ -198,7 +198,7 @@ namespace Engine
 				if (t_material->GetType() == UNLIT)
 				{
 					m_types = {Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_UNIFORM_BUFFER , Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_COMBINED_IMAGE_SAMPLER};
-					t_newRenderObject->Create(a_logicalDevice, a_unlitPipeine, Core::RHI::Object, 3, 1, { a_maxFrame }, m_types);
+					t_newRenderObject->Create(a_logicalDevice, a_unlitPipeline, Core::RHI::Object, 3, 1, { a_maxFrame }, m_types);
 				}
 				else if (t_material->GetType() == LIT)
 				{
@@ -212,8 +212,14 @@ namespace Engine
 					if (t_material->HasNormal())
 					{
 						Ref<Resource::Texture> t_normal = t_material->GetNormal();
-						t_newRenderObject->SetTexture(a_logicalDevice, t_normal->GetImage(), 2, 1);
-						t_normal->CreateImage(a_renderer);
+						if (!t_normal->IsCreated())
+						{
+							t_normal->CreateImage(a_renderer);
+						}
+						else
+						{
+							t_newRenderObject->SetTexture(a_logicalDevice, t_normal->GetImage(), 2, 1);
+						}
 					}
 					else
 					{
@@ -222,8 +228,14 @@ namespace Engine
 					if (t_material->HasMetallic())
 					{
 						Ref<Resource::Texture> t_metallic = t_material->GetMetallic();
-						t_newRenderObject->SetTexture(a_logicalDevice, t_metallic->GetImage(), 3, 1);
-						t_metallic->CreateImage(a_renderer);
+						if (!t_metallic->IsCreated())
+						{
+							t_metallic->CreateImage(a_renderer);
+						}
+						else
+						{
+							t_newRenderObject->SetTexture(a_logicalDevice, t_metallic->GetImage(), 3, 1);
+						}
 					}
 					else
 					{
@@ -232,8 +244,14 @@ namespace Engine
 					if (t_material->HasRoughness())
 					{
 						Ref<Resource::Texture> t_roughness = t_material->GetRoughness();
-						t_newRenderObject->SetTexture(a_logicalDevice, t_roughness->GetImage(), 3, 1);
-						t_roughness->CreateImage(a_renderer);
+						if (!t_roughness->IsCreated())
+						{
+							t_roughness->CreateImage(a_renderer);
+						}
+						else
+						{
+							t_newRenderObject->SetTexture(a_logicalDevice, t_roughness->GetImage(), 3, 1);
+						}
 					}
 					else
 					{
@@ -242,8 +260,14 @@ namespace Engine
 					if (t_material->HasAO())
 					{
 						Ref<Resource::Texture> t_ao = t_material->GetAO();
-						t_newRenderObject->SetTexture(a_logicalDevice, t_ao->GetImage(), 3, 1);
-						t_ao->CreateImage(a_renderer);
+						if (!t_ao->IsCreated())
+						{
+							t_ao->CreateImage(a_renderer);
+						}
+						else
+						{
+							t_newRenderObject->SetTexture(a_logicalDevice, t_ao->GetImage(), 3, 1);
+						}
 					}
 					else
 					{
@@ -256,7 +280,7 @@ namespace Engine
 				{
 					LOG_ERROR("Not other type of pipeline has been implemented");
 				}
-				t_newRenderObject->SetUniform(a_logicalDevice, a_physicalDevice, a_commandPool, 0, &a_updatedMatrix.at(m_pendingComponents.at(i)).second, sizeof(Math::UniformMatrixs), 0, 1);
+				t_newRenderObject->SetUniform(a_logicalDevice, a_physicalDevice, a_commandPool, 0, &a_updatedMatrix.at(m_pendingComponents.at(i)).second.m_transform, sizeof(Math::UniformMatrixs), 0, 1);
 
 				Ref<Resource::Texture> t_albedo = t_material->GetAlbedo();
 				if (t_albedo)

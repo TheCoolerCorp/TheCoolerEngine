@@ -80,6 +80,21 @@ namespace Engine
 				}
 
 				template<typename ComponentClass>
+				bool HasComponent()
+				{
+					static_assert(std::is_invocable<decltype(&ComponentClass::GetType)>::value);
+
+					const ComponentType t_componentType = ComponentClass::GetType();
+
+					if (!m_compsId.contains(t_componentType))
+					{
+						return false;
+					}
+
+					return true;
+				}
+
+				template<typename ComponentClass>
 				int GetComponentID()
 				{
 					static_assert(std::is_base_of<Component, ComponentClass>::value);

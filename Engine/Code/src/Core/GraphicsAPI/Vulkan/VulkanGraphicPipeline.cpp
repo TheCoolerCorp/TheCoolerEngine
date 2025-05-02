@@ -251,7 +251,7 @@ namespace Engine
 			void VulkanGraphicPipeline::BindObjects(RHI::ICommandPool* a_commandPool, uint32_t a_commandBufferIndex, uint32_t a_currentFrame, uint32_t  a_imageIndex, std::vector<RHI::IBuffer*> a_indexBuffers,
 													std::vector<RHI::IBuffer*> a_vertexBuffers, std::vector<uint32_t> a_indicesCount, std::vector<RHI::IObjectDescriptor*> a_objectsDescriptors)
 			{
-				const VulkanCommandPool* t_commandPool = a_commandPool->CastVulkan();
+				/*const VulkanCommandPool* t_commandPool = a_commandPool->CastVulkan();
 
 				if (t_commandPool->mCommandBuffers[a_commandBufferIndex].empty())
 				{
@@ -261,7 +261,7 @@ namespace Engine
 				const VkCommandBuffer t_commandBuffer = t_commandPool->mCommandBuffers[a_commandBufferIndex][a_currentFrame];
 				const VkDeviceSize t_offsets[] = { 0 };
 
-				for (int i = 0; i < a_objectsDescriptors.size(); ++i)
+				for (int i = 0; i < a_vertexBuffers.size(); ++i)
 				{
 					if (!a_vertexBuffers.at(i))
 					{
@@ -296,7 +296,50 @@ namespace Engine
 					{
 						vkCmdDrawIndexed(t_commandBuffer, a_indicesCount.at(i), 1, 0, 0, 0);
 					}
+				}*/
+
+				const VulkanCommandPool* t_commandPool = a_commandPool->CastVulkan();
+
+				if (t_commandPool->mCommandBuffers[a_commandBufferIndex].empty())
+				{
+					return;
 				}
+
+				const VkCommandBuffer t_commandBuffer = t_commandPool->mCommandBuffers[a_commandBufferIndex][a_currentFrame];
+				const VkDeviceSize t_offsets[] = { 0 };
+
+				for (int i = 0; i < a_objectsDescriptors.size(); ++i)
+				{
+					if (a_vertexBuffers.at(i)->CastVulkan()->GetBuffer() != nullptr)
+					{
+						VkBuffer t_vertexBuffer = a_vertexBuffers.at(i)->CastVulkan()->GetBuffer();
+
+						vkCmdBindVertexBuffers(t_commandBuffer, 0, 1, &t_vertexBuffer, t_offsets);
+					}
+
+					if (a_indexBuffers.at(i)->CastVulkan()->GetBuffer() != nullptr)
+					{
+						VkBuffer t_indexBuffer = a_indexBuffers.at(i)->CastVulkan()->GetBuffer();
+
+						vkCmdBindIndexBuffer(t_commandBuffer, t_indexBuffer, 0, VK_INDEX_TYPE_UINT32);
+					}
+
+
+					VulkanObjectDescriptor* t_objectDescriptor = a_objectsDescriptors.at(i)->CastVulkan();
+
+					uint32_t t_descriptorIndex = a_imageIndex;
+					if (t_objectDescriptor->GetDescriptorSets().size() != t_commandPool->mCommandBuffers[a_commandBufferIndex].size() && !t_objectDescriptor->GetDescriptorSets().empty())
+					{
+						t_descriptorIndex = static_cast<uint32_t>(t_objectDescriptor->GetDescriptorSets().size()) - 1;
+					}
+					vkCmdBindDescriptorSets(t_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_layout, (int)t_objectDescriptor->GetType(), 1, &t_objectDescriptor->GetDescriptorSets()[t_descriptorIndex], 0, nullptr);
+
+					if (a_indicesCount.at(i))
+					{
+						vkCmdDrawIndexed(t_commandBuffer, a_indicesCount.at(i), 1, 0, 0, 0);
+					}
+				}
+
 			}
 
 			void VulkanGraphicPipeline::BindSingleDescriptors(RHI::ICommandPool* a_commandPool, uint32_t a_commandBufferIndex, uint32_t a_currentFrame, uint32_t  a_imageIndex, std::vector<RHI::IObjectDescriptor*> a_objectsDescriptors)
