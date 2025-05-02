@@ -95,8 +95,10 @@ namespace Engine
 
 			ENGINE_API Ref<Resource::Texture> GetEmpty() { return m_empty; }
 
-			void SetType(MaterialType a_type) { m_type = a_type; }
+			void SetType(MaterialType a_type) { m_type = a_type; m_needUpdate = true; }
 			MaterialType GetType() { return m_type; }
+			bool GetNeedUpdate() { return m_needUpdate; }
+			void SetNeedUpdate(bool a_bool) { m_needUpdate = a_bool; }
 			HasMaterialTextures& GetHasTextures() { return m_hasTextures; }
 			MaterialValues& GetMaterialValues() { return m_values; }
 		private:
@@ -106,6 +108,7 @@ namespace Engine
 			MaterialValues m_values;
 			HasMaterialTextures m_hasTextures;
 			Ref<Resource::Texture> m_empty;
+			bool m_needUpdate = false;
 		};
 	}
 }

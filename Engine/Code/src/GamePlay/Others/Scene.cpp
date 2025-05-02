@@ -71,6 +71,7 @@ namespace Engine
 			std::vector<std::pair<int, Math::UniformMatrixs>> t_syncro;
 			std::vector<std::pair<int, Math::vec3>> t_lightSyncro;
 			std::vector<Math::Transform*> t_physicsTransforms;
+			std::vector<int> t_materialUpdate;
 			m_mainCamera->Update(a_renderer, a_inputHandler, a_window, a_deltatime);
 
 			for (GameObject* t_obj : m_objs)
@@ -82,15 +83,15 @@ namespace Engine
 					t_physicsTransforms.push_back(t_transform);
 				}
 				t_obj->UpdateColliderMat();
-			}
-			m_physicsSystem->Update(a_deltatime, t_physicsTransforms);
 
-			for (GameObject* t_obj : m_objs)
-			{
 				const int t_meshId = t_obj->GetComponentID<MeshComponent>();
 				if (std::cmp_not_equal(t_meshId, -1))
 				{
 					t_syncro.emplace_back(t_meshId, t_obj->GetComponent<TransformComponent>()->GetTransform()->GetUniformsMatrixs());
+					if (m_renderSystem->GetMeshComponent(t_meshId)->GetMaterial()->GetNeedUpdate())
+					{
+						t_materialUpdate.push_back(t_meshId);
+					}
 				}
 
 				const int t_lightId = t_obj->GetComponentID<LightComponent>();
@@ -99,7 +100,9 @@ namespace Engine
 					t_lightSyncro.emplace_back(t_lightId, t_obj->GetComponent<TransformComponent>()->GetTransform()->GetGlobalPosition());
 				}
 			}
-			m_renderSystem->Update(a_renderer, t_syncro, t_lightSyncro);
+			m_physicsSystem->Update(a_deltatime, t_physicsTransforms);
+
+			m_renderSystem->Update(a_renderer, t_syncro, t_lightSyncro, t_materialUpdate);
 
 			t_physicsTransforms.clear();
 			t_syncro.clear();

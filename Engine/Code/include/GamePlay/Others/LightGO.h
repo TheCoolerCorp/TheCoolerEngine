@@ -18,7 +18,7 @@ namespace Engine
 
 			ENGINE_API ~LightGO() override;
 
-			ENGINE_API LightComponent* GetLightComponents() { return GetComponent<LightComponent>(); }
+			ENGINE_API LightComponent* GetLightComponent() { return GetComponent<LightComponent>(); }
 		};
 
 

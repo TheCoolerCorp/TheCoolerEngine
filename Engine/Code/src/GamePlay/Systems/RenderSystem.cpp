@@ -13,7 +13,7 @@ namespace Engine
 			// DO NOTHING FOR NOW
 		}
 
-		void RenderSystem::Update(Core::Renderer* a_renderer, std::vector<std::pair<int,Math::UniformMatrixs>> a_updatedMatrix, std::vector<std::pair<int, Math::vec3>> a_lightsUpdate)
+		void RenderSystem::Update(Core::Renderer* a_renderer, std::vector<std::pair<int,Math::UniformMatrixs>> a_updatedMatrix, std::vector<std::pair<int, Math::vec3>> a_lightsUpdate, std::vector<int> a_materialUpdate)
 		{
 			Core::RHI::ILogicalDevice* t_logicalDevice = a_renderer->GetLogicalDevice();
 			Core::RHI::IPhysicalDevice* t_physicalDevice = a_renderer->GetPhysicalDevice();
@@ -35,6 +35,8 @@ namespace Engine
 				m_lightComponents[a_lightsUpdate[i].first]->GetLight().SetPosition(a_lightsUpdate[i].second);
 				m_lightsDescriptors[i]->UpdateUniforms(t_logicalDevice, 0, &m_lightComponents[i]->GetLight().GetData(), sizeof(LightData), 0);
 			}
+
+			UpdateMaterial(a_renderer->GetInterface(), t_logicalDevice, t_physicalDevice, t_surface, t_commandPool, t_unlitPipeline, t_litPipeline, t_maxFrame, a_materialUpdate, a_updatedMatrix);
 		}
 
 		void RenderSystem::Destroy(Core::Renderer* a_renderer)
@@ -178,12 +180,12 @@ namespace Engine
 				Ref<Material> t_material = m_components[m_pendingComponents[i]]->GetMaterial();
 
 				std::vector<Core::RHI::DescriptorSetDataType> m_types;
-				if (m_components.at(m_pendingComponents.at(i))->GetMaterial()->GetType() == UNLIT)
+				if (t_material->GetType() == UNLIT)
 				{
 					m_types = {Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_UNIFORM_BUFFER , Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_COMBINED_IMAGE_SAMPLER};
 					t_newRenderObject->Create(a_logicalDevice, a_unlitPipeine, Core::RHI::Object, 3, 1, { a_maxFrame }, m_types);
 				}
-				else if (m_components.at(m_pendingComponents.at(i))->GetMaterial()->GetType() == LIT)
+				else if (t_material->GetType() == LIT)
 				{
 					m_types = { Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_UNIFORM_BUFFER, Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_COMBINED_IMAGE_SAMPLER,
 								Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_COMBINED_IMAGE_SAMPLER, Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_COMBINED_IMAGE_SAMPLER,
@@ -274,6 +276,82 @@ namespace Engine
 				}
 			}
 			m_lightsPendingComponents.clear();
+		}
+
+		void RenderSystem::UpdateMaterial(Core::RHI::ApiInterface* apiInterface, Core::RHI::ILogicalDevice* a_logicalDevice,
+			Core::RHI::IPhysicalDevice* a_physicalDevice, Core::RHI::ISurface* a_surface, Core::RHI::ICommandPool* a_commandPool, Core::RHI::IGraphicPipeline* a_unlitPipeine,
+			Core::RHI::IGraphicPipeline* a_litPipeine, uint32_t a_maxFrame, std::vector<int>& a_indexes, std::vector<std::pair<int, Math::UniformMatrixs>>& a_updatedMatrix)
+		{
+			for (int i = 0; i < a_indexes.size(); ++i)
+			{
+				Core::RHI::IObjectDescriptor* t_newRenderObject = apiInterface->InstantiateObjectDescriptor();
+
+				Ref<Material> t_material = m_components[a_indexes[i]]->GetMaterial();
+
+				std::vector<Core::RHI::DescriptorSetDataType> m_types;
+				if (t_material->GetType() == UNLIT)
+				{
+					m_types = { Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_UNIFORM_BUFFER , Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_COMBINED_IMAGE_SAMPLER };
+					t_newRenderObject->Create(a_logicalDevice, a_unlitPipeine, Core::RHI::Object, 3, 1, { a_maxFrame }, m_types);
+				}
+				else if (t_material->GetType() == LIT)
+				{
+					m_types = { Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_UNIFORM_BUFFER, Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_COMBINED_IMAGE_SAMPLER,
+								Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_COMBINED_IMAGE_SAMPLER, Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_COMBINED_IMAGE_SAMPLER,
+								Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_COMBINED_IMAGE_SAMPLER, Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_COMBINED_IMAGE_SAMPLER,
+								Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_UNIFORM_BUFFER, Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_UNIFORM_BUFFER };
+
+					t_newRenderObject->Create(a_logicalDevice, a_litPipeine, Core::RHI::Object, 3, 3, { a_maxFrame, 1, 1 }, m_types);
+
+					if (t_material->HasNormal())
+					{
+						t_newRenderObject->SetTexture(a_logicalDevice, t_material->GetNormal()->GetImage(), 2, 1);
+					}
+					else
+					{
+						t_newRenderObject->SetTexture(a_logicalDevice, t_material->GetEmpty()->GetImage(), 2, 1);
+					}
+					if (t_material->HasMetallic())
+					{
+						t_newRenderObject->SetTexture(a_logicalDevice, t_material->GetMetallic()->GetImage(), 3, 1);
+					}
+					else
+					{
+						t_newRenderObject->SetTexture(a_logicalDevice, t_material->GetEmpty()->GetImage(), 3, 1);
+					}
+					if (t_material->HasRoughness())
+					{
+						t_newRenderObject->SetTexture(a_logicalDevice, t_material->GetRoughness()->GetImage(), 4, 1);
+					}
+					else
+					{
+						t_newRenderObject->SetTexture(a_logicalDevice, t_material->GetEmpty()->GetImage(), 4, 1);
+					}
+					if (t_material->HasAO())
+					{
+						t_newRenderObject->SetTexture(a_logicalDevice, t_material->GetAO()->GetImage(), 5, 1);
+					}
+					else
+					{
+						t_newRenderObject->SetTexture(a_logicalDevice, t_material->GetEmpty()->GetImage(), 5, 1);
+					}
+					t_newRenderObject->SetUniform(a_logicalDevice, a_physicalDevice, a_commandPool, 1, &t_material->GetMaterialValues(), sizeof(MaterialValues), 6, 1);
+					t_newRenderObject->SetUniform(a_logicalDevice, a_physicalDevice, a_commandPool, 2, &t_material->GetHasTextures(), sizeof(HasMaterialTextures), 7, 1);
+				}
+				else
+				{
+					LOG_ERROR("Not other type of pipeline has been implemented");
+				}
+				t_newRenderObject->SetUniform(a_logicalDevice, a_physicalDevice, a_commandPool, 0, &a_updatedMatrix.at(a_indexes[i]).second, sizeof(Math::UniformMatrixs), 0, 1);
+
+				t_newRenderObject->SetTexture(a_logicalDevice, t_material->GetAlbedo()->GetImage(), 1, 1);
+
+				m_objectsDescriptors[a_indexes[i]]->Destroy(a_logicalDevice);
+				delete m_objectsDescriptors[a_indexes[i]];
+
+				m_objectsDescriptors[a_indexes[i]] = t_newRenderObject;
+				t_material->SetNeedUpdate(false);
+			}
 		}
 	}
 }
