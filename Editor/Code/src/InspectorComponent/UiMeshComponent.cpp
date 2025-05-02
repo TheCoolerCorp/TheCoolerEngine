@@ -97,9 +97,18 @@ void Editor::EditorLayer::Ui::UiMeshComponent::CreateImageDescriptorSets()
 	m_imageSets[AMBIENTOCCLUSION] = VK_NULL_HANDLE;
 
 	if (m_material->HasAlbedo())
+	{
+		Engine::Ref<Engine::Resource::Texture> t_albedo = m_material->GetAlbedo();
+		if (!t_albedo->IsCreated())
+		{
+			return;
+		}
 		m_imageSets[ALBEDO] = ImGui_ImplVulkan_AddTexture(m_material->GetAlbedo()->GetImage()->CastVulkan()->GetSampler(), m_meshComp->GetMaterial()->GetAlbedo()->GetImage()->CastVulkan()->GetView(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+	}
 	if (m_material->HasNormal())
+	{
 		m_imageSets[NORMAL] = ImGui_ImplVulkan_AddTexture(m_material->GetNormal()->GetImage()->CastVulkan()->GetSampler(), m_meshComp->GetMaterial()->GetNormal()->GetImage()->CastVulkan()->GetView(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+	}
 	if (m_material->HasMetallic())
 		m_imageSets[METALLIC] = ImGui_ImplVulkan_AddTexture(m_material->GetMetallic()->GetImage()->CastVulkan()->GetSampler(), m_meshComp->GetMaterial()->GetMetallic()->GetImage()->CastVulkan()->GetView(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 	if (m_material->HasRoughness())
@@ -182,27 +191,84 @@ void Editor::EditorLayer::Ui::UiMeshComponent::AddDragDropImageTarget(ImageType 
 			const int t_id = m_window->GetSelectedObject()->GetId();
 			Engine::Core::RHI::IObjectDescriptor* t_descriptor = m_layer->GetScene()->GetRenderSystem()->GetMeshDescriptor(t_id);
 			vkDeviceWaitIdle(m_layer->GetRenderer()->GetLogicalDevice()->CastVulkan()->GetVkDevice());
+
+			const Engine::Ref<Engine::Resource::Texture> t_albedo = m_material->GetAlbedo();
+			const Engine::Ref<Engine::Resource::Texture> t_normal = m_material->GetNormal();
+			const Engine::Ref<Engine::Resource::Texture> t_metallic = m_material->GetMetallic();
+			const Engine::Ref<Engine::Resource::Texture> t_roughness = m_material->GetRoughness();
+			const Engine::Ref<Engine::Resource::Texture> t_ao = m_material->GetAO();
+
 			switch (a_type)
 			{
 			case ALBEDO:
 				m_material->SetAlbedo(t_path, m_layer->GetRenderer());
-				t_descriptor->SetTexture(m_layer->GetRenderer()->GetLogicalDevice(), m_material->GetAlbedo()->GetImage(), 1, 1);
+				
+				if (!t_albedo)
+				{
+					break;
+				}
+				if (!t_albedo->IsCreated())
+				{
+					t_albedo->CreateImage(m_layer->GetRenderer());
+					break;
+				}
+				t_descriptor->SetTexture(m_layer->GetRenderer()->GetLogicalDevice(), t_albedo->GetImage(), 1, 1);
 				break;
 			case NORMAL:
 				m_material->SetNormal(t_path, m_layer->GetRenderer());
-				t_descriptor->SetTexture(m_layer->GetRenderer()->GetLogicalDevice(), m_material->GetNormal()->GetImage(), 2, 1);
+				
+				if (!t_albedo)
+				{
+					break;
+				}
+				if (!t_normal->IsCreated())
+				{
+					t_normal->CreateImage(m_layer->GetRenderer());
+					break;
+				}
+				t_descriptor->SetTexture(m_layer->GetRenderer()->GetLogicalDevice(), t_normal->GetImage(), 2, 1);
 				break;
 			case METALLIC:
 				m_material->SetMetallic(t_path, m_layer->GetRenderer());
-				t_descriptor->SetTexture(m_layer->GetRenderer()->GetLogicalDevice(), m_material->GetMetallic()->GetImage(), 3, 1);
+				
+				if (!t_metallic)
+				{
+					break;
+				}
+				if (!t_metallic->IsCreated())
+				{
+					t_metallic->CreateImage(m_layer->GetRenderer());
+					break;
+				}
+				t_descriptor->SetTexture(m_layer->GetRenderer()->GetLogicalDevice(), t_metallic->GetImage(), 3, 1);
 				break;
 			case ROUGHNESS:
 				m_material->SetRoughness(t_path, m_layer->GetRenderer());
-				t_descriptor->SetTexture(m_layer->GetRenderer()->GetLogicalDevice(), m_material->GetRoughness()->GetImage(), 4, 1);
+				
+				if (!t_metallic)
+				{
+					break;
+				}
+				if (!t_roughness->IsCreated())
+				{
+					t_roughness->CreateImage(m_layer->GetRenderer());
+					break;
+				}
+				t_descriptor->SetTexture(m_layer->GetRenderer()->GetLogicalDevice(), t_roughness->GetImage(), 4, 1);
 				break;
 			case AMBIENTOCCLUSION:
 				m_material->SetAO(t_path, m_layer->GetRenderer());
-				t_descriptor->SetTexture(m_layer->GetRenderer()->GetLogicalDevice(), m_material->GetAO()->GetImage(), 5, 1);
+				
+				if (!t_ao)
+				{
+					break;
+				}
+				if (!t_ao->IsCreated())
+				{
+					t_ao->CreateImage(m_layer->GetRenderer());
+					break;
+				}
+				t_descriptor->SetTexture(m_layer->GetRenderer()->GetLogicalDevice(), t_ao->GetImage(), 5, 1);
 				break;
 			}
 			m_isOutOfDate = true;
