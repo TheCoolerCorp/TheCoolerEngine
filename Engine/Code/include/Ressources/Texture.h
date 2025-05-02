@@ -23,6 +23,13 @@ namespace Engine
 
 	namespace Resource
 	{
+		enum class TextureType : uint8_t
+		{
+			Undefined = 0,
+			Albedo = 1,
+			Other = 2
+		};
+
 		class Texture : public IResource
 		{
 		public:
@@ -47,7 +54,9 @@ namespace Engine
 			int m_width = 0;
 			int m_height = 0;
 			unsigned char* m_data = nullptr;
+			int m_channels = 0;
 
+			TextureType m_type = TextureType::Undefined;
 			Core::RHI::IImage* m_image = nullptr;
 		};
 	}

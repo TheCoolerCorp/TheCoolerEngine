@@ -13,18 +13,26 @@ namespace Engine
         void Texture::Create(std::string a_path)
         {
             int texWidth, texHeight, texChannels;
-            stbi_uc* pixels = stbi_load(a_path.c_str(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
-
+            stbi_uc* pixels = stbi_load(a_path.c_str(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha );  
             if (!pixels) 
             {
                 LOG_ERROR("Can't load image");
                 LOG_ERROR(stbi_failure_reason());
             }
 
+            if (texChannels == 4 || texChannels == 3)
+            {
+                m_type = TextureType::Albedo;
+            }
+            else if (texChannels == 1)
+            {
+                m_type = TextureType::Other;
+            }
+
             m_width = texWidth;
             m_height = texHeight;
             m_data = pixels;
-
+            m_channels = 4;
             m_path = a_path;
         }
 
@@ -53,10 +61,21 @@ namespace Engine
             const Core::RHI::ImageData t_imageData = {
                 .mWidth = m_width,
                 .mHeight = m_height,
-                .data = m_data
+                .data = m_data,
+                .channels = m_channels
             };
 
-            m_image->Create(Core::RHI::ImageType::TEXTURE, t_imageData, t_physicalDevice, t_logicalDevice, t_commandPool);
+            switch (m_type)
+            {
+            case TextureType::Albedo:
+
+				m_image->Create(Core::RHI::ImageType::TEXTURE, Core::RHI::ImageFormat::FORMAT_R8G8B8A8_SRBG, t_imageData, t_physicalDevice, t_logicalDevice, t_commandPool);
+                break;
+            case TextureType::Other:
+                // Normal : , metallic : 
+                m_image->Create(Core::RHI::ImageType::TEXTURE, Core::RHI::ImageFormat::FORMAT_R8G8B8A8_UNORM, t_imageData, t_physicalDevice, t_logicalDevice, t_commandPool);
+                break;
+            }
 
             m_isLoaded = true;
             //delete m_data;

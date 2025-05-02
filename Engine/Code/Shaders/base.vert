@@ -26,7 +26,8 @@ void main()
 {
     outWorldPos = vec3(per_objModel.model * vec4(inPosition, 1.0));
 
-    vec3 t_normal = mat3(per_objModel.normalMatrix) * inNormal;
+    vec3 t_normal = transpose(inverse(mat3(per_objModel.normalMatrix))) * inNormal;
+
     outNormal = normalize(t_normal);
 
     outTexCoord = inTexCoord;

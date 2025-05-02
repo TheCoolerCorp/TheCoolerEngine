@@ -54,8 +54,14 @@ layout(location = 0) out vec4 outColor;
 
 const float PI = 3.14159265359;
 
+vec3 toLinear(vec3 srgb) {
+    return mix(srgb / 12.92, pow((srgb + 0.055) / 1.055, vec3(2.4)), step(0.04045, srgb));
+}
+
 vec3 getNormalFromMap()
 {
+
+    // HUGE ISSUE WITH NORMAL COLOR ON SCREEN
     vec3 tangentNormal = texture(per_normalMap, inTexCoord).xyz * 2.0 - 1.0;
 
     vec3 Q1  = dFdx(inWorldPos);
@@ -63,8 +69,9 @@ vec3 getNormalFromMap()
     vec2 st1 = dFdx(inTexCoord);
     vec2 st2 = dFdy(inTexCoord);
 
-    vec3 N   = inNormal;
+    vec3 N   = normalize(inNormal);
     vec3 T  = normalize(Q1*st2.t - Q2*st1.t);
+    // MAYBE PUT A - ON B ??
     vec3 B  = -normalize(cross(N, T));
     mat3 TBN = mat3(T, B, N);
 
@@ -145,7 +152,7 @@ void main()
     // Albedo
     if (per_bTexs.HasAlbedoTexture)
     {
-        albedo = pow(texture(per_albedoMap, inTexCoord).rgb, vec3(2.0));
+        albedo = pow(texture(per_albedoMap, inTexCoord).rgb, vec3(2.2));
     }
     else
     {
@@ -175,7 +182,7 @@ void main()
     // Roughness
     if (per_bTexs.HasRoughnessTexture)
     {
-        roughness = texture(per_albedoMap, inTexCoord).r;
+        roughness = texture(per_RoughnessMap, inTexCoord).r;
     }
     else
     {
@@ -185,7 +192,7 @@ void main()
     // AO
     if (per_bTexs.HasAoTexture)
     {
-        ao = texture(per_albedoMap, inTexCoord).r;
+        ao = texture(per_aoMap, inTexCoord).r;
     }
     else
     {
@@ -219,9 +226,10 @@ void main()
     }   
     
     vec3 ambient = vec3(0.03) * albedo * ao;
+    //vec3 ambient = vec3(0.03) * albedo;
     vec3 color = ambient + Lo;
     color = color / (color + vec3(1.0));
     color = pow(color, vec3(1.0/2.2));
 
-    outColor = vec4(color, 1 );
+    outColor = vec4(inNormal, 1 );
 }
