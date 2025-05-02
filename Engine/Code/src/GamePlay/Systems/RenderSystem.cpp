@@ -74,6 +74,7 @@ namespace Engine
 			if (m_availableIndexes.empty())
 			{
 				m_components.emplace_back(a_meshComponent);
+				a_meshComponent->SetUid(static_cast<int>(m_components.size()) - 1);
 				const int t_nbComps = static_cast<int>(m_components.size() - 1);
 				m_pendingComponents.push_back(t_nbComps);
 				return t_nbComps;
@@ -83,6 +84,7 @@ namespace Engine
 				if (m_components.at(t_availableIndex) == nullptr)
 				{
 					m_components.at(t_availableIndex) = a_meshComponent;
+					a_meshComponent->SetUid(t_availableIndex);
 					m_pendingComponents.push_back(t_availableIndex);
 					return t_availableIndex;
 				}

@@ -179,32 +179,33 @@ void Editor::EditorLayer::Ui::UiMeshComponent::AddDragDropImageTarget(ImageType 
 		if (const ImGuiPayload* t_payload = ImGui::AcceptDragDropPayload("IMAGE_PATH_PAYLOAD"))
 		{
 			const char* t_path = static_cast<const char*>(t_payload->Data);
-			const int t_id = m_window->GetSelectedObject()->GetId();
+			const int t_id = m_meshComp->GetUid();
 			Engine::Core::RHI::IObjectDescriptor* t_descriptor = m_layer->GetScene()->GetRenderSystem()->GetMeshDescriptor(t_id);
-			vkDeviceWaitIdle(m_layer->GetRenderer()->GetLogicalDevice()->CastVulkan()->GetVkDevice());
+			//vkDeviceWaitIdle(m_layer->GetRenderer()->GetLogicalDevice()->CastVulkan()->GetVkDevice());
 			switch (a_type)
 			{
 			case ALBEDO:
 				m_material->SetAlbedo(t_path, m_layer->GetRenderer());
-				t_descriptor->SetTexture(m_layer->GetRenderer()->GetLogicalDevice(), m_material->GetAlbedo()->GetImage(), 1, 1);
+				//t_descriptor->SetTexture(m_layer->GetRenderer()->GetLogicalDevice(), m_material->GetAlbedo()->GetImage(), 1, 1);
 				break;
 			case NORMAL:
 				m_material->SetNormal(t_path, m_layer->GetRenderer());
-				t_descriptor->SetTexture(m_layer->GetRenderer()->GetLogicalDevice(), m_material->GetNormal()->GetImage(), 2, 1);
+				//t_descriptor->SetTexture(m_layer->GetRenderer()->GetLogicalDevice(), m_material->GetNormal()->GetImage(), 2, 1);
 				break;
 			case METALLIC:
 				m_material->SetMetallic(t_path, m_layer->GetRenderer());
-				t_descriptor->SetTexture(m_layer->GetRenderer()->GetLogicalDevice(), m_material->GetMetallic()->GetImage(), 3, 1);
+				//t_descriptor->SetTexture(m_layer->GetRenderer()->GetLogicalDevice(), m_material->GetMetallic()->GetImage(), 3, 1);
 				break;
 			case ROUGHNESS:
 				m_material->SetRoughness(t_path, m_layer->GetRenderer());
-				t_descriptor->SetTexture(m_layer->GetRenderer()->GetLogicalDevice(), m_material->GetRoughness()->GetImage(), 4, 1);
+				//t_descriptor->SetTexture(m_layer->GetRenderer()->GetLogicalDevice(), m_material->GetRoughness()->GetImage(), 4, 1);
 				break;
 			case AMBIENTOCCLUSION:
 				m_material->SetAO(t_path, m_layer->GetRenderer());
-				t_descriptor->SetTexture(m_layer->GetRenderer()->GetLogicalDevice(), m_material->GetAO()->GetImage(), 5, 1);
+				//t_descriptor->SetTexture(m_layer->GetRenderer()->GetLogicalDevice(), m_material->GetAO()->GetImage(), 5, 1);
 				break;
 			}
+			m_material->SetNeedUpdate(true);
 			m_isOutOfDate = true;
 		}
 		ImGui::EndDragDropTarget();
