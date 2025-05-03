@@ -68,8 +68,8 @@ namespace Engine
 
 		private:
 			std::vector<MeshComponent*> m_components;
-			std::vector<Core::RHI::IObjectDescriptor*> m_objectsDescriptors;
 			std::vector<int> m_availableIndexes;
+			std::vector<Core::RHI::IObjectDescriptor*> m_objectsDescriptors;
 			std::vector<int> m_pendingComponents;
 
 			std::vector<LightComponent*> m_lightComponents;

@@ -39,7 +39,7 @@ namespace Engine
 			m_mainCamera->Create(a_renderer);
 
 		
-			/*GameObject* t_object2 = new GameObject(Math::vec3(5.f, 0.f, 0.f), Math::vec3(0.f, Math::ToRadians(270.f), Math::ToRadians(270.f)), Math::vec3(1.f), "Lit");
+			GameObject* t_object2 = new GameObject(Math::vec3(5.f, 0.f, 0.f), Math::vec3(0.f, Math::ToRadians(270.f), Math::ToRadians(270.f)), Math::vec3(1.f), "Lit");
 			t_object2->AddComponent<MeshComponent>();
 			t_object2->GetComponent<MeshComponent>()->SetMesh("Assets/Meshes/BaseObjects/sphere.obj", a_renderer);
 			t_object2->GetComponent<MeshComponent>()->GetMaterial()->Create(LIT);
@@ -47,13 +47,13 @@ namespace Engine
 			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetNormal("Assets/Textures/metal_plate_nor_dx_2k.png", a_renderer);
 			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetMetallic("Assets/Textures/metal_plate_metal_2k.png", a_renderer);
 			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetRoughness("Assets/Textures/metal_plate_rough_2k.png", a_renderer);
-			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetAO("Assets/Textures/metal_plate_ao_2k.png", a_renderer);*/
+			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetAO("Assets/Textures/metal_plate_ao_2k.png", a_renderer);
 
 			LightGO* t_light = new LightGO(Math::vec3(10.f, 0.f, 0.f), Math::vec3(0.f, 0.f, 0.f), Math::vec3(1.f));
 
 
 			//AddGameObject(t_object);
-			//AddGameObject(t_object2);
+			AddGameObject(t_object2);
 			//// DON'T ADD MORE THAN ONE LIGHT FOR ONE
 			AddGameObject(t_light);
 
@@ -93,8 +93,11 @@ namespace Engine
 
 			for (GameObject* t_obj : m_objs)
 			{
-				if (!t_obj)
+				if (!t_obj) //if a t_obj is empty, t_syncro will not be added to, which makes all subsequent indexes invalid, causing an out of bounds acess and a crash
+				{
+					t_syncro.emplace_back(-1, Math::UniformMatrixs(Math::mat4(true), Math::mat4(true)));
 					continue;
+				}
 				const uint32_t t_rigidBodyId = t_obj->GetComponentID<RigidBodyComponent>();
 				if (std::cmp_not_equal(t_rigidBodyId, -1))
 				{

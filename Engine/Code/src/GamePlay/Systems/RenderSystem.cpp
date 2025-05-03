@@ -31,6 +31,8 @@ namespace Engine
 
 			for (int i = 0; i < a_updatedMatrix.size(); ++i)
 			{
+				if (a_updatedMatrix[i].first == -1)
+					continue;
 				m_objectsDescriptors[a_updatedMatrix[i].first]->UpdateUniforms(t_logicalDevice, 0, &a_updatedMatrix[i].second, sizeof(Math::UniformMatrixs), a_renderer->GetSwapChain()->GetCurrentFrame());
 			}
 			for (int i = 0; i < a_lightsUpdate.size(); ++i)
@@ -94,6 +96,7 @@ namespace Engine
 			}
 			int t_index = m_availableIndexes.back();
 			m_availableIndexes.pop_back();
+			m_components[t_index] = a_meshComponent;
 			a_meshComponent->SetUid(t_index);
 			m_pendingComponents.push_back(t_index);
 
@@ -258,16 +261,14 @@ namespace Engine
 
 				t_newRenderObject->SetTexture(a_logicalDevice, t_material->GetAlbedo()->GetImage(), 1, 1);
 
-				if (m_availableIndexes.empty())
+				
+				if (m_pendingComponents[i] >= static_cast<int>(m_objectsDescriptors.size()))
 				{
 					m_objectsDescriptors.push_back(t_newRenderObject);
 				}
 				else
 				{
-					if (m_objectsDescriptors.at(m_availableIndexes.at(i)) == nullptr)
-					{
-						m_objectsDescriptors.at(m_availableIndexes.at(i)) = t_newRenderObject;
-					}
+					m_objectsDescriptors[m_pendingComponents[i]] = t_newRenderObject;
 				}
 			}
 			m_pendingComponents.clear();
