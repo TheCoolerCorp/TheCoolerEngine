@@ -21,7 +21,6 @@ namespace Engine
 				VkFormat t_format = static_cast<VkFormat>((int)a_format);
 				if (a_type == RHI::ImageType::TEXTURE)
 				{
-					// NORMAL MAP IN UNORM
 					const VkDeviceSize t_imageSize = a_data.mWidth * a_data.mHeight * a_data.channels;
 					VkBuffer t_stagingBuffer;
 					VkDeviceMemory t_stagingBufferMemory;

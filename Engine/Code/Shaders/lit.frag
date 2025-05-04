@@ -35,14 +35,6 @@ layout(set = 2, binding = 0) uniform LightData
     float intensity;
 } light_lhtValues;
 
-//layout(set = 0, binding = 1) uniform CameraData
-//{
-//    vec3 albedoTexture;
-//    float metallicTexture;
-//    float roughnessTexture;
-//    float aoTexture;
-//} common_camera;
-
 layout(location = 0) in vec3 inNormal;
 layout(location = 1) in vec2 inTexCoord;
 layout(location = 2) in vec3 inWorldPos;
@@ -54,14 +46,8 @@ layout(location = 0) out vec4 outColor;
 
 const float PI = 3.14159265359;
 
-vec3 toLinear(vec3 srgb) {
-    return mix(srgb / 12.92, pow((srgb + 0.055) / 1.055, vec3(2.4)), step(0.04045, srgb));
-}
-
 vec3 getNormalFromMap()
 {
-
-    // HUGE ISSUE WITH NORMAL COLOR ON SCREEN
     vec3 tangentNormal = texture(per_normalMap, inTexCoord).xyz * 2.0 - 1.0;
 
     vec3 Q1  = dFdx(inWorldPos);
@@ -71,11 +57,15 @@ vec3 getNormalFromMap()
 
     vec3 N   = normalize(inNormal);
     vec3 T  = normalize(Q1*st2.t - Q2*st1.t);
-    // MAYBE PUT A - ON B ??
+    // MAYBE PUT A - ON B ?? Depend on righ handed or left handed
     vec3 B  = -normalize(cross(N, T));
     mat3 TBN = mat3(T, B, N);
 
-    return normalize(TBN * tangentNormal);
+    //return normalize(TBN * tangentNormal);
+
+    //return T * 0.5 + 0.5;
+    //return tangentNormal;
+    return vec3(0.0, 0.0, T.z * 0.5 + 0.5);
 }
 
 vec3 Radiance(vec3 lightDir)
@@ -231,5 +221,5 @@ void main()
     color = color / (color + vec3(1.0));
     color = pow(color, vec3(1.0/2.2));
 
-    outColor = vec4(inNormal, 1 );
+    outColor = vec4(normal, 1 );
 }

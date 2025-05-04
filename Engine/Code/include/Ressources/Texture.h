@@ -26,8 +26,8 @@ namespace Engine
 		enum class TextureType : uint8_t
 		{
 			Undefined = 0,
-			Albedo = 1,
-			Other = 2
+			SRGB = 1,
+			RGB = 2
 		};
 
 		class Texture : public IResource

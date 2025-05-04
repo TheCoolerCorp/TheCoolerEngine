@@ -46,7 +46,7 @@ namespace Engine
 
 			GameObject* t_object2 = new GameObject(Math::vec3(5.f, 0.f, 0.f), Math::vec3(0.f, Math::ToRadians(270.f), Math::ToRadians(270.f)), Math::vec3(1.f), "Lit");
 			t_object2->AddComponent<MeshComponent>();
-			t_object2->GetComponent<MeshComponent>()->SetMesh("Assets/Meshes/BaseObjects/testSphere.obj", a_renderer);
+			t_object2->GetComponent<MeshComponent>()->SetMesh("Assets/Meshes/BaseObjects/Sphere.obj", a_renderer);
 			t_object2->GetComponent<MeshComponent>()->GetMaterial()->Create(LIT);
 			//t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetAlbedo("Assets/Textures/viking_room.png", a_renderer);
 			//t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetMetallic(1.f);

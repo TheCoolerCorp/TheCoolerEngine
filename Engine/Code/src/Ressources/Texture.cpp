@@ -20,13 +20,25 @@ namespace Engine
                 LOG_ERROR(stbi_failure_reason());
             }
 
-            if (texChannels == 4 || texChannels == 3)
+            if (a_path.find("ao") != std::string::npos)
             {
-                m_type = TextureType::Albedo;
+                m_type = TextureType::RGB;
             }
-            else if (texChannels == 1)
+            else if (a_path.find("nor") != std::string::npos || a_path.find("normal") != std::string::npos)
             {
-                m_type = TextureType::Other;
+                m_type = TextureType::RGB;
+            }
+            else if (a_path.find("rough") != std::string::npos || a_path.find("roughness") != std::string::npos)
+            {
+                m_type = TextureType::RGB;
+            }
+            else if (a_path.find("metal") != std::string::npos || a_path.find("metallic") != std::string::npos)
+            {
+                m_type = TextureType::RGB;
+            }
+            else
+            {
+                m_type = TextureType::SRGB;
             }
 
             m_width = texWidth;
@@ -67,12 +79,12 @@ namespace Engine
 
             switch (m_type)
             {
-            case TextureType::Albedo:
+            case TextureType::SRGB:
 
 				m_image->Create(Core::RHI::ImageType::TEXTURE, Core::RHI::ImageFormat::FORMAT_R8G8B8A8_SRBG, t_imageData, t_physicalDevice, t_logicalDevice, t_commandPool);
                 break;
-            case TextureType::Other:
-                // Normal : , metallic : 
+            case TextureType::RGB:
+                // Normal, metallic, roughness, etc...  
                 m_image->Create(Core::RHI::ImageType::TEXTURE, Core::RHI::ImageFormat::FORMAT_R8G8B8A8_UNORM, t_imageData, t_physicalDevice, t_logicalDevice, t_commandPool);
                 break;
             }
