@@ -24,6 +24,15 @@ void Editor::EditorLayer::Ui::SceneGraphUiWindow::UiDraw()
 	}
     if (m_scene->GetObjectCount() == 0)
 		ImGui::Text("No objects in the scene :(. Go make some");
+	ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 0.0f);
+	ImGui::BeginChild(("Empty Child" + std::to_string(m_uid)).c_str(), ImGui::GetContentRegionAvail());
+	ImGui::EndChild();
+	ImGui::PopStyleVar();
+	if (ImGui::BeginPopupContextItem(("SceneGraphContextMenu##"+std::to_string(m_uid)).c_str()))
+    {
+		m_layer->CreateItemAddMenu();
+		ImGui::EndPopup();
+    }
 	ImGui::End();
 }
 
@@ -40,7 +49,8 @@ void Editor::EditorLayer::Ui::SceneGraphUiWindow::DrawObject(int a_transformId)
    		if (!t_object->HasChildren())
    		{
 	        ImGui::TreeNodeEx(std::to_string(t_object->GetId()).c_str(), ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen, t_object->GetName().c_str());
-			if (ImGui::IsItemClicked())
+            AddPopupContext(t_object);
+   			if (ImGui::IsItemClicked())
 			{
 				m_layer->SetSelectedGameObject(t_object);
 			}
@@ -52,6 +62,7 @@ void Editor::EditorLayer::Ui::SceneGraphUiWindow::DrawObject(int a_transformId)
        {
            m_layer->SetSelectedGameObject(t_object);
        }
+       AddPopupContext(t_object);
 
        if (t_open)
        {
@@ -69,6 +80,10 @@ void Editor::EditorLayer::Ui::SceneGraphUiWindow::DrawObject(int a_transformId)
 void Editor::EditorLayer::Ui::SceneGraphUiWindow::Destroy()
 {
 	
+}
+
+void Editor::EditorLayer::Ui::SceneGraphUiWindow::NotifyObjectRemoved(Engine::GamePlay::GameObject* a_object)
+{
 }
 
 void Editor::EditorLayer::Ui::SceneGraphUiWindow::CreateNameTextField(GameObject* a_object)
@@ -93,4 +108,17 @@ void Editor::EditorLayer::Ui::SceneGraphUiWindow::CreateNameTextField(GameObject
 
     ImGui::PopStyleVar(2);
     ImGui::PopStyleColor(3);
+}
+
+void Editor::EditorLayer::Ui::SceneGraphUiWindow::AddPopupContext(GameObject* a_object)
+{
+	if (ImGui::BeginPopupContextItem(("SceneGraphItemContextMenu##"+std::to_string(a_object->GetId())).c_str()))
+	{
+		if (ImGui::MenuItem(("Delete "+a_object->GetName()+"##"+std::to_string(m_uid)).c_str()))
+		{
+			m_layer->NotifyObjectRemoved(a_object);
+			m_scene->RemoveGameObject(a_object->GetId());
+		}
+		ImGui::EndPopup();
+	}
 }

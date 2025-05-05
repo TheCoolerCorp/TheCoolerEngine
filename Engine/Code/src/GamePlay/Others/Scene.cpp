@@ -79,6 +79,26 @@ namespace Engine
 
 		void Scene::Update(Core::Renderer* a_renderer, Core::Window::IWindow* a_window, Core::Window::IInputHandler* a_inputHandler, float a_deltatime)
 		{
+			while (!m_deletionQueue.empty())
+			{
+				int t_id = m_deletionQueue.back();
+				m_deletionQueue.pop_back();
+				for (int i = 0; i < m_objs.size(); ++i)
+				{
+					if (!m_objs[i])
+						continue;
+					if (m_objs[i]->GetId() == t_id)
+					{
+						m_availableIds.push_back(i);
+						delete m_objs[i];
+						m_objs[i] = nullptr;
+						break;
+					}
+				}
+			}
+				
+			
+
 			//m_objs[0]->GetComponent<TransformComponent>()->GetTransform()->Rotate(Math::quat(Math::vec3(0.01f * a_deltatime, 0.f,0.f)));
 			m_transformSystem->Update();
 
@@ -90,6 +110,11 @@ namespace Engine
 
 			for (GameObject* t_obj : m_objs)
 			{
+				if (!t_obj) //if a t_obj is empty, t_syncro will not be added to, which makes all subsequent indexes invalid, causing an out of bounds acess and a crash
+				{
+					t_syncro.emplace_back(-1, Math::UniformMatrixs(Math::mat4(true), Math::mat4(true)));
+					continue;
+				}
 				const uint32_t t_rigidBodyId = t_obj->GetComponentID<RigidBodyComponent>();
 				if (std::cmp_not_equal(t_rigidBodyId, -1))
 				{
@@ -131,7 +156,8 @@ namespace Engine
 			std::unordered_map<Core::RHI::DescriptorSetPipelineTarget, std::vector<Core::RHI::IBuffer*>> t_vertexBuffersMap;
 			for (int i = 0; i < m_renderSystem->GetMeshComponents().size(); ++i)
 			{
-				t_vertexBuffersMap[GetDescriptorTarget(i)].push_back(m_renderSystem->GetMeshComponents().at(i)->GetMesh()->GetVertexBuffer());
+				if (MeshComponent* t_meshComp = m_renderSystem->GetMeshComponents().at(i))
+					t_vertexBuffersMap[GetDescriptorTarget(i)].push_back(t_meshComp->GetMesh()->GetVertexBuffer());
 			}
 			return t_vertexBuffersMap;
 		}
@@ -145,7 +171,8 @@ namespace Engine
 			std::unordered_map<Core::RHI::DescriptorSetPipelineTarget, std::vector<Core::RHI::IBuffer*>> t_indexBuffersMap;
 			for (int i = 0; i < m_renderSystem->GetMeshComponents().size(); ++i)
 			{
-				t_indexBuffersMap[GetDescriptorTarget(i)].push_back(m_renderSystem->GetMeshComponents().at(i)->GetMesh()->GetIndexBuffer());
+				if (MeshComponent* t_meshComp = m_renderSystem->GetMeshComponents().at(i))
+					t_indexBuffersMap[GetDescriptorTarget(i)].push_back(t_meshComp->GetMesh()->GetIndexBuffer());
 			}
 			return t_indexBuffersMap;
 		}
@@ -160,7 +187,8 @@ namespace Engine
 			std::unordered_map<Core::RHI::DescriptorSetPipelineTarget, std::vector<uint32_t>> t_nbIndicesMap;
 			for (int i = 0; i < m_renderSystem->GetMeshComponents().size(); ++i)
 			{
-				t_nbIndicesMap[GetDescriptorTarget(i)].push_back(m_renderSystem->GetMeshComponents().at(i)->GetMesh()->GetNbIndices());
+				if (MeshComponent* t_meshComp = m_renderSystem->GetMeshComponents().at(i))
+					t_nbIndicesMap[GetDescriptorTarget(i)].push_back(t_meshComp->GetMesh()->GetNbIndices());
 			}
 			return t_nbIndicesMap;
 		}
@@ -174,8 +202,10 @@ namespace Engine
 		{
 			std::unordered_map<Core::RHI::DescriptorSetPipelineTarget, std::vector<Core::RHI::IObjectDescriptor*>> t_descriptorsMap;
 			std::vector<Core::RHI::IObjectDescriptor*>& t_descriptors = m_renderSystem->GetMeshDescriptors();
-			for(auto & t_descriptor : t_descriptors)
+			for(Core::RHI::IObjectDescriptor* t_descriptor : t_descriptors)
 			{
+				if (t_descriptor == nullptr)
+					continue;
 				t_descriptorsMap[t_descriptor->GetPipelineTargetType()].push_back(t_descriptor);
 			}
 			return t_descriptorsMap;
@@ -286,8 +316,10 @@ namespace Engine
 				t_object->GetComponent<MeshComponent>()->SetMesh("Assets/Meshes/BaseObjects/plane.obj", m_renderer);
 				break;
 			case OBJECTTYPE_LIGHT:
+				return nullptr;
 				break;
 			case OBJECTTYPE_CAMERA:
+				return nullptr;
 				break;
 			default:
 				break;
@@ -308,16 +340,8 @@ namespace Engine
 		 */
 		void Scene::RemoveGameObject(uint32_t a_id)
 		{
-			for (int i = 0; i < m_objs.size(); ++i)
-			{
-				if (m_objs[i]->GetId() == a_id)
-				{
-					m_availableIds.push_back(i);
-					delete m_objs[i];
-					m_objs.erase(m_objs.begin() + i);
-					break;
-				}
-			}
+			m_deletionQueue.push_back(a_id);
+			
 		}
 
 		void Scene::Save()
@@ -326,6 +350,8 @@ namespace Engine
 
 			for (const auto& t_obj : m_objs)
 			{
+				if (!t_obj)
+					continue;
 				json t_objJson;
 				t_objJson["GameObject"] = t_obj->GetName();
 				t_objJson["TransformComponent"] = SerializeTransformComponent(*t_obj->GetComponent<TransformComponent>());
@@ -434,6 +460,20 @@ namespace Engine
 					LOG_DEBUG("AO path : " + t_mesh.mAOPath);
 				}
 			}
+		}
+
+		bool Scene::HasObject(int a_id)
+		{
+			for (GameObject* t_object : m_objs)
+			{
+				if (!t_object)
+					continue;
+				if (t_object->GetId() == a_id)
+				{
+					return true;
+				}
+			}
+			return false;
 		}
 
 		nlohmann::ordered_json Scene::SerializeTransformComponent(const TransformComponent& a_transform)

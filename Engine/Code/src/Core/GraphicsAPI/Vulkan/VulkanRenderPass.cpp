@@ -328,8 +328,7 @@ namespace Engine
 					VulkanSwapchain* swapchain = m_renderer->GetSwapChain()->CastVulkan();
 					swapchain->AddResizeCallback([this](VkExtent2D a_extent)
 						{
-							if (!this)
-								return;
+							
 							m_config.extent = a_extent;
 							if (m_config.createOwnFramebuffers)
 								RecreateFrameBuffer(a_extent);
@@ -475,8 +474,8 @@ namespace Engine
 					float t_offsetHeight = (static_cast<float>(t_swapChainExtent.height) - static_cast<float>(m_config.extent.height))/2;
 
 					VkViewport viewport;
-					viewport.x = -t_offsetWidth;
-					viewport.y = -t_offsetHeight;
+					viewport.x = 0;
+					viewport.y = 0;
 					viewport.width = static_cast<float>(t_swapChainExtent.width);
 					viewport.height = static_cast<float>(t_swapChainExtent.height);
 					viewport.minDepth = 0.0f;

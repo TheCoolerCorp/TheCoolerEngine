@@ -10,11 +10,14 @@ namespace Engine
 	{
 		void RenderSystem::Create(Core::Renderer* a_renderer)
 		{
-			// DO NOTHING FOR NOW
+			m_renderer = a_renderer;
 		}
 
 		void RenderSystem::Update(Core::Renderer* a_renderer, std::vector<std::pair<int,Math::UniformMatrixs>> a_updatedMatrix, std::vector<std::pair<int, Math::vec3>> a_lightsUpdate, std::vector<int> a_materialUpdate)
 		{
+			if (!m_renderer)
+				m_renderer = a_renderer;
+
 			Core::RHI::ILogicalDevice* t_logicalDevice = a_renderer->GetLogicalDevice();
 			Core::RHI::IPhysicalDevice* t_physicalDevice = a_renderer->GetPhysicalDevice();
 			Core::RHI::ISurface* t_surface = a_renderer->GetSurface();
@@ -28,6 +31,8 @@ namespace Engine
 
 			for (int i = 0; i < a_updatedMatrix.size(); ++i)
 			{
+				if (a_updatedMatrix[i].first == -1)
+					continue;
 				m_objectsDescriptors[a_updatedMatrix[i].first]->UpdateUniforms(t_logicalDevice, 0, &a_updatedMatrix[i].second, sizeof(Math::UniformMatrixs), a_renderer->GetSwapChain()->GetCurrentFrame());
 			}
 			for (int i = 0; i < a_lightsUpdate.size(); ++i)
@@ -44,11 +49,16 @@ namespace Engine
 			// Destroy Meshes
 			for (int i = 0; i < m_components.size(); ++i)
 			{
-				auto& comp = m_components[i];
-				comp->Destroy();
-				m_objectsDescriptors[i]->Destroy(a_renderer->GetLogicalDevice());
-				a_renderer->GetInterface()->DestroyObjectDescriptor(m_objectsDescriptors[i]);
-				delete comp;
+				if (auto& comp = m_components[i])
+				{
+					comp->Destroy();
+					delete comp;
+				}
+				if (m_objectsDescriptors[i])
+				{
+					m_objectsDescriptors[i]->Destroy(a_renderer->GetLogicalDevice());
+					a_renderer->GetInterface()->DestroyObjectDescriptor(m_objectsDescriptors[i]);
+				}
 			}
 			m_components.clear();
 			m_availableIndexes.clear();
@@ -57,11 +67,16 @@ namespace Engine
 			// Destroy lights
 			for (int i = 0; i < m_lightComponents.size(); ++i)
 			{
-				auto& comp = m_lightComponents[i];
-				comp->Destroy();
-				m_lightsDescriptors[i]->Destroy(a_renderer->GetLogicalDevice());
-				a_renderer->GetInterface()->DestroyObjectDescriptor(m_lightsDescriptors[i]);
-				delete comp;
+				if (auto& comp = m_lightComponents[i])
+				{
+					comp->Destroy();
+					delete comp;
+				}
+				if (m_lightsDescriptors[i])
+				{
+					m_lightsDescriptors[i]->Destroy(a_renderer->GetLogicalDevice());
+					a_renderer->GetInterface()->DestroyObjectDescriptor(m_lightsDescriptors[i]);
+				}
 			}
 			m_lightComponents.clear();
 			m_lightsAvailableIndexes.clear();
@@ -79,17 +94,13 @@ namespace Engine
 				m_pendingComponents.push_back(t_nbComps);
 				return t_nbComps;
 			}
-			for (const int t_availableIndex : m_availableIndexes)
-			{
-				if (m_components.at(t_availableIndex) == nullptr)
-				{
-					m_components.at(t_availableIndex) = a_meshComponent;
-					a_meshComponent->SetUid(t_availableIndex);
-					m_pendingComponents.push_back(t_availableIndex);
-					return t_availableIndex;
-				}
-			}
-			return -1;
+			int t_index = m_availableIndexes.back();
+			m_availableIndexes.pop_back();
+			m_components[t_index] = a_meshComponent;
+			a_meshComponent->SetUid(t_index);
+			m_pendingComponents.push_back(t_index);
+
+			return t_index;
 			// ADD PENDING INDEX
 		}
 
@@ -119,9 +130,19 @@ namespace Engine
 		{
 			if (m_components.at(a_id) != nullptr && a_id < m_components.size())
 			{
+				vkDeviceWaitIdle(m_renderer->GetLogicalDevice()->CastVulkan()->GetVkDevice());
+				if (m_components.at(a_id)->GetMesh() != nullptr)
+				{
+					//m_components.at(a_id)->GetMesh()->Unload(m_renderer);
+				}
 				m_components.at(a_id)->Destroy();
 				delete m_components.at(a_id);
+				m_components[a_id] = nullptr;
 				m_availableIndexes.push_back(a_id);
+
+				m_objectsDescriptors[a_id]->Destroy(m_renderer->GetLogicalDevice());
+				delete m_objectsDescriptors[a_id];
+				m_objectsDescriptors[a_id] = nullptr;
 			}
 		}
 
@@ -131,6 +152,7 @@ namespace Engine
 			{
 				m_lightComponents.at(a_id)->Destroy();
 				delete m_lightComponents.at(a_id);
+				m_lightComponents[a_id] = nullptr;
 				m_availableIndexes.push_back(a_id);
 			}
 		}
@@ -246,16 +268,14 @@ namespace Engine
 					t_newRenderObject->SetTexture(a_logicalDevice, t_material->GetEmpty()->GetImage(), 1, 1);
 				}
 
-				if (m_availableIndexes.empty())
+				
+				if (m_pendingComponents[i] >= static_cast<int>(m_objectsDescriptors.size()))
 				{
 					m_objectsDescriptors.push_back(t_newRenderObject);
 				}
 				else
 				{
-					if (m_objectsDescriptors.at(m_availableIndexes.at(i)) == nullptr)
-					{
-						m_objectsDescriptors.at(m_availableIndexes.at(i)) = t_newRenderObject;
-					}
+					m_objectsDescriptors[m_pendingComponents[i]] = t_newRenderObject;
 				}
 			}
 			m_pendingComponents.clear();

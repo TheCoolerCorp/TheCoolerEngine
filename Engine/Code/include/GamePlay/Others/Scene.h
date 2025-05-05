@@ -49,10 +49,13 @@ namespace Engine
 			ENGINE_API [[nodiscard]] int GetObjectCount() const { return static_cast<int>(m_objs.size()); }
 			ENGINE_API [[nodiscard]] std::string& GetName() { return m_name; }
 			ENGINE_API [[nodiscard]] RenderSystem* GetRenderSystem() { return m_renderSystem; }
+			ENGINE_API [[nodiscard]] Camera* GetMainCamera() const { return m_mainCamera; }
+
 			ENGINE_API void Save();
 			ENGINE_API void Load(Core::Renderer* a_renderer);
 			ENGINE_API void SetMode(bool a_mode) { m_isPlaying = a_mode; }
 			ENGINE_API bool IsPlaying() { return m_isPlaying; }
+			ENGINE_API bool HasObject(int a_id);
 		private:
 			static nlohmann::ordered_json SerializeTransformComponent(const TransformComponent& a_transform);
 			static TransformData DeserializeTransformComponent(const nlohmann::ordered_json& a_json);
@@ -62,6 +65,7 @@ namespace Engine
 			static MeshData DeserializeMeshComponent(const nlohmann::ordered_json& a_json);
 
 			std::vector<GameObject*> m_objs;
+			std::vector<int> m_deletionQueue;
 			std::vector<int> m_availableIds;
 			Camera* m_mainCamera;
 			Core::Renderer* m_renderer = nullptr;

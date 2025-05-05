@@ -18,6 +18,7 @@ namespace Editor::EditorLayer::Ui
 		void Create() override;
 		void UiDraw() override;
 		void Destroy() override;
+		void NotifyObjectRemoved(Engine::GamePlay::GameObject* a_object) override;
 
 		static void SetRootPath(const std::filesystem::path& a_path) { m_rootPath = a_path; }
 	private:

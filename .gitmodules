@@ -23,3 +23,6 @@
 [submodule "libs/spir-v"]
 	path = libs/spir-v
 	url = https://github.com/KhronosGroup/SPIRV-Reflect.git
+[submodule "libs/imguizmo"]
+	path = libs/imguizmo
+	url = https://github.com/CedricGuillemet/ImGuizmo.git

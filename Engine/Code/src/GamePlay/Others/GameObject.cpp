@@ -61,6 +61,7 @@ namespace Engine
 		{
 			RemoveParent();
 			ClearChildren();
+			ClearComponents();
 		}
 
 		void GameObject::SetId(int a_id)
@@ -160,6 +161,13 @@ namespace Engine
 				return !a_component->GetChildrenIDs().empty();
 			}
 			return false;
+		}
+
+		void GameObject::ClearComponents()
+		{
+			RemoveComponent<TransformComponent>();
+			RemoveComponent<MeshComponent>();
+			RemoveComponent<LightComponent>();
 		}
 	}
 }
