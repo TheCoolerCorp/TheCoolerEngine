@@ -143,7 +143,7 @@ void main()
     // Albedo
     if (per_bTexs.HasAlbedoTexture)
     {
-        albedo = pow(texture(per_albedoMap, inTexCoord).rgb, vec3(2.2));
+        albedo = texture(per_albedoMap, inTexCoord).rgb;
     }
     else
     {
@@ -219,8 +219,8 @@ void main()
     vec3 ambient = vec3(0.03) * albedo * ao;
     //vec3 ambient = vec3(0.03) * albedo;
     vec3 color = ambient + Lo;
-    color = color / (color + vec3(1.0));
-    color = pow(color, vec3(1.0/2.2));
+    //color = color / (color + vec3(1.0));
+    //color = pow(color, vec3(1.0/2.2));
 
     //outColor = vec4(color, 1.0 );
     outColor = vec4(color, 1.0 );
