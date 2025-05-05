@@ -67,6 +67,8 @@ namespace Engine
 			{
 				const VkDevice t_device = a_logicalDevice->CastVulkan()->GetVkDevice();
 
+				vkDeviceWaitIdle(t_device);
+
 				VkDescriptorImageInfo t_textureInfo{};
 				t_textureInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 				t_textureInfo.imageView = a_image->CastVulkan()->GetView();
@@ -74,7 +76,6 @@ namespace Engine
 
 				for (int i = 0; i < m_sets.size(); ++i)
 				{
-
 					VkWriteDescriptorSet texture;
 					texture.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 					texture.pNext = nullptr;

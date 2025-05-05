@@ -214,7 +214,9 @@ namespace Engine
 						Ref<Resource::Texture> t_normal = t_material->GetNormal();
 						if (!t_normal->IsCreated())
 						{
+							const Ref<Resource::Texture> t_defaultTexture = ServiceLocator::GetResourceManager()->GetResource<Resource::Texture>("Assets/Textures/DefaultTexture.png");
 							t_normal->CreateImage(a_renderer);
+							t_newRenderObject->SetTexture(a_logicalDevice, t_defaultTexture->GetImage(), 2, 1);
 						}
 						else
 						{
@@ -386,6 +388,8 @@ namespace Engine
 						if (!t_normal->IsCreated())
 						{
 							t_normal->CreateImage(a_renderer);
+							const Ref<Resource::Texture> t_defaultTexture = ServiceLocator::GetResourceManager()->GetResource<Resource::Texture>("Assets/Textures/DefaultTexture.png");
+							t_newRenderObject->SetTexture(a_logicalDevice, t_defaultTexture->GetImage(), 2, 1);
 						}
 						else
 						{

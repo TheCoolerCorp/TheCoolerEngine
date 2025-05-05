@@ -106,8 +106,11 @@ namespace Engine
 
             Core::RHI::ILogicalDevice* t_logicalDevice = a_renderer->GetLogicalDevice();
 
-            m_image->Destroy(t_logicalDevice);
-            delete m_image;
+            if (m_image)
+            {
+                m_image->Destroy(t_logicalDevice);
+                delete m_image;
+            }
 
             m_isLoaded = false;
             m_isCreated = false;
