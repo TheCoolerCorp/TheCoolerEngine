@@ -43,6 +43,8 @@ namespace Engine
 
 			ENGINE_API Core::RHI::IObjectDescriptor* GetDescriptor() const { return m_descriptor; }
 
+			[[nodiscard]] ENGINE_API Math::mat4 GetViewMatrix() { return m_view; }
+			[[nodiscard]] ENGINE_API Math::mat4 GetProjectionMatrix() { return m_projection; }
 		private:
 			void ComputeInputs(Core::Window::IInputHandler* a_inputHandler, Core::Window::IWindow* a_window, float a_deltaTime);
 
@@ -65,6 +67,9 @@ namespace Engine
 			float m_sensitivity;
 			bool m_needToUpdate = false;
 			bool m_hasClicked = false;
+
+			Math::mat4 m_view;
+			Math::mat4 m_projection;
 
 			CameraData m_data;
 			Core::RHI::IObjectDescriptor* m_descriptor{};

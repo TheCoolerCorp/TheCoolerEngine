@@ -8,7 +8,8 @@
 #include "RHIImGui.h"
 #include "GamePlay/Others/GameObject.h"
 
-
+//IMGUIZMO
+#include "ImGuizmo.h"
 
 namespace Editor::EditorLayer::Ui
 {
@@ -33,6 +34,16 @@ namespace Editor::EditorLayer::Ui
 		Engine::GamePlay::GameObject* GetSelectedGameObject() const { return m_selectedGameObject; }
 
 		void NotifyObjectRemoved(Engine::GamePlay::GameObject* a_object);
+
+		void CreateItemAddMenu();
+
+		/*
+		 * Since ImGuizmo functionality is so intertwined with ImGui, all functionality related to it
+		 * Will be made in the ImGuiLayer class. All ImGuizmo-related functions will start with "Gizmo" for distinction
+		 */
+
+		void GizmoBeginFrame();
+		void GizmoMainDraw();
 	private:
 		Engine::GamePlay::GameObject* m_selectedGameObject = nullptr;
 		RHIImGui* m_imGui = nullptr;

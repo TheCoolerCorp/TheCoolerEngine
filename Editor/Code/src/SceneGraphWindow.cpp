@@ -30,34 +30,7 @@ void Editor::EditorLayer::Ui::SceneGraphUiWindow::UiDraw()
 	ImGui::PopStyleVar();
 	if (ImGui::BeginPopupContextItem(("SceneGraphContextMenu##"+std::to_string(m_uid)).c_str()))
     {
-		if (ImGui::BeginMenu("Add Object"))
-		{
-			if (ImGui::MenuItem("Empty Object"))
-			{
-				m_layer->GetScene()->AddGameObject(OBJECTTYPE_EMPTY);
-			}
-			if (ImGui::MenuItem("Camera"))
-			{
-				m_layer->GetScene()->AddGameObject(OBJECTTYPE_CAMERA);
-			}
-			if (ImGui::MenuItem("Cube"))
-			{
-				m_layer->GetScene()->AddGameObject(OBJECTTYPE_CUBE);
-			}
-			if (ImGui::MenuItem("Sphere"))
-			{
-				m_layer->GetScene()->AddGameObject(OBJECTTYPE_SPHERE);
-			}
-			if (ImGui::MenuItem("Plane"))
-			{
-				m_layer->GetScene()->AddGameObject(OBJECTTYPE_PLANE);
-			}
-			if (ImGui::MenuItem("Light"))
-			{
-				m_layer->GetScene()->AddGameObject(OBJECTTYPE_LIGHT);
-			}
-			ImGui::EndMenu();
-		}
+		m_layer->CreateItemAddMenu();
 		ImGui::EndPopup();
     }
 	ImGui::End();

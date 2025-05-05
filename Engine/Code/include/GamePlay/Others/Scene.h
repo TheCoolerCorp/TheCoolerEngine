@@ -49,6 +49,8 @@ namespace Engine
 			ENGINE_API [[nodiscard]] int GetObjectCount() const { return static_cast<int>(m_objs.size()); }
 			ENGINE_API [[nodiscard]] std::string& GetName() { return m_name; }
 			ENGINE_API [[nodiscard]] RenderSystem* GetRenderSystem() { return m_renderSystem; }
+			ENGINE_API [[nodiscard]] Camera* GetMainCamera() const { return m_mainCamera; }
+
 			ENGINE_API void Save();
 			ENGINE_API void Load(Core::Renderer* a_renderer);
 			ENGINE_API void SetMode(bool a_mode) { m_isPlaying = a_mode; }

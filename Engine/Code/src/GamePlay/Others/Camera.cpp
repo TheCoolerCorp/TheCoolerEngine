@@ -51,6 +51,8 @@ namespace Engine
 				t_proj.mElements[5] *= -1.f;
 				const Math::mat4 t_view = Math::mat4::View(m_up, m_center, m_eye);
 				m_vp = t_proj * t_view;
+				m_view = t_view;
+				m_projection = t_proj;
 				m_vp.Transpose();
 				m_data.m_vp = m_vp;
 				m_data.m_pos = m_eye;
