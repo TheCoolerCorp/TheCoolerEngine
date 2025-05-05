@@ -124,6 +124,12 @@ namespace Editor::EditorLayer::Ui
 	{
 		SetupSceneRenderPass();
 		SetupImGuiRenderPass();
+		m_renderer->GetSwapChain()->CastVulkan()->AddResizeCallback(
+			[this](VkExtent2D a_extent)
+			{
+				this->RecreateSceneImageDescriptorSets(m_viewportWindowExtent);
+			}
+		);
 	}
 
 	void VulkanImGui::SetupSceneRenderPass()
@@ -188,7 +194,7 @@ namespace Editor::EditorLayer::Ui
 		t_config.setViewportAndScissor = true;
 		t_config.useSwapChainFramebuffers = false;
 		//we handle the resize for this one
-		t_config.setResizeCallback = false;
+		t_config.setResizeCallback = true;
 
 		m_imGuiRenderPass = new VulkanRenderPass(device, m_renderer);
 
@@ -317,11 +323,15 @@ namespace Editor::EditorLayer::Ui
 			vkDeviceWaitIdle(t_device);
 
 			m_viewportWindowResized = false;
-			m_imGuiRenderPass->RecreateFrameBuffer(m_viewportWindowExtent);
-			RecreateSceneImageDescriptorSets(m_viewportWindowExtent);
+			//m_imGuiRenderPass->RecreateFrameBuffer(m_viewportWindowExtent);
+			
 			//m_viewportWindowResized = true;
+			//RecreateSceneImageDescriptorSets(m_viewportWindowExtent);
 		}
-		ImGui::Image(reinterpret_cast<ImTextureID>(m_dset[t_swapchain->GetCurrentFrame()]), ImVec2{ t_viewportPanelSize.x, t_viewportPanelSize.y });
+		float t_offsetX = (static_cast<float>(t_swapchain->GetExtent2D().width) - t_viewportPanelSize.x) / 2;
+		float t_offsetY = (static_cast<float>(t_swapchain->GetExtent2D().height) - t_viewportPanelSize.y) / 2;
+		ImGui::SetCursorPos(ImVec2{ -t_offsetX, -t_offsetY });
+		ImGui::Image(reinterpret_cast<ImTextureID>(m_dset[t_swapchain->GetCurrentFrame()]), ImVec2{ static_cast<float>(t_swapchain->GetExtent2D().width), static_cast<float>(t_swapchain->GetExtent2D().height) });
 	}
 
 	void VulkanImGui::Cleanup()

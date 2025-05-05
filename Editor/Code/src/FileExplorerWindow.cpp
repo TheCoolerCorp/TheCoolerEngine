@@ -87,6 +87,10 @@ void Editor::EditorLayer::Ui::FileExplorerWindow::Destroy()
 {
 }
 
+void Editor::EditorLayer::Ui::FileExplorerWindow::NotifyObjectRemoved(Engine::GamePlay::GameObject* a_object)
+{
+}
+
 /**
  * Draws the content of m_currentPath (the currently selected folder) in a ImGui table
  * With an image illustrating its type and its name. Folders can be double clicked to acess its child

@@ -47,6 +47,7 @@ namespace Engine
 			[[nodiscard]] ENGINE_API int GetGameObjectID() const { return m_gameObjectId; }
 			[[nodiscard]] ENGINE_API int GetParentID() const { return m_parentId; }
 			[[nodiscard]] ENGINE_API std::vector<int> GetChildrenIDs() const { return m_childrenIds; }
+			[[nodiscard]] ENGINE_API Math::mat4 GetMatrix() { return m_transform->GetTransformMatrix(); }
 
 			ENGINE_API static TransformComponent* GetComponent(int a_id);
 			ENGINE_API static void RemoveComponent(int a_id);

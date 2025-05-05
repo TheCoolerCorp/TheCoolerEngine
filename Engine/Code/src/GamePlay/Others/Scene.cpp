@@ -24,6 +24,7 @@ namespace Engine
 			m_transformSystem = new TransformSystem;
 
 			m_renderSystem = new RenderSystem;
+			m_renderSystem->Create(a_renderer);
 
 			m_physicsSystem = new PhysicsSystem;
 			m_physicsSystem->Create();
@@ -48,32 +49,63 @@ namespace Engine
 			t_object->GetComponent<MeshComponent>()->GetMaterial()->Create(UNLIT);
 			t_object->GetComponent<MeshComponent>()->SetMesh("Assets/Meshes/viking_room.obj", a_renderer);
 
-			GameObject* t_object2 = new GameObject(Math::vec3(5.f, 0.f, 0.f), Math::vec3(0.f, Math::ToRadians(270.f), Math::ToRadians(270.f)), Math::vec3(1.f), "Lit");
+			GameObject* t_object2 = new GameObject(Math::vec3(2.5f, 0.f, 0.f), Math::vec3(0.f, Math::ToRadians(270.f), Math::ToRadians(270.f)), Math::vec3(1.f), "Lit");
 			t_object2->AddComponent<MeshComponent>();
-			t_object2->GetComponent<MeshComponent>()->SetMesh("Assets/Meshes/rusty_metal_04_4k.gltf", a_renderer);
+			t_object2->GetComponent<MeshComponent>()->SetMesh("Assets/Meshes/BaseObjects/Sphere.obj", a_renderer);
 			t_object2->GetComponent<MeshComponent>()->GetMaterial()->Create(LIT);
-			//t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetAlbedo("Assets/Textures/viking_room.png", a_renderer);
-			//t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetMetallic(1.f);
-			//t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetRoughness(0.2f);
-			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetAlbedo("Assets/Textures/metal_plate_diff_2k.png", a_renderer);
-			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetNormal("Assets/Textures/metal_plate_nor_dx_2k.png", a_renderer);
-			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetMetallic("Assets/Textures/metal_plate_metal_2k.png", a_renderer);
-			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetRoughness("Assets/Textures/metal_plate_rough_2k.png", a_renderer);
-			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetAO("Assets/Textures/metal_plate_ao_2k.png", a_renderer);
+			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetAlbedo("Assets/Textures/rustediron2_basecolor.png", a_renderer);
+			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetNormal("Assets/Textures/rustediron2_normal.png", a_renderer);
+			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetMetallic("Assets/Textures/rustediron2_metallic.png", a_renderer);
+			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetRoughness("Assets/Textures/rustediron2_roughness.png", a_renderer);
+			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetAO(1.f);
+
+			GameObject* t_object3 = new GameObject(Math::vec3(5.f, 0.f, 0.f), Math::vec3(0.f, Math::ToRadians(270.f), Math::ToRadians(270.f)), Math::vec3(1.f), "Lit");
+			t_object3->AddComponent<MeshComponent>();
+			t_object3->GetComponent<MeshComponent>()->SetMesh("Assets/Meshes/BaseObjects/Sphere.obj", a_renderer);
+			t_object3->GetComponent<MeshComponent>()->GetMaterial()->Create(LIT);
+			t_object3->GetComponent<MeshComponent>()->GetMaterial()->SetAlbedo("Assets/Textures/PBR/pbr_diff.png", a_renderer);
+			t_object3->GetComponent<MeshComponent>()->GetMaterial()->SetNormal("Assets/Textures/PBR/pbr_nor.png", a_renderer);
+			t_object3->GetComponent<MeshComponent>()->GetMaterial()->SetMetallic("Assets/Textures/PBR/pbr_metal.png", a_renderer);
+			t_object3->GetComponent<MeshComponent>()->GetMaterial()->SetRoughness("Assets/Textures/PBR/pbr_rough.png", a_renderer);
+			t_object3->GetComponent<MeshComponent>()->GetMaterial()->SetAO("Assets/Textures/PBR/pbr_ao.png", a_renderer);
+
 
 			LightGO* t_light = new LightGO(Math::vec3(10.f, 0.f, 0.f), Math::vec3(0.f, 0.f, 0.f), Math::vec3(1.f));
+			LightGO* t_light2 = new LightGO(Math::vec3(0.f, 0.f, 0.f), Math::vec3(0.f, 0.f, 0.f), Math::vec3(1.f));
 
 
 			AddGameObject(t_object);
 			AddGameObject(t_object2);
-			// DON'T ADD MORE THAN ONE LIGHT FOR ONE
+			AddGameObject(t_object3);
+			//// DON'T ADD MORE THAN ONE LIGHT FOR ONE
 			AddGameObject(t_light);
+			AddGameObject(t_light2);
 
 			Load(a_renderer);
 		}
 
 		void Scene::Update(Core::Renderer* a_renderer, Core::Window::IWindow* a_window, Core::Window::IInputHandler* a_inputHandler, float a_deltatime)
 		{
+			while (!m_deletionQueue.empty())
+			{
+				int t_id = m_deletionQueue.back();
+				m_deletionQueue.pop_back();
+				for (int i = 0; i < m_objs.size(); ++i)
+				{
+					if (!m_objs[i])
+						continue;
+					if (m_objs[i]->GetId() == t_id)
+					{
+						m_availableIds.push_back(i);
+						delete m_objs[i];
+						m_objs[i] = nullptr;
+						break;
+					}
+				}
+			}
+				
+			
+
 			//m_objs[0]->GetComponent<TransformComponent>()->GetTransform()->Rotate(Math::quat(Math::vec3(0.01f * a_deltatime, 0.f,0.f)));
 			m_transformSystem->Update();
 
@@ -85,6 +117,11 @@ namespace Engine
 
 			for (GameObject* t_obj : m_objs)
 			{
+				if (!t_obj) //if a t_obj is empty, t_syncro will not be added to, which makes all subsequent indexes invalid, causing an out of bounds acess and a crash
+				{
+					t_syncro.emplace_back(-1, Math::UniformMatrixs(Math::mat4(true), Math::mat4(true)));
+					continue;
+				}
 				const uint32_t t_rigidBodyId = t_obj->GetComponentID<RigidBodyComponent>();
 				if (std::cmp_not_equal(t_rigidBodyId, -1))
 				{
@@ -192,16 +229,18 @@ namespace Engine
 		{
 			std::unordered_map<Core::RHI::DescriptorSetPipelineTarget, std::vector<Core::RHI::IObjectDescriptor*>> t_descriptorsMap;
 			std::vector<Core::RHI::IObjectDescriptor*>& t_descriptors = m_renderSystem->GetMeshDescriptors();
-			for(auto & t_descriptor : t_descriptors)
+			for(Core::RHI::IObjectDescriptor* t_descriptor : t_descriptors)
 			{
+				if (t_descriptor == nullptr)
+					continue;
 				t_descriptorsMap[t_descriptor->GetPipelineTargetType()].push_back(t_descriptor);
 			}
 			return t_descriptorsMap;
 		}
 
-		std::vector<Core::RHI::IObjectDescriptor*> Scene::GetLightsDescriptors()
+		Core::RHI::IObjectDescriptor* Scene::GetLightsDescriptors()
 		{
-			return m_renderSystem->GetLightDescriptors();
+			return m_renderSystem->GetLightDescriptor();
 		}
 
 		/**
@@ -215,7 +254,6 @@ namespace Engine
 			{
 				return t_descriptor->GetPipelineTargetType();
 			}
-			LOG_ERROR("Tried to get descriptor at an invalid index!");
 			return Core::RHI::DescriptorSetPipelineTarget::LitDescriptor;
 		}
 
@@ -304,8 +342,10 @@ namespace Engine
 				t_object->GetComponent<MeshComponent>()->SetMesh("Assets/Meshes/BaseObjects/plane.obj", m_renderer);
 				break;
 			case OBJECTTYPE_LIGHT:
+				return nullptr;
 				break;
 			case OBJECTTYPE_CAMERA:
+				return nullptr;
 				break;
 			default:
 				break;
@@ -326,16 +366,8 @@ namespace Engine
 		 */
 		void Scene::RemoveGameObject(uint32_t a_id)
 		{
-			for (int i = 0; i < m_objs.size(); ++i)
-			{
-				if (m_objs[i]->GetId() == a_id)
-				{
-					m_availableIds.push_back(i);
-					delete m_objs[i];
-					m_objs.erase(m_objs.begin() + i);
-					break;
-				}
-			}
+			m_deletionQueue.push_back(a_id);
+			
 		}
 
 		void Scene::Save()
@@ -344,6 +376,8 @@ namespace Engine
 
 			for (const auto& t_obj : m_objs)
 			{
+				if (!t_obj)
+					continue;
 				json t_objJson;
 				t_objJson["GameObject"] = t_obj->GetName();
 				t_objJson["TransformComponent"] = SerializeTransformComponent(*t_obj->GetComponent<TransformComponent>());
@@ -452,6 +486,20 @@ namespace Engine
 					LOG_DEBUG("AO path : " + t_mesh.mAOPath);
 				}
 			}
+		}
+
+		bool Scene::HasObject(int a_id)
+		{
+			for (GameObject* t_object : m_objs)
+			{
+				if (!t_object)
+					continue;
+				if (t_object->GetId() == a_id)
+				{
+					return true;
+				}
+			}
+			return false;
 		}
 
 		nlohmann::ordered_json Scene::SerializeTransformComponent(const TransformComponent& a_transform)

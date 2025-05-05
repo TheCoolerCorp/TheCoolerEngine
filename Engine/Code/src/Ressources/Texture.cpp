@@ -66,10 +66,21 @@ namespace Engine
             const Core::RHI::ImageData t_imageData = {
                 .mWidth = m_width,
                 .mHeight = m_height,
-                .data = m_data
+                .data = m_data,
+                .channels = m_channels
             };
 
-            m_image->Create(Core::RHI::ImageType::TEXTURE, t_imageData, t_physicalDevice, t_logicalDevice, t_commandPool);
+            switch (m_type)
+            {
+            case TextureType::SRGB:
+
+				m_image->Create(Core::RHI::ImageType::TEXTURE, Core::RHI::ImageFormat::FORMAT_R8G8B8A8_SRBG, t_imageData, t_physicalDevice, t_logicalDevice, t_commandPool);
+                break;
+            case TextureType::RGB:
+                // Normal, metallic, roughness, etc...  
+                m_image->Create(Core::RHI::ImageType::TEXTURE, Core::RHI::ImageFormat::FORMAT_R8G8B8A8_UNORM, t_imageData, t_physicalDevice, t_logicalDevice, t_commandPool);
+                break;
+            }
 
             //delete m_data;
 

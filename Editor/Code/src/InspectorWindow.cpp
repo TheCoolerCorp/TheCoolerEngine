@@ -6,6 +6,7 @@
 #include "../Include/InspectorComponent/UiTransformComponent.h"
 #include "../Include/InspectorComponent/UiMeshComponent.h"
 #include "../Include/UiWindow.h"
+#include "InspectorComponent/UiLightComponent.h"
 #include "InspectorComponent/UiRigidbodyComponent.h"
 
 Editor::EditorLayer::Ui::InspectorUiWindow::~InspectorUiWindow()
@@ -64,6 +65,15 @@ void Editor::EditorLayer::Ui::InspectorUiWindow::Destroy()
 	m_open = false; 
 }
 
+void Editor::EditorLayer::Ui::InspectorUiWindow::NotifyObjectRemoved(Engine::GamePlay::GameObject* a_object)
+{
+	if (m_selectedObject)
+	{
+		if (m_selectedObject->GetId()==a_object->GetId())
+			m_selectedObject = nullptr;
+	}
+}
+
 
 /**
  * Checks if the currently selected GameObject is different to the one stored in the inspector.
@@ -103,7 +113,7 @@ void Editor::EditorLayer::Ui::InspectorUiWindow::RefreshSelectedObject()
 			AddComponent(new UiRigidbodyComponent(m_layer, m_selectedObject->GetComponent<Engine::GamePlay::RigidBodyComponent>()));
 			break;
 		case Engine::GamePlay::ComponentType::LIGHT:
-			//AddComponent(new UiLightComponent(m_layer, m_selectedObject->GetComponent<LightComponent>()));
+			AddComponent(new UiLightComponent(m_layer, m_selectedObject->GetComponent<Engine::GamePlay::LightComponent>()));
 			break;
 		}
 	}

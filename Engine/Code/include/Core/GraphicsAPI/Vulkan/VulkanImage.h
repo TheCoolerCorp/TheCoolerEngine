@@ -22,7 +22,7 @@ namespace Engine
 				ENGINE_API ~VulkanImage() override = default;
 				ENGINE_API VulkanImage* CastVulkan() override { return this; }
 
-				ENGINE_API void Create(RHI::ImageType a_type, RHI::ImageData a_data, RHI::IPhysicalDevice* a_physicalDevice, RHI::ILogicalDevice* a_logicalDevice, RHI::ICommandPool* a_commandPool) override;
+				ENGINE_API void Create(RHI::ImageType a_type, RHI::ImageFormat a_format, RHI::ImageData a_data, RHI::IPhysicalDevice* a_physicalDevice, RHI::ILogicalDevice* a_logicalDevice, RHI::ICommandPool* a_commandPool) override;
 				ENGINE_API void Destroy(RHI::ILogicalDevice* a_logicalDevice) override;
 
 				[[nodiscard]] ENGINE_API VkImage GetImage() { return m_image; }

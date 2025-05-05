@@ -3,6 +3,8 @@
 
 #include <Core/Renderer/Renderer.h>
 
+#include "GamePlay/Others/GameObject.h"
+
 namespace Engine::Core
 {
 	class Renderer;
@@ -24,6 +26,8 @@ namespace Editor::EditorLayer::Ui
 		virtual void Create() = 0;
 		virtual void UiDraw() = 0;
 		virtual void Destroy() = 0;
+
+		virtual void NotifyObjectRemoved(Engine::GamePlay::GameObject* a_object) = 0;
 
 		void SetName(std::string a_name) { m_name = std::move(a_name); }
 		void SetUid(int a_uid) { m_uid = a_uid; }

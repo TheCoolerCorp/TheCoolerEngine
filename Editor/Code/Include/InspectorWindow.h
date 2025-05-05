@@ -22,6 +22,7 @@ namespace Editor::EditorLayer::Ui
 		void Create() override;
 		void UiDraw() override;
 		void Destroy() override;
+		void NotifyObjectRemoved(Engine::GamePlay::GameObject* a_object) override;
 
 		Engine::GamePlay::GameObject* GetSelectedObject() { return m_selectedObject; }
 		

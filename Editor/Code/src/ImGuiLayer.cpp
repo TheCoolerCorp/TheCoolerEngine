@@ -13,6 +13,8 @@
 #include "../Include/UiWindow.h"
 #include "../Include/SceneGraphWindow.h"
 #include "../Include/InspectorWindow.h"
+#include "Math/TheCoolerMath.h"
+
 
 namespace Editor::EditorLayer::Ui
 {
@@ -35,6 +37,7 @@ namespace Editor::EditorLayer::Ui
 	void ImGuiLayer::OnUpdate(float a_deltaTime)
 	{
 		Layer::OnUpdate(a_deltaTime);
+		
 		m_imGui->Update();
 		std::vector<int> t_indexesToDelete;
 		for (UiWindow* t_window : m_windows)
@@ -64,6 +67,7 @@ namespace Editor::EditorLayer::Ui
 
 		Layer::OnUiRender();
 		m_imGui->NewFrame();
+		GizmoBeginFrame();
 		const ImGuiViewport* viewport = ImGui::GetMainViewport();
 		ImGui::SetNextWindowPos(viewport->WorkPos);
 		ImGui::SetNextWindowSize(viewport->WorkSize);
@@ -114,56 +118,18 @@ namespace Editor::EditorLayer::Ui
 				ImGui::EndMenu();
 				
 			}
-			if (ImGui::BeginMenu("Scene"))
-			{
-				if (ImGui::MenuItem("Save Scene"))
-				{
-					//m_app->GetCurrentScene()->SaveScene();
-				}
-				if (ImGui::MenuItem("Load Scene"))
-				{
-					//m_app->GetCurrentScene()->LoadScene();
-				}
-				ImGui::Separator();
-				if (ImGui::BeginMenu("Add Object"))
-				{
-					if (ImGui::MenuItem("Empty Object"))
-					{
-						m_app->GetCurrentScene()->AddGameObject(Engine::GamePlay::GameObjectType::OBJECTTYPE_EMPTY);
-					}
-					if (ImGui::MenuItem("Camera"))
-					{
-						m_app->GetCurrentScene()->AddGameObject(Engine::GamePlay::GameObjectType::OBJECTTYPE_CAMERA);
-					}
-					if (ImGui::MenuItem("Cube"))
-					{
-						m_app->GetCurrentScene()->AddGameObject(Engine::GamePlay::GameObjectType::OBJECTTYPE_CUBE);
-					}
-					if (ImGui::MenuItem("Sphere"))
-					{
-						m_app->GetCurrentScene()->AddGameObject(Engine::GamePlay::GameObjectType::OBJECTTYPE_SPHERE);
-					}
-					if (ImGui::MenuItem("Plane"))
-					{
-						m_app->GetCurrentScene()->AddGameObject(Engine::GamePlay::GameObjectType::OBJECTTYPE_PLANE);
-					}
-					if (ImGui::MenuItem("Light"))
-					{
-						m_app->GetCurrentScene()->AddGameObject(Engine::GamePlay::GameObjectType::OBJECTTYPE_LIGHT);
-					}
-					ImGui::EndMenu();
-				}
-				ImGui::EndMenu();
-			}
+			CreateItemAddMenu();
 			ImGui::EndMainMenuBar();
 		}
-
 		ImGui::End();
-		
 
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0.0f,0.0f });
 		ImGui::Begin("Viewport");
 		m_imGui->DrawSceneAsImage();
+		GizmoMainDraw();
 		ImGui::End();
+		ImGui::PopStyleVar();
+		
 
 		for (UiWindow* t_window : m_windows)
 		{
@@ -212,6 +178,143 @@ namespace Editor::EditorLayer::Ui
 			a_window->Create();
 			a_window->SetUid(static_cast<int>(m_windows.size()) - 1);
 		}
+	}
+
+	/**
+	 * Notifies all windows that a specified GameObject has been removed
+	 * This is to prevent any active window trying to access a GameObject that has been deleted
+	 * if they are storing a reference to it
+	 */
+	void ImGuiLayer::NotifyObjectRemoved(Engine::GamePlay::GameObject* a_object)
+	{
+		if (m_selectedGameObject)
+		{
+			if (a_object->GetId() == m_selectedGameObject->GetId())
+				m_selectedGameObject = nullptr;
+		}
+		for (UiWindow* t_window : m_windows)
+		{
+			if (t_window == nullptr)
+				continue;
+			t_window->NotifyObjectRemoved(a_object);
+		}
+	}
+
+	void ImGuiLayer::CreateItemAddMenu()
+	{
+		if (ImGui::BeginMenu("Scene"))
+		{
+			if (ImGui::MenuItem("Save Scene"))
+			{
+				//m_app->GetCurrentScene()->SaveScene();
+			}
+			if (ImGui::MenuItem("Load Scene"))
+			{
+				//m_app->GetCurrentScene()->LoadScene();
+			}
+			ImGui::Separator();
+			if (ImGui::BeginMenu("Add Object"))
+			{
+				if (ImGui::MenuItem("Empty Object"))
+				{
+					m_app->GetCurrentScene()->AddGameObject(Engine::GamePlay::GameObjectType::OBJECTTYPE_EMPTY);
+				}
+				if (ImGui::MenuItem("Camera"))
+				{
+					m_app->GetCurrentScene()->AddGameObject(Engine::GamePlay::GameObjectType::OBJECTTYPE_CAMERA);
+				}
+				if (ImGui::MenuItem("Cube"))
+				{
+					m_app->GetCurrentScene()->AddGameObject(Engine::GamePlay::GameObjectType::OBJECTTYPE_CUBE);
+				}
+				if (ImGui::MenuItem("Sphere"))
+				{
+					m_app->GetCurrentScene()->AddGameObject(Engine::GamePlay::GameObjectType::OBJECTTYPE_SPHERE);
+				}
+				if (ImGui::MenuItem("Plane"))
+				{
+					m_app->GetCurrentScene()->AddGameObject(Engine::GamePlay::GameObjectType::OBJECTTYPE_PLANE);
+				}
+				if (ImGui::BeginMenu("Light"))
+				{
+					if (ImGui::MenuItem("Point Light"))
+					{
+						m_app->GetCurrentScene()->AddGameObject(Engine::GamePlay::GameObjectType::OBJECTTYPE_LIGHT);
+					}
+					if (ImGui::MenuItem("Directional Light"))
+					{
+						//m_app->GetCurrentScene()->AddGameObject(Engine::GamePlay::GameObjectType::OBJECTTYPE_LIGHT);
+					}
+					if (ImGui::MenuItem("Spot Light"))
+					{
+						//m_app->GetCurrentScene()->AddGameObject(Engine::GamePlay::GameObjectType::OBJECTTYPE_LIGHT);
+					}
+					ImGui::EndMenu();
+				}
+
+				ImGui::EndMenu();
+			}
+			ImGui::EndMenu();
+		}
+	}
+
+	void ImGuiLayer::GizmoBeginFrame()
+	{
+		ImGuizmo::SetOrthographic(false); // perspective or ortho
+		ImGuizmo::BeginFrame();
+
+	}
+
+	void ImGuiLayer::GizmoMainDraw()
+	{
+		Engine::Math::mat4 t_identityMatrix = Engine::Math::mat4(1.0f);
+		Engine::Math::mat4 t_cameraView = m_app->GetCurrentScene()->GetMainCamera()->GetViewMatrix();
+		Engine::Math::mat4 t_cameraProjection = m_app->GetCurrentScene()->GetMainCamera()->GetProjectionMatrix();
+
+		t_cameraProjection.mElements[5] *= -1.f; // flip the Y axis for the projection matrix
+
+		t_identityMatrix.Transpose();
+		t_cameraView.Transpose();
+		t_cameraProjection.Transpose();
+
+
+		const float* t_viewf = t_cameraView.mElements.data();
+		const float* t_projectionf = t_cameraProjection.mElements.data();
+		const float* t_identityf = t_identityMatrix.mElements.data();
+		//lets start off by drawing the grid
+
+		ImGuizmo::SetDrawlist(ImGui::GetWindowDrawList());
+		ImVec2 imageMin = ImGui::GetItemRectMin();
+		ImVec2 imageSize = ImGui::GetItemRectSize();
+		ImGuizmo::SetRect(imageMin.x, imageMin.y, imageSize.x, imageSize.y);
+		//ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, ImGui::GetWindowSize().x, ImGui::GetWindowSize().y);
+
+		if (m_selectedGameObject && m_selectedGameObject->GetComponent<Engine::GamePlay::TransformComponent>())
+		{
+			Engine::Math::mat4 t_objectMatrix = m_selectedGameObject->GetComponent<Engine::GamePlay::TransformComponent>()->GetMatrix();
+			t_objectMatrix.Transpose();
+
+			if (ImGuizmo::Manipulate(t_viewf, t_projectionf, ImGuizmo::TRANSLATE, ImGuizmo::WORLD, t_objectMatrix.mElements.data()))
+			{
+				float t_translation[3], t_rotation[3], t_scale[3];
+
+				ImGuizmo::DecomposeMatrixToComponents(t_objectMatrix.mElements.data(), t_translation, t_rotation, t_scale);
+				Engine::GamePlay::TransformData t_transformData;
+
+				t_transformData.mRot = Engine::Math::quat(Engine::Math::vec3(t_rotation[0]* Engine::Math::PI/180.0f, t_rotation[1] * Engine::Math::PI / 180.0f, t_rotation[2] * Engine::Math::PI / 180.0f));
+				t_transformData.mRot = Engine::Math::quat::Normalize(t_transformData.mRot);
+
+				t_transformData.mPos = Engine::Math::vec3(t_translation[0], t_translation[1], t_translation[2]);
+				t_transformData.mScale = Engine::Math::vec3(t_scale[0], t_scale[1], t_scale[2]);
+
+				t_transformData.mParentId = m_selectedGameObject->GetComponent<Engine::GamePlay::TransformComponent>()->GetParentID();
+
+				m_selectedGameObject->GetComponent<Engine::GamePlay::TransformComponent>()->Set(t_transformData);
+			}
+		}
+
+		//ImGuizmo::DrawGrid(t_viewf, t_projectionf, t_identityf, 100.f);
+
 	}
 
 	void ImGuiLayer::SetupImGuiStyle()
@@ -306,6 +409,11 @@ namespace Editor::EditorLayer::Ui
 	
 	}
 
+	/**
+	 * Workaround to imgui not supporting srgb, converts the given linear space colour to srgb and returs it
+	 * Not perfect, but its a very easy solution with an acceptable margin of error
+	 * and no performance cost
+	 */
 	ImVec4 ImGuiLayer::ToSrgb(ImVec4 rgba)
 	{
 		float r = powf(rgba.x, 2.2f);

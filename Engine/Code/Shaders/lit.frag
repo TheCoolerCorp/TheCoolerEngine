@@ -27,21 +27,20 @@ layout(set = 1, binding = 7) uniform HasTextures
 } per_bTexs;
 
 
-// Lights
-layout(set = 2, binding = 0) uniform LightData
+
+struct LightData
 {
     vec3 position;
     vec3 color;
     float intensity;
-} light_lhtValues;
+};
 
-//layout(set = 0, binding = 1) uniform CameraData
-//{
-//    vec3 albedoTexture;
-//    float metallicTexture;
-//    float roughnessTexture;
-//    float aoTexture;
-//} common_camera;
+// Lights
+layout(set = 2, binding = 0) uniform LightDatas 
+{
+    LightData data[5];
+
+} light_lhtValues;
 
 layout(location = 0) in vec3 inNormal;
 layout(location = 1) in vec2 inTexCoord;
@@ -56,27 +55,28 @@ const float PI = 3.14159265359;
 
 vec3 getNormalFromMap()
 {
-    vec3 tangentNormal = texture(per_normalMap, inTexCoord).xyz * 2.0 - 1.0;
+    vec3 tangentNormal = texture(per_normalMap, inTexCoord).xyz;
+    tangentNormal = tangentNormal * 2.0 - 1.0;
 
     vec3 Q1  = dFdx(inWorldPos);
     vec3 Q2  = dFdy(inWorldPos);
     vec2 st1 = dFdx(inTexCoord);
     vec2 st2 = dFdy(inTexCoord);
 
-    vec3 N   = inNormal;
+    vec3 N   = normalize(inNormal);
     vec3 T  = normalize(Q1*st2.t - Q2*st1.t);
     vec3 B  = -normalize(cross(N, T));
+
     mat3 TBN = mat3(T, B, N);
 
     return normalize(TBN * tangentNormal);
 }
 
-vec3 Radiance(vec3 lightDir)
+vec3 Radiance(vec3 lightDir, vec3 lightColor, float intensity)
 {
-    float distance = length(lightDir);
-    float attenuation = 1.0 / (distance * distance);
-    vec3 radiance = light_lhtValues.color * attenuation * light_lhtValues.intensity;
-    //vec3 radiance = light_lhtValues.color * attenuation * 0.75;
+    float dst = length(lightDir);
+    float attenuation = 1.0 / (dst * dst);
+    vec3 radiance = lightColor * attenuation * intensity;
 
     return radiance;
 }
@@ -145,7 +145,7 @@ void main()
     // Albedo
     if (per_bTexs.HasAlbedoTexture)
     {
-        albedo = pow(texture(per_albedoMap, inTexCoord).rgb, vec3(2.0));
+        albedo = texture(per_albedoMap, inTexCoord).rgb;
     }
     else
     {
@@ -175,7 +175,7 @@ void main()
     // Roughness
     if (per_bTexs.HasRoughnessTexture)
     {
-        roughness = texture(per_albedoMap, inTexCoord).r;
+        roughness = texture(per_RoughnessMap, inTexCoord).r;
     }
     else
     {
@@ -185,7 +185,7 @@ void main()
     // AO
     if (per_bTexs.HasAoTexture)
     {
-        ao = texture(per_albedoMap, inTexCoord).r;
+        ao = texture(per_aoMap, inTexCoord).r;
     }
     else
     {
@@ -200,12 +200,13 @@ void main()
 
      vec3 Lo = vec3(0.0);
 
-    for(int i = 0; i < 1; ++i) 
+    for(int i = 0; i < 5; ++i)  
     {
-        vec3 lightDir = normalize(light_lhtValues.position - inWorldPos);
+        vec3 lightVec = light_lhtValues.data[i].position - inWorldPos;
+        vec3 lightDir = normalize(lightVec);
         vec3 halfwayVec = normalize(camDir + lightDir);
         
-        vec3 radiance = Radiance(lightDir);
+        vec3 radiance = Radiance(lightVec, light_lhtValues.data[i].color, light_lhtValues.data[i].intensity);
 
         float D   = Distribution(halfwayVec, roughness, normal);   
         float G   = Geometry(camDir, lightDir, roughness, normal);      
@@ -220,8 +221,5 @@ void main()
     
     vec3 ambient = vec3(0.03) * albedo * ao;
     vec3 color = ambient + Lo;
-    color = color / (color + vec3(1.0));
-    color = pow(color, vec3(1.0/2.2));
-
-    outColor = vec4(color, 1 );
+    outColor = vec4(color, 1.0 );
 }

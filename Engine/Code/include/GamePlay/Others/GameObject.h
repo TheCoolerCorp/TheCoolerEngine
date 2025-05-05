@@ -154,6 +154,8 @@ namespace Engine
 
 				std::string m_name;
 				int m_id = -1;
+
+				void ClearComponents();
 			};
 
 		

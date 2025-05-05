@@ -11,7 +11,15 @@ namespace Engine
 	{
 		void RenderSystem::Create(Core::Renderer* a_renderer)
 		{
-			// DO NOTHING FOR NOW
+			m_renderer = a_renderer;
+			m_lightsDescriptor = a_renderer->GetInterface()->InstantiateObjectDescriptor();
+			m_lightsDescriptor->Create(a_renderer->GetLogicalDevice(), a_renderer->GetLitPipeline(), Core::RHI::Lights, 1, 1, { 1 }, { Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_UNIFORM_BUFFER });
+			uint32_t t_lightsSize = MAX_LIGHTS * sizeof(LightData);
+			for (int i = 0; i < MAX_LIGHTS; ++i)
+			{
+				m_lightsData[i] = { Math::vec3(0.f), Math::vec3(0.f), 0.f };
+			}
+			m_lightsDescriptor->SetUniform(a_renderer->GetLogicalDevice(), a_renderer->GetPhysicalDevice(), a_renderer->GetCommandPool(), 0, &m_lightsData, t_lightsSize, 0, 1);
 		}
 
 		void RenderSystem::Update(Core::Renderer* a_renderer, std::vector<std::pair<int,Math::UniformMatrixs>> a_updatedMatrix, std::vector<std::pair<int, Math::vec3>> a_lightsUpdate, std::vector<int> a_materialUpdate)
@@ -20,6 +28,8 @@ namespace Engine
 			{
 				return;
 			}
+			if (!m_renderer)
+				m_renderer = a_renderer;
 
 			Core::RHI::ILogicalDevice* t_logicalDevice = a_renderer->GetLogicalDevice();
 			Core::RHI::IPhysicalDevice* t_physicalDevice = a_renderer->GetPhysicalDevice();
@@ -34,13 +44,18 @@ namespace Engine
 
 			for (int i = 0; i < a_updatedMatrix.size(); ++i)
 			{
+				if (a_updatedMatrix[i].first == -1)
+					continue;
 				m_objectsDescriptors[a_updatedMatrix[i].first]->UpdateUniforms(t_logicalDevice, 0, &a_updatedMatrix[i].second, sizeof(Math::UniformMatrixs), a_renderer->GetSwapChain()->GetCurrentFrame());
 			}
 			for (int i = 0; i < a_lightsUpdate.size(); ++i)
 			{
 				m_lightComponents[a_lightsUpdate[i].first]->GetLight().SetPosition(a_lightsUpdate[i].second);
-				m_lightsDescriptors[i]->UpdateUniforms(t_logicalDevice, 0, &m_lightComponents[i]->GetLight().GetData(), sizeof(LightData), 0);
+				m_lightsData[a_lightsUpdate[i].first].m_position = a_lightsUpdate[i].second;
+				m_lightsData[a_lightsUpdate[i].first].m_color = m_lightComponents[a_lightsUpdate[i].first]->GetLight().GetColor();
+				m_lightsData[a_lightsUpdate[i].first].m_intensity = m_lightComponents[a_lightsUpdate[i].first]->GetLight().GetIntensisty();
 			}
+			m_lightsDescriptor->UpdateUniforms(t_logicalDevice, 0, &m_lightsData, MAX_LIGHTS * sizeof(LightData), 0);
 
 			UpdateMaterial(a_renderer, t_logicalDevice, t_physicalDevice, t_surface, t_commandPool, t_unlitPipeline, t_litPipeline, t_maxFrame, a_materialUpdate, a_updatedMatrix);
 		}
@@ -50,11 +65,16 @@ namespace Engine
 			// Destroy Meshes
 			for (int i = 0; i < m_components.size(); ++i)
 			{
-				auto& comp = m_components[i];
-				comp->Destroy();
-				m_objectsDescriptors[i]->Destroy(a_renderer->GetLogicalDevice());
-				a_renderer->GetInterface()->DestroyObjectDescriptor(m_objectsDescriptors[i]);
-				delete comp;
+				if (auto& comp = m_components[i])
+				{
+					comp->Destroy();
+					delete comp;
+				}
+				if (m_objectsDescriptors[i])
+				{
+					m_objectsDescriptors[i]->Destroy(a_renderer->GetLogicalDevice());
+					a_renderer->GetInterface()->DestroyObjectDescriptor(m_objectsDescriptors[i]);
+				}
 			}
 			m_components.clear();
 			m_availableIndexes.clear();
@@ -63,11 +83,20 @@ namespace Engine
 			// Destroy lights
 			for (int i = 0; i < m_lightComponents.size(); ++i)
 			{
-				auto& comp = m_lightComponents[i];
-				comp->Destroy();
-				m_lightsDescriptors[i]->Destroy(a_renderer->GetLogicalDevice());
-				a_renderer->GetInterface()->DestroyObjectDescriptor(m_lightsDescriptors[i]);
-				delete comp;
+				if (auto& comp = m_lightComponents[i])
+				{
+					if (comp)
+					{
+						comp->Destroy();
+						delete comp;
+						
+					}
+				}
+			}
+			if (m_lightsDescriptor)
+			{
+				m_lightsDescriptor->Destroy(a_renderer->GetLogicalDevice());
+				a_renderer->GetInterface()->DestroyObjectDescriptor(m_lightsDescriptor);
 			}
 			m_lightComponents.clear();
 			m_lightsAvailableIndexes.clear();
@@ -80,33 +109,31 @@ namespace Engine
 			if (m_availableIndexes.empty())
 			{
 				m_components.emplace_back(a_meshComponent);
+				a_meshComponent->SetUid(static_cast<int>(m_components.size()) - 1);
 				const int t_nbComps = static_cast<int>(m_components.size() - 1);
 				m_pendingComponents.push_back(t_nbComps);
 				return t_nbComps;
 			}
-			for (const int t_availableIndex : m_availableIndexes)
-			{
-				if (m_components.at(t_availableIndex) == nullptr)
-				{
-					m_components.at(t_availableIndex) = a_meshComponent;
-					m_pendingComponents.push_back(t_availableIndex);
-					return t_availableIndex;
-				}
-			}
-			return -1;
+			int t_index = m_availableIndexes.back();
+			m_availableIndexes.pop_back();
+			m_components[t_index] = a_meshComponent;
+			a_meshComponent->SetUid(t_index);
+			m_pendingComponents.push_back(t_index);
+
+			return t_index;
 			// ADD PENDING INDEX
 		}
 
 		int RenderSystem::AddComponent(LightComponent* a_lightComponent)
 		{
-			if (m_availableIndexes.empty())
+			if (m_lightsAvailableIndexes.empty())
 			{
 				m_lightComponents.emplace_back(a_lightComponent);
 				const int t_nbComps = static_cast<int>(m_lightComponents.size() - 1);
 				m_lightsPendingComponents.push_back(t_nbComps);
 				return t_nbComps;
 			}
-			for (const int t_availableIndex : m_availableIndexes)
+			for (const int t_availableIndex : m_lightsAvailableIndexes)
 			{
 				if (m_lightComponents.at(t_availableIndex) == nullptr)
 				{
@@ -123,9 +150,19 @@ namespace Engine
 		{
 			if (m_components.at(a_id) != nullptr && a_id < m_components.size())
 			{
+				vkDeviceWaitIdle(m_renderer->GetLogicalDevice()->CastVulkan()->GetVkDevice());
+				if (m_components.at(a_id)->GetMesh() != nullptr)
+				{
+					//m_components.at(a_id)->GetMesh()->Unload(m_renderer);
+				}
 				m_components.at(a_id)->Destroy();
 				delete m_components.at(a_id);
+				m_components[a_id] = nullptr;
 				m_availableIndexes.push_back(a_id);
+
+				m_objectsDescriptors[a_id]->Destroy(m_renderer->GetLogicalDevice());
+				delete m_objectsDescriptors[a_id];
+				m_objectsDescriptors[a_id] = nullptr;
 			}
 		}
 
@@ -133,9 +170,17 @@ namespace Engine
 		{
 			if (m_lightComponents.at(a_id) != nullptr && a_id < m_lightComponents.size())
 			{
-				m_lightComponents.at(a_id)->Destroy();
-				delete m_lightComponents.at(a_id);
-				m_availableIndexes.push_back(a_id);
+				if (m_lightComponents.at(a_id))
+				{
+					m_lightComponents.at(a_id)->Destroy();
+					delete m_lightComponents.at(a_id);
+					m_lightComponents[a_id] = nullptr;
+					m_availableIndexes.push_back(a_id);
+
+					m_lightsData[a_id].m_position = Math::vec3(0.f);
+					m_lightsData[a_id].m_color = Math::vec3(0.f);
+					m_lightsData[a_id].m_intensity = 0.f;
+				}
 			}
 		}
 
@@ -312,16 +357,14 @@ namespace Engine
 					t_newRenderObject->SetTexture(a_logicalDevice, t_defaultTexture->GetImage(), 1, 1);
 				}
 
-				if (m_availableIndexes.empty())
+				
+				if (m_pendingComponents[i] >= static_cast<int>(m_objectsDescriptors.size()))
 				{
 					m_objectsDescriptors.push_back(t_newRenderObject);
 				}
 				else
 				{
-					if (m_objectsDescriptors.at(m_availableIndexes.at(i)) == nullptr)
-					{
-						m_objectsDescriptors.at(m_availableIndexes.at(i)) = t_newRenderObject;
-					}
+					m_objectsDescriptors[m_pendingComponents[i]] = t_newRenderObject;
 				}
 
 				t_componentsToErase.push_back(i);
@@ -338,24 +381,9 @@ namespace Engine
 			Core::RHI::IPhysicalDevice* a_physicalDevice, Core::RHI::ISurface* a_surface, Core::RHI::ICommandPool* a_commandPool,
 			Core::RHI::IGraphicPipeline* a_litPipeine, uint32_t a_count)
 		{
-			for (int i = 0; i < m_lightsPendingComponents.size(); ++i)
+			for (int i = 0; i < m_lightsPendingComponents.size() && m_lightComponents.size() <= MAX_LIGHTS; ++i)
 			{
-				Core::RHI::IObjectDescriptor* t_newLightObject = apiInterface->InstantiateObjectDescriptor();
-
-				t_newLightObject->Create(a_logicalDevice, a_litPipeine, Core::RHI::Lights, 1, 1, { a_count }, { Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_UNIFORM_BUFFER });
-				t_newLightObject->SetUniform(a_logicalDevice, a_physicalDevice, a_commandPool, 0, &m_lightComponents[m_lightsPendingComponents[i]]->GetLight().GetData(), sizeof(LightData), 0, 1);
-
-				if (m_lightsAvailableIndexes.empty())
-				{
-					m_lightsDescriptors.push_back(t_newLightObject);
-				}
-				else
-				{
-					if (m_lightsDescriptors.at(m_lightsAvailableIndexes.at(i)) == nullptr)
-					{
-						m_lightsDescriptors.at(m_lightsAvailableIndexes.at(i)) = t_newLightObject;
-					}
-				}
+				m_lightsData[i] = m_lightComponents[m_lightsPendingComponents[i]]->GetLight().GetData();
 			}
 			m_lightsPendingComponents.clear();
 		}

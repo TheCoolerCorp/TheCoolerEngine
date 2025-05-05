@@ -85,6 +85,10 @@ void Editor::EditorLayer::Ui::UiLoggerWindow::Destroy()
 {
 }
 
+void Editor::EditorLayer::Ui::UiLoggerWindow::NotifyObjectRemoved(Engine::GamePlay::GameObject* a_object)
+{
+}
+
 //checks if m_selectedLog is valid
 bool Editor::EditorLayer::Ui::UiLoggerWindow::IsValidLog()
 {

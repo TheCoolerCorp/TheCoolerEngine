@@ -42,6 +42,13 @@ file(GLOB IMGUI_SOURCES_FILES "${IMGUI_FILES_LOCATION}/*.cpp" "${IMGUI_FILES_LOC
 add_library(imgui INTERFACE)
 target_sources(imgui INTERFACE ${IMGUI_SOURCES_FILES})
 target_include_directories(imgui INTERFACE ${IMGUI_FILES_LOCATION})
+
+#IMGUIZMO
+set(IMGUIZMO_FILES_LOCATION "imguizmo")
+file(GLOB IMGUIZMO_SOURCES_FILES "${IMGUIZMO_FILES_LOCATION}/*.cpp")
+add_library(imguizmo INTERFACE)
+target_sources(imguizmo INTERFACE ${IMGUIZMO_SOURCES_FILES})
+target_include_directories(imguizmo INTERFACE ${IMGUIZMO_FILES_LOCATION})
 #SPIR-V
 #add_subdirectory(spir-v)
 #set(SPIRV_FILES_LOCATION "spir-v")

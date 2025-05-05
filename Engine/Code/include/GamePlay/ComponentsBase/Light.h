@@ -14,7 +14,7 @@ namespace Engine
 		public:
 			alignas(16)Math::vec3 m_position = { 0.f, 0.f, 0.f };
 			alignas(16)Math::vec3 m_color = { 1.f, 1.f, 1.f };
-			float m_intensity = 100.f;
+			float m_intensity = 15.f;
 		};
 
 		/*
@@ -35,7 +35,7 @@ namespace Engine
 			ENGINE_API void SetColor(Math::vec3 a_color) { m_data.m_color = a_color; }
 
 			ENGINE_API float GetIntensisty() { return m_data.m_intensity; }
-			ENGINE_API void SetPosition(float a_intensity) { m_data.m_intensity = a_intensity; }
+			ENGINE_API void SetIntensity(float a_intensity) { m_data.m_intensity = a_intensity; }
 
 			ENGINE_API LightData& GetData() { return m_data; }
 

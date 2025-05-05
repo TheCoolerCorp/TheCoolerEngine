@@ -248,10 +248,9 @@ void Editor::EditorLayer::Ui::UiMeshComponent::AddDragDropImageTarget(ImageType 
 		if (const ImGuiPayload* t_payload = ImGui::AcceptDragDropPayload("IMAGE_PATH_PAYLOAD"))
 		{
 			const char* t_path = static_cast<const char*>(t_payload->Data);
-			const int t_id = m_window->GetSelectedObject()->GetId();
+			const int t_id = m_meshComp->GetUid();
 			Engine::Core::RHI::IObjectDescriptor* t_descriptor = m_layer->GetScene()->GetRenderSystem()->GetMeshDescriptor(t_id);
-			vkDeviceWaitIdle(m_layer->GetRenderer()->GetLogicalDevice()->CastVulkan()->GetVkDevice());
-
+			//vkDeviceWaitIdle(m_layer->GetRenderer()->GetLogicalDevice()->CastVulkan()->GetVkDevice());
 			switch (a_type)
 			{
 			case ALBEDO:
@@ -270,6 +269,7 @@ void Editor::EditorLayer::Ui::UiMeshComponent::AddDragDropImageTarget(ImageType 
 				m_material->SetAO(t_path, m_layer->GetRenderer());
 				break;
 			}
+			m_material->SetNeedUpdate(true);
 			m_isOutOfDate = true;
 			m_material->SetNeedUpdate(true);
 		}
