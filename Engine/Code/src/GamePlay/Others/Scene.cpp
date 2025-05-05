@@ -24,6 +24,7 @@ namespace Engine
 			m_transformSystem = new TransformSystem;
 
 			m_renderSystem = new RenderSystem;
+			m_renderSystem->Create(a_renderer);
 
 			m_physicsSystem = new PhysicsSystem;
 			m_physicsSystem->Create();
@@ -66,6 +67,7 @@ namespace Engine
 
 
 			LightGO* t_light = new LightGO(Math::vec3(10.f, 0.f, 0.f), Math::vec3(0.f, 0.f, 0.f), Math::vec3(1.f));
+			LightGO* t_light2 = new LightGO(Math::vec3(0.f, 0.f, 0.f), Math::vec3(0.f, 0.f, 0.f), Math::vec3(1.f));
 
 
 			AddGameObject(t_object);
@@ -73,6 +75,7 @@ namespace Engine
 			AddGameObject(t_object3);
 			//// DON'T ADD MORE THAN ONE LIGHT FOR ONE
 			AddGameObject(t_light);
+			AddGameObject(t_light2);
 
 			Load(a_renderer);
 		}
@@ -211,9 +214,9 @@ namespace Engine
 			return t_descriptorsMap;
 		}
 
-		std::vector<Core::RHI::IObjectDescriptor*> Scene::GetLightsDescriptors()
+		Core::RHI::IObjectDescriptor* Scene::GetLightsDescriptors()
 		{
-			return m_renderSystem->GetLightDescriptors();
+			return m_renderSystem->GetLightDescriptor();
 		}
 
 		/**

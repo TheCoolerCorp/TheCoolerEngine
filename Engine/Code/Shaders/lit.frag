@@ -27,12 +27,19 @@ layout(set = 1, binding = 7) uniform HasTextures
 } per_bTexs;
 
 
-// Lights
-layout(set = 2, binding = 0) uniform LightData
+
+struct LightData
 {
     vec3 position;
     vec3 color;
     float intensity;
+};
+
+// Lights
+layout(set = 2, binding = 0) uniform LightDatas 
+{
+    LightData data[5];
+
 } light_lhtValues;
 
 layout(location = 0) in vec3 inNormal;
@@ -65,11 +72,11 @@ vec3 getNormalFromMap()
     return normalize(TBN * tangentNormal);
 }
 
-vec3 Radiance(vec3 lightDir)
+vec3 Radiance(vec3 lightDir, vec3 lightColor, float intensity)
 {
     float dst = length(lightDir);
     float attenuation = 1.0 / (dst * dst);
-    vec3 radiance = light_lhtValues.color * attenuation * light_lhtValues.intensity;
+    vec3 radiance = lightColor * attenuation * intensity;
 
     return radiance;
 }
@@ -193,13 +200,13 @@ void main()
 
      vec3 Lo = vec3(0.0);
 
-    for(int i = 0; i < 1; ++i) 
+    for(int i = 0; i < 5; ++i)  
     {
-        vec3 lightVec = light_lhtValues.position - inWorldPos;
+        vec3 lightVec = light_lhtValues.data[i].position - inWorldPos;
         vec3 lightDir = normalize(lightVec);
         vec3 halfwayVec = normalize(camDir + lightDir);
         
-        vec3 radiance = Radiance(lightVec);
+        vec3 radiance = Radiance(lightVec, light_lhtValues.data[i].color, light_lhtValues.data[i].intensity);
 
         float D   = Distribution(halfwayVec, roughness, normal);   
         float G   = Geometry(camDir, lightDir, roughness, normal);      

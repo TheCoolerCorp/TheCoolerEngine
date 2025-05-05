@@ -91,8 +91,8 @@ namespace Engine
 					std::unordered_map<RHI::DescriptorSetPipelineTarget, std::vector<uint32_t>>& a_nbIndices,
 					std::unordered_map<RHI::DescriptorSetPipelineTarget, std::vector<RHI::IObjectDescriptor*>>& a_descriptors)
 				{
-					std::vector<RHI::IObjectDescriptor*> m_descriptors = info.scene->GetLightsDescriptors();
-					// TODO : CHANGE LATER TO HANDLE MULTIPLE LIGHTS AND DIFFERENT CAMERA FOR SCENE MODE (Editor or play)
+					std::vector<RHI::IObjectDescriptor*> m_descriptors;
+					m_descriptors.emplace_back(info.scene->GetLightsDescriptors());
 					m_descriptors.emplace_back(info.scene->GetCameraDescriptor());
 
 					m_litPipeline->Bind(info.renderer->GetCommandPool(), 0, info.renderer->GetSwapChain());

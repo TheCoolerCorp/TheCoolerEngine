@@ -15,6 +15,7 @@ namespace Engine
 {
 	namespace GamePlay
 	{
+		#define MAX_LIGHTS uint32_t(5)
 		class RenderSystem : public System
 		{
 		public:
@@ -56,8 +57,7 @@ namespace Engine
 			*/
 			std::vector<LightComponent*>& GetLightComponents() { return m_lightComponents; }
 			ENGINE_API LightComponent* GetLightComponent(int a_id) const;
-			std::vector<Core::RHI::IObjectDescriptor*>& GetLightDescriptors() { return m_lightsDescriptors; }
-			[[nodiscard]] Core::RHI::IObjectDescriptor* GetLightDescriptor(int a_idx);
+			[[nodiscard]] Core::RHI::IObjectDescriptor* GetLightDescriptor() { return m_lightsDescriptor; }
 
 			/*
 			* Camera part getters
@@ -67,15 +67,18 @@ namespace Engine
 			//[[nodiscard]] Core::RHI::IObjectDescriptor* GetCameraDescriptor(int a_idx);
 
 		private:
+			LightData m_lightsData[MAX_LIGHTS];
+
 			std::vector<MeshComponent*> m_components;
 			std::vector<int> m_availableIndexes;
 			std::vector<Core::RHI::IObjectDescriptor*> m_objectsDescriptors;
 			std::vector<int> m_pendingComponents;
 
 			std::vector<LightComponent*> m_lightComponents;
-			std::vector<Core::RHI::IObjectDescriptor*> m_lightsDescriptors;
+			Core::RHI::IObjectDescriptor* m_lightsDescriptor;
 			std::vector<int> m_lightsAvailableIndexes;
 			std::vector<int> m_lightsPendingComponents;
+
 
 			Core::Renderer* m_renderer = nullptr;
 
