@@ -227,7 +227,6 @@ namespace Engine
 			{
 				return t_descriptor->GetPipelineTargetType();
 			}
-			LOG_ERROR("Tired to get descriptor at an invalid index!");
 			return Core::RHI::DescriptorSetPipelineTarget::LitDescriptor;
 		}
 
