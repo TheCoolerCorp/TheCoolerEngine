@@ -165,10 +165,17 @@ namespace Engine
 		{
 			if (m_lightComponents.at(a_id) != nullptr && a_id < m_lightComponents.size())
 			{
-				m_lightComponents.at(a_id)->Destroy();
-				delete m_lightComponents.at(a_id);
-				m_lightComponents[a_id] = nullptr;
-				m_availableIndexes.push_back(a_id);
+				if (m_lightComponents.at(a_id))
+				{
+					m_lightComponents.at(a_id)->Destroy();
+					delete m_lightComponents.at(a_id);
+					m_lightComponents[a_id] = nullptr;
+					m_availableIndexes.push_back(a_id);
+
+					m_lightsData[a_id].m_position = Math::vec3(0.f);
+					m_lightsData[a_id].m_color = Math::vec3(0.f);
+					m_lightsData[a_id].m_intensity = 0.f;
+				}
 			}
 		}
 
