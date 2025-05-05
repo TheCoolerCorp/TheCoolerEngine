@@ -33,15 +33,37 @@ namespace Engine
 
             int t_texWidth, t_texHeight, t_texChannels;
             stbi_uc* t_pixels = stbi_load(m_path.c_str(), &t_texWidth, &t_texHeight, &t_texChannels, STBI_rgb_alpha);
-
             if (!t_pixels)
             {
                 LOG_ERROR("Can't load image");
+                LOG_ERROR(stbi_failure_reason());
+            }
+
+            if (m_path.find("ao") != std::string::npos)
+            {
+                m_type = TextureType::RGB;
+            }
+            else if (m_path.find("nor") != std::string::npos || m_path.find("normal") != std::string::npos)
+            {
+                m_type = TextureType::RGB;
+            }
+            else if (m_path.find("rough") != std::string::npos || m_path.find("roughness") != std::string::npos)
+            {
+                m_type = TextureType::RGB;
+            }
+            else if (m_path.find("metal") != std::string::npos || m_path.find("metallic") != std::string::npos)
+            {
+                m_type = TextureType::RGB;
+            }
+            else
+            {
+                m_type = TextureType::SRGB;
             }
 
             m_width = t_texWidth;
             m_height = t_texHeight;
             m_data = t_pixels;
+            m_channels = 4;
 
             m_isLoaded.store(true, std::memory_order_release);
             m_isLoading.store(false, std::memory_order_release);

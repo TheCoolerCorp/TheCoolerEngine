@@ -38,6 +38,7 @@ JPH_NAMESPACE_BEGIN
 		return m_objectToBroadPhase[a_iLayer];
 	}
 
+#if defined(JPH_EXTERNAL_PROFILE) || defined(JPH_PROFILE_ENABLED)
 	const char* MyBroadPhaseLayerInterface::GetBroadPhaseLayerName(const BroadPhaseLayer a_inLayer) const
 	{
 		switch (static_cast<BroadPhaseLayer::Type>(a_inLayer))
@@ -55,6 +56,7 @@ JPH_NAMESPACE_BEGIN
 			return "INVALID";
 		}
 	}
+#endif
 
 	bool ObjectVsBroadPhaseLayerFilterImpl::ShouldCollide(const ObjectLayer a_inLayer1, const BroadPhaseLayer a_inLayer2) const
 	{

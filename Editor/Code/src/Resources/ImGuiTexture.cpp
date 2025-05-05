@@ -15,12 +15,10 @@ namespace Editor::EditorLayer::Ui
 	{
 
 		Engine::Resource::ResourceManager* t_resourceManager = Engine::GamePlay::ServiceLocator::GetResourceManager();
-		t_resourceManager->CreateResource<Engine::Resource::Texture>(a_path);
 
-		Engine::Ref<Engine::Resource::Texture> t_texture = t_resourceManager->CreateResource<Engine::Resource::Texture>(a_path);
-		t_texture->Load();
-		t_texture->CreateImage(a_renderer);
-		m_texture = t_texture;
+		m_texture = t_resourceManager->CreateResource<Engine::Resource::Texture>(a_path);
+		m_texture->Load();
+		m_texture->CreateImage(a_renderer);
 
 		m_dSet = ImGui_ImplVulkan_AddTexture(m_texture->GetImage()->CastVulkan()->GetSampler(), m_texture->GetImage()->CastVulkan()->GetView(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 	}

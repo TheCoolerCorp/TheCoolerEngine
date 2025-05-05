@@ -150,7 +150,7 @@ namespace Engine
 		{
 			if (m_components.at(a_id) != nullptr && a_id < m_components.size())
 			{
-				vkDeviceWaitIdle(m_renderer->GetLogicalDevice()->CastVulkan()->GetVkDevice());
+				m_renderer->GetLogicalDevice()->WaitIdle();
 				if (m_components.at(a_id)->GetMesh() != nullptr)
 				{
 					//m_components.at(a_id)->GetMesh()->Unload(m_renderer);
@@ -209,15 +209,6 @@ namespace Engine
 				return nullptr;
 			}
 			return m_lightComponents.at(a_id);
-		}
-
-		Core::RHI::IObjectDescriptor* RenderSystem::GetLightDescriptor(int a_idx)
-		{
-			if (a_idx >= static_cast<int>(m_lightComponents.size()) || a_idx < 0)
-			{
-				return nullptr;
-			}
-			return m_lightsDescriptors[a_idx];
 		}
 
 		void RenderSystem::CreatePendingComponentsDescriptors(Core::Renderer* a_renderer, Core::RHI::ILogicalDevice* a_logicalDevice,
@@ -424,6 +415,7 @@ namespace Engine
 							t_normal->CreateImage(a_renderer);
 							const Ref<Resource::Texture> t_defaultTexture = ServiceLocator::GetResourceManager()->GetResource<Resource::Texture>("Assets/Textures/DefaultTexture.png");
 							t_newRenderObject->SetTexture(a_logicalDevice, t_defaultTexture->GetImage(), 2, 1);
+							t_material->SetNeedUpdate(true);
 						}
 						else
 						{
@@ -442,6 +434,7 @@ namespace Engine
 							const Ref<Resource::Texture> t_defaultTexture = ServiceLocator::GetResourceManager()->GetResource<Resource::Texture>("Assets/Textures/DefaultTexture.png");
 							t_metallic->CreateImage(a_renderer);
 							t_newRenderObject->SetTexture(a_logicalDevice, t_defaultTexture->GetImage(), 3, 1);
+							t_material->SetNeedUpdate(true);
 						}
 						else
 						{
@@ -460,6 +453,7 @@ namespace Engine
 							const Ref<Resource::Texture> t_defaultTexture = ServiceLocator::GetResourceManager()->GetResource<Resource::Texture>("Assets/Textures/DefaultTexture.png");
 							t_roughness->CreateImage(a_renderer);
 							t_newRenderObject->SetTexture(a_logicalDevice, t_defaultTexture->GetImage(), 3, 1);
+							t_material->SetNeedUpdate(true);
 						}
 						else
 						{
@@ -478,6 +472,7 @@ namespace Engine
 							const Ref<Resource::Texture> t_defaultTexture = ServiceLocator::GetResourceManager()->GetResource<Resource::Texture>("Assets/Textures/DefaultTexture.png");
 							t_ao->CreateImage(a_renderer);
 							t_newRenderObject->SetTexture(a_logicalDevice, t_defaultTexture->GetImage(), 3, 1);
+							t_material->SetNeedUpdate(true);
 						}
 						else
 						{
