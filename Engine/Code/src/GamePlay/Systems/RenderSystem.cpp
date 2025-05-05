@@ -237,7 +237,14 @@ namespace Engine
 				}
 				t_newRenderObject->SetUniform(a_logicalDevice, a_physicalDevice, a_commandPool, 0, &a_updatedMatrix.at(m_pendingComponents.at(i)).second, sizeof(Math::UniformMatrixs), 0, 1);
 
-				t_newRenderObject->SetTexture(a_logicalDevice, t_material->GetAlbedo()->GetImage(), 1, 1);
+				if (t_material->HasAlbedo())
+				{
+					t_newRenderObject->SetTexture(a_logicalDevice, t_material->GetAlbedo()->GetImage(), 1, 1);
+				}
+				else
+				{
+					t_newRenderObject->SetTexture(a_logicalDevice, t_material->GetEmpty()->GetImage(), 1, 1);
+				}
 
 				if (m_availableIndexes.empty())
 				{
@@ -349,6 +356,10 @@ namespace Engine
 				if (t_material->HasAlbedo())
 				{
 					t_newRenderObject->SetTexture(a_logicalDevice, t_material->GetAlbedo()->GetImage(), 1, 1);
+				}
+				else
+				{
+					t_newRenderObject->SetTexture(a_logicalDevice, t_material->GetEmpty()->GetImage(), 1, 1);
 				}
 
 				m_objectsDescriptors[a_indexes[i]]->Destroy(a_logicalDevice);
