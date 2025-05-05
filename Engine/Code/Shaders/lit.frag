@@ -58,23 +58,18 @@ vec3 getNormalFromMap()
 
     vec3 N   = normalize(inNormal);
     vec3 T  = normalize(Q1*st2.t - Q2*st1.t);
-    // MAYBE PUT A - ON B ?? Depend on righ handed or left handed
     vec3 B  = -normalize(cross(N, T));
+
     mat3 TBN = mat3(T, B, N);
 
     return normalize(TBN * tangentNormal);
-
-    //return T;
-    //return tangentNormal;
-    //return vec3(0.0, 0.0, T.z);
 }
 
 vec3 Radiance(vec3 lightDir)
 {
-    float distance = length(lightDir);
-    float attenuation = 1.0 / (distance * distance);
+    float dst = length(lightDir);
+    float attenuation = 1.0 / (dst * dst);
     vec3 radiance = light_lhtValues.color * attenuation * light_lhtValues.intensity;
-    //vec3 radiance = light_lhtValues.color * attenuation * 0.75;
 
     return radiance;
 }
@@ -200,10 +195,11 @@ void main()
 
     for(int i = 0; i < 1; ++i) 
     {
-        vec3 lightDir = normalize(light_lhtValues.position - inWorldPos);
+        vec3 lightVec = light_lhtValues.position - inWorldPos;
+        vec3 lightDir = normalize(lightVec);
         vec3 halfwayVec = normalize(camDir + lightDir);
         
-        vec3 radiance = Radiance(lightDir);
+        vec3 radiance = Radiance(lightVec);
 
         float D   = Distribution(halfwayVec, roughness, normal);   
         float G   = Geometry(camDir, lightDir, roughness, normal);      
@@ -217,11 +213,6 @@ void main()
     }   
     
     vec3 ambient = vec3(0.03) * albedo * ao;
-    //vec3 ambient = vec3(0.03) * albedo;
     vec3 color = ambient + Lo;
-    //color = color / (color + vec3(1.0));
-    //color = pow(color, vec3(1.0/2.2));
-
-    //outColor = vec4(color, 1.0 );
     outColor = vec4(color, 1.0 );
 }
