@@ -27,6 +27,10 @@ namespace Editor::EditorLayer::Ui
 		void UiDraw() override;
 		void Destroy() override;
 
+		UiComponentType GetType() override
+		{
+			return UiComponentType::RIGIDBODY;
+		}
 	private:
 		Engine::GamePlay::RigidBodyComponent* m_rigidBody = nullptr;
 

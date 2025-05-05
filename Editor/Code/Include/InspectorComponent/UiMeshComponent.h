@@ -36,6 +36,10 @@ namespace Editor::EditorLayer::Ui
 		void UiDraw() override;
 		void Destroy() override;
 
+		UiComponentType GetType() override
+		{
+			return UiComponentType::MESH;
+		}
 	private:
 		bool m_isOutOfDate = false;
 

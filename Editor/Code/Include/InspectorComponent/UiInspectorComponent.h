@@ -17,7 +17,7 @@ namespace Editor::EditorLayer::Ui
 		virtual void Create() = 0;
 		virtual void UiDraw() = 0;
 		virtual void Destroy() = 0;
-
+		virtual UiComponentType GetType() = 0;
 		/**
 		 * Set the unique id of the Inspector Component.
 		 * This id is very important for the imgui context and not setting it will cause problems

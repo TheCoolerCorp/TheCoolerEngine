@@ -8,6 +8,14 @@
 
 namespace Editor::EditorLayer::Ui
 {
+	enum UiComponentType
+	{
+		TRANSFORM,
+		MESH,
+		RIGIDBODY,
+		LIGHT
+	};
+
 	class InspectorComponent;
 
 	class InspectorUiWindow : public UiWindow
@@ -25,7 +33,8 @@ namespace Editor::EditorLayer::Ui
 		void NotifyObjectRemoved(Engine::GamePlay::GameObject* a_object) override;
 
 		Engine::GamePlay::GameObject* GetSelectedObject() { return m_selectedObject; }
-		
+
+		bool HasComponentOfType(UiComponentType a_type);
 	private:
 		
 
@@ -34,12 +43,14 @@ namespace Editor::EditorLayer::Ui
 		std::vector<InspectorComponent*> m_objectComponents;
 
 		void RefreshSelectedObject();
+		void RefreshCurrentObject();
 		bool IsObjectOutOfDate() const;
 		void AddComponent(InspectorComponent* a_component);
 		void ClearComponents();
 
 		//ui helpers
 		void CreateNameTextField();
+		void DrawComponentAddWindow();
 	};
 }
 

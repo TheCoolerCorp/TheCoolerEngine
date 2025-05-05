@@ -39,6 +39,8 @@ void Editor::EditorLayer::Ui::InspectorUiWindow::UiDraw()
 		{
 			t_objectComponent->UiDraw();
 		}
+		ImGui::Separator();
+		DrawComponentAddWindow();
 	}
 	else
 	{
@@ -74,6 +76,16 @@ void Editor::EditorLayer::Ui::InspectorUiWindow::NotifyObjectRemoved(Engine::Gam
 	}
 }
 
+bool Editor::EditorLayer::Ui::InspectorUiWindow::HasComponentOfType(UiComponentType a_type)
+{
+	for (InspectorComponent* t_component : m_objectComponents)
+	{
+		if (t_component->GetType() == a_type)
+			return true;
+	}
+	return false;
+}
+
 
 /**
  * Checks if the currently selected GameObject is different to the one stored in the inspector.
@@ -92,6 +104,11 @@ void Editor::EditorLayer::Ui::InspectorUiWindow::RefreshSelectedObject()
 	}
 	
 	m_selectedObject = t_object;
+	RefreshCurrentObject();
+}
+
+void Editor::EditorLayer::Ui::InspectorUiWindow::RefreshCurrentObject()
+{
 	ClearComponents();
 	for (Engine::GamePlay::ComponentType t_type : m_selectedObject->GetOwnedTypes())
 	{
@@ -185,4 +202,41 @@ void Editor::EditorLayer::Ui::InspectorUiWindow::CreateNameTextField()
 
 	ImGui::PopStyleVar(2);
 	ImGui::PopStyleColor(3);
+}
+
+void Editor::EditorLayer::Ui::InspectorUiWindow::DrawComponentAddWindow()
+{
+	if (ImGui::Button("Add Component", ImVec2(ImGui::GetContentRegionAvail().x, 30.0f)))
+	{
+		ImGui::OpenPopup(("AddComponent"+std::to_string(m_uid)).c_str());
+	}
+	if (ImGui::BeginPopup(("AddComponent" + std::to_string(m_uid)).c_str()))
+	{
+		//All objects have a transform by default, it is as such not needed here
+		if (!HasComponentOfType(UiComponentType::MESH))
+		{
+			if (ImGui::MenuItem("Mesh"))
+			{
+				m_selectedObject->AddComponent<Engine::GamePlay::MeshComponent>();
+				RefreshCurrentObject();
+			}
+		}
+		if (!HasComponentOfType(UiComponentType::RIGIDBODY))
+		{
+			if (ImGui::MenuItem("Rigidbody"))
+			{
+				m_selectedObject->AddComponent<Engine::GamePlay::RigidBodyComponent>();
+				RefreshCurrentObject();
+			}
+		}
+		if (!HasComponentOfType(UiComponentType::LIGHT))
+		{
+			if (ImGui::MenuItem("Light"))
+			{
+				m_selectedObject->AddComponent<Engine::GamePlay::LightComponent>();
+				RefreshCurrentObject();
+			}
+		}
+		ImGui::EndPopup();
+	}
 }
