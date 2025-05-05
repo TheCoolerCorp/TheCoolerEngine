@@ -44,25 +44,33 @@ namespace Engine
 			t_object->GetComponent<MeshComponent>()->GetMaterial()->Create(UNLIT);
 			t_object->GetComponent<MeshComponent>()->SetMesh("Assets/Meshes/viking_room.obj", a_renderer);
 
-			GameObject* t_object2 = new GameObject(Math::vec3(5.f, 0.f, 0.f), Math::vec3(0.f, Math::ToRadians(270.f), Math::ToRadians(270.f)), Math::vec3(1.f), "Lit");
+			GameObject* t_object2 = new GameObject(Math::vec3(2.5f, 0.f, 0.f), Math::vec3(0.f, Math::ToRadians(270.f), Math::ToRadians(270.f)), Math::vec3(1.f), "Lit");
 			t_object2->AddComponent<MeshComponent>();
 			t_object2->GetComponent<MeshComponent>()->SetMesh("Assets/Meshes/BaseObjects/Sphere.obj", a_renderer);
 			t_object2->GetComponent<MeshComponent>()->GetMaterial()->Create(LIT);
-			//t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetAlbedo("Assets/Textures/viking_room.png", a_renderer);
-			//t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetMetallic(1.f);
-			//t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetRoughness(0.2f);
-			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetAlbedo("Assets/Textures/PBR/pbr_diff.png", a_renderer);
-			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetNormal("Assets/Textures/PBR/pbr_nor.png", a_renderer);
-			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetMetallic("Assets/Textures/PBR/pbr_metal.png", a_renderer);
-			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetRoughness("Assets/Textures/PBR/pbr_rough.png", a_renderer);
-			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetAO("Assets/Textures/PBR/pbr_ao.png", a_renderer);
-			//t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetAO("Assets/Textures/metal_plate_ao_2k.png", a_renderer);
+			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetAlbedo("Assets/Textures/rustediron2_basecolor.png", a_renderer);
+			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetNormal("Assets/Textures/rustediron2_normal.png", a_renderer);
+			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetMetallic("Assets/Textures/rustediron2_metallic.png", a_renderer);
+			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetRoughness("Assets/Textures/rustediron2_roughness.png", a_renderer);
+			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetAO(1.f);
+
+			GameObject* t_object3 = new GameObject(Math::vec3(5.f, 0.f, 0.f), Math::vec3(0.f, Math::ToRadians(270.f), Math::ToRadians(270.f)), Math::vec3(1.f), "Lit");
+			t_object3->AddComponent<MeshComponent>();
+			t_object3->GetComponent<MeshComponent>()->SetMesh("Assets/Meshes/BaseObjects/Sphere.obj", a_renderer);
+			t_object3->GetComponent<MeshComponent>()->GetMaterial()->Create(LIT);
+			t_object3->GetComponent<MeshComponent>()->GetMaterial()->SetAlbedo("Assets/Textures/PBR/pbr_diff.png", a_renderer);
+			t_object3->GetComponent<MeshComponent>()->GetMaterial()->SetNormal("Assets/Textures/PBR/pbr_nor.png", a_renderer);
+			t_object3->GetComponent<MeshComponent>()->GetMaterial()->SetMetallic("Assets/Textures/PBR/pbr_metal.png", a_renderer);
+			t_object3->GetComponent<MeshComponent>()->GetMaterial()->SetRoughness("Assets/Textures/PBR/pbr_rough.png", a_renderer);
+			t_object3->GetComponent<MeshComponent>()->GetMaterial()->SetAO("Assets/Textures/PBR/pbr_ao.png", a_renderer);
+
 
 			LightGO* t_light = new LightGO(Math::vec3(10.f, 0.f, 0.f), Math::vec3(0.f, 0.f, 0.f), Math::vec3(1.f));
 
 
 			AddGameObject(t_object);
 			AddGameObject(t_object2);
+			AddGameObject(t_object3);
 			//// DON'T ADD MORE THAN ONE LIGHT FOR ONE
 			AddGameObject(t_light);
 
