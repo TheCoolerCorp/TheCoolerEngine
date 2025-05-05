@@ -94,12 +94,20 @@ namespace Engine
 				t_obj->UpdateColliderMat();
 
 				const int t_meshId = t_obj->GetComponentID<MeshComponent>();
-				if (std::cmp_not_equal(t_meshId, -1) && t_obj->GetComponent<MeshComponent>()->GetMesh()->IsLoaded())
+				if (std::cmp_not_equal(t_meshId, -1))
 				{
-					t_syncro.emplace_back(t_meshId, t_obj->GetComponent<TransformComponent>()->GetTransform()->GetUniformsMatrixs());
-					if (m_renderSystem->GetMeshComponent(t_meshId)->GetMaterial()->GetNeedUpdate())
+					Ref<Resource::Mesh> t_mesh = t_obj->GetComponent<MeshComponent>()->GetMesh();
+					if (t_obj->GetComponent<MeshComponent>()->GetMesh()->IsBound())
 					{
-						t_materialUpdate.push_back(t_meshId);
+						t_syncro.emplace_back(t_meshId, t_obj->GetComponent<TransformComponent>()->GetTransform()->GetUniformsMatrixs());
+						if (m_renderSystem->GetMeshComponent(t_meshId)->GetMaterial()->GetNeedUpdate())
+						{
+							t_materialUpdate.push_back(t_meshId);
+						}
+					}
+					else
+					{
+						t_mesh->BindBuffers(a_renderer);
 					}
 				}
 

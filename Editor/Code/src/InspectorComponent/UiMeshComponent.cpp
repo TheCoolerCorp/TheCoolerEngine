@@ -271,6 +271,7 @@ void Editor::EditorLayer::Ui::UiMeshComponent::AddDragDropImageTarget(ImageType 
 				break;
 			}
 			m_isOutOfDate = true;
+			m_material->SetNeedUpdate(true);
 		}
 		ImGui::EndDragDropTarget();
 	}
