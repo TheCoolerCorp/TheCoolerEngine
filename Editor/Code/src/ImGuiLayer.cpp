@@ -118,13 +118,28 @@ namespace Editor::EditorLayer::Ui
 				ImGui::EndMenu();
 				
 			}
-			CreateItemAddMenu();
+			if (ImGui::BeginMenu("Scene"))
+			{
+				if (ImGui::MenuItem("Save Scene"))
+				{
+					//m_app->GetCurrentScene()->SaveScene();
+				}
+				if (ImGui::MenuItem("Load Scene"))
+				{
+					//m_app->GetCurrentScene()->LoadScene();
+				}
+				ImGui::Separator();
+				CreateItemAddMenu();
+				ImGui::EndMenu();
+			}
 			ImGui::EndMainMenuBar();
 		}
 		ImGui::End();
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0.0f,0.0f });
-		ImGui::Begin("Viewport");
+
+
+		ImGui::Begin("Viewport", nullptr, ImGuiWindowFlags_NoScrollbar);
 		m_imGui->DrawSceneAsImage();
 		GizmoMainDraw();
 		ImGui::End();
@@ -202,58 +217,45 @@ namespace Editor::EditorLayer::Ui
 
 	void ImGuiLayer::CreateItemAddMenu()
 	{
-		if (ImGui::BeginMenu("Scene"))
+		if (ImGui::BeginMenu("Add Object"))
 		{
-			if (ImGui::MenuItem("Save Scene"))
+			if (ImGui::MenuItem("Empty Object"))
 			{
-				//m_app->GetCurrentScene()->SaveScene();
+				m_app->GetCurrentScene()->AddGameObject(Engine::GamePlay::GameObjectType::OBJECTTYPE_EMPTY);
 			}
-			if (ImGui::MenuItem("Load Scene"))
+			if (ImGui::MenuItem("Camera"))
 			{
-				//m_app->GetCurrentScene()->LoadScene();
+				m_app->GetCurrentScene()->AddGameObject(Engine::GamePlay::GameObjectType::OBJECTTYPE_CAMERA);
 			}
-			ImGui::Separator();
-			if (ImGui::BeginMenu("Add Object"))
+			if (ImGui::MenuItem("Cube"))
 			{
-				if (ImGui::MenuItem("Empty Object"))
+				m_app->GetCurrentScene()->AddGameObject(Engine::GamePlay::GameObjectType::OBJECTTYPE_CUBE);
+			}
+			if (ImGui::MenuItem("Sphere"))
+			{
+				m_app->GetCurrentScene()->AddGameObject(Engine::GamePlay::GameObjectType::OBJECTTYPE_SPHERE);
+			}
+			if (ImGui::MenuItem("Plane"))
+			{
+				m_app->GetCurrentScene()->AddGameObject(Engine::GamePlay::GameObjectType::OBJECTTYPE_PLANE);
+			}
+			if (ImGui::BeginMenu("Light"))
+			{
+				if (ImGui::MenuItem("Point Light"))
 				{
-					m_app->GetCurrentScene()->AddGameObject(Engine::GamePlay::GameObjectType::OBJECTTYPE_EMPTY);
+					m_app->GetCurrentScene()->AddGameObject(Engine::GamePlay::GameObjectType::OBJECTTYPE_LIGHT);
 				}
-				if (ImGui::MenuItem("Camera"))
+				if (ImGui::MenuItem("Directional Light"))
 				{
-					m_app->GetCurrentScene()->AddGameObject(Engine::GamePlay::GameObjectType::OBJECTTYPE_CAMERA);
+					//m_app->GetCurrentScene()->AddGameObject(Engine::GamePlay::GameObjectType::OBJECTTYPE_LIGHT);
 				}
-				if (ImGui::MenuItem("Cube"))
+				if (ImGui::MenuItem("Spot Light"))
 				{
-					m_app->GetCurrentScene()->AddGameObject(Engine::GamePlay::GameObjectType::OBJECTTYPE_CUBE);
+					//m_app->GetCurrentScene()->AddGameObject(Engine::GamePlay::GameObjectType::OBJECTTYPE_LIGHT);
 				}
-				if (ImGui::MenuItem("Sphere"))
-				{
-					m_app->GetCurrentScene()->AddGameObject(Engine::GamePlay::GameObjectType::OBJECTTYPE_SPHERE);
-				}
-				if (ImGui::MenuItem("Plane"))
-				{
-					m_app->GetCurrentScene()->AddGameObject(Engine::GamePlay::GameObjectType::OBJECTTYPE_PLANE);
-				}
-				if (ImGui::BeginMenu("Light"))
-				{
-					if (ImGui::MenuItem("Point Light"))
-					{
-						m_app->GetCurrentScene()->AddGameObject(Engine::GamePlay::GameObjectType::OBJECTTYPE_LIGHT);
-					}
-					if (ImGui::MenuItem("Directional Light"))
-					{
-						//m_app->GetCurrentScene()->AddGameObject(Engine::GamePlay::GameObjectType::OBJECTTYPE_LIGHT);
-					}
-					if (ImGui::MenuItem("Spot Light"))
-					{
-						//m_app->GetCurrentScene()->AddGameObject(Engine::GamePlay::GameObjectType::OBJECTTYPE_LIGHT);
-					}
-					ImGui::EndMenu();
-				}
-
 				ImGui::EndMenu();
 			}
+
 			ImGui::EndMenu();
 		}
 	}
@@ -280,14 +282,11 @@ namespace Editor::EditorLayer::Ui
 
 		const float* t_viewf = t_cameraView.mElements.data();
 		const float* t_projectionf = t_cameraProjection.mElements.data();
-		const float* t_identityf = t_identityMatrix.mElements.data();
-		//lets start off by drawing the grid
 
-		ImGuizmo::SetDrawlist(ImGui::GetWindowDrawList());
+		ImGuizmo::SetDrawlist();
 		ImVec2 imageMin = ImGui::GetItemRectMin();
 		ImVec2 imageSize = ImGui::GetItemRectSize();
 		ImGuizmo::SetRect(imageMin.x, imageMin.y, imageSize.x, imageSize.y);
-		//ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, ImGui::GetWindowSize().x, ImGui::GetWindowSize().y);
 
 		if (m_selectedGameObject && m_selectedGameObject->GetComponent<Engine::GamePlay::TransformComponent>())
 		{
@@ -312,9 +311,6 @@ namespace Editor::EditorLayer::Ui
 				m_selectedGameObject->GetComponent<Engine::GamePlay::TransformComponent>()->Set(t_transformData);
 			}
 		}
-
-		//ImGuizmo::DrawGrid(t_viewf, t_projectionf, t_identityf, 100.f);
-
 	}
 
 	void ImGuiLayer::SetupImGuiStyle()

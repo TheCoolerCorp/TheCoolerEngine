@@ -22,12 +22,19 @@ namespace Editor::EditorLayer::Ui
 
 		static void SetRootPath(const std::filesystem::path& a_path) { m_rootPath = a_path; }
 	private:
+		bool m_previewImages = false;
 
 		std::filesystem::path m_currentPath;
 		static std::filesystem::path m_rootPath;
+
 		static ImGuiTexture* m_folderTexture;
 		static ImGuiTexture* m_imageTexture;
 		static ImGuiTexture* m_fileTexture;
+
+		std::unordered_map<std::string, ImGuiTexture*> m_textures;
+
+		void SetCurrentPath(std::filesystem::path a_path);
+
 		void DrawFileInfo();
 
 		void DrawFileTree();
@@ -37,6 +44,9 @@ namespace Editor::EditorLayer::Ui
 		bool IsImage(const std::filesystem::path& a_path);
 
 		std::filesystem::path TruncatePathToRoot(const std::filesystem::path& a_path);
+
+		void LoadContextImages(const std::filesystem::path& a_path);
+		void ClearContextImages();
 
 		void DrawTextCentered(std::string a_text);
 		void DrawFileImage(const std::filesystem::directory_entry& a_path);
