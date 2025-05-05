@@ -28,7 +28,7 @@ void main()
     // Transform Vertex position into world pos
     outWorldPos = vec3(per_objModel.model * vec4(inPosition, 1.0));
 
-    // Transform normal position into world pos
+    // Transform normal position into world pos 
     outNormal = mat3(per_objModel.normalMatrix) * inNormal;
 
     // Don't transform texCord, keep in UV space

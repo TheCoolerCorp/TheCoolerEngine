@@ -51,11 +51,11 @@ namespace Engine
 			//t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetAlbedo("Assets/Textures/viking_room.png", a_renderer);
 			//t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetMetallic(1.f);
 			//t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetRoughness(0.2f);
-			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetAlbedo("Assets/Textures/metal_plate_diff_2k.png", a_renderer);
-			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetNormal("Assets/Textures/metal_plate_nor_dx_2k.png", a_renderer);
-			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetMetallic("Assets/Textures/metal_plate_metal_2k.png", a_renderer);
-			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetRoughness("Assets/Textures/metal_plate_rough_2k.png", a_renderer);
-			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetAO("Assets/Textures/metal_plate_ao_2k.png", a_renderer);
+			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetAlbedo("Assets/Textures/PBR/pbr_diff.png", a_renderer);
+			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetNormal("Assets/Textures/PBR/pbr_nor.png", a_renderer);
+			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetMetallic("Assets/Textures/PBR/pbr_metal.png", a_renderer);
+			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetRoughness("Assets/Textures/PBR/pbr_rough.png", a_renderer);
+			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetAO("Assets/Textures/PBR/pbr_ao.png", a_renderer);
 			//t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetAO("Assets/Textures/metal_plate_ao_2k.png", a_renderer);
 
 			LightGO* t_light = new LightGO(Math::vec3(10.f, 0.f, 0.f), Math::vec3(0.f, 0.f, 0.f), Math::vec3(1.f));

@@ -48,7 +48,8 @@ const float PI = 3.14159265359;
 
 vec3 getNormalFromMap()
 {
-    vec3 tangentNormal = texture(per_normalMap, inTexCoord).xyz * 2.0 - 1.0;
+    vec3 tangentNormal = texture(per_normalMap, inTexCoord).xyz;
+    tangentNormal = tangentNormal * 2.0 - 1.0;
 
     vec3 Q1  = dFdx(inWorldPos);
     vec3 Q2  = dFdy(inWorldPos);
@@ -61,11 +62,11 @@ vec3 getNormalFromMap()
     vec3 B  = -normalize(cross(N, T));
     mat3 TBN = mat3(T, B, N);
 
-    //return normalize(TBN * tangentNormal);
+    return normalize(TBN * tangentNormal);
 
-    //return T * 0.5 + 0.5;
+    //return T;
     //return tangentNormal;
-    return vec3(0.0, 0.0, T.z * 0.5 + 0.5);
+    //return vec3(0.0, 0.0, T.z);
 }
 
 vec3 Radiance(vec3 lightDir)
@@ -221,5 +222,6 @@ void main()
     color = color / (color + vec3(1.0));
     color = pow(color, vec3(1.0/2.2));
 
-    outColor = vec4(normal, 1 );
+    //outColor = vec4(color, 1.0 );
+    outColor = vec4(color, 1.0 );
 }
