@@ -74,17 +74,18 @@ namespace Engine
 			LightGO* t_light = new LightGO(Math::vec3(10.f, 0.f, 0.f), Math::vec3(0.f, 0.f, 0.f), Math::vec3(1.f));
 			LightGO* t_light2 = new LightGO(Math::vec3(0.f, 0.f, 0.f), Math::vec3(0.f, 0.f, 0.f), Math::vec3(1.f));
 
-			/*CameraGO* t_camera = new CameraGO(Math::vec3(0.f, 0.f, 0.f), Math::vec3(0.f, 0.f, 0.f), Math::vec3(1.f));
+			CameraGO* t_camera = new CameraGO(Math::vec3(0.f, 0.f, 0.f), Math::vec3(0.f, 0.f, 0.f), Math::vec3(1.f));
 			t_camera->Set(Math::vec3(0.f, 1.f, 0.f), Math::vec3(0.f, 0.f, 0.f),
 				Math::vec3(0.f, 1.f, 3.f), Math::ToRadians(70.f),
 				static_cast<float>(a_width) / static_cast<float>(a_height), 0.1f, 100.f, 10.f, 20.f);
-				*/
+			t_camera->GetCameraComponent()->GetCamera().Create(a_renderer);
+				
 			AddGameObject(t_object);
 			AddGameObject(t_object2);
 			AddGameObject(t_object3);
 			AddGameObject(t_light);
 			AddGameObject(t_light2);
-			//AddGameObject(t_camera);
+			AddGameObject(t_camera);
 
 			//Load(a_renderer);
 		}
@@ -114,6 +115,7 @@ namespace Engine
 
 			std::vector<std::pair<int, Math::UniformMatrixs>> t_syncro;
 			std::vector<std::pair<int, Math::vec3>> t_lightSyncro;
+			std::vector<std::pair<int, Math::mat4>> t_cameraSyncro;
 			std::vector<Math::Transform*> t_physicsTransforms;
 			std::vector<int> t_materialUpdate;
 
@@ -152,13 +154,17 @@ namespace Engine
 				{
 					t_lightSyncro.emplace_back(t_lightId, t_obj->GetComponent<TransformComponent>()->GetTransform()->GetGlobalPosition());
 				}
+
+				const uint32_t t_cameraId = t_obj->GetComponentID<CameraComponent>();
+				if (std::cmp_not_equal(t_cameraId, -1))
+				{
+					//t_lightSyncro.emplace_back(t_cameraId, t_obj->GetComponent<TransformComponent>()->GetTransform()->GetUniformsMatrixs().m_transform);
+				}
 			}
 
 			if (!m_isPlaying)
 			{
 				m_mainCamera->Update(a_renderer, a_inputHandler, a_window, a_deltatime);
-				
-
 			}
 			else
 			{
@@ -167,10 +173,11 @@ namespace Engine
 				*
 				*/
 				m_physicsSystem->Update(a_deltatime, t_physicsTransforms);
+				m_renderSystem->UpdateCamera(a_renderer, a_deltatime, a_window, a_inputHandler, m_gameCameraId);
 			}
 
 
-			m_renderSystem->Update(a_renderer, a_deltatime, t_syncro, t_lightSyncro, t_materialUpdate, a_window, a_inputHandler, m_gameCameraId);
+			m_renderSystem->Update(a_renderer, t_syncro, t_lightSyncro, t_materialUpdate, t_cameraSyncro);
 
 			t_physicsTransforms.clear();
 			t_syncro.clear();
