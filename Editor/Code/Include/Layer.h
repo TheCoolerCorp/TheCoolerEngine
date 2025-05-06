@@ -2,6 +2,8 @@
 #define LAYERBASE_H
 #include <string>
 
+
+
 namespace Engine::GamePlay
 {
 	class Scene;
@@ -16,6 +18,7 @@ namespace Engine::Core
 {
 	namespace Window
 	{
+		class IInputHandler;
 		class IWindow;
 	}
 
@@ -48,6 +51,8 @@ namespace Editor::EditorLayer
 		// Called every frame (or editor tick)
 		virtual void OnUpdate(float a_deltaTime) {}
 		virtual void OnUiRender() {}
+
+		virtual void OnProcessInputs(Engine::Core::Window::IInputHandler* a_inputHandler, float a_deltaTime) {};
 
 		virtual void Delete() = 0;
 

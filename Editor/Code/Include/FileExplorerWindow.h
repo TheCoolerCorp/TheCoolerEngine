@@ -17,6 +17,7 @@ namespace Editor::EditorLayer::Ui
 		~FileExplorerWindow() override;
 		void Create() override;
 		void UiDraw() override;
+		void ProcessInputs(Engine::Core::Window::IInputHandler* a_inputHandler, float a_deltaTime) override;
 		void Destroy() override;
 		void NotifyObjectRemoved(Engine::GamePlay::GameObject* a_object) override;
 
@@ -42,6 +43,7 @@ namespace Editor::EditorLayer::Ui
 
 		bool HasChildDirectories(const std::filesystem::path& a_path);
 		bool IsImage(const std::filesystem::path& a_path);
+		bool IsModel(const std::filesystem::path& a_path);
 
 		std::filesystem::path TruncatePathToRoot(const std::filesystem::path& a_path);
 
@@ -51,6 +53,7 @@ namespace Editor::EditorLayer::Ui
 		void DrawTextCentered(std::string a_text);
 		void DrawFileImage(const std::filesystem::directory_entry& a_path);
 		void AddImageDragDropSource(const std::filesystem::path& a_path);
+		void AddModelDragDropSource(const std::filesystem::path& a_path);
 	};
 }
 

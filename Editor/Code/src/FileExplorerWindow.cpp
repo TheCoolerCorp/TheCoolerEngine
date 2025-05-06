@@ -96,6 +96,10 @@ void Editor::EditorLayer::Ui::FileExplorerWindow::UiDraw()
 	ImGui::End();
 }
 
+void Editor::EditorLayer::Ui::FileExplorerWindow::ProcessInputs(Engine::Core::Window::IInputHandler* a_inputHandler, float a_deltaTime)
+{
+}
+
 void Editor::EditorLayer::Ui::FileExplorerWindow::Destroy()
 {
 	ClearContextImages();
@@ -135,6 +139,7 @@ void Editor::EditorLayer::Ui::FileExplorerWindow::SetCurrentPath(std::filesystem
 /**
  * Draws the content of m_currentPath (the currently selected folder) in a ImGui table
  * With an image illustrating its type and its name. Folders can be double clicked to acess its child
+ * A drag and drop source is created for each image and model
  */
 void Editor::EditorLayer::Ui::FileExplorerWindow::DrawFileInfo()
 {
@@ -162,6 +167,10 @@ void Editor::EditorLayer::Ui::FileExplorerWindow::DrawFileInfo()
 			if (IsImage(t_path)) //if image, create a drag and drop source which carries the image's path
 			{
 				AddImageDragDropSource(t_path);
+			}
+			else if (IsModel(t_path)) //if model, create a drag and drop source which carries the model's path
+			{
+				AddModelDragDropSource(t_path);
 			}
 			DrawFileImage(t_entry);
 			DrawTextCentered(t_filename);
@@ -203,7 +212,7 @@ void Editor::EditorLayer::Ui::FileExplorerWindow::DrawFileTree()
 		ImGui::TreeNodeEx(("##" + t_filename).c_str(), ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth);
 		if (ImGui::IsItemClicked())
 		{
-			SetCurrentPath(m_currentPath);
+			SetCurrentPath(m_rootPath);
 		}
 		ImGui::SameLine();
 		m_folderTexture->DrawTexture({ 15.f, 15.f });
@@ -225,7 +234,7 @@ void Editor::EditorLayer::Ui::FileExplorerWindow::DrawFileTreeRecursive(const st
 				bool open = ImGui::TreeNodeEx(("##" + t_filename).c_str(), ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth);
 				if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen())
 				{
-					SetCurrentPath(m_currentPath);
+					SetCurrentPath(t_path);
 				}
 				ImGui::SameLine();
 				m_folderTexture->DrawTexture({ 15.f, 15.f });
@@ -243,7 +252,7 @@ void Editor::EditorLayer::Ui::FileExplorerWindow::DrawFileTreeRecursive(const st
 				ImGui::TreeNodeEx(("##" + t_filename).c_str(), ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_SpanAvailWidth);
 				if (ImGui::IsItemClicked())
 				{
-					SetCurrentPath(m_currentPath);
+					SetCurrentPath(t_path);
 				}
 				ImGui::SameLine();
 				m_folderTexture->DrawTexture({ 15.f, 15.f });
@@ -273,6 +282,14 @@ bool Editor::EditorLayer::Ui::FileExplorerWindow::IsImage(const std::filesystem:
 	std::string t_extension = a_path.extension().string();
 	std::ranges::transform(t_extension, t_extension.begin(), ::tolower);
 	return (t_extension == ".png" || t_extension == ".jpg" || t_extension == ".jpeg" || t_extension == ".bmp");
+}
+
+bool Editor::EditorLayer::Ui::FileExplorerWindow::IsModel(const std::filesystem::path& a_path)
+{
+	std::string t_extension = a_path.extension().string();
+	std::ranges::transform(t_extension, t_extension.begin(), ::tolower);
+	return t_extension == ".obj"; //only .obj is supported for now
+	//return (t_extension == ".fbx" || t_extension == ".obj" || t_extension == ".gltf" || t_extension == ".glb");
 }
 
 /**
@@ -361,6 +378,17 @@ void Editor::EditorLayer::Ui::FileExplorerWindow::AddImageDragDropSource(const s
 	{
 		std::filesystem::path t_path = TruncatePathToRoot(a_path);
 		ImGui::SetDragDropPayload("IMAGE_PATH_PAYLOAD", t_path.string().c_str(), t_path.string().size() + 1);
+		ImGui::Text(a_path.filename().string().c_str());
+		ImGui::EndDragDropSource();
+	}
+}
+
+void Editor::EditorLayer::Ui::FileExplorerWindow::AddModelDragDropSource(const std::filesystem::path& a_path)
+{
+	if (ImGui::BeginDragDropSource())
+	{
+		std::filesystem::path t_path = TruncatePathToRoot(a_path);
+		ImGui::SetDragDropPayload("MESH_PATH_PAYLOAD", t_path.string().c_str(), t_path.string().size() + 1);
 		ImGui::Text(a_path.filename().string().c_str());
 		ImGui::EndDragDropSource();
 	}

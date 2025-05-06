@@ -315,7 +315,9 @@ namespace Engine
 				t_object->GetComponent<MeshComponent>()->SetMesh("Assets/Meshes/BaseObjects/plane.obj", m_renderer);
 				break;
 			case OBJECTTYPE_LIGHT:
-				return nullptr;
+				t_object = new GameObject(Math::vec3(0.f, 0.f, 0.f), Math::vec3(0.f, 0.f, 0.f), Math::vec3(1.f));
+				t_object->SetName("Light");
+				t_object->AddComponent<LightComponent>();
 				break;
 			case OBJECTTYPE_CAMERA:
 				return nullptr;

@@ -54,6 +54,12 @@ namespace Editor::EditorLayer::Ui
 
 		void DrawImageInfo(ImageType a_type);
 		void AddDragDropImageTarget(ImageType a_type);
+		void AddDragDropMeshTarget();
+
+		void UiDrawAlbedoInfo();
+		void UiDrawMetallicInfo();
+		void UiDrawRoughnessInfo();
+		void UiDrawAoInfo();
 
 		bool HasImage(ImageType a_type);
 

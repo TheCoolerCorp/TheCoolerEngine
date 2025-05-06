@@ -22,6 +22,7 @@ namespace Editor::EditorLayer::Ui
 		~SceneGraphUiWindow() override;
 		void Create() override;
 		void UiDraw() override;
+		void ProcessInputs(Engine::Core::Window::IInputHandler* a_inputHandler, float a_deltaTime) override;
 		void DrawObject(int a_transformId);
 		void Destroy() override;
 

@@ -34,6 +34,9 @@ namespace Editor::EditorLayer::Ui
 	private:
 		
 		Engine::GamePlay::TransformComponent* m_transform = nullptr;
+
+		Engine::Math::vec3 UtilsToDeg(Engine::Math::vec3 a_euler);
+		Engine::Math::vec3 UtilsToRad(Engine::Math::vec3 a_euler);
 	};
 }
 

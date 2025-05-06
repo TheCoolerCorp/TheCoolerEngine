@@ -67,6 +67,10 @@ void Editor::EditorLayer::Ui::InspectorUiWindow::Destroy()
 	m_open = false; 
 }
 
+void Editor::EditorLayer::Ui::InspectorUiWindow::ProcessInputs(Engine::Core::Window::IInputHandler* a_inputHandler, float a_deltaTime)
+{
+}
+
 void Editor::EditorLayer::Ui::InspectorUiWindow::NotifyObjectRemoved(Engine::GamePlay::GameObject* a_object)
 {
 	if (m_selectedObject)
@@ -206,24 +210,23 @@ void Editor::EditorLayer::Ui::InspectorUiWindow::CreateNameTextField()
 
 void Editor::EditorLayer::Ui::InspectorUiWindow::DrawComponentAddWindow()
 {
-	if (ImGui::Button("Add Component", ImVec2(ImGui::GetContentRegionAvail().x, 30.0f)))
-	{
-		ImGui::OpenPopup(("AddComponent"+std::to_string(m_uid)).c_str());
-	}
-	if (ImGui::BeginPopup(("AddComponent" + std::to_string(m_uid)).c_str()))
+	if (ImGui::BeginCombo(("##Add Component"+std::to_string(m_uid)).c_str(), "Add Component"))
 	{
 		//All objects have a transform by default, it is as such not needed here
 		if (!HasComponentOfType(UiComponentType::MESH))
 		{
-			if (ImGui::MenuItem("Mesh"))
+			if (ImGui::Selectable("Mesh"))
 			{
 				m_selectedObject->AddComponent<Engine::GamePlay::MeshComponent>();
+				//Workaround: if you dont set a mesh the program will crash on draw. So we set a default one
+				m_selectedObject->GetComponent<Engine::GamePlay::MeshComponent>()->SetMesh("Assets/Meshes/empty.obj", m_renderer);
+				m_selectedObject->GetComponent<Engine::GamePlay::MeshComponent>()->GetMaterial()->Create(Engine::GamePlay::UNLIT);
 				RefreshCurrentObject();
 			}
 		}
 		if (!HasComponentOfType(UiComponentType::RIGIDBODY))
 		{
-			if (ImGui::MenuItem("Rigidbody"))
+			if (ImGui::Selectable("Rigidbody"))
 			{
 				m_selectedObject->AddComponent<Engine::GamePlay::RigidBodyComponent>();
 				RefreshCurrentObject();
@@ -231,12 +234,12 @@ void Editor::EditorLayer::Ui::InspectorUiWindow::DrawComponentAddWindow()
 		}
 		if (!HasComponentOfType(UiComponentType::LIGHT))
 		{
-			if (ImGui::MenuItem("Light"))
+			if (ImGui::Selectable("Light"))
 			{
 				m_selectedObject->AddComponent<Engine::GamePlay::LightComponent>();
 				RefreshCurrentObject();
 			}
 		}
-		ImGui::EndPopup();
+		ImGui::EndCombo();
 	}
 }

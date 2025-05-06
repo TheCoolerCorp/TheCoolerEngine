@@ -36,6 +36,7 @@ namespace Engine
 			ENGINE_API vec3 GetPosition() const { return m_pos; }
 			ENGINE_API vec3 GetGlobalPosition() const { return m_globalPos; }
 
+			ENGINE_API vec3 GetEulerAngles() const { return m_eulerAngles; }
 			ENGINE_API quat GetRotation() const { return m_rot; }
 			ENGINE_API quat GetGlobalRotation() const { return m_globalRot; }
 
@@ -52,8 +53,8 @@ namespace Engine
 			ENGINE_API void SetPosition(const vec3 a_pos) { m_pos = a_pos; m_needUpdate = true; }
 			ENGINE_API void SetGlobalPositionFromMatrix();
 
-			ENGINE_API void SetRotation(const quat a_rot) { m_rot = a_rot; m_needUpdate = true; }
-			ENGINE_API void SetRotation(const vec3 a_rot) { m_rot = quat(a_rot); m_needUpdate = true; }
+			ENGINE_API void SetRotation(const quat a_rot) { m_rot = a_rot; m_eulerAngles = quat::ToEulerAngles(m_rot); m_needUpdate = true; }
+			ENGINE_API void SetRotation(const vec3 a_rot) { m_eulerAngles = a_rot; m_rot = quat(a_rot); m_needUpdate = true; }
 			ENGINE_API void SetGlobalRotationFromMatrix();
 
 			ENGINE_API void SetScale(const vec3 a_scale) { m_scale = a_scale; m_needUpdate = true; }
@@ -67,6 +68,7 @@ namespace Engine
 			bool m_needUpdate = true;
 			vec3 m_pos;
 			quat m_rot;
+			vec3 m_eulerAngles; //the storage of the local euler angles is necessary to prevent a Y axis gimbal lock
 			vec3 m_scale;
 			vec3 m_globalPos;
 			quat m_globalRot;

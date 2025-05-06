@@ -18,6 +18,7 @@ namespace Editor::EditorLayer::Ui
 		~UiLoggerWindow() override;
 		void Create() override;
 		void UiDraw() override;
+		void ProcessInputs(Engine::Core::Window::IInputHandler* a_inputHandler, float a_deltaTime) override;
 		void Destroy() override;
 		void NotifyObjectRemoved(Engine::GamePlay::GameObject* a_object) override;
 
