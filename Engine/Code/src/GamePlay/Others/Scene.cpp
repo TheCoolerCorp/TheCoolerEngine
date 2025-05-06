@@ -43,43 +43,43 @@ namespace Engine
 				static_cast<float>(a_width) / static_cast<float>(a_height), 0.1f, 100.f, 10.f, 20.f);
 			m_mainCamera->Create(a_renderer);
 
-			GameObject* t_object = new GameObject(Math::vec3(0.f, 0.f, 0.f), Math::vec3(0.f, Math::ToRadians(270.f), Math::ToRadians(270.f)), Math::vec3(1.f), "Unlit");
-			t_object->AddComponent<MeshComponent>();
-			t_object->GetComponent<MeshComponent>()->GetMaterial()->SetAlbedo("Assets/Textures/viking_room.png", a_renderer);
-			t_object->GetComponent<MeshComponent>()->GetMaterial()->Create(UNLIT);
-			t_object->GetComponent<MeshComponent>()->SetMesh("Assets/Meshes/viking_room.obj", a_renderer);
+			//GameObject* t_object = new GameObject(Math::vec3(0.f, 0.f, 0.f), Math::vec3(0.f, Math::ToRadians(270.f), Math::ToRadians(270.f)), Math::vec3(1.f), "Unlit");
+			//t_object->AddComponent<MeshComponent>();
+			//t_object->GetComponent<MeshComponent>()->GetMaterial()->SetAlbedo("Assets/Textures/viking_room.png", a_renderer);
+			//t_object->GetComponent<MeshComponent>()->GetMaterial()->Create(UNLIT);
+			//t_object->GetComponent<MeshComponent>()->SetMesh("Assets/Meshes/viking_room.obj", a_renderer);
 
-			GameObject* t_object2 = new GameObject(Math::vec3(2.5f, 0.f, 0.f), Math::vec3(0.f, Math::ToRadians(270.f), Math::ToRadians(270.f)), Math::vec3(1.f), "Lit");
-			t_object2->AddComponent<MeshComponent>();
-			t_object2->GetComponent<MeshComponent>()->SetMesh("Assets/Meshes/BaseObjects/Sphere.obj", a_renderer);
-			t_object2->GetComponent<MeshComponent>()->GetMaterial()->Create(LIT);
-			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetAlbedo("Assets/Textures/rustediron2_basecolor.png", a_renderer);
-			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetNormal("Assets/Textures/rustediron2_normal.png", a_renderer);
-			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetMetallic("Assets/Textures/rustediron2_metallic.png", a_renderer);
-			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetRoughness("Assets/Textures/rustediron2_roughness.png", a_renderer);
-			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetAO(1.f);
+			//GameObject* t_object2 = new GameObject(Math::vec3(2.5f, 0.f, 0.f), Math::vec3(0.f, Math::ToRadians(270.f), Math::ToRadians(270.f)), Math::vec3(1.f), "Lit");
+			//t_object2->AddComponent<MeshComponent>();
+			//t_object2->GetComponent<MeshComponent>()->SetMesh("Assets/Meshes/BaseObjects/Sphere.obj", a_renderer);
+			//t_object2->GetComponent<MeshComponent>()->GetMaterial()->Create(LIT);
+			//t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetAlbedo("Assets/Textures/rustediron2_basecolor.png", a_renderer);
+			//t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetNormal("Assets/Textures/rustediron2_normal.png", a_renderer);
+			//t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetMetallic("Assets/Textures/rustediron2_metallic.png", a_renderer);
+			//t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetRoughness("Assets/Textures/rustediron2_roughness.png", a_renderer);
+			//t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetAO(1.f);
 
-			GameObject* t_object3 = new GameObject(Math::vec3(5.f, 0.f, 0.f), Math::vec3(0.f, Math::ToRadians(270.f), Math::ToRadians(270.f)), Math::vec3(1.f), "Lit");
-			t_object3->AddComponent<MeshComponent>();
-			t_object3->GetComponent<MeshComponent>()->SetMesh("Assets/Meshes/BaseObjects/Sphere.obj", a_renderer);
-			t_object3->GetComponent<MeshComponent>()->GetMaterial()->Create(LIT);
-			t_object3->GetComponent<MeshComponent>()->GetMaterial()->SetAlbedo("Assets/Textures/PBR/pbr_diff.png", a_renderer);
-			t_object3->GetComponent<MeshComponent>()->GetMaterial()->SetNormal("Assets/Textures/PBR/pbr_nor.png", a_renderer);
-			t_object3->GetComponent<MeshComponent>()->GetMaterial()->SetMetallic("Assets/Textures/PBR/pbr_metal.png", a_renderer);
-			t_object3->GetComponent<MeshComponent>()->GetMaterial()->SetRoughness("Assets/Textures/PBR/pbr_rough.png", a_renderer);
-			t_object3->GetComponent<MeshComponent>()->GetMaterial()->SetAO("Assets/Textures/PBR/pbr_ao.png", a_renderer);
-
-
-			LightGO* t_light = new LightGO(Math::vec3(10.f, 0.f, 0.f), Math::vec3(0.f, 0.f, 0.f), Math::vec3(1.f));
-			LightGO* t_light2 = new LightGO(Math::vec3(0.f, 0.f, 0.f), Math::vec3(0.f, 0.f, 0.f), Math::vec3(1.f));
+			//GameObject* t_object3 = new GameObject(Math::vec3(5.f, 0.f, 0.f), Math::vec3(0.f, Math::ToRadians(270.f), Math::ToRadians(270.f)), Math::vec3(1.f), "Lit");
+			//t_object3->AddComponent<MeshComponent>();
+			//t_object3->GetComponent<MeshComponent>()->SetMesh("Assets/Meshes/BaseObjects/Sphere.obj", a_renderer);
+			//t_object3->GetComponent<MeshComponent>()->GetMaterial()->Create(LIT);
+			//t_object3->GetComponent<MeshComponent>()->GetMaterial()->SetAlbedo("Assets/Textures/PBR/pbr_diff.png", a_renderer);
+			//t_object3->GetComponent<MeshComponent>()->GetMaterial()->SetNormal("Assets/Textures/PBR/pbr_nor.png", a_renderer);
+			//t_object3->GetComponent<MeshComponent>()->GetMaterial()->SetMetallic("Assets/Textures/PBR/pbr_metal.png", a_renderer);
+			//t_object3->GetComponent<MeshComponent>()->GetMaterial()->SetRoughness("Assets/Textures/PBR/pbr_rough.png", a_renderer);
+			//t_object3->GetComponent<MeshComponent>()->GetMaterial()->SetAO("Assets/Textures/PBR/pbr_ao.png", a_renderer);
 
 
-			AddGameObject(t_object);
-			AddGameObject(t_object2);
-			AddGameObject(t_object3);
-			//// DON'T ADD MORE THAN ONE LIGHT FOR ONE
-			AddGameObject(t_light);
-			AddGameObject(t_light2);
+			//LightGO* t_light = new LightGO(Math::vec3(10.f, 0.f, 0.f), Math::vec3(0.f, 0.f, 0.f), Math::vec3(1.f));
+			//LightGO* t_light2 = new LightGO(Math::vec3(0.f, 0.f, 0.f), Math::vec3(0.f, 0.f, 0.f), Math::vec3(1.f));
+
+
+			//AddGameObject(t_object);
+			//AddGameObject(t_object2);
+			//AddGameObject(t_object3);
+			////// DON'T ADD MORE THAN ONE LIGHT FOR ONE
+			//AddGameObject(t_light);
+			//AddGameObject(t_light2);
 
 			Load(a_renderer);
 		}
@@ -442,26 +442,15 @@ namespace Engine
 					t_hasMesh = true;
 				}
 
-				LOG_DEBUG(t_name);
+				GameObject* t_gameObject = new GameObject(t_transform.mPos, t_transform.mRot, t_transform.mScale, t_name);
+				t_gameObject->GetComponent<TransformComponent>()->SetParent(t_transform.mParentId);
 
-				LOG_DEBUG("Transform :");
-				LOG_DEBUG("pos :");
-				t_transform.mPos.Print();
-				LOG_DEBUG("rot :");
-				t_transform.mRot.Print();
-				LOG_DEBUG("scale :");
-				t_transform.mScale.Print();
-				LOG_DEBUG("parent : " + Core::Debugging::ToString(t_transform.mParentId));
+				LOG_DEBUG(t_name);
 
 				if (t_hasLight)
 				{
-					LOG_DEBUG("Light :");
-					LOG_DEBUG("pos :");
-					t_light.m_position.Print();
-					LOG_DEBUG("color :");
-					t_light.m_color.Print();
-					LOG_DEBUG("intensity :");
-					LOG_DEBUG(Core::Debugging::ToString(t_light.m_intensity));
+					t_gameObject->AddComponent<LightComponent>();
+					t_gameObject->GetComponent<LightComponent>()->SetLightFromData(t_light);
 				}
 
 				if (t_hasRigidBody)
@@ -497,14 +486,34 @@ namespace Engine
 
 				if (t_hasMesh)
 				{
-					LOG_DEBUG("Mesh :");
-					LOG_DEBUG("Mesh path : " + t_mesh.mMeshPath);
-					LOG_DEBUG("Albedo path : " + t_mesh.mAlbedoPath);
-					LOG_DEBUG("Normal path : " + t_mesh.mNormalPath);
-					LOG_DEBUG("Metallic path : " + t_mesh.mMetallicPath);
-					LOG_DEBUG("Roughness path : " + t_mesh.mRoughnessPath);
-					LOG_DEBUG("AO path : " + t_mesh.mAOPath);
+					t_gameObject->AddComponent<MeshComponent>();
+					MeshComponent* t_meshComponent = t_gameObject->GetComponent<MeshComponent>();
+					t_meshComponent->SetMesh(t_mesh.mMeshPath, a_renderer);
+					Ref<Material> t_material = t_meshComponent->GetMaterial();
+					t_material->Create(static_cast<MaterialType>(t_mesh.mType));
+					if (!t_mesh.mAlbedoPath.empty())
+					{
+						t_material->SetAlbedo(t_mesh.mAlbedoPath, a_renderer);
+					}
+					if (!t_mesh.mNormalPath.empty())
+					{
+						t_material->SetNormal(t_mesh.mNormalPath, a_renderer);
+					}
+					if (!t_mesh.mMetallicPath.empty())
+					{
+						t_material->SetMetallic(t_mesh.mMetallicPath, a_renderer);
+					}
+					if (!t_mesh.mRoughnessPath.empty())
+					{
+						t_material->SetRoughness(t_mesh.mRoughnessPath, a_renderer);
+					}
+					if (!t_mesh.mAOPath.empty())
+					{
+						t_material->SetAO(t_mesh.mAOPath, a_renderer);
+					}
 				}
+
+				AddGameObject(t_gameObject);
 			}
 		}
 
@@ -862,6 +871,13 @@ namespace Engine
 				t_json["mesh"] = t_meshAny.cast<std::string>();
 			}
 
+			const meta::data t_typeField = t_meshDataType.data(t_hash("type"));
+			if (t_typeField)
+			{
+				meta::any t_typeAny = t_typeField.get(t_meshDataHandle);
+				t_json["type"] = t_typeAny.cast<int>();
+			}
+
 			const meta::data t_albedoField = t_meshDataType.data(t_hash("albedo"));
 			if (t_albedoField)
 			{
@@ -905,6 +921,8 @@ namespace Engine
 			MeshData t_meshData;
 
 			t_meshData.mMeshPath = a_json.at("mesh").get<std::string>();
+
+			t_meshData.mType = a_json.at("type").get<int>();
 
 			t_meshData.mAlbedoPath = a_json.at("albedo").get<std::string>();
 

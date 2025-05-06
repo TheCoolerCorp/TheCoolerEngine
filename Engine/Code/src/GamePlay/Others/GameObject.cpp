@@ -26,6 +26,14 @@ namespace Engine
 			m_colliderMat = GetComponent<TransformComponent>()->GetTransform()->GetTransformMatrix();
 		}
 
+		GameObject::GameObject(Math::vec3 a_position, Math::quat a_rotation, Math::vec3 a_scale, std::string a_name)
+			:m_name(std::move(a_name))
+		{
+			AddComponent<TransformComponent>();
+			GetComponent<TransformComponent>()->Set({ a_position, a_rotation, a_scale, -1 });
+			m_colliderMat = GetComponent<TransformComponent>()->GetTransform()->GetTransformMatrix();
+		}
+
 		void GameObject::UpdateColliderMat()
 		{
 			if (!GetComponent<RigidBodyComponent>())
