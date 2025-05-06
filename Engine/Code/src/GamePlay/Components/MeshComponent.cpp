@@ -16,6 +16,7 @@ namespace Engine
 
 			meta::reflect<MeshData>(t_hash("MeshData"))
 				.data<&MeshData::mMeshPath>(t_hash("mesh"))
+				.data<&MeshData::mType>(t_hash("type"))
 				.data<&MeshData::mAlbedoPath>(t_hash("albedo"))
 				.data<&MeshData::mNormalPath>(t_hash("normal"))
 				.data<&MeshData::mMetallicPath>(t_hash("metallic"))

@@ -16,6 +16,7 @@ namespace Engine
 		struct MeshData
 		{
 			std::string mMeshPath;
+			int mType;
 			std::string mAlbedoPath;
 			std::string mNormalPath;
 			std::string mMetallicPath;
