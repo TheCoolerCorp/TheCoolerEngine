@@ -22,7 +22,7 @@ namespace Engine
 
 			ENGINE_API Camera& GetCamera() { return m_camera; }
 
-			ENGINE_API static ComponentType GetType() { return ComponentType::LIGHT; }
+			ENGINE_API static ComponentType GetType() { return ComponentType::CAMERA; }
 
 			ENGINE_API static CameraComponent* GetComponent(int a_id);
 
