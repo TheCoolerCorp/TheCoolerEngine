@@ -114,6 +114,7 @@ namespace Engine
 					int t_id = m_compsId.at(t_componentType);
 
 					ComponentClass::RemoveComponent(t_id);
+					m_compsId.erase(t_componentType);
 				}
 
 				ENGINE_API void SetId(int a_id);

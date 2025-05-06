@@ -36,9 +36,11 @@ namespace Editor::EditorLayer::Ui
 		Engine::GamePlay::GameObject* GetSelectedObject() { return m_selectedObject; }
 
 		bool HasComponentOfType(UiComponentType a_type);
+		void MarkOutOfDate() { m_isOutOfDate = true; }
 	private:
-		
 
+		//boolean member inspectors can use to tell the inspector to refresh components
+		bool m_isOutOfDate = false;
 		bool m_locked = false;
 		Engine::GamePlay::GameObject* m_selectedObject = nullptr;
 		std::vector<InspectorComponent*> m_objectComponents;

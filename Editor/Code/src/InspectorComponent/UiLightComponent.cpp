@@ -1,4 +1,5 @@
 #include "../Include/InspectorComponent/UiLightComponent.h"
+#include "GamePlay/Others/GameObject.h"
 
 Editor::EditorLayer::Ui::UiLightComponent::~UiLightComponent()
 {
@@ -11,6 +12,13 @@ void Editor::EditorLayer::Ui::UiLightComponent::Create()
 void Editor::EditorLayer::Ui::UiLightComponent::UiDraw()
 {
 	ImGui::SeparatorText("Light Component");
+	ImGui::SameLine();
+	if (ImGui::Button("Remove"))
+	{
+		m_window->GetSelectedObject()->RemoveComponent<Engine::GamePlay::LightComponent>();
+		m_window->MarkOutOfDate();
+		return;
+	}
 
 	Engine::Math::vec3 t_color = m_lightComp->GetLight().GetColor();
 

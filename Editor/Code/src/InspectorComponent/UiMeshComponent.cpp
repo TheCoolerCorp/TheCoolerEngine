@@ -7,6 +7,7 @@
 #include "Core/Interfaces/IObjectDescriptor.h"
 #include "GamePlay/Others/Scene.h"
 #include "GamePlay/Systems/RenderSystem.h"
+#include "GamePlay/Others/GameObject.h"
 
 Editor::EditorLayer::Ui::UiMeshComponent::~UiMeshComponent()
 {
@@ -27,6 +28,13 @@ void Editor::EditorLayer::Ui::UiMeshComponent::UiDraw()
 		m_isOutOfDate = false;
 	}
 	ImGui::SeparatorText("Mesh Component");
+	ImGui::SameLine();
+	if (ImGui::Button("Remove"))
+	{
+		m_window->GetSelectedObject()->RemoveComponent<Engine::GamePlay::MeshComponent>();
+		m_window->MarkOutOfDate();
+		return;
+	}
 	ImGuiTreeNodeFlags t_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_DefaultOpen;
 	if (ImGui::TreeNodeEx(("Mesh Info: ##"+std::to_string(m_uid)).c_str(), t_flags))
 	{

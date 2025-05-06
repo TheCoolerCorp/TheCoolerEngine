@@ -19,9 +19,15 @@ void Editor::EditorLayer::Ui::InspectorUiWindow::Create()
 
 void Editor::EditorLayer::Ui::InspectorUiWindow::UiDraw()
 {
+	
 	if (!m_locked)
 	{
 		RefreshSelectedObject();
+	}
+	if (m_isOutOfDate)
+	{
+		m_isOutOfDate = false;
+		RefreshCurrentObject();
 	}
 	ImGui::Begin((m_name+"##"+std::to_string(m_uid)).c_str(), &m_open);
 	if (m_selectedObject != nullptr)
