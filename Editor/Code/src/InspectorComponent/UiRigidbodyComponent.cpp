@@ -59,8 +59,8 @@ void Editor::EditorLayer::Ui::UiRigidbodyComponent::UiDraw()
 		m_rigidBody->SetDebug(t_isDebug);
 	}
 
-	ShowBodyType();
-	ShowColliderInfo();
+	UiShowBodyType();
+	UiShowColliderInfo();
 	if (ImGui::DragFloat3(("Position##" + std::to_string(m_uid)).c_str(), t_fPos, 0.1f, -FLT_MAX, +FLT_MAX))
 	{
 		m_rigidBody->SetPosition(Engine::Math::vec3(t_fPos[0], t_fPos[1], t_fPos[2]));
@@ -77,7 +77,7 @@ void Editor::EditorLayer::Ui::UiRigidbodyComponent::Destroy()
 {
 }
 
-void Editor::EditorLayer::Ui::UiRigidbodyComponent::ShowColliderInfo()
+void Editor::EditorLayer::Ui::UiRigidbodyComponent::UiShowColliderInfo()
 {
 	ImGui::Text("Collider Type: ");
 	ImGui::SameLine();
@@ -123,7 +123,7 @@ void Editor::EditorLayer::Ui::UiRigidbodyComponent::ShowColliderInfo()
 	}
 }
 
-void Editor::EditorLayer::Ui::UiRigidbodyComponent::ShowBodyType()
+void Editor::EditorLayer::Ui::UiRigidbodyComponent::UiShowBodyType()
 {
 	switch (m_rigidBody->GetBody()->GetBodyType())
 	{

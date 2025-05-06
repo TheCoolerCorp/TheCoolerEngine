@@ -19,7 +19,7 @@ void Editor::EditorLayer::Ui::SceneGraphUiWindow::UiDraw()
 	{
 		if (m_scene->GetGameObject(i) != nullptr && !m_scene->GetGameObject(i)->HasParent())
 		{
-			DrawObject(m_scene->GetGameObject(i)->GetComponent<TransformComponent>()->GetID());
+			UiDrawObject(m_scene->GetGameObject(i)->GetComponent<TransformComponent>()->GetID());
 		}
 	}
     if (m_scene->GetObjectCount() == 0)
@@ -44,7 +44,13 @@ void Editor::EditorLayer::Ui::SceneGraphUiWindow::ProcessInputs(Engine::Core::Wi
 {
 }
 
-void Editor::EditorLayer::Ui::SceneGraphUiWindow::DrawObject(int a_transformId)  
+/**
+ * Draws the scene graph recursively. Starts with the transform object specified by a_transformId
+ * then draws all of its children. All as TreeNodes.
+ * If the object has no children, it will be drawn as a leaf node.
+ * @param a_transformId The transform id of the object to draw the TreeNode of
+ */
+void Editor::EditorLayer::Ui::SceneGraphUiWindow::UiDrawObject(int a_transformId)  
 {  
    TransformComponent* t_transform = m_transformSystem->GetComponent(a_transformId);  
    if (t_transform == nullptr)  
@@ -57,7 +63,7 @@ void Editor::EditorLayer::Ui::SceneGraphUiWindow::DrawObject(int a_transformId)
    		if (!t_object->HasChildren())
    		{
 	        ImGui::TreeNodeEx(std::to_string(t_object->GetId()).c_str(), ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen, t_object->GetName().c_str());
-            AddPopupContext(t_object);
+            UiAddPopupContext(t_object);
    			if (ImGui::IsItemClicked())
 			{
 				m_layer->SetSelectedGameObject(t_object);
@@ -70,13 +76,13 @@ void Editor::EditorLayer::Ui::SceneGraphUiWindow::DrawObject(int a_transformId)
        {
            m_layer->SetSelectedGameObject(t_object);
        }
-       AddPopupContext(t_object);
+       UiAddPopupContext(t_object);
 
        if (t_open)
        {
 	       for (int t_id : t_object->GetChildrenTransformIDs())  
 	       {  
-	           DrawObject(t_id);  
+	           UiDrawObject(t_id);  
 	       }  
 	       ImGui::TreePop();  
        }
@@ -94,7 +100,12 @@ void Editor::EditorLayer::Ui::SceneGraphUiWindow::NotifyObjectRemoved(Engine::Ga
 {
 }
 
-void Editor::EditorLayer::Ui::SceneGraphUiWindow::CreateNameTextField(GameObject* a_object)
+/**
+ * Creates an editable text field for the name of the object in the same line as the previous element.
+ * This function is deprecated and no longer used.
+ * @param a_object the object to create the name text field for
+ */
+void Editor::EditorLayer::Ui::SceneGraphUiWindow::UiCreateNameTextField(GameObject* a_object)
 {
     // Create a buffer for editing
     char buffer[128];
@@ -118,7 +129,12 @@ void Editor::EditorLayer::Ui::SceneGraphUiWindow::CreateNameTextField(GameObject
     ImGui::PopStyleColor(3);
 }
 
-void Editor::EditorLayer::Ui::SceneGraphUiWindow::AddPopupContext(GameObject* a_object)
+/**
+ * Adds a popup for the given object. This popup will be shown when the user right clicks on the object.
+ * Its only functionality is to allow the user to delete the given element
+ * @param a_object the concerned element for the popup
+ */
+void Editor::EditorLayer::Ui::SceneGraphUiWindow::UiAddPopupContext(GameObject* a_object)
 {
 	if (ImGui::BeginPopupContextItem(("SceneGraphItemContextMenu##"+std::to_string(a_object->GetId())).c_str()))
 	{

@@ -25,6 +25,10 @@ namespace Engine::Core
 
 namespace Editor::EditorLayer::Ui
 {
+	/**
+	 * RHI for the GLFW/Vulkan ImGui implementation
+	 * Sets up its own renderpass and framebuffer, so that it can capture the scene as an image to be used by the ImGuiLayer
+	 */
 	class VulkanImGui : public RHIImGui
 	{
 	public:

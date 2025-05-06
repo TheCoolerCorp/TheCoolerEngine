@@ -52,8 +52,8 @@ namespace Editor::EditorLayer::Ui
 		void ClearComponents();
 
 		//ui helpers
-		void CreateNameTextField();
-		void DrawComponentAddWindow();
+		void UiCreateNameTextField();
+		void UiDrawComponentAddWindow();
 	};
 }
 

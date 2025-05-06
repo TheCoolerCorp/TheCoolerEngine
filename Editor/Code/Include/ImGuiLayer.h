@@ -59,8 +59,10 @@ namespace Editor::EditorLayer::Ui
 		ImGuizmo::MODE GizmoGetCurrentMode() const { return m_currentGizmoMode; }
 		void GizmoSetCurrentMode(ImGuizmo::MODE a_mode) { m_currentGizmoMode = a_mode; }
 	private:
-
+		//the selected game object, used for gizmo manipulation and by the inspector window
 		Engine::GamePlay::GameObject* m_selectedGameObject = nullptr;
+
+		//an RHI for imgui is needed because certain functions and behaviours are specific to certain implementations, like vulkan or glfw
 		RHIImGui* m_imGui = nullptr;
 
 		std::vector<UiWindow*> m_windows;

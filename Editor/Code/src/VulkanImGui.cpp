@@ -281,16 +281,6 @@ namespace Editor::EditorLayer::Ui
 				ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), t_commandBuffer);
 			}
 		);
-		m_imGuiViewportRenderPass->AddDependency(m_imGuiRenderPass);
-		//std::vector<VkImageView> t_imageViews = m_renderer->GetSwapChain()->CastVulkan()->GetImageViews();
-		//std::vector<std::vector<VkImageView>> t_imageViews2;
-		//for (auto& t_imageView : t_imageViews)
-		//{
-		//	t_imageViews2.push_back({t_imageView});
-		//}
-		//m_imGuiViewportRenderPass->CreateFramebuffers(t_imageViews2);
-
-		
 
 		VulkanRenderPassManager* t_manager = m_renderer->GetRenderPass()->CastVulkan();
 		t_manager->AddRenderPass(m_imGuiViewportRenderPass);
@@ -316,6 +306,11 @@ namespace Editor::EditorLayer::Ui
 		if (m_viewportWindowExtent.width != t_extent.width || m_viewportWindowExtent.height != t_extent.height)
 		{
 			m_viewportWindowExtent = t_extent;
+			/*
+			 * we cap the viewport size to prevent it from being too large or too small
+			 * The upper limit is an arbitrary number to prevent an edge-case where the size becomes the maximum value for an int causing an immediate crash
+			 * If this is the case, we simply dont draw the image
+			 */
 			if (m_viewportWindowExtent.height <= 0 || m_viewportWindowExtent.width <= 0 || m_viewportWindowExtent.height >= 3000 || m_viewportWindowExtent.width >= 3000)
 				return;
 			const VkDevice t_device = m_renderer->GetLogicalDevice()->CastVulkan()->GetVkDevice();
@@ -323,11 +318,12 @@ namespace Editor::EditorLayer::Ui
 			vkDeviceWaitIdle(t_device);
 
 			m_viewportWindowResized = false;
-			//m_imGuiRenderPass->RecreateFrameBuffer(m_viewportWindowExtent);
-			
-			//m_viewportWindowResized = true;
-			//RecreateSceneImageDescriptorSets(m_viewportWindowExtent);
 		}
+		/*
+		 * The Image is actually the size of the swapchain, not the window.
+		 * We need to offset the image to center it in the window
+		 * The image is a larger scale than the window so that it has the correct resize behaviour (the image doesnt stretch)
+		 */
 		float t_offsetX = (static_cast<float>(t_swapchain->GetExtent2D().width) - t_viewportPanelSize.x) / 2;
 		float t_offsetY = (static_cast<float>(t_swapchain->GetExtent2D().height) - t_viewportPanelSize.y) / 2;
 		ImGui::SetCursorPos(ImVec2{ -t_offsetX, -t_offsetY });

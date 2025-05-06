@@ -71,11 +71,6 @@ namespace Engine
 					std::unordered_map<RHI::DescriptorSetPipelineTarget, std::vector<uint32_t>>& a_nbIndices,
 					std::unordered_map<RHI::DescriptorSetPipelineTarget, std::vector<RHI::IObjectDescriptor*>>& a_descriptors);
 
-				// --- Dependency Resolution ---
-				ENGINE_API void ResolveDependencies(VulkanRenderPass* a_pass,
-					std::set<VulkanRenderPass*>& a_visited,
-					std::vector<VulkanRenderPass*>& a_sorted);
-
 				// --- Setters ---
 				ENGINE_API void SetSceneRenderPass(VulkanRenderPass* a_renderPass);
 				ENGINE_API void AddRenderPass(VulkanRenderPass* a_renderPass);
@@ -177,11 +172,6 @@ namespace Engine
 				                                               std::unordered_map<RHI::DescriptorSetPipelineTarget, std::vector<uint32_t>>&,
 				                                               std::unordered_map<RHI::DescriptorSetPipelineTarget, std::vector<RHI::IObjectDescriptor*>>&)> a_func);
 
-				// --- Dependencies ---
-				ENGINE_API void AddDependency(VulkanRenderPass* a_dependency) { m_dependencies.push_back(a_dependency); }
-				[[nodiscard]] ENGINE_API const std::vector<VulkanRenderPass*>& GetDependencies() { return m_dependencies; }
-				[[nodiscard]] ENGINE_API bool HasDependency() const { return !m_dependencies.empty(); }
-
 				// --- Getters ---
 				[[nodiscard]] ENGINE_API VkRenderPass GetRenderPass() const { return m_renderPass; }
 				[[nodiscard]] ENGINE_API const std::vector<VkFramebuffer>& GetFramebuffers() const { return m_framebuffers; }
@@ -212,9 +202,6 @@ namespace Engine
 					std::unordered_map<RHI::DescriptorSetPipelineTarget, std::vector<RHI::IBuffer*>>&,
 					std::unordered_map<RHI::DescriptorSetPipelineTarget, std::vector<uint32_t>>&,
 					std::unordered_map<RHI::DescriptorSetPipelineTarget, std::vector<RHI::IObjectDescriptor*>>&)> m_drawFunc;
-
-				// --- Dependencies ---
-				std::vector<VulkanRenderPass*> m_dependencies;
 
 				// --- Helpers ---
 				void CreateDepthAttachment(const RenderPassAttachment& a_attachment);

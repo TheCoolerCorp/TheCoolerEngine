@@ -19,11 +19,12 @@ void Editor::EditorLayer::Ui::InspectorUiWindow::Create()
 
 void Editor::EditorLayer::Ui::InspectorUiWindow::UiDraw()
 {
-	
-	if (!m_locked)
+	//if the window is market as "locked", dont change the selected object
+	if (!m_locked) 
 	{
 		RefreshSelectedObject();
 	}
+	//if the object is out of date, refresh it (re-setup the components)
 	if (m_isOutOfDate)
 	{
 		m_isOutOfDate = false;
@@ -36,7 +37,7 @@ void Editor::EditorLayer::Ui::InspectorUiWindow::UiDraw()
 		ImGui::Text(("Object ID: " + std::to_string(m_selectedObject->GetId())).c_str());
 		ImGui::Text("Object Name: ");
 		ImGui::SameLine();
-		CreateNameTextField();
+		UiCreateNameTextField();
 		ImGui::Text("Lock Selected Object");
 		ImGui::SameLine();
 		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 5);
@@ -46,22 +47,22 @@ void Editor::EditorLayer::Ui::InspectorUiWindow::UiDraw()
 			t_objectComponent->UiDraw();
 		}
 		ImGui::Separator();
-		DrawComponentAddWindow();
+		UiDrawComponentAddWindow();
 	}
-	else
+	else //if nothing is selected, show a message in the middle
 	{
-		ImVec2 windowSize = ImGui::GetWindowSize();
-		const char* text = "No object selected!";
-		ImVec2 textSize = ImGui::CalcTextSize(text);
+		ImVec2 t_windowSize = ImGui::GetWindowSize();
+		const char* t_text = "No object selected!";
+		ImVec2 t_textSize = ImGui::CalcTextSize(t_text);
 
 		// Center position = (window size - text size) / 2
-		ImVec2 pos = ImVec2(
-			(windowSize.x - textSize.x) * 0.5f,
-			(windowSize.y - textSize.y) * 0.5f
+		ImVec2 t_pos = ImVec2(
+			(t_windowSize.x - t_textSize.x) * 0.5f,
+			(t_windowSize.y - t_textSize.y) * 0.5f
 		);
 
-		ImGui::SetCursorPos(pos);
-		ImGui::Text("%s", text);
+		ImGui::SetCursorPos(t_pos);
+		ImGui::Text("%s", t_text);
 	}
 	ImGui::End();
 }
@@ -117,6 +118,10 @@ void Editor::EditorLayer::Ui::InspectorUiWindow::RefreshSelectedObject()
 	RefreshCurrentObject();
 }
 
+/**
+ * Refreshes the components of the current selected object.
+ * Clears the previous UiInspectorComponents and creates new ones based on what the current object has.
+ */
 void Editor::EditorLayer::Ui::InspectorUiWindow::RefreshCurrentObject()
 {
 	ClearComponents();
@@ -190,7 +195,10 @@ void Editor::EditorLayer::Ui::InspectorUiWindow::ClearComponents()
 	m_objectComponents.clear();
 }
 
-void Editor::EditorLayer::Ui::InspectorUiWindow::CreateNameTextField()
+/**
+ * Draws an editable text field for changing the gameobject's name
+ */
+void Editor::EditorLayer::Ui::InspectorUiWindow::UiCreateNameTextField()
 {
 	// Create a buffer for editing
 	char buffer[128];
@@ -214,7 +222,11 @@ void Editor::EditorLayer::Ui::InspectorUiWindow::CreateNameTextField()
 	ImGui::PopStyleColor(3);
 }
 
-void Editor::EditorLayer::Ui::InspectorUiWindow::DrawComponentAddWindow()
+/**
+ * Draws a combo box with all the components that can be added to the selected object
+ * A selected object can only have one of each component type, to prevent unexpected behaviour. 
+ */
+void Editor::EditorLayer::Ui::InspectorUiWindow::UiDrawComponentAddWindow()
 {
 	if (ImGui::BeginCombo(("##Add Component"+std::to_string(m_uid)).c_str(), "Add Component"))
 	{

@@ -39,7 +39,11 @@ namespace Editor::EditorLayer::Ui
 		Layer::OnUpdate(a_deltaTime);
 		
 		m_imGui->Update();
-		std::vector<int> t_indexesToDelete;
+		/*
+		 * if any windows need to be deleted, it will be done here. This is to prevent the stale pointers that would if a window tried to delete itself
+		 * The Layer will instead check if the window is closed, and if so, delete it
+		 */
+		std::vector<int> t_indexesToDelete; 
 		for (UiWindow* t_window : m_windows)
 		{
 			if (t_window == nullptr)
@@ -67,9 +71,8 @@ namespace Editor::EditorLayer::Ui
 		m_imGui->NewFrame();
 		GizmoBeginFrame();
 
+		//dockspace setup
 		UiSetupDockspace();
-
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0.0f,0.0f });
 
 		//Main viewport
 		UiDrawViewport();
@@ -84,6 +87,7 @@ namespace Editor::EditorLayer::Ui
 	void ImGuiLayer::OnProcessInputs(Engine::Core::Window::IInputHandler* a_inputHandler, float a_deltaTime)
 	{
 		Layer::OnProcessInputs(a_inputHandler, a_deltaTime);
+		//the windows process inputs, although none need it at the moment
 		for (UiWindow* t_window : m_windows)
 		{
 			if (t_window == nullptr)
@@ -92,6 +96,7 @@ namespace Editor::EditorLayer::Ui
 		}
 		ImGuiWindow* t_viewPortWindow = ImGui::FindWindowByName("Viewport");
 		//if the viewport window is focused, process inputs
+		//ActiveWindow didnt really work so HoveredWindow is an acceptable alternative
 		if (t_viewPortWindow && GImGui->HoveredWindow == t_viewPortWindow)
 		{
 			if (a_inputHandler->IsKeyDown(Engine::Core::Window::Key::KEY_G))
@@ -147,6 +152,9 @@ namespace Editor::EditorLayer::Ui
 		}
 	}
 
+	/*
+	 * Deselects the current selected object
+	 */
 	void ImGuiLayer::DeselectObject()
 	{
 		if (m_selectedGameObject)
@@ -458,8 +466,14 @@ namespace Editor::EditorLayer::Ui
 		}
 	}
 
+	
+	/**
+	 * Draws the main viewport, where the scene is rendered
+	 * Also draws the gizmo and the play/pause buttons
+	 */
 	void ImGuiLayer::UiDrawViewport()
 	{
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0.0f,0.0f });
 		ImGui::Begin("Viewport", nullptr, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
 		m_imGui->DrawSceneAsImage();
 

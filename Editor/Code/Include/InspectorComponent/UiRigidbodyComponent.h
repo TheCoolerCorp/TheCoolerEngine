@@ -34,8 +34,8 @@ namespace Editor::EditorLayer::Ui
 	private:
 		Engine::GamePlay::RigidBodyComponent* m_rigidBody = nullptr;
 
-		void ShowColliderInfo();
-		void ShowBodyType();
+		void UiShowColliderInfo();
+		void UiShowBodyType();
 	};
 }
 

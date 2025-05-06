@@ -52,9 +52,9 @@ namespace Editor::EditorLayer::Ui
 		void ClearImageDescriptorSets();
 		void RefreshImageDescriptorSets();
 
-		void DrawImageInfo(ImageType a_type);
-		void AddDragDropImageTarget(ImageType a_type);
-		void AddDragDropMeshTarget();
+		void UiDrawImageInfo(ImageType a_type);
+		void UiAddDragDropImageTarget(ImageType a_type);
+		void UiAddDragDropMeshTarget();
 
 		void UiDrawAlbedoInfo();
 		void UiDrawMetallicInfo();

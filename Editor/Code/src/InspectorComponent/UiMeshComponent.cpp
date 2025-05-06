@@ -53,7 +53,7 @@ void Editor::EditorLayer::Ui::UiMeshComponent::UiDraw()
 		ImGui::PopStyleVar(2);
 		ImGui::Text(t_text.c_str());
 		ImGui::EndChild();
-		AddDragDropMeshTarget();
+		UiAddDragDropMeshTarget();
 		
 		ImGui::Text(("Vertices: "+std::to_string(m_meshComp->GetMesh()->GetNbVertices())).c_str());
 		ImGui::Text(("Indices: "+std::to_string(m_meshComp->GetMesh()->GetNbIndices())).c_str());
@@ -91,17 +91,17 @@ void Editor::EditorLayer::Ui::UiMeshComponent::UiDraw()
 			ImGui::EndCombo();
 		}
 		ImGui::SeparatorText("Albedo");
-		DrawImageInfo(ALBEDO);
+		UiDrawImageInfo(ALBEDO);
 		if (m_material->GetType() == Engine::GamePlay::LIT)
 		{
 			ImGui::SeparatorText("Normal");
-			DrawImageInfo(NORMAL);
+			UiDrawImageInfo(NORMAL);
 			ImGui::SeparatorText("Metallic");
-			DrawImageInfo(METALLIC);
+			UiDrawImageInfo(METALLIC);
 			ImGui::SeparatorText("Roughness");
-			DrawImageInfo(ROUGHNESS);
+			UiDrawImageInfo(ROUGHNESS);
 			ImGui::SeparatorText("Ambient Occlusion");
-			DrawImageInfo(AMBIENTOCCLUSION);
+			UiDrawImageInfo(AMBIENTOCCLUSION);
 		}
 		ImGui::TreePop();
 	}
@@ -227,7 +227,7 @@ void Editor::EditorLayer::Ui::UiMeshComponent::RefreshImageDescriptorSets()
 	CreateImageDescriptorSets();
 }
 
-void Editor::EditorLayer::Ui::UiMeshComponent::DrawImageInfo(ImageType a_type)
+void Editor::EditorLayer::Ui::UiMeshComponent::UiDrawImageInfo(ImageType a_type)
 {
 	if (HasImage(a_type))
 	{
@@ -266,7 +266,7 @@ void Editor::EditorLayer::Ui::UiMeshComponent::DrawImageInfo(ImageType a_type)
 		ImGui::Image(reinterpret_cast<ImTextureID>(m_imageSets[a_type]), ImVec2{t_displaySize, t_displaySize});
 	ImGui::SetItemTooltip(GetSize(a_type).c_str());
 	ImGui::EndChild();
-	AddDragDropImageTarget(a_type);
+	UiAddDragDropImageTarget(a_type);
 	ImGui::PopStyleVar(1);
 	if (!HasImage(a_type))
 		return;
@@ -296,7 +296,7 @@ void Editor::EditorLayer::Ui::UiMeshComponent::DrawImageInfo(ImageType a_type)
 	
 }
 
-void Editor::EditorLayer::Ui::UiMeshComponent::AddDragDropImageTarget(ImageType a_type)
+void Editor::EditorLayer::Ui::UiMeshComponent::UiAddDragDropImageTarget(ImageType a_type)
 {
 	if (ImGui::BeginDragDropTarget())
 	{
@@ -331,7 +331,7 @@ void Editor::EditorLayer::Ui::UiMeshComponent::AddDragDropImageTarget(ImageType 
 	}
 }
 
-void Editor::EditorLayer::Ui::UiMeshComponent::AddDragDropMeshTarget()
+void Editor::EditorLayer::Ui::UiMeshComponent::UiAddDragDropMeshTarget()
 {
 	if (ImGui::BeginDragDropTarget())
 	{

@@ -5,6 +5,10 @@
 
 void Editor::EditorLayer::Ui::UiLoggerWindow::UiDraw()
 {
+	/*
+	 * The first child draws all the logs using a ImGui clipper, allowing us to only draw the visible logs in the scrollable area,
+	 * saving a ton of performance.
+	 */
 	ImGui::Begin((m_name + std::to_string(m_uid)).c_str(), &m_open);
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(5, 5));
 	ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 5.0f);
@@ -54,6 +58,9 @@ void Editor::EditorLayer::Ui::UiLoggerWindow::UiDraw()
 			ImGui::PopStyleColor();
 		}
 	}
+	/*
+	 * The second child draws the selected log, if any is selected, as plain text.
+	 */
 	ImGui::EndChild();
 	ImGui::BeginChild("SelectedInfo", ImVec2(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y), ImGuiChildFlags_Borders | ImGuiChildFlags_AutoResizeY, ImGuiWindowFlags_HorizontalScrollbar);
 	if (IsValidLog())

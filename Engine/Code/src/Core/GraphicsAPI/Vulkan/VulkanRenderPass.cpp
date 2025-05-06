@@ -114,17 +114,8 @@ namespace Engine
 				std::unordered_map<RHI::DescriptorSetPipelineTarget, std::vector<uint32_t>>& a_nbIndices,
 				std::unordered_map<RHI::DescriptorSetPipelineTarget, std::vector<RHI::IObjectDescriptor*>>& a_descriptors)
 			{
-				std::set<VulkanRenderPass*> t_visited;
-				std::vector<VulkanRenderPass*> t_sortedPasses;
-
-				//the whole resolving this is kind of pointless atm, maybe usefull in the future
-				ResolveDependencies(m_sceneRenderPass, t_visited, t_sortedPasses);
+				m_sceneRenderPass->RecordRenderPass(a_info, a_vertexBuffers, a_indexBuffers, a_nbIndices, a_descriptors);
 				for (VulkanRenderPass* t_pass : m_renderPasses)
-				{
-					ResolveDependencies(t_pass, t_visited, t_sortedPasses);
-				}
-
-				for (VulkanRenderPass* t_pass : t_sortedPasses)
 				{
 					t_pass->RecordRenderPass(a_info, a_vertexBuffers, a_indexBuffers, a_nbIndices, a_descriptors);
 				}
@@ -139,19 +130,6 @@ namespace Engine
 				m_sceneRenderPass->RecordRenderPass(a_info, a_vertexBuffers, a_indexBuffers, a_nbIndices, a_descriptors);
 			}
 
-			void VulkanRenderPassManager::ResolveDependencies(VulkanRenderPass* a_pass,
-				std::set<VulkanRenderPass*>& a_visited, std::vector<VulkanRenderPass*>& a_sorted)
-			{
-				if (a_visited.contains(a_pass)) return;
-
-				for (VulkanRenderPass* t_dep : a_pass->GetDependencies())
-				{
-					ResolveDependencies(t_dep, a_visited, a_sorted);
-				}
-
-				a_visited.insert(a_pass);
-				a_sorted.push_back(a_pass);
-			}
 
 			void VulkanRenderPassManager::SetSceneRenderPass(VulkanRenderPass* a_renderPass)
 			{

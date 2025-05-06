@@ -23,7 +23,6 @@ namespace Editor::EditorLayer::Ui
 		void Create() override;
 		void UiDraw() override;
 		void ProcessInputs(Engine::Core::Window::IInputHandler* a_inputHandler, float a_deltaTime) override;
-		void DrawObject(int a_transformId);
 		void Destroy() override;
 
 		void NotifyObjectRemoved(Engine::GamePlay::GameObject* a_object) override;
@@ -31,8 +30,9 @@ namespace Editor::EditorLayer::Ui
 		Engine::GamePlay::Scene* m_scene;
 		Engine::GamePlay::TransformSystem* m_transformSystem = nullptr;
 
-		void CreateNameTextField(Engine::GamePlay::GameObject* a_object);
-		void AddPopupContext(Engine::GamePlay::GameObject* a_object);
+		void UiDrawObject(int a_transformId);
+		void UiCreateNameTextField(Engine::GamePlay::GameObject* a_object);
+		void UiAddPopupContext(Engine::GamePlay::GameObject* a_object);
 	};
 }
 #endif

@@ -39,6 +39,7 @@ void Editor::EditorLayer::Ui::FileExplorerWindow::Create()
 
 void Editor::EditorLayer::Ui::FileExplorerWindow::UiDraw()
 {
+	//No padding, so that the windows dont take up more space than they need
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
 	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
 	ImGui::Begin((m_name + "##" + std::to_string(m_uid)).c_str(), &m_open);
@@ -46,16 +47,23 @@ void Editor::EditorLayer::Ui::FileExplorerWindow::UiDraw()
 	float t_width = ImGui::GetContentRegionAvail().x*0.3f;
 	t_width = std::min(t_width, 150.f);
 
+	/*
+	 * The first child draws the file tree, which is a tree of all the folders in the root path.
+	 */
 	ImGui::BeginChild(("FileTree" + std::to_string(m_uid)).c_str(),ImVec2(t_width, ImGui::GetContentRegionAvail().y), ImGuiChildFlags_Borders, ImGuiWindowFlags_HorizontalScrollbar);
 	ImGui::PopStyleVar(2);
 
-	DrawFileTree();
+	UiDrawFileTree();
 	ImGui::EndChild();
 
 	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
 	ImGui::SameLine();
-	
+
+	/*
+	 * The second child draws the file info, which is a table of all the files in the current path, with drag & drop functionality for certain file types.
+	 * It also draws a toolbar with a back button, a preview button to toggle the preview of images in the file explorer, and the current path.
+	 */
 	ImGui::BeginChild(("FileInfo" + std::to_string(m_uid)).c_str(), ImGui::GetContentRegionAvail(), ImGuiChildFlags_Borders, ImGuiWindowFlags_HorizontalScrollbar);
 	ImGui::BeginChild(("Toolbar" + std::to_string(m_uid)).c_str(), ImVec2(ImGui::GetContentRegionAvail().x, 20.0f), ImGuiChildFlags_Borders);
 	ImGui::PopStyleVar(2);
@@ -88,7 +96,7 @@ void Editor::EditorLayer::Ui::FileExplorerWindow::UiDraw()
 	ImGui::BeginChild(("Browser" + std::to_string(m_uid)).c_str(), ImGui::GetContentRegionAvail(), ImGuiChildFlags_Borders, ImGuiWindowFlags_HorizontalScrollbar);
 	ImGui::PopStyleVar(2);
 
-	DrawFileInfo();
+	UiDrawFileInfo();
 	ImGui::EndChild();
 
 	ImGui::EndChild();
@@ -127,6 +135,10 @@ void Editor::EditorLayer::Ui::FileExplorerWindow::NotifyObjectRemoved(Engine::Ga
 {
 }
 
+/**
+ * Sets the current active path, used by UiDrawFileInfo to draw the content of the path as a table,
+ * to the one given in a_path
+ */
 void Editor::EditorLayer::Ui::FileExplorerWindow::SetCurrentPath(std::filesystem::path a_path)
 {
 	m_currentPath = a_path;
@@ -141,7 +153,7 @@ void Editor::EditorLayer::Ui::FileExplorerWindow::SetCurrentPath(std::filesystem
  * With an image illustrating its type and its name. Folders can be double clicked to acess its child
  * A drag and drop source is created for each image and model
  */
-void Editor::EditorLayer::Ui::FileExplorerWindow::DrawFileInfo()
+void Editor::EditorLayer::Ui::FileExplorerWindow::UiDrawFileInfo()
 {
 	int t_filesPerColumn = static_cast<int>(ImGui::GetContentRegionAvail().x / 100);
 	if (t_filesPerColumn <= 0)
@@ -166,14 +178,14 @@ void Editor::EditorLayer::Ui::FileExplorerWindow::DrawFileInfo()
 			ImGui::BeginChild((std::to_string(t_row) + std::to_string(t_column)).c_str(), ImVec2{ 100,100 });
 			if (IsImage(t_path)) //if image, create a drag and drop source which carries the image's path
 			{
-				AddImageDragDropSource(t_path);
+				UiAddImageDragDropSource(t_path);
 			}
 			else if (IsModel(t_path)) //if model, create a drag and drop source which carries the model's path
 			{
-				AddModelDragDropSource(t_path);
+				UiAddModelDragDropSource(t_path);
 			}
-			DrawFileImage(t_entry);
-			DrawTextCentered(t_filename);
+			UiDrawFileImage(t_entry);
+			UiDrawTextCentered(t_filename);
 			ImGui::EndChild();
 			if (t_entry.is_directory() && ImGui::IsItemClicked(ImGuiMouseButton_Left) && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
 			{
@@ -186,7 +198,12 @@ void Editor::EditorLayer::Ui::FileExplorerWindow::DrawFileInfo()
 	}
 }
 
-void Editor::EditorLayer::Ui::FileExplorerWindow::DrawFileTree()
+/**
+ * Draws the file tree, which is a tree of all the folders in the root path.
+ * If any of the elements is selected, it will set the current path to the selected folder.
+ * If the folder has no child folders, it will be drawn as a leaf node.
+ */
+void Editor::EditorLayer::Ui::FileExplorerWindow::UiDrawFileTree()
 {
 	std::string t_filename = m_rootPath.filename().string();
 	if (HasChildDirectories(m_rootPath))
@@ -202,7 +219,7 @@ void Editor::EditorLayer::Ui::FileExplorerWindow::DrawFileTree()
 		ImGui::Text(t_filename.c_str());
 		if (open)
 		{
-			DrawFileTreeRecursive(m_rootPath);
+			UiDrawFileTreeRecursive(m_rootPath);
 			ImGui::TreePop();
 		}
 
@@ -222,7 +239,7 @@ void Editor::EditorLayer::Ui::FileExplorerWindow::DrawFileTree()
 	}
 }
 
-void Editor::EditorLayer::Ui::FileExplorerWindow::DrawFileTreeRecursive(const std::filesystem::path& a_path)
+void Editor::EditorLayer::Ui::FileExplorerWindow::UiDrawFileTreeRecursive(const std::filesystem::path& a_path)
 {
 	for (const auto& t_entry : std::filesystem::directory_iterator(a_path))
 	{
@@ -242,7 +259,7 @@ void Editor::EditorLayer::Ui::FileExplorerWindow::DrawFileTreeRecursive(const st
 				ImGui::Text(t_filename.c_str());
 				if (open)
 				{
-					DrawFileTreeRecursive(t_path);
+					UiDrawFileTreeRecursive(t_path);
 					ImGui::TreePop();
 				}
 				
@@ -337,7 +354,7 @@ void Editor::EditorLayer::Ui::FileExplorerWindow::ClearContextImages()
 	m_textures.clear();
 }
 
-void Editor::EditorLayer::Ui::FileExplorerWindow::DrawTextCentered(std::string a_text)
+void Editor::EditorLayer::Ui::FileExplorerWindow::UiDrawTextCentered(std::string a_text)
 {
 	float t_width = ImGui::GetContentRegionAvail().x;
 	float t_offsetx = std::max((t_width - ImGui::CalcTextSize(a_text.c_str()).x) * 0.5f, 0.5f);
@@ -348,7 +365,7 @@ void Editor::EditorLayer::Ui::FileExplorerWindow::DrawTextCentered(std::string a
 /**
  * Draws the icon of the type of file given in a_path
  */
-void Editor::EditorLayer::Ui::FileExplorerWindow::DrawFileImage(const std::filesystem::directory_entry& a_path)
+void Editor::EditorLayer::Ui::FileExplorerWindow::UiDrawFileImage(const std::filesystem::directory_entry& a_path)
 {
 	if (a_path.is_directory())
 	{
@@ -372,7 +389,7 @@ void Editor::EditorLayer::Ui::FileExplorerWindow::DrawFileImage(const std::files
 	}
 }
 
-void Editor::EditorLayer::Ui::FileExplorerWindow::AddImageDragDropSource(const std::filesystem::path& a_path)
+void Editor::EditorLayer::Ui::FileExplorerWindow::UiAddImageDragDropSource(const std::filesystem::path& a_path)
 {
 	if (ImGui::BeginDragDropSource())
 	{
@@ -383,7 +400,7 @@ void Editor::EditorLayer::Ui::FileExplorerWindow::AddImageDragDropSource(const s
 	}
 }
 
-void Editor::EditorLayer::Ui::FileExplorerWindow::AddModelDragDropSource(const std::filesystem::path& a_path)
+void Editor::EditorLayer::Ui::FileExplorerWindow::UiAddModelDragDropSource(const std::filesystem::path& a_path)
 {
 	if (ImGui::BeginDragDropSource())
 	{
