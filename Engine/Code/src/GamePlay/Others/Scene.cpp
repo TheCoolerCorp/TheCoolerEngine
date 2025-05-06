@@ -413,12 +413,20 @@ namespace Engine
 			t_file >> t_scene;
 
 			for (const auto& t_entry : t_scene) {
+				bool t_hasLight = false;
 				bool t_hasRigidBody = false;
 				bool t_hasMesh = false;
 
 				std::string t_name = t_entry.at("GameObject").get<std::string>();
 
 				TransformData t_transform = DeserializeTransformComponent(t_entry.at("TransformComponent"));
+
+				LightData t_light{};
+				if (t_entry.contains("LightComponent"))
+				{
+					t_light = DeserializeLightComponent(t_entry.at("LightComponent"));
+					t_hasLight = true;
+				}
 
 				RigidBodyData t_rigidBody{};
 				if (t_entry.contains("RigidBodyComponent")) 
@@ -444,6 +452,17 @@ namespace Engine
 				LOG_DEBUG("scale :");
 				t_transform.mScale.Print();
 				LOG_DEBUG("parent : " + Core::Debugging::ToString(t_transform.mParentId));
+
+				if (t_hasLight)
+				{
+					LOG_DEBUG("Light :");
+					LOG_DEBUG("pos :");
+					t_light.m_position.Print();
+					LOG_DEBUG("color :");
+					t_light.m_color.Print();
+					LOG_DEBUG("intensity :");
+					LOG_DEBUG(Core::Debugging::ToString(t_light.m_intensity));
+				}
 
 				if (t_hasRigidBody)
 				{
