@@ -33,6 +33,7 @@ namespace Editor
 
 			void AddLayer(EditorLayer::Layer* a_layer);
 			void UpdateLayers();
+			void LayerProcessInput(Engine::Core::Window::IInputHandler* a_handler, float a_deltaTime);
 			void CleanupLayers();
 
 			void RegisterTypes();

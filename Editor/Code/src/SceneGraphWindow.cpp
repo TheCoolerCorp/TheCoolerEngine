@@ -27,13 +27,21 @@ void Editor::EditorLayer::Ui::SceneGraphUiWindow::UiDraw()
 	ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 0.0f);
 	ImGui::BeginChild(("Empty Child" + std::to_string(m_uid)).c_str(), ImGui::GetContentRegionAvail());
 	ImGui::EndChild();
+	if (ImGui::IsItemClicked())
+	{
+		m_layer->DeselectObject();
+	}
 	ImGui::PopStyleVar();
 	if (ImGui::BeginPopupContextItem(("SceneGraphContextMenu##"+std::to_string(m_uid)).c_str()))
     {
-		m_layer->CreateItemAddMenu();
+		m_layer->UiDrawItemAddMenu();
 		ImGui::EndPopup();
     }
 	ImGui::End();
+}
+
+void Editor::EditorLayer::Ui::SceneGraphUiWindow::ProcessInputs(Engine::Core::Window::IInputHandler* a_inputHandler, float a_deltaTime)
+{
 }
 
 void Editor::EditorLayer::Ui::SceneGraphUiWindow::DrawObject(int a_transformId)  

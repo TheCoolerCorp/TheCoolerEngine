@@ -22,6 +22,10 @@ namespace Editor::EditorLayer::Ui
 		void UiDraw() override;
 		void Destroy() override;
 
+		UiComponentType GetType() override
+		{
+			return UiComponentType::LIGHT;
+		}
 	private:
 		Engine::GamePlay::LightComponent* m_lightComp = nullptr;
 	};

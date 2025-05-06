@@ -30,8 +30,10 @@ namespace Engine
 			ENGINE_API void Destroy() override;
 
 			ENGINE_API void Set(const TransformData& a_data);
+			ENGINE_API void SetPosition(Math::vec3 a_pos);
+			ENGINE_API void SetRotation(Math::vec3 a_euler);
+			ENGINE_API void SetScale(Math::vec3 a_scale);
 
-			ENGINE_API void Move(Math::vec3 a_pos, Math::quat a_rot, Math::vec3 a_scale);
 			ENGINE_API void Move(Math::vec3 a_pos, Math::vec3 a_rot, Math::vec3 a_scale);
 
 			ENGINE_API void SetGameObject(int a_gameObjectId) { m_gameObjectId = a_gameObjectId; }

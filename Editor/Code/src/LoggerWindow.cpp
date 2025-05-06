@@ -71,6 +71,10 @@ void Editor::EditorLayer::Ui::UiLoggerWindow::UiDraw()
 	
 }
 
+void Editor::EditorLayer::Ui::UiLoggerWindow::ProcessInputs(Engine::Core::Window::IInputHandler* a_inputHandler, float a_deltaTime)
+{
+}
+
 Editor::EditorLayer::Ui::UiLoggerWindow::~UiLoggerWindow()
 {
 }

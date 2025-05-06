@@ -11,6 +11,13 @@
 //IMGUIZMO
 #include "ImGuizmo.h"
 
+namespace Engine::Core
+{
+	namespace Window
+	{
+		class IInputHandler;
+	}
+}
 namespace Editor::EditorLayer::Ui
 {
 	class UiWindow;
@@ -26,6 +33,7 @@ namespace Editor::EditorLayer::Ui
 		void OnDetach() override;
 		void OnUpdate(float a_deltaTime) override;
 		void OnUiRender() override;
+		void OnProcessInputs(Engine::Core::Window::IInputHandler* a_inputHandler, float a_deltaTime) override;
 		void Delete() override;
 
 		void AddWindow(UiWindow* a_window);
@@ -33,9 +41,10 @@ namespace Editor::EditorLayer::Ui
 		void SetSelectedGameObject(Engine::GamePlay::GameObject* a_object) { m_selectedGameObject = a_object; }
 		Engine::GamePlay::GameObject* GetSelectedGameObject() const { return m_selectedGameObject; }
 
+		void DeselectObject();
 		void NotifyObjectRemoved(Engine::GamePlay::GameObject* a_object);
 
-		void CreateItemAddMenu();
+		void UiDrawItemAddMenu();
 
 		/*
 		 * Since ImGuizmo functionality is so intertwined with ImGui, all functionality related to it
@@ -44,14 +53,32 @@ namespace Editor::EditorLayer::Ui
 
 		void GizmoBeginFrame();
 		void GizmoMainDraw();
+
+		ImGuizmo::OPERATION GizmoGetCurrentOperation() const { return m_currentGizmoOperation; }
+		void GizmoSetCurrentOperation(ImGuizmo::OPERATION a_operation) { m_currentGizmoOperation = a_operation; }
+		ImGuizmo::MODE GizmoGetCurrentMode() const { return m_currentGizmoMode; }
+		void GizmoSetCurrentMode(ImGuizmo::MODE a_mode) { m_currentGizmoMode = a_mode; }
 	private:
+
 		Engine::GamePlay::GameObject* m_selectedGameObject = nullptr;
 		RHIImGui* m_imGui = nullptr;
+
 		std::vector<UiWindow*> m_windows;
 		std::vector<int> m_availableIds;
 
+		//ImGuiZmo
+		ImGuizmo::OPERATION m_currentGizmoOperation = ImGuizmo::TRANSLATE;
+		ImGuizmo::MODE m_currentGizmoMode = ImGuizmo::LOCAL;
+
 		void SetupImGuiStyle();
 		ImVec4 ToSrgb(ImVec4 rgba);
+
+		//ui helpers
+		void UiSetupDockspace();
+		void UiDrawMenuBar();
+		void UiDrawViewport();
+		void UiDrawWindows();
+
 	};
 }
 

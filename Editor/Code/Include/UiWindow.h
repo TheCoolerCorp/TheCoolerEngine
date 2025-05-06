@@ -3,6 +3,7 @@
 
 #include <Core/Renderer/Renderer.h>
 
+#include "Core/Window/IInputHandler.h"
 #include "GamePlay/Others/GameObject.h"
 
 namespace Engine::Core
@@ -25,6 +26,7 @@ namespace Editor::EditorLayer::Ui
 		virtual ~UiWindow() = default;
 		virtual void Create() = 0;
 		virtual void UiDraw() = 0;
+		virtual void ProcessInputs(Engine::Core::Window::IInputHandler* a_inputHandler, float a_deltaTime) = 0;
 		virtual void Destroy() = 0;
 
 		virtual void NotifyObjectRemoved(Engine::GamePlay::GameObject* a_object) = 0;

@@ -66,6 +66,7 @@ namespace Editor
 				UpdateDeltaTime();
 				m_currentScene->Update(m_renderer, m_mainWindow, m_inputHandler, m_deltaTime);
 				UpdateLayers();
+				LayerProcessInput(m_inputHandler, m_deltaTime);
 
 				/*
 				 * Basic begin frame to acquired the next image index in the swapchain to draw in for presentation on screen
@@ -150,6 +151,14 @@ namespace Editor
 			{
 				layer->OnUpdate(m_deltaTime);
 				//layer->OnUiRender();
+			}
+		}
+
+		void Application::LayerProcessInput(Engine::Core::Window::IInputHandler* a_handler, float a_deltaTime)
+		{
+			for (Layer* layer : m_layers)
+			{
+				layer->OnProcessInputs(a_handler, a_deltaTime);
 			}
 		}
 

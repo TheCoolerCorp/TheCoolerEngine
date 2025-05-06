@@ -36,6 +36,10 @@ namespace Editor::EditorLayer::Ui
 		void UiDraw() override;
 		void Destroy() override;
 
+		UiComponentType GetType() override
+		{
+			return UiComponentType::MESH;
+		}
 	private:
 		bool m_isOutOfDate = false;
 
@@ -50,6 +54,12 @@ namespace Editor::EditorLayer::Ui
 
 		void DrawImageInfo(ImageType a_type);
 		void AddDragDropImageTarget(ImageType a_type);
+		void AddDragDropMeshTarget();
+
+		void UiDrawAlbedoInfo();
+		void UiDrawMetallicInfo();
+		void UiDrawRoughnessInfo();
+		void UiDrawAoInfo();
 
 		bool HasImage(ImageType a_type);
 

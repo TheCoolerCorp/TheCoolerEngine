@@ -19,9 +19,15 @@ void Editor::EditorLayer::Ui::InspectorUiWindow::Create()
 
 void Editor::EditorLayer::Ui::InspectorUiWindow::UiDraw()
 {
+	
 	if (!m_locked)
 	{
 		RefreshSelectedObject();
+	}
+	if (m_isOutOfDate)
+	{
+		m_isOutOfDate = false;
+		RefreshCurrentObject();
 	}
 	ImGui::Begin((m_name+"##"+std::to_string(m_uid)).c_str(), &m_open);
 	if (m_selectedObject != nullptr)
@@ -39,6 +45,8 @@ void Editor::EditorLayer::Ui::InspectorUiWindow::UiDraw()
 		{
 			t_objectComponent->UiDraw();
 		}
+		ImGui::Separator();
+		DrawComponentAddWindow();
 	}
 	else
 	{
@@ -65,6 +73,10 @@ void Editor::EditorLayer::Ui::InspectorUiWindow::Destroy()
 	m_open = false; 
 }
 
+void Editor::EditorLayer::Ui::InspectorUiWindow::ProcessInputs(Engine::Core::Window::IInputHandler* a_inputHandler, float a_deltaTime)
+{
+}
+
 void Editor::EditorLayer::Ui::InspectorUiWindow::NotifyObjectRemoved(Engine::GamePlay::GameObject* a_object)
 {
 	if (m_selectedObject)
@@ -72,6 +84,16 @@ void Editor::EditorLayer::Ui::InspectorUiWindow::NotifyObjectRemoved(Engine::Gam
 		if (m_selectedObject->GetId()==a_object->GetId())
 			m_selectedObject = nullptr;
 	}
+}
+
+bool Editor::EditorLayer::Ui::InspectorUiWindow::HasComponentOfType(UiComponentType a_type)
+{
+	for (InspectorComponent* t_component : m_objectComponents)
+	{
+		if (t_component->GetType() == a_type)
+			return true;
+	}
+	return false;
 }
 
 
@@ -92,6 +114,11 @@ void Editor::EditorLayer::Ui::InspectorUiWindow::RefreshSelectedObject()
 	}
 	
 	m_selectedObject = t_object;
+	RefreshCurrentObject();
+}
+
+void Editor::EditorLayer::Ui::InspectorUiWindow::RefreshCurrentObject()
+{
 	ClearComponents();
 	for (Engine::GamePlay::ComponentType t_type : m_selectedObject->GetOwnedTypes())
 	{
@@ -185,4 +212,40 @@ void Editor::EditorLayer::Ui::InspectorUiWindow::CreateNameTextField()
 
 	ImGui::PopStyleVar(2);
 	ImGui::PopStyleColor(3);
+}
+
+void Editor::EditorLayer::Ui::InspectorUiWindow::DrawComponentAddWindow()
+{
+	if (ImGui::BeginCombo(("##Add Component"+std::to_string(m_uid)).c_str(), "Add Component"))
+	{
+		//All objects have a transform by default, it is as such not needed here
+		if (!HasComponentOfType(UiComponentType::MESH))
+		{
+			if (ImGui::Selectable("Mesh"))
+			{
+				m_selectedObject->AddComponent<Engine::GamePlay::MeshComponent>();
+				//Workaround: if you dont set a mesh the program will crash on draw. So we set a default one
+				m_selectedObject->GetComponent<Engine::GamePlay::MeshComponent>()->SetMesh("Assets/Meshes/empty.obj", m_renderer);
+				m_selectedObject->GetComponent<Engine::GamePlay::MeshComponent>()->GetMaterial()->Create(Engine::GamePlay::UNLIT);
+				RefreshCurrentObject();
+			}
+		}
+		if (!HasComponentOfType(UiComponentType::RIGIDBODY))
+		{
+			if (ImGui::Selectable("Rigidbody"))
+			{
+				m_selectedObject->AddComponent<Engine::GamePlay::RigidBodyComponent>();
+				RefreshCurrentObject();
+			}
+		}
+		if (!HasComponentOfType(UiComponentType::LIGHT))
+		{
+			if (ImGui::Selectable("Light"))
+			{
+				m_selectedObject->AddComponent<Engine::GamePlay::LightComponent>();
+				RefreshCurrentObject();
+			}
+		}
+		ImGui::EndCombo();
+	}
 }

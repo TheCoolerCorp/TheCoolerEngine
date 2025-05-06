@@ -70,11 +70,19 @@ namespace Engine
 			}
 		}
 
-		void TransformComponent::Move(Math::vec3 a_pos, Math::quat a_rot, Math::vec3 a_scale)
+		void TransformComponent::SetPosition(Math::vec3 a_pos)
 		{
-			m_transform->Translate(a_pos);
-			m_transform->Rotate(a_rot);
-			m_transform->Scale(a_scale);
+			m_transform->SetPosition(a_pos);
+		}
+
+		void TransformComponent::SetRotation(Math::vec3 a_euler)
+		{
+			m_transform->SetRotation(a_euler);
+		}
+
+		void TransformComponent::SetScale(Math::vec3 a_scale)
+		{
+			m_transform->SetScale(a_scale);
 		}
 
 		void TransformComponent::Move(Math::vec3 a_pos, Math::vec3 a_rot, Math::vec3 a_scale)

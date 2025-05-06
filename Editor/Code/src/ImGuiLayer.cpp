@@ -14,7 +14,7 @@
 #include "../Include/SceneGraphWindow.h"
 #include "../Include/InspectorWindow.h"
 #include "Math/TheCoolerMath.h"
-
+#include "Core/Window/IInputHandler.h"
 
 namespace Editor::EditorLayer::Ui
 {
@@ -63,83 +63,50 @@ namespace Editor::EditorLayer::Ui
 
 	void ImGuiLayer::OnUiRender()
 	{
-		bool dockSpaceOpen = true;
-
 		Layer::OnUiRender();
 		m_imGui->NewFrame();
 		GizmoBeginFrame();
-		const ImGuiViewport* viewport = ImGui::GetMainViewport();
-		ImGui::SetNextWindowPos(viewport->WorkPos);
-		ImGui::SetNextWindowSize(viewport->WorkSize);
-		ImGui::SetNextWindowViewport(viewport->ID);
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-		//ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-		ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
-		window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
 
-		ImGui::Begin("DockSpace", &dockSpaceOpen, window_flags);
-		ImGuiID t_dockSpaceID = ImGui::GetID("MainDockSpace");
-		ImGuiDockNodeFlags t_dockspaceFlags = ImGuiDockNodeFlags_None;
-		ImGui::DockSpace(t_dockSpaceID, ImVec2(0.0f, 0.0f), t_dockspaceFlags);
-		ImGui::PopStyleVar(2);
-		if (ImGui::BeginMainMenuBar())
-		{
-			if (ImGui::BeginMenu("Windows"))
-			{
-				if (ImGui::BeginMenu("Add Window"))
-				{
-					if (ImGui::MenuItem("Logger"))
-					{
-						UiLoggerWindow* t_window = new UiLoggerWindow(m_renderer, this);
-						t_window->SetName("Logger");
-						AddWindow(t_window);
-					}
-					if (ImGui::MenuItem("Scene Graph"))
-					{
-						SceneGraphUiWindow* t_window = new SceneGraphUiWindow(m_renderer,this, m_app->GetCurrentScene());
-						t_window->SetName("Scene Graph");
-						AddWindow(t_window);
-					}
-					if (ImGui::MenuItem("Inspector"))
-					{
-						InspectorUiWindow* t_window = new InspectorUiWindow(m_renderer, this);
-						t_window->SetName("Inspector");
-						AddWindow(t_window);
-					}
-					if (ImGui::MenuItem("Explorer"))
-					{
-						FileExplorerWindow* t_window = new FileExplorerWindow(m_renderer, this);
-						t_window->SetName("File Explorer");
-						AddWindow(t_window);
-					}
-					ImGui::EndMenu();
-				}
-				ImGui::EndMenu();
-				
-			}
-			CreateItemAddMenu();
-			ImGui::EndMainMenuBar();
-		}
-		ImGui::End();
+		UiSetupDockspace();
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0.0f,0.0f });
-		ImGui::Begin("Viewport");
-		m_imGui->DrawSceneAsImage();
-		GizmoMainDraw();
-		ImGui::End();
-		ImGui::PopStyleVar();
-		
 
+		//Main viewport
+		UiDrawViewport();
+		
+		//Extra windows
+		UiDrawWindows();
+
+		m_imGui->Render();
+
+	}
+
+	void ImGuiLayer::OnProcessInputs(Engine::Core::Window::IInputHandler* a_inputHandler, float a_deltaTime)
+	{
+		Layer::OnProcessInputs(a_inputHandler, a_deltaTime);
 		for (UiWindow* t_window : m_windows)
 		{
 			if (t_window == nullptr)
 				continue;
-			t_window->UiDraw();	
+			t_window->ProcessInputs(a_inputHandler, a_deltaTime);
 		}
-
-		m_imGui->Render();
-
+		ImGuiWindow* t_viewPortWindow = ImGui::FindWindowByName("Viewport");
+		//if the viewport window is focused, process inputs
+		if (t_viewPortWindow && GImGui->HoveredWindow == t_viewPortWindow)
+		{
+			if (a_inputHandler->IsKeyDown(Engine::Core::Window::Key::KEY_G))
+			{
+				GizmoSetCurrentOperation(ImGuizmo::TRANSLATE);
+			}
+			if (a_inputHandler->IsKeyDown(Engine::Core::Window::Key::KEY_R))
+			{
+				GizmoSetCurrentOperation(ImGuizmo::ROTATE);
+			}
+			if (a_inputHandler->IsKeyDown(Engine::Core::Window::Key::KEY_E))
+			{
+				GizmoSetCurrentOperation(ImGuizmo::SCALE);
+			}
+		}
 	}
 
 	void ImGuiLayer::Delete()
@@ -180,6 +147,14 @@ namespace Editor::EditorLayer::Ui
 		}
 	}
 
+	void ImGuiLayer::DeselectObject()
+	{
+		if (m_selectedGameObject)
+		{
+			m_selectedGameObject = nullptr;
+		}
+	}
+
 	/**
 	 * Notifies all windows that a specified GameObject has been removed
 	 * This is to prevent any active window trying to access a GameObject that has been deleted
@@ -200,60 +175,47 @@ namespace Editor::EditorLayer::Ui
 		}
 	}
 
-	void ImGuiLayer::CreateItemAddMenu()
+	void ImGuiLayer::UiDrawItemAddMenu()
 	{
-		if (ImGui::BeginMenu("Scene"))
+		if (ImGui::BeginMenu("Add Object"))
 		{
-			if (ImGui::MenuItem("Save Scene"))
+			if (ImGui::MenuItem("Empty Object"))
 			{
-				//m_app->GetCurrentScene()->SaveScene();
+				SetSelectedGameObject(m_app->GetCurrentScene()->AddGameObject(Engine::GamePlay::GameObjectType::OBJECTTYPE_EMPTY));
 			}
-			if (ImGui::MenuItem("Load Scene"))
+			if (ImGui::MenuItem("Camera"))
 			{
-				//m_app->GetCurrentScene()->LoadScene();
+				SetSelectedGameObject(m_app->GetCurrentScene()->AddGameObject(Engine::GamePlay::GameObjectType::OBJECTTYPE_CAMERA));
 			}
-			ImGui::Separator();
-			if (ImGui::BeginMenu("Add Object"))
+			if (ImGui::MenuItem("Cube"))
 			{
-				if (ImGui::MenuItem("Empty Object"))
+				SetSelectedGameObject(m_app->GetCurrentScene()->AddGameObject(Engine::GamePlay::GameObjectType::OBJECTTYPE_CUBE));
+			}
+			if (ImGui::MenuItem("Sphere"))
+			{
+				SetSelectedGameObject(m_app->GetCurrentScene()->AddGameObject(Engine::GamePlay::GameObjectType::OBJECTTYPE_SPHERE));
+			}
+			if (ImGui::MenuItem("Plane"))
+			{
+				SetSelectedGameObject(m_app->GetCurrentScene()->AddGameObject(Engine::GamePlay::GameObjectType::OBJECTTYPE_PLANE));
+			}
+			if (ImGui::BeginMenu("Light"))
+			{
+				if (ImGui::MenuItem("Point Light"))
 				{
-					m_app->GetCurrentScene()->AddGameObject(Engine::GamePlay::GameObjectType::OBJECTTYPE_EMPTY);
+					SetSelectedGameObject(m_app->GetCurrentScene()->AddGameObject(Engine::GamePlay::GameObjectType::OBJECTTYPE_LIGHT));
 				}
-				if (ImGui::MenuItem("Camera"))
+				if (ImGui::MenuItem("Directional Light"))
 				{
-					m_app->GetCurrentScene()->AddGameObject(Engine::GamePlay::GameObjectType::OBJECTTYPE_CAMERA);
+					//m_app->GetCurrentScene()->AddGameObject(Engine::GamePlay::GameObjectType::OBJECTTYPE_LIGHT);
 				}
-				if (ImGui::MenuItem("Cube"))
+				if (ImGui::MenuItem("Spot Light"))
 				{
-					m_app->GetCurrentScene()->AddGameObject(Engine::GamePlay::GameObjectType::OBJECTTYPE_CUBE);
+					//m_app->GetCurrentScene()->AddGameObject(Engine::GamePlay::GameObjectType::OBJECTTYPE_LIGHT);
 				}
-				if (ImGui::MenuItem("Sphere"))
-				{
-					m_app->GetCurrentScene()->AddGameObject(Engine::GamePlay::GameObjectType::OBJECTTYPE_SPHERE);
-				}
-				if (ImGui::MenuItem("Plane"))
-				{
-					m_app->GetCurrentScene()->AddGameObject(Engine::GamePlay::GameObjectType::OBJECTTYPE_PLANE);
-				}
-				if (ImGui::BeginMenu("Light"))
-				{
-					if (ImGui::MenuItem("Point Light"))
-					{
-						m_app->GetCurrentScene()->AddGameObject(Engine::GamePlay::GameObjectType::OBJECTTYPE_LIGHT);
-					}
-					if (ImGui::MenuItem("Directional Light"))
-					{
-						//m_app->GetCurrentScene()->AddGameObject(Engine::GamePlay::GameObjectType::OBJECTTYPE_LIGHT);
-					}
-					if (ImGui::MenuItem("Spot Light"))
-					{
-						//m_app->GetCurrentScene()->AddGameObject(Engine::GamePlay::GameObjectType::OBJECTTYPE_LIGHT);
-					}
-					ImGui::EndMenu();
-				}
-
 				ImGui::EndMenu();
 			}
+
 			ImGui::EndMenu();
 		}
 	}
@@ -280,21 +242,18 @@ namespace Editor::EditorLayer::Ui
 
 		const float* t_viewf = t_cameraView.mElements.data();
 		const float* t_projectionf = t_cameraProjection.mElements.data();
-		const float* t_identityf = t_identityMatrix.mElements.data();
-		//lets start off by drawing the grid
 
-		ImGuizmo::SetDrawlist(ImGui::GetWindowDrawList());
+		ImGuizmo::SetDrawlist();
 		ImVec2 imageMin = ImGui::GetItemRectMin();
 		ImVec2 imageSize = ImGui::GetItemRectSize();
 		ImGuizmo::SetRect(imageMin.x, imageMin.y, imageSize.x, imageSize.y);
-		//ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, ImGui::GetWindowSize().x, ImGui::GetWindowSize().y);
 
 		if (m_selectedGameObject && m_selectedGameObject->GetComponent<Engine::GamePlay::TransformComponent>())
 		{
 			Engine::Math::mat4 t_objectMatrix = m_selectedGameObject->GetComponent<Engine::GamePlay::TransformComponent>()->GetMatrix();
 			t_objectMatrix.Transpose();
 
-			if (ImGuizmo::Manipulate(t_viewf, t_projectionf, ImGuizmo::TRANSLATE, ImGuizmo::WORLD, t_objectMatrix.mElements.data()))
+			if (ImGuizmo::Manipulate(t_viewf, t_projectionf, m_currentGizmoOperation, m_currentGizmoMode, t_objectMatrix.mElements.data()))
 			{
 				float t_translation[3], t_rotation[3], t_scale[3];
 
@@ -312,9 +271,6 @@ namespace Editor::EditorLayer::Ui
 				m_selectedGameObject->GetComponent<Engine::GamePlay::TransformComponent>()->Set(t_transformData);
 			}
 		}
-
-		//ImGuizmo::DrawGrid(t_viewf, t_projectionf, t_identityf, 100.f);
-
 	}
 
 	void ImGuiLayer::SetupImGuiStyle()
@@ -420,5 +376,178 @@ namespace Editor::EditorLayer::Ui
 		float g = powf(rgba.y, 2.2f);
 		float b = powf(rgba.z, 2.2f);
 		return ImVec4(r, g, b, rgba.w);
+	}
+
+	void ImGuiLayer::UiSetupDockspace()
+	{
+		bool dockSpaceOpen = true;
+		const ImGuiViewport* viewport = ImGui::GetMainViewport();
+		ImGui::SetNextWindowPos(viewport->WorkPos);
+		ImGui::SetNextWindowSize(viewport->WorkSize);
+		ImGui::SetNextWindowViewport(viewport->ID);
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+		ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+		window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+
+		//Dockspace setup
+		ImGui::Begin("DockSpace", &dockSpaceOpen, window_flags);
+		ImGuiID t_dockSpaceID = ImGui::GetID("MainDockSpace");
+		ImGuiDockNodeFlags t_dockspaceFlags = ImGuiDockNodeFlags_None;
+		ImGui::DockSpace(t_dockSpaceID, ImVec2(0.0f, 0.0f), t_dockspaceFlags);
+		ImGui::PopStyleVar(2);
+
+		//Menu bar setup
+		UiDrawMenuBar();
+		ImGui::End();
+	}
+
+
+	void ImGuiLayer::UiDrawMenuBar()
+	{
+		if (ImGui::BeginMainMenuBar())
+		{
+			if (ImGui::BeginMenu("Windows"))
+			{
+				if (ImGui::BeginMenu("Add Window"))
+				{
+					if (ImGui::MenuItem("Logger"))
+					{
+						UiLoggerWindow* t_window = new UiLoggerWindow(m_renderer, this);
+						t_window->SetName("Logger");
+						AddWindow(t_window);
+					}
+					if (ImGui::MenuItem("Scene Graph"))
+					{
+						SceneGraphUiWindow* t_window = new SceneGraphUiWindow(m_renderer, this, m_app->GetCurrentScene());
+						t_window->SetName("Scene Graph");
+						AddWindow(t_window);
+					}
+					if (ImGui::MenuItem("Inspector"))
+					{
+						InspectorUiWindow* t_window = new InspectorUiWindow(m_renderer, this);
+						t_window->SetName("Inspector");
+						AddWindow(t_window);
+					}
+					if (ImGui::MenuItem("Explorer"))
+					{
+						FileExplorerWindow* t_window = new FileExplorerWindow(m_renderer, this);
+						t_window->SetName("File Explorer");
+						AddWindow(t_window);
+					}
+					ImGui::EndMenu();
+				}
+				ImGui::EndMenu();
+
+			}
+			if (ImGui::BeginMenu("Scene"))
+			{
+				if (ImGui::MenuItem("Save Scene"))//placeholder for when this gets implemented
+				{
+					//m_app->GetCurrentScene()->SaveScene();
+				}
+				if (ImGui::MenuItem("Load Scene"))
+				{
+					//m_app->GetCurrentScene()->LoadScene();
+				}
+				ImGui::Separator();
+				UiDrawItemAddMenu();
+				ImGui::EndMenu();
+			}
+			ImGui::EndMainMenuBar();
+		}
+	}
+
+	void ImGuiLayer::UiDrawViewport()
+	{
+		ImGui::Begin("Viewport", nullptr, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
+		m_imGui->DrawSceneAsImage();
+
+		//gizmo draw inside the viewport
+		GizmoMainDraw();
+
+		if (m_selectedGameObject != nullptr)
+		{
+			ImGui::SetCursorPos(ImVec2(10, 20));
+		
+			int t_currentMode;
+			switch (m_currentGizmoOperation)
+			{
+			case ImGuizmo::TRANSLATE:
+				t_currentMode = 0;
+				break;
+			case ImGuizmo::ROTATE:
+				t_currentMode = 1;
+				break;
+			case ImGuizmo::SCALE:
+				t_currentMode = 2;
+				break;
+			default:
+				t_currentMode = 0;
+			}
+
+			int t_isLocal = 0;
+			if (m_currentGizmoMode == ImGuizmo::WORLD)
+			{
+				t_isLocal = 1;
+			}
+
+			ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0, 0, 0, 0));
+			ImGui::BeginChild("GizmoMode", ImVec2(100.0f, ImGui::GetContentRegionAvail().y));
+
+			//Switch between gizmo modes
+			if(ImGui::RadioButton("Move", &t_currentMode, 0))
+			{
+				m_currentGizmoOperation = ImGuizmo::TRANSLATE;
+			}
+			if(ImGui::RadioButton("Rotate", &t_currentMode, 1))
+			{
+				m_currentGizmoOperation = ImGuizmo::ROTATE;
+			}
+			if(ImGui::RadioButton("Scale", &t_currentMode, 2))
+			{
+				m_currentGizmoOperation = ImGuizmo::SCALE;
+			}
+			ImGui::Separator();
+			//Switch between local and global gizmo
+			if (ImGui::RadioButton("Local", &t_isLocal, 0))
+			{
+				m_currentGizmoMode = ImGuizmo::LOCAL;
+			}
+			if (ImGui::RadioButton("Global", &t_isLocal, 1))
+			{
+				m_currentGizmoMode = ImGuizmo::WORLD;
+			}
+
+			ImGui::PopStyleColor();
+			ImGui::EndChild();
+			
+		}
+		ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0, 0, 0, 0));
+		ImGui::SetCursorPos(ImVec2(ImGui::GetWindowSize().x / 2 - 60, 20));
+		ImGui::BeginChild("PlayPause Button", ImVec2(140, 70));
+		if (ImGui::Button("Play", ImVec2(60, ImGui::CalcTextSize("Play").y+10)))
+		{
+			
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("Pause", ImVec2(60, ImGui::CalcTextSize("Pause").y + 10)))
+		{
+
+		}
+		ImGui::PopStyleColor();
+		ImGui::EndChild();
+		ImGui::End();
+		ImGui::PopStyleVar();
+	}
+
+	void ImGuiLayer::UiDrawWindows()
+	{
+		for (UiWindow* t_window : m_windows)
+		{
+			if (t_window == nullptr)
+				continue;
+			t_window->UiDraw();
+		}
 	}
 }

@@ -2,6 +2,7 @@
 
 #include "imgui.h"
 #include "GamePlay/Components/RigidBodyComponent.h"
+#include "GamePlay/Others/GameObject.h"
 
 Editor::EditorLayer::Ui::UiRigidbodyComponent::~UiRigidbodyComponent()
 {
@@ -29,6 +30,13 @@ void Editor::EditorLayer::Ui::UiRigidbodyComponent::UiDraw()
 	bool t_isDebug = m_rigidBody->GetDebug();
 
 	ImGui::SeparatorText("Rigidbody Component");
+	/*ImGui::SameLine();
+	if (ImGui::Button("Remove Component"))
+	{
+		m_window->GetSelectedObject()->RemoveComponent<Engine::GamePlay::RigidBodyComponent>();
+		m_window->MarkOutOfDate();
+		return;
+	}*/
 
 	ImGui::Text("Active: ");
 	ImGui::SameLine();

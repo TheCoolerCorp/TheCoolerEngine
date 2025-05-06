@@ -7,6 +7,7 @@
 #include "Core/Interfaces/IObjectDescriptor.h"
 #include "GamePlay/Others/Scene.h"
 #include "GamePlay/Systems/RenderSystem.h"
+#include "GamePlay/Others/GameObject.h"
 
 Editor::EditorLayer::Ui::UiMeshComponent::~UiMeshComponent()
 {
@@ -26,10 +27,31 @@ void Editor::EditorLayer::Ui::UiMeshComponent::UiDraw()
 		RefreshImageDescriptorSets();
 	}
 	ImGui::SeparatorText("Mesh Component");
+	ImGui::SameLine();
+	if (ImGui::Button("Remove"))
+	{
+		m_window->GetSelectedObject()->RemoveComponent<Engine::GamePlay::MeshComponent>();
+		m_window->MarkOutOfDate();
+		return;
+	}
 	ImGuiTreeNodeFlags t_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_DefaultOpen;
 	if (ImGui::TreeNodeEx(("Mesh Info: ##"+std::to_string(m_uid)).c_str(), t_flags))
 	{
-		ImGui::Text(("Path: "+m_meshComp->GetMesh()->GetPath()).c_str());
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(4, 4));
+		ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 8.0f);
+
+		// Compute child size manually (text size + padding * 2)
+		std::string t_text = "Path: " + m_meshComp->GetMesh()->GetPath();
+		ImVec2 t_textSize = ImGui::CalcTextSize(t_text.c_str());
+		ImVec2 t_childSize = ImVec2(t_textSize.x + 8, t_textSize.y + 8);
+
+		ImGui::SetCursorPosX(ImGui::GetCursorPosX() - 4);
+		ImGui::BeginChild(("MeshDragDropTarget" + std::to_string(m_uid)).c_str(), t_childSize, true, ImGuiChildFlags_Border);
+		ImGui::PopStyleVar(2);
+		ImGui::Text(t_text.c_str());
+		ImGui::EndChild();
+		AddDragDropMeshTarget();
+		
 		ImGui::Text(("Vertices: "+std::to_string(m_meshComp->GetMesh()->GetNbVertices())).c_str());
 		ImGui::Text(("Indices: "+std::to_string(m_meshComp->GetMesh()->GetNbIndices())).c_str());
 		ImGui::TreePop();
@@ -65,16 +87,17 @@ void Editor::EditorLayer::Ui::UiMeshComponent::UiDraw()
 			}
 			ImGui::EndCombo();
 		}
+		ImGui::SeparatorText("Albedo");
 		DrawImageInfo(ALBEDO);
 		if (m_material->GetType() == Engine::GamePlay::LIT)
 		{
-			ImGui::Separator();
+			ImGui::SeparatorText("Normal");
 			DrawImageInfo(NORMAL);
-			ImGui::Separator();
+			ImGui::SeparatorText("Metallic");
 			DrawImageInfo(METALLIC);
-			ImGui::Separator();
+			ImGui::SeparatorText("Roughness");
 			DrawImageInfo(ROUGHNESS);
-			ImGui::Separator();
+			ImGui::SeparatorText("Ambient Occlusion");
 			DrawImageInfo(AMBIENTOCCLUSION);
 		}
 		ImGui::TreePop();
@@ -199,8 +222,31 @@ void Editor::EditorLayer::Ui::UiMeshComponent::RefreshImageDescriptorSets()
 
 void Editor::EditorLayer::Ui::UiMeshComponent::DrawImageInfo(ImageType a_type)
 {
-	ImGui::Text(("Path: " + GetPath(a_type)).c_str());
-	ImGui::Text(("Size: " + GetSize(a_type)).c_str());
+	if (HasImage(a_type))
+	{
+		ImGui::Text(("Path: " + GetPath(a_type)).c_str());
+		ImGui::Text(("Size: " + GetSize(a_type)).c_str());
+	}
+	else
+	{
+		switch (a_type)
+		{
+		case ALBEDO:
+			UiDrawAlbedoInfo();
+			break;
+		case METALLIC:
+			UiDrawMetallicInfo();
+			break;
+		case ROUGHNESS:
+			UiDrawRoughnessInfo();
+			break;
+		case AMBIENTOCCLUSION:
+			UiDrawAoInfo();
+			break;
+		}
+	}
+
+
 	float t_displaySize = ImGui::GetWindowWidth() - 50.f;
 	t_displaySize = std::max(t_displaySize, 10.f);
 	t_displaySize = std::min(t_displaySize, 100.f);
@@ -215,6 +261,8 @@ void Editor::EditorLayer::Ui::UiMeshComponent::DrawImageInfo(ImageType a_type)
 	ImGui::EndChild();
 	AddDragDropImageTarget(a_type);
 	ImGui::PopStyleVar(1);
+	if (!HasImage(a_type))
+		return;
 	if(ImGui::Button(("Clear " + ToString(a_type) + "##" + std::to_string(m_uid)).c_str()))
 	{
 		switch (a_type)
@@ -250,7 +298,6 @@ void Editor::EditorLayer::Ui::UiMeshComponent::AddDragDropImageTarget(ImageType 
 			const char* t_path = static_cast<const char*>(t_payload->Data);
 			const int t_id = m_meshComp->GetUid();
 			Engine::Core::RHI::IObjectDescriptor* t_descriptor = m_layer->GetScene()->GetRenderSystem()->GetMeshDescriptor(t_id);
-			//vkDeviceWaitIdle(m_layer->GetRenderer()->GetLogicalDevice()->CastVulkan()->GetVkDevice());
 			switch (a_type)
 			{
 			case ALBEDO:
@@ -274,6 +321,61 @@ void Editor::EditorLayer::Ui::UiMeshComponent::AddDragDropImageTarget(ImageType 
 			m_material->SetNeedUpdate(true);
 		}
 		ImGui::EndDragDropTarget();
+	}
+}
+
+void Editor::EditorLayer::Ui::UiMeshComponent::AddDragDropMeshTarget()
+{
+	if (ImGui::BeginDragDropTarget())
+	{
+		if (const ImGuiPayload* t_payload = ImGui::AcceptDragDropPayload("MESH_PATH_PAYLOAD"))
+		{
+			const char* t_path = static_cast<const char*>(t_payload->Data);
+			m_meshComp->SetMesh(t_path, m_layer->GetRenderer());
+			m_isOutOfDate = true;
+		}
+		ImGui::EndDragDropTarget();
+	}
+}
+
+void Editor::EditorLayer::Ui::UiMeshComponent::UiDrawAlbedoInfo()
+{
+	Engine::Math::vec3 t_albedo = m_material->GetMaterialValues().albedo;
+	float t_colorf[4] = { t_albedo.x, t_albedo.y, t_albedo.z, 1.f };
+	ImGui::Text("Color Value: ");
+	if (ImGui::ColorEdit3(("Albedo Color##" + std::to_string(m_uid)).c_str(), t_colorf))
+	{
+		m_material->SetAlbedo(Engine::Math::vec3(t_colorf[0], t_colorf[1], t_colorf[2]));
+	}
+}
+
+void Editor::EditorLayer::Ui::UiMeshComponent::UiDrawMetallicInfo()
+{
+	float t_metallic = m_material->GetMaterialValues().metallic;
+	ImGui::Text("Metallic Value: ");
+	if (ImGui::DragFloat(("Metallic Value##" + std::to_string(m_uid)).c_str(), &t_metallic, 0.01f, 0.f, 1.f))
+	{
+		m_material->SetMetallic(t_metallic);
+	}
+}
+
+void Editor::EditorLayer::Ui::UiMeshComponent::UiDrawRoughnessInfo()
+{
+	float t_roughness = m_material->GetMaterialValues().roughness;
+	ImGui::Text("Roughness Value: ");
+	if (ImGui::DragFloat(("Roughness Value##" + std::to_string(m_uid)).c_str(), &t_roughness, 0.01f, 0.f, 1.f))
+	{
+		m_material->SetRoughness(t_roughness);
+	}
+}
+
+void Editor::EditorLayer::Ui::UiMeshComponent::UiDrawAoInfo()
+{
+	float t_ao = m_material->GetMaterialValues().ao;
+	ImGui::Text("AO Value: ");
+	if (ImGui::DragFloat(("AO Value##" + std::to_string(m_uid)).c_str(), &t_ao, 0.01f, 0.f, 1.f))
+	{
+		m_material->SetAO(t_ao);
 	}
 }
 
