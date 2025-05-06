@@ -13,7 +13,7 @@ void Editor::EditorLayer::Ui::UiLightComponent::UiDraw()
 {
 	ImGui::SeparatorText("Light Component");
 	ImGui::SameLine();
-	if (ImGui::Button("Remove"))
+	if (ImGui::Button(("Remove##Light" + std::to_string(m_uid)).c_str()))
 	{
 		m_window->GetSelectedObject()->RemoveComponent<Engine::GamePlay::LightComponent>();
 		m_window->MarkOutOfDate();

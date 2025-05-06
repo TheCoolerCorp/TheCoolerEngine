@@ -1,5 +1,8 @@
 #include "Core/Multithread/ThreadPool.h"
 
+#include <windows.h>
+#include <thread>
+
 namespace Engine
 {
 	namespace Core
@@ -42,6 +45,7 @@ namespace Engine
 
             void ThreadPool::CheckQueue()
             {
+                SetThreadDescription(GetCurrentThread(), L"Cooler Thread");
                 while (true)
                 {
                     std::function<void()> t_task;

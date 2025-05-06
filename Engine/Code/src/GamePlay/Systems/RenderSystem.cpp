@@ -57,7 +57,8 @@ namespace Engine
 			}
 			m_lightsDescriptor->UpdateUniforms(t_logicalDevice, 0, &m_lightsData, MAX_LIGHTS * sizeof(LightData), 0);
 
-			m_cameraComponents[a_cameraIndex]->GetCamera().Update(m_renderer, a_inputHandler, a_window, a_deltaTime);
+			if (a_cameraIndex < m_cameraComponents.size())
+				m_cameraComponents[a_cameraIndex]->GetCamera().Update(m_renderer, a_inputHandler, a_window, a_deltaTime);
 
 			UpdateMaterial(a_renderer, t_logicalDevice, t_physicalDevice, t_surface, t_commandPool, t_unlitPipeline, t_litPipeline, t_maxFrame, a_materialUpdate, a_updatedMatrix);
 		}
@@ -414,12 +415,13 @@ namespace Engine
 					m_objectsDescriptors[m_pendingComponents[i]] = t_newRenderObject;
 				}
 
-				t_componentsToErase.push_back(i);
+				t_componentsToErase.push_back(m_pendingComponents[i]);
 			}
 
 			for (int i : t_componentsToErase)
 			{
 				m_pendingComponents.erase(std::ranges::remove(m_pendingComponents, i).begin(), m_pendingComponents.end());
+
 			}
 			t_componentsToErase.clear();
 		}

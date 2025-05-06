@@ -17,6 +17,7 @@ void Editor::EditorLayer::Ui::UiMeshComponent::Create()
 {
 	m_material = m_meshComp->GetMaterial();
 	//create image descriptor set
+	m_isOutOfDate = true;
 	CreateImageDescriptorSets();
 }
 
@@ -28,7 +29,7 @@ void Editor::EditorLayer::Ui::UiMeshComponent::UiDraw()
 	}
 	ImGui::SeparatorText("Mesh Component");
 	ImGui::SameLine();
-	if (ImGui::Button("Remove"))
+	if (ImGui::Button(("Remove##Mesh"+std::to_string(m_uid)).c_str()))
 	{
 		m_window->GetSelectedObject()->RemoveComponent<Engine::GamePlay::MeshComponent>();
 		m_window->MarkOutOfDate();
@@ -112,9 +113,9 @@ void Editor::EditorLayer::Ui::UiMeshComponent::Destroy()
 
 void Editor::EditorLayer::Ui::UiMeshComponent::CreateImageDescriptorSets()
 {
-	m_isOutOfDate = false;
+	
 
-	const int t_id = m_window->GetSelectedObject()->GetId();
+	const int t_id = m_window->GetSelectedObject()->GetComponentID<Engine::GamePlay::MeshComponent>();
 	Engine::Core::RHI::IObjectDescriptor* t_descriptor = m_layer->GetScene()->GetRenderSystem()->GetMeshDescriptor(t_id);
 
 	m_imageSets[ALBEDO] = VK_NULL_HANDLE;
@@ -122,6 +123,10 @@ void Editor::EditorLayer::Ui::UiMeshComponent::CreateImageDescriptorSets()
 	m_imageSets[METALLIC] = VK_NULL_HANDLE;
 	m_imageSets[ROUGHNESS] = VK_NULL_HANDLE;
 	m_imageSets[AMBIENTOCCLUSION] = VK_NULL_HANDLE;
+	if (!t_descriptor)
+		return;
+
+	m_isOutOfDate = false;
 
 	if (m_material->HasAlbedo())
 	{
@@ -198,7 +203,7 @@ void Editor::EditorLayer::Ui::UiMeshComponent::CreateImageDescriptorSets()
 			m_isOutOfDate = true;
 		}
 	}
-
+	
 }
 
 void Editor::EditorLayer::Ui::UiMeshComponent::ClearImageDescriptorSets()
