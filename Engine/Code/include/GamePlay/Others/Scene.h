@@ -9,7 +9,7 @@
 #include "Ressources/ResourceManager.h"
 #include "GamePlay/Others/GameObject.h"
 #include <nlohmann/json.hpp>
-#include "GamePlay/Others/Camera.h"
+#include "GamePlay/ComponentsBase/Camera.h"
 
 namespace Engine
 {
@@ -41,7 +41,7 @@ namespace Engine
 			[[nodiscard]] ENGINE_API Core::RHI::IObjectDescriptor* GetLightsDescriptors();
 			[[nodiscard]] ENGINE_API Core::RHI::DescriptorSetPipelineTarget GetDescriptorTarget(int a_idx);
 
-			ENGINE_API Core::RHI::IObjectDescriptor* GetCameraDescriptor() { return m_mainCamera->GetDescriptor(); }
+			ENGINE_API Core::RHI::IObjectDescriptor* GetCameraDescriptor();
 			ENGINE_API void AddGameObject(GameObject* a_object, uint32_t a_parentTransformId = -1, std::vector<uint32_t> a_childTransformIds = {});
 			ENGINE_API GameObject* AddGameObject(GameObjectType a_type, uint32_t a_parentTransformId = -1, std::vector<uint32_t> a_childTransformIds = {});
 			ENGINE_API void RemoveGameObject(uint32_t a_id);
@@ -76,6 +76,7 @@ namespace Engine
 			PhysicsSystem* m_physicsSystem = nullptr;
 
 			bool m_isPlaying = false;
+			int m_gameCameraId = 0;
 		};
 	}	
 }

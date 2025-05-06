@@ -34,6 +34,7 @@ namespace Engine
 		class Camera
 		{
 		public:
+			ENGINE_API Camera() = default;
 			ENGINE_API Camera(Math::vec3 a_up, Math::vec3 a_center, Math::vec3 a_eye, float a_fovY, float a_aspect, float a_near, float a_far, float a_speed, float a_sensitivity);
 			~Camera() = default;
 
@@ -42,7 +43,6 @@ namespace Engine
 			ENGINE_API void Destroy(Core::Renderer* a_renderer);
 
 			ENGINE_API Core::RHI::IObjectDescriptor* GetDescriptor() const { return m_descriptor; }
-
 			[[nodiscard]] ENGINE_API Math::mat4 GetViewMatrix() { return m_view; }
 			[[nodiscard]] ENGINE_API Math::mat4 GetProjectionMatrix() { return m_projection; }
 		private:

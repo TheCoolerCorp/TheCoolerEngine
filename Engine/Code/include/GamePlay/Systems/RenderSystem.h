@@ -6,6 +6,7 @@
 #include "System.h"
 #include "GamePlay/Components/Meshcomponent.h"
 #include "GamePlay/Components/LightComponent.h"
+#include "GamePlay/Components/CameraComponent.h"
 #include "Core/Interfaces/IObjectDescriptor.h"
 
 #include "Math/Transform.h"
@@ -26,7 +27,7 @@ namespace Engine
 			 * Init, update and destroy part of the system
 			 */
 			ENGINE_API void Create(Core::Renderer* a_renderer);
-			ENGINE_API void Update(Core::Renderer* a_renderer, std::vector<std::pair<int, Math::UniformMatrixs>> a_updatedMatrix, std::vector<std::pair<int, Math::vec3>> a_lightsUpdate, std::vector<int> a_materialUpdate);
+			ENGINE_API void Update(Core::Renderer* a_renderer, float a_deltaTime, std::vector<std::pair<int, Math::UniformMatrixs>> a_updatedMatrix, std::vector<std::pair<int, Math::vec3>> a_lightsUpdate, std::vector<int> a_materialUpdate, Core::Window::IWindow* a_window, Core::Window::IInputHandler* a_inputHandler, int a_cameraIndex);
 			ENGINE_API void Destroy(Core::Renderer* a_renderer);
 
 			/*
@@ -36,13 +37,14 @@ namespace Engine
 			*/
 			ENGINE_API int AddComponent(MeshComponent* a_meshComponent);
 			ENGINE_API int AddComponent(LightComponent* a_lightComponent);
-			//ENGINE_API int AddComponent(LightComponent* a_lightComponent);
+			ENGINE_API int AddComponent(CameraComponent* a_cameraComponent);
 
 			/*
 			 * Remove component part
 			 */
 			ENGINE_API void RemoveMeshComponent(int a_id);
 			ENGINE_API void RemoveLightComponent(int a_id);
+			ENGINE_API void RemoveCameraComponent(int a_id);
 
 			/*
 			 * Mesh part getters
@@ -62,25 +64,33 @@ namespace Engine
 			/*
 			* Camera part getters
 			*/
-			//std::vector<MeshComponent*>& GetCameraComponents() { return m_components; }
-			//std::vector<Core::RHI::IObjectDescriptor*>& GetCameraDescriptors() { return m_objectsDescriptors; }
-			//[[nodiscard]] Core::RHI::IObjectDescriptor* GetCameraDescriptor(int a_idx);
+			std::vector<CameraComponent*>& GetCameraComponents() { return m_cameraComponents; }
+			ENGINE_API CameraComponent* GetCameraComponent(int a_id) const;
+			[[nodiscard]] Core::RHI::IObjectDescriptor* GetCameraDescriptor(int a_id);
 
 		private:
+		#pragma region LIGHTS
 			LightData m_lightsData[MAX_LIGHTS];
-
-			std::vector<MeshComponent*> m_components;
-			std::vector<int> m_availableIndexes;
-			std::vector<Core::RHI::IObjectDescriptor*> m_objectsDescriptors;
-			std::vector<int> m_pendingComponents;
-
 			std::vector<LightComponent*> m_lightComponents;
 			Core::RHI::IObjectDescriptor* m_lightsDescriptor;
 			std::vector<int> m_lightsAvailableIndexes;
 			std::vector<int> m_lightsPendingComponents;
+		#pragma endregion
 
+		#pragma region MESHES
+			std::vector<MeshComponent*> m_components;
+			std::vector<int> m_availableIndexes;
+			std::vector<Core::RHI::IObjectDescriptor*> m_objectsDescriptors;
+			std::vector<int> m_pendingComponents;
+		#pragma endregion
 
+		#pragma region CAMERA
+			std::vector<CameraComponent*> m_cameraComponents;
+			std::vector<int> m_cameraAvailableIndexes;
+			std::vector<int> m_cameraPendingComponents;
+		#pragma endregion
 			Core::Renderer* m_renderer = nullptr;
+
 
 			void CreatePendingComponentsDescriptors(Core::Renderer* a_renderer, Core::RHI::ILogicalDevice* a_logicalDevice,
 				Core::RHI::IPhysicalDevice* a_physicalDevice, Core::RHI::ISurface* a_surface, Core::RHI::ICommandPool* a_commandPool, 
@@ -89,6 +99,10 @@ namespace Engine
 			void CreatePendingLightComponentsDescriptors(Core::RHI::ApiInterface* apiInterface, Core::RHI::ILogicalDevice* a_logicalDevice,
 				Core::RHI::IPhysicalDevice* a_physicalDevice, Core::RHI::ISurface* a_surface, Core::RHI::ICommandPool* a_commandPool,
 				Core::RHI::IGraphicPipeline* a_litPipeine, uint32_t a_maxFrame);
+
+			void CreatePendingCameraComponentsDescriptors(Core::RHI::ApiInterface* apiInterface, Core::RHI::ILogicalDevice* a_logicalDevice,
+				Core::RHI::IPhysicalDevice* a_physicalDevice, Core::RHI::ISurface* a_surface, Core::RHI::ICommandPool* a_commandPool,
+				Core::RHI::IGraphicPipeline* a_pipeline, uint32_t a_maxFrame);
 
 			void UpdateMaterial(Core::Renderer* a_renderer, Core::RHI::ILogicalDevice* a_logicalDevice,
 				Core::RHI::IPhysicalDevice* a_physicalDevice, Core::RHI::ISurface* a_surface, Core::RHI::ICommandPool* a_commandPool, Core::RHI::IGraphicPipeline* a_unlitPipeine,

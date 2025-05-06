@@ -14,7 +14,7 @@
 #include "Core/GraphicsAPI/Vulkan/VulkanUtils.h"
 
 #include "GamePlay/Others/GameObject.h"
-#include "GamePlay/Others/Camera.h"
+#include "GamePlay/ComponentsBase/Camera.h"
 
 namespace Engine
 {

@@ -11,7 +11,7 @@
 #include "Core/Window/GLInputHandler.h"
 #include "Core/Renderer/Renderer.h"
 #include "GamePlay/Others/GameObject.h"
-#include "GamePlay/Others/Camera.h"
+#include "GamePlay/ComponentsBase/Camera.h"
 #include "GamePlay/Others/Scene.h"
 
 #include "Layer.h"

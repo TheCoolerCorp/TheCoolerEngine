@@ -6,8 +6,6 @@
 #include <iostream>
 #include <string>
 #include <filesystem>
-//#include <Refureku/Refureku.h>
-//#include "Component.rfkh.h"
 
 namespace Engine
 {
@@ -20,7 +18,8 @@ namespace Engine
 			MATERIAL = 2,
 			RIGIDBODY = 3,
 			COLLIDERMESH = 4,
-			LIGHT = 5
+			LIGHT = 5,
+			CAMERA = 6
 		};
 
 		class Component

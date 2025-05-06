@@ -4,7 +4,7 @@
 #include "GamePlay/ServiceLocator.h"
 
 //#include "GamePlay/Others/Camera.h"
-
+#include "Core/Window/IInputHandler.h"
 namespace Engine
 {
 	namespace GamePlay
@@ -22,7 +22,7 @@ namespace Engine
 			m_lightsDescriptor->SetUniform(a_renderer->GetLogicalDevice(), a_renderer->GetPhysicalDevice(), a_renderer->GetCommandPool(), 0, &m_lightsData, t_lightsSize, 0, 1);
 		}
 
-		void RenderSystem::Update(Core::Renderer* a_renderer, std::vector<std::pair<int,Math::UniformMatrixs>> a_updatedMatrix, std::vector<std::pair<int, Math::vec3>> a_lightsUpdate, std::vector<int> a_materialUpdate)
+		void RenderSystem::Update(Core::Renderer* a_renderer, float a_deltaTime, std::vector<std::pair<int,Math::UniformMatrixs>> a_updatedMatrix, std::vector<std::pair<int, Math::vec3>> a_lightsUpdate, std::vector<int> a_materialUpdate, Core::Window::IWindow* a_window, Core::Window::IInputHandler* a_inputHandler, int a_cameraIndex)
 		{
 			if (a_updatedMatrix.empty())
 			{
@@ -56,6 +56,8 @@ namespace Engine
 				m_lightsData[a_lightsUpdate[i].first].m_intensity = m_lightComponents[a_lightsUpdate[i].first]->GetLight().GetIntensisty();
 			}
 			m_lightsDescriptor->UpdateUniforms(t_logicalDevice, 0, &m_lightsData, MAX_LIGHTS * sizeof(LightData), 0);
+
+			m_cameraComponents[a_cameraIndex]->GetCamera().Update(m_renderer, a_inputHandler, a_window, a_deltaTime);
 
 			UpdateMaterial(a_renderer, t_logicalDevice, t_physicalDevice, t_surface, t_commandPool, t_unlitPipeline, t_litPipeline, t_maxFrame, a_materialUpdate, a_updatedMatrix);
 		}
@@ -146,6 +148,27 @@ namespace Engine
 			// ADD PENDING INDEX
 		}
 
+		int RenderSystem::AddComponent(CameraComponent* a_cameraComponent)
+		{
+			if (m_cameraAvailableIndexes.empty())
+			{
+				m_cameraComponents.emplace_back(a_cameraComponent);
+				const int t_nbComps = static_cast<int>(m_cameraComponents.size() - 1);
+				m_cameraPendingComponents.push_back(t_nbComps);
+				return t_nbComps;
+			}
+			for (const int t_availableIndex : m_cameraAvailableIndexes)
+			{
+				if (m_lightComponents.at(t_availableIndex) == nullptr)
+				{
+					m_cameraComponents.at(t_availableIndex) = a_cameraComponent;
+					m_cameraPendingComponents.push_back(t_availableIndex);
+					return t_availableIndex;
+				}
+			}
+			return -1;
+		}
+
 		void RenderSystem::RemoveMeshComponent(const int a_id)
 		{
 			if (m_components.at(a_id) != nullptr && a_id < m_components.size())
@@ -184,6 +207,21 @@ namespace Engine
 			}
 		}
 
+		void RenderSystem::RemoveCameraComponent(int a_id)
+		{
+			if (m_cameraComponents.at(a_id) != nullptr && a_id < m_cameraComponents.size())
+			{
+				if (m_cameraComponents.at(a_id))
+				{
+					m_cameraComponents.at(a_id)->GetCamera().Destroy(m_renderer);
+					m_cameraComponents.at(a_id)->Destroy();
+					delete m_cameraComponents.at(a_id);
+					m_cameraComponents[a_id] = nullptr;
+					m_cameraAvailableIndexes.push_back(a_id);
+				}
+			}
+		}
+
 		MeshComponent* RenderSystem::GetMeshComponent(const int a_id) const
 		{
 			if (a_id >= static_cast<int>(m_components.size()))
@@ -209,6 +247,24 @@ namespace Engine
 				return nullptr;
 			}
 			return m_lightComponents.at(a_id);
+		}
+
+		CameraComponent* RenderSystem::GetCameraComponent(int a_id) const
+		{
+			if (a_id >= static_cast<int>(m_cameraComponents.size()))
+			{
+				return nullptr;
+			}
+			return m_cameraComponents.at(a_id);
+		}
+
+		Core::RHI::IObjectDescriptor* RenderSystem::GetCameraDescriptor(int a_id)
+		{
+			if (a_id >= static_cast<int>(m_cameraComponents.size()))
+			{
+				return nullptr;
+			}
+			return m_cameraComponents.at(a_id)->GetCamera().GetDescriptor();
 		}
 
 		void RenderSystem::CreatePendingComponentsDescriptors(Core::Renderer* a_renderer, Core::RHI::ILogicalDevice* a_logicalDevice,
@@ -375,6 +431,17 @@ namespace Engine
 			for (int i = 0; i < m_lightsPendingComponents.size() && m_lightComponents.size() <= MAX_LIGHTS; ++i)
 			{
 				m_lightsData[i] = m_lightComponents[m_lightsPendingComponents[i]]->GetLight().GetData();
+			}
+			m_lightsPendingComponents.clear();
+		}
+
+		void RenderSystem::CreatePendingCameraComponentsDescriptors(Core::RHI::ApiInterface* apiInterface, Core::RHI::ILogicalDevice* a_logicalDevice,
+			Core::RHI::IPhysicalDevice* a_physicalDevice, Core::RHI::ISurface* a_surface, Core::RHI::ICommandPool* a_commandPool,
+			Core::RHI::IGraphicPipeline* a_litPipeine, uint32_t a_count)
+		{
+			for (int i = 0; i < m_cameraPendingComponents.size(); ++i)
+			{
+				m_cameraComponents[m_cameraPendingComponents[i]]->GetCamera().Create(m_renderer);
 			}
 			m_lightsPendingComponents.clear();
 		}

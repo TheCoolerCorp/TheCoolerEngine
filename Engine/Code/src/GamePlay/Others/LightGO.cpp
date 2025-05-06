@@ -5,7 +5,6 @@
 #include <ranges>
 
 #include "GamePlay/Components/Meshcomponent.h"
-#include  "GamePlay/Components/MaterialComponent.h"
 #include "Core/Utils.h"
 namespace Engine
 {
