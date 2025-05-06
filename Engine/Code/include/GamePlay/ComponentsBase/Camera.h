@@ -41,7 +41,7 @@ namespace Engine
 			ENGINE_API void Create(Core::Renderer* a_renderer);
 			ENGINE_API void Update(Core::Renderer* a_renderer, Core::Window::IInputHandler* a_inputHandler, Core::Window::IWindow* a_window, const float a_deltaTime);
 			ENGINE_API void Destroy(Core::Renderer* a_renderer);
-
+			ENGINE_API void Set(Math::vec3 a_up, Math::vec3 a_center, Math::vec3 a_eye, float a_fovY, float a_aspect, float a_near, float a_far, float a_speed, float a_sensitivity);
 			ENGINE_API Core::RHI::IObjectDescriptor* GetDescriptor() const { return m_descriptor; }
 			[[nodiscard]] ENGINE_API Math::mat4 GetViewMatrix() { return m_view; }
 			[[nodiscard]] ENGINE_API Math::mat4 GetProjectionMatrix() { return m_projection; }

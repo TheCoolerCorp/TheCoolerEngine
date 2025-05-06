@@ -25,7 +25,7 @@ void Editor::EditorLayer::Ui::UiMeshComponent::UiDraw()
 	if (m_isOutOfDate)
 	{
 		RefreshImageDescriptorSets();
-		Engine::Core::Audio::SoundManager::Get().PlaySound("Assets/fart.wav");
+		Engine::Core::Audio::SoundManager::Get().PlaySound("Assets/Sounds/fart.wav");
 	}
 	ImGui::SeparatorText("Mesh Component");
 	ImGuiTreeNodeFlags t_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_DefaultOpen;
