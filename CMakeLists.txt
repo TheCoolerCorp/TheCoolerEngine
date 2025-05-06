@@ -46,4 +46,4 @@ target_link_libraries(Engine PUBLIC meta)
 target_link_libraries(Engine PUBLIC nlohmann_json)
 target_link_libraries(Editor PUBLIC imgui)
 target_link_libraries(Editor PUBLIC imguizmo)
-
+target_link_libraries(Engine PUBLIC miniaudio)

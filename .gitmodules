@@ -26,3 +26,6 @@
 [submodule "libs/imguizmo"]
 	path = libs/imguizmo
 	url = https://github.com/CedricGuillemet/ImGuizmo.git
+[submodule "libs/miniaudio"]
+	path = libs/miniaudio
+	url = https://github.com/mackron/miniaudio.git

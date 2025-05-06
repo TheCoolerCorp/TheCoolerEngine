@@ -4,6 +4,7 @@
 
 #include "imgui.h"
 #include "backends/imgui_impl_vulkan.h"
+#include "Core/Audio/SoundManager.h"
 #include "Core/Interfaces/IObjectDescriptor.h"
 #include "GamePlay/Others/Scene.h"
 #include "GamePlay/Systems/RenderSystem.h"
@@ -26,6 +27,7 @@ void Editor::EditorLayer::Ui::UiMeshComponent::UiDraw()
 	if (m_isOutOfDate)
 	{
 		RefreshImageDescriptorSets();
+		Engine::Core::Audio::SoundManager::Get().PlaySound("Assets/Sounds/sparkle.wav");
 	}
 	ImGui::SeparatorText("Mesh Component");
 	ImGui::SameLine();

@@ -104,6 +104,20 @@ namespace Engine
 			m_lightComponents.clear();
 			m_lightsAvailableIndexes.clear();
 			m_lightsPendingComponents.clear();
+
+			for (int i = 0; i < m_cameraComponents.size(); ++i)
+			{
+				if (m_cameraComponents[i])
+				{
+					m_cameraComponents[i]->Destroy();
+					m_cameraComponents[i]->GetCamera().Destroy(a_renderer);
+					delete m_cameraComponents[i];
+				}
+
+			}
+			m_cameraComponents.clear();
+			m_cameraAvailableIndexes.clear();
+			m_cameraPendingComponents.clear();
 		}
 
 

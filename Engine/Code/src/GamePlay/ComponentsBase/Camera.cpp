@@ -35,6 +35,20 @@ namespace Engine
 			m_descriptor->SetUniform(a_renderer->GetLogicalDevice(), a_renderer->GetPhysicalDevice(), a_renderer->GetCommandPool(), 0, &m_data, sizeof(CameraData), 0, 1);
 		}
 
+		void Camera::Set(Math::vec3 a_up, Math::vec3 a_center, Math::vec3 a_eye, float a_fovY, float a_aspect, float a_near, float a_far, float a_speed, float a_sensitivity)
+		{
+			m_baseForward = Math::vec3::Normalize(m_center - m_eye);
+			m_currentForward = m_baseForward;
+			m_right = Math::vec3::Normalize(Math::vec3::CrossProduct(m_currentForward, m_up));
+			Math::mat4 t_proj = Math::mat4::Perspective(m_fovY, m_aspect, m_near, m_far);
+			t_proj.mElements[5] *= -1.f;
+			const Math::mat4 t_view = Math::mat4::View(m_up, m_center, m_eye);
+			m_vp = t_proj * t_view;
+			m_vp.Transpose();
+			m_data.m_vp = m_vp;
+			m_data.m_pos = m_eye;
+		}
+
 		void Camera::Update(Core::Renderer* a_renderer, Core::Window::IInputHandler* a_inputHandler, Core::Window::IWindow* a_window, const float a_deltaTime)
 		{
 			ComputeInputs(a_inputHandler, a_window, a_deltaTime);

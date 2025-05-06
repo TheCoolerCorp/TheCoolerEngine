@@ -8,6 +8,9 @@ target_include_directories(stb INTERFACE "stb/")
 add_library(meta INTERFACE)
 target_include_directories(meta INTERFACE "meta/src")
 
+#miniaudio
+add_subdirectory(miniaudio)
+
 # json
 add_subdirectory(json)
 
