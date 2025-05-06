@@ -16,6 +16,7 @@ namespace Engine
 
 			meta::reflect<MeshData>(t_hash("MeshData"))
 				.data<&MeshData::mMeshPath>(t_hash("mesh"))
+				.data<&MeshData::mType>(t_hash("type"))
 				.data<&MeshData::mAlbedoPath>(t_hash("albedo"))
 				.data<&MeshData::mNormalPath>(t_hash("normal"))
 				.data<&MeshData::mMetallicPath>(t_hash("metallic"))
@@ -69,6 +70,8 @@ namespace Engine
 			Ref<Resource::Texture> t_albedoTexture = m_material->GetAlbedo();
 			std::string t_albedoPath = t_albedoTexture ? t_albedoTexture->GetPath() : "";
 
+			int t_type = m_material->GetType();
+
 			Ref<Resource::Texture> t_normalTexture = m_material->GetNormal();
 			std::string t_normalPath = t_normalTexture ? t_normalTexture->GetPath() : "";
 
@@ -83,6 +86,7 @@ namespace Engine
 
 			MeshData t_data = {
 				.mMeshPath= m_mesh->GetPath(),
+				.mType= t_type,
 				.mAlbedoPath= t_albedoPath,
 				.mNormalPath= t_normalPath,
 				.mMetallicPath= t_metallicPath,

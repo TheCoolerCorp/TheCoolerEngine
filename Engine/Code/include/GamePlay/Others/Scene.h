@@ -63,6 +63,8 @@ namespace Engine
 			static RigidBodyData DeserializeRigidBodyComponent(const nlohmann::ordered_json& a_json);
 			static nlohmann::ordered_json SerializeMeshComponent(const MeshComponent& a_mesh);
 			static MeshData DeserializeMeshComponent(const nlohmann::ordered_json& a_json);
+			static nlohmann::ordered_json SerializeLightComponent(const LightComponent& a_lightComponent);
+			static LightData DeserializeLightComponent(const nlohmann::ordered_json& a_json);
 
 			std::vector<GameObject*> m_objs;
 			std::vector<int> m_deletionQueue;

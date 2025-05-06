@@ -44,35 +44,35 @@ namespace Engine
 				static_cast<float>(a_width) / static_cast<float>(a_height), 0.1f, 100.f, 10.f, 20.f);
 			m_mainCamera->Create(a_renderer);
 
-			GameObject* t_object = new GameObject(Math::vec3(0.f, 0.f, 0.f), Math::vec3(0.f, Math::ToRadians(270.f), Math::ToRadians(270.f)), Math::vec3(1.f), "Unlit");
-			t_object->AddComponent<MeshComponent>();
-			t_object->GetComponent<MeshComponent>()->GetMaterial()->SetAlbedo("Assets/Textures/viking_room.png", a_renderer);
-			t_object->GetComponent<MeshComponent>()->GetMaterial()->Create(UNLIT);
-			t_object->GetComponent<MeshComponent>()->SetMesh("Assets/Meshes/viking_room.obj", a_renderer);
+			//GameObject* t_object = new GameObject(Math::vec3(0.f, 0.f, 0.f), Math::vec3(0.f, Math::ToRadians(270.f), Math::ToRadians(270.f)), Math::vec3(1.f), "Unlit");
+			//t_object->AddComponent<MeshComponent>();
+			//t_object->GetComponent<MeshComponent>()->GetMaterial()->SetAlbedo("Assets/Textures/viking_room.png", a_renderer);
+			//t_object->GetComponent<MeshComponent>()->GetMaterial()->Create(UNLIT);
+			//t_object->GetComponent<MeshComponent>()->SetMesh("Assets/Meshes/viking_room.obj", a_renderer);
 
-			GameObject* t_object2 = new GameObject(Math::vec3(2.5f, 0.f, 0.f), Math::vec3(0.f, Math::ToRadians(270.f), Math::ToRadians(270.f)), Math::vec3(1.f), "Lit");
-			t_object2->AddComponent<MeshComponent>();
-			t_object2->GetComponent<MeshComponent>()->SetMesh("Assets/Meshes/BaseObjects/Sphere.obj", a_renderer);
-			t_object2->GetComponent<MeshComponent>()->GetMaterial()->Create(LIT);
-			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetAlbedo("Assets/Textures/rustediron2_basecolor.png", a_renderer);
-			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetNormal("Assets/Textures/rustediron2_normal.png", a_renderer);
-			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetMetallic("Assets/Textures/rustediron2_metallic.png", a_renderer);
-			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetRoughness("Assets/Textures/rustediron2_roughness.png", a_renderer);
-			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetAO(1.f);
+			//GameObject* t_object2 = new GameObject(Math::vec3(2.5f, 0.f, 0.f), Math::vec3(0.f, Math::ToRadians(270.f), Math::ToRadians(270.f)), Math::vec3(1.f), "Lit");
+			//t_object2->AddComponent<MeshComponent>();
+			//t_object2->GetComponent<MeshComponent>()->SetMesh("Assets/Meshes/BaseObjects/Sphere.obj", a_renderer);
+			//t_object2->GetComponent<MeshComponent>()->GetMaterial()->Create(LIT);
+			//t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetAlbedo("Assets/Textures/rustediron2_basecolor.png", a_renderer);
+			//t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetNormal("Assets/Textures/rustediron2_normal.png", a_renderer);
+			//t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetMetallic("Assets/Textures/rustediron2_metallic.png", a_renderer);
+			//t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetRoughness("Assets/Textures/rustediron2_roughness.png", a_renderer);
+			//t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetAO(1.f);
 
-			GameObject* t_object3 = new GameObject(Math::vec3(5.f, 0.f, 0.f), Math::vec3(0.f, Math::ToRadians(270.f), Math::ToRadians(270.f)), Math::vec3(1.f), "Lit");
-			t_object3->AddComponent<MeshComponent>();
-			t_object3->GetComponent<MeshComponent>()->SetMesh("Assets/Meshes/BaseObjects/Sphere.obj", a_renderer);
-			t_object3->GetComponent<MeshComponent>()->GetMaterial()->Create(LIT);
-			t_object3->GetComponent<MeshComponent>()->GetMaterial()->SetAlbedo("Assets/Textures/PBR/pbr_diff.png", a_renderer);
-			t_object3->GetComponent<MeshComponent>()->GetMaterial()->SetNormal("Assets/Textures/PBR/pbr_nor.png", a_renderer);
-			t_object3->GetComponent<MeshComponent>()->GetMaterial()->SetMetallic("Assets/Textures/PBR/pbr_metal.png", a_renderer);
-			t_object3->GetComponent<MeshComponent>()->GetMaterial()->SetRoughness("Assets/Textures/PBR/pbr_rough.png", a_renderer);
-			t_object3->GetComponent<MeshComponent>()->GetMaterial()->SetAO("Assets/Textures/PBR/pbr_ao.png", a_renderer);
+			//GameObject* t_object3 = new GameObject(Math::vec3(5.f, 0.f, 0.f), Math::vec3(0.f, Math::ToRadians(270.f), Math::ToRadians(270.f)), Math::vec3(1.f), "Lit");
+			//t_object3->AddComponent<MeshComponent>();
+			//t_object3->GetComponent<MeshComponent>()->SetMesh("Assets/Meshes/BaseObjects/Sphere.obj", a_renderer);
+			//t_object3->GetComponent<MeshComponent>()->GetMaterial()->Create(LIT);
+			//t_object3->GetComponent<MeshComponent>()->GetMaterial()->SetAlbedo("Assets/Textures/PBR/pbr_diff.png", a_renderer);
+			//t_object3->GetComponent<MeshComponent>()->GetMaterial()->SetNormal("Assets/Textures/PBR/pbr_nor.png", a_renderer);
+			//t_object3->GetComponent<MeshComponent>()->GetMaterial()->SetMetallic("Assets/Textures/PBR/pbr_metal.png", a_renderer);
+			//t_object3->GetComponent<MeshComponent>()->GetMaterial()->SetRoughness("Assets/Textures/PBR/pbr_rough.png", a_renderer);
+			//t_object3->GetComponent<MeshComponent>()->GetMaterial()->SetAO("Assets/Textures/PBR/pbr_ao.png", a_renderer);
 
 
-			LightGO* t_light = new LightGO(Math::vec3(10.f, 0.f, 0.f), Math::vec3(0.f, 0.f, 0.f), Math::vec3(1.f));
-			LightGO* t_light2 = new LightGO(Math::vec3(0.f, 0.f, 0.f), Math::vec3(0.f, 0.f, 0.f), Math::vec3(1.f));
+			//LightGO* t_light = new LightGO(Math::vec3(10.f, 0.f, 0.f), Math::vec3(0.f, 0.f, 0.f), Math::vec3(1.f));
+			//LightGO* t_light2 = new LightGO(Math::vec3(0.f, 0.f, 0.f), Math::vec3(0.f, 0.f, 0.f), Math::vec3(1.f));
 
 			CameraGO* t_camera = new CameraGO(Math::vec3(0.f, 0.f, 0.f), Math::vec3(0.f, 0.f, 0.f), Math::vec3(1.f));
 			t_camera->Set(Math::vec3(0.f, 1.f, 0.f), Math::vec3(0.f, 0.f, 0.f),
@@ -86,7 +86,7 @@ namespace Engine
 			AddGameObject(t_light2);
 			AddGameObject(t_camera);
 
-			Load(a_renderer);
+			//Load(a_renderer);
 		}
 
 		void Scene::Update(Core::Renderer* a_renderer, Core::Window::IWindow* a_window, Core::Window::IInputHandler* a_inputHandler, float a_deltatime)
@@ -407,6 +407,10 @@ namespace Engine
 				{
 					t_objJson["RigidBodyComponent"] = SerializeRigidBodyComponent(*t_rigidBodyComponent);
 				}
+				if (const LightComponent* t_lightComponent = t_obj->GetComponent<LightComponent>())
+				{
+					t_objJson["LightComponent"] = SerializeLightComponent(*t_lightComponent);
+				}
 				if (const MeshComponent* t_meshComponent = t_obj->GetComponent<MeshComponent>())
 				{
 					t_objJson["MeshComponent"] = SerializeMeshComponent(*t_meshComponent);
@@ -434,12 +438,20 @@ namespace Engine
 			t_file >> t_scene;
 
 			for (const auto& t_entry : t_scene) {
+				bool t_hasLight = false;
 				bool t_hasRigidBody = false;
 				bool t_hasMesh = false;
 
 				std::string t_name = t_entry.at("GameObject").get<std::string>();
 
 				TransformData t_transform = DeserializeTransformComponent(t_entry.at("TransformComponent"));
+
+				LightData t_light{};
+				if (t_entry.contains("LightComponent"))
+				{
+					t_light = DeserializeLightComponent(t_entry.at("LightComponent"));
+					t_hasLight = true;
+				}
 
 				RigidBodyData t_rigidBody{};
 				if (t_entry.contains("RigidBodyComponent")) 
@@ -455,16 +467,16 @@ namespace Engine
 					t_hasMesh = true;
 				}
 
+				GameObject* t_gameObject = new GameObject(t_transform.mPos, t_transform.mRot, t_transform.mScale, t_name);
+				t_gameObject->GetComponent<TransformComponent>()->SetParent(t_transform.mParentId);
+
 				LOG_DEBUG(t_name);
 
-				LOG_DEBUG("Transform :");
-				LOG_DEBUG("pos :");
-				t_transform.mPos.Print();
-				LOG_DEBUG("rot :");
-				t_transform.mRot.Print();
-				LOG_DEBUG("scale :");
-				t_transform.mScale.Print();
-				LOG_DEBUG("parent : " + Core::Debugging::ToString(t_transform.mParentId));
+				if (t_hasLight)
+				{
+					t_gameObject->AddComponent<LightComponent>();
+					t_gameObject->GetComponent<LightComponent>()->SetLightFromData(t_light);
+				}
 
 				if (t_hasRigidBody)
 				{
@@ -499,14 +511,34 @@ namespace Engine
 
 				if (t_hasMesh)
 				{
-					LOG_DEBUG("Mesh :");
-					LOG_DEBUG("Mesh path : " + t_mesh.mMeshPath);
-					LOG_DEBUG("Albedo path : " + t_mesh.mAlbedoPath);
-					LOG_DEBUG("Normal path : " + t_mesh.mNormalPath);
-					LOG_DEBUG("Metallic path : " + t_mesh.mMetallicPath);
-					LOG_DEBUG("Roughness path : " + t_mesh.mRoughnessPath);
-					LOG_DEBUG("AO path : " + t_mesh.mAOPath);
+					t_gameObject->AddComponent<MeshComponent>();
+					MeshComponent* t_meshComponent = t_gameObject->GetComponent<MeshComponent>();
+					t_meshComponent->SetMesh(t_mesh.mMeshPath, a_renderer);
+					Ref<Material> t_material = t_meshComponent->GetMaterial();
+					t_material->Create(static_cast<MaterialType>(t_mesh.mType));
+					if (!t_mesh.mAlbedoPath.empty())
+					{
+						t_material->SetAlbedo(t_mesh.mAlbedoPath, a_renderer);
+					}
+					if (!t_mesh.mNormalPath.empty())
+					{
+						t_material->SetNormal(t_mesh.mNormalPath, a_renderer);
+					}
+					if (!t_mesh.mMetallicPath.empty())
+					{
+						t_material->SetMetallic(t_mesh.mMetallicPath, a_renderer);
+					}
+					if (!t_mesh.mRoughnessPath.empty())
+					{
+						t_material->SetRoughness(t_mesh.mRoughnessPath, a_renderer);
+					}
+					if (!t_mesh.mAOPath.empty())
+					{
+						t_material->SetAO(t_mesh.mAOPath, a_renderer);
+					}
 				}
+
+				AddGameObject(t_gameObject);
 			}
 		}
 
@@ -864,6 +896,13 @@ namespace Engine
 				t_json["mesh"] = t_meshAny.cast<std::string>();
 			}
 
+			const meta::data t_typeField = t_meshDataType.data(t_hash("type"));
+			if (t_typeField)
+			{
+				meta::any t_typeAny = t_typeField.get(t_meshDataHandle);
+				t_json["type"] = t_typeAny.cast<int>();
+			}
+
 			const meta::data t_albedoField = t_meshDataType.data(t_hash("albedo"));
 			if (t_albedoField)
 			{
@@ -908,6 +947,8 @@ namespace Engine
 
 			t_meshData.mMeshPath = a_json.at("mesh").get<std::string>();
 
+			t_meshData.mType = a_json.at("type").get<int>();
+
 			t_meshData.mAlbedoPath = a_json.at("albedo").get<std::string>();
 
 			t_meshData.mNormalPath = a_json.at("normal").get<std::string>();
@@ -919,6 +960,95 @@ namespace Engine
 			t_meshData.mAOPath = a_json.at("ao").get<std::string>();
 
 			return t_meshData;
+		}
+
+		nlohmann::ordered_json Scene::SerializeLightComponent(const LightComponent& a_lightComponent)
+		{
+			json t_json;
+			constexpr std::hash<std::string_view> t_hash{};
+
+			meta::any t_lightAny{ a_lightComponent };
+
+			const meta::handle t_lightHandle{ t_lightAny };
+
+			if (!t_lightHandle)
+			{
+				return t_json;
+			}
+
+			const meta::data t_lightDataField = t_lightHandle.type().data(t_hash("Light"));
+			if (!t_lightDataField)
+			{
+				return t_json;
+			}
+
+			meta::any t_lightDataAny = t_lightDataField.get(t_lightHandle);
+			if (!t_lightDataAny)
+			{
+				return t_json;
+			}
+
+			const meta::handle t_lightDataHandle(t_lightDataAny);
+
+			const meta::type t_lightDataType = t_lightDataHandle.type();
+
+			const meta::data t_posField = t_lightDataType.data(t_hash("position"));
+			if (t_posField)
+			{
+				meta::any t_posAny = t_posField.get(t_lightDataHandle);
+				const meta::handle t_posHandle(t_posAny);
+
+				t_json["position"] = {
+					{"x", t_posHandle.type().data(t_hash("x")).get(t_posHandle).cast<float>()},
+					{"y", t_posHandle.type().data(t_hash("y")).get(t_posHandle).cast<float>()},
+					{"z", t_posHandle.type().data(t_hash("z")).get(t_posHandle).cast<float>()}
+				};
+			}
+
+			const meta::data t_colorField = t_lightDataType.data(t_hash("color"));
+			if (t_colorField)
+			{
+				meta::any t_scaleAny = t_colorField.get(t_lightDataHandle);
+				const meta::handle t_scaleHandle(t_scaleAny);
+
+				t_json["color"] = {
+					{"x", t_scaleHandle.type().data(t_hash("x")).get(t_scaleHandle).cast<float>()},
+					{"y", t_scaleHandle.type().data(t_hash("y")).get(t_scaleHandle).cast<float>()},
+					{"z", t_scaleHandle.type().data(t_hash("z")).get(t_scaleHandle).cast<float>()}
+				};
+			}
+
+			const meta::data t_intensityField = t_lightDataType.data(t_hash("intensity"));
+			if (t_intensityField)
+			{
+				meta::any t_intensityAny = t_intensityField.get(t_lightDataHandle);
+				t_json["intensity"] = t_intensityAny.cast<float>();
+			}
+
+			return t_json;
+		}
+
+		LightData Scene::DeserializeLightComponent(const nlohmann::ordered_json& a_json)
+		{
+			LightData t_lightData;
+
+			const auto& t_pos = a_json.at("position");
+			t_lightData.m_position = {
+				t_pos.at("x").get<float>(),
+				t_pos.at("y").get<float>(),
+				t_pos.at("z").get<float>()
+			};
+
+			const auto& t_color = a_json.at("color");
+			t_lightData.m_color = {
+				t_color.at("x").get<float>(),
+				t_color.at("y").get<float>(),
+				t_color.at("z").get<float>()
+			};
+
+			t_lightData.m_intensity = a_json.at("intensity").get<float>();
+
+			return t_lightData;
 		}
 	}
 }

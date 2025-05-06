@@ -37,7 +37,7 @@ namespace Engine
 			ENGINE_API float GetIntensisty() { return m_data.m_intensity; }
 			ENGINE_API void SetIntensity(float a_intensity) { m_data.m_intensity = a_intensity; }
 
-			ENGINE_API LightData& GetData() { return m_data; }
+			ENGINE_API LightData GetData() const { return m_data; }
 
 		private:
 			LightData m_data;

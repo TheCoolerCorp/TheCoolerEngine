@@ -32,6 +32,7 @@ namespace Engine
 			public:
 				ENGINE_API GameObject( std::string a_name = "Game Object");
 				ENGINE_API GameObject( Math::vec3 a_position, Math::vec3 a_rotation, Math::vec3 a_scale, std::string a_name = "Game Object");
+				ENGINE_API GameObject( Math::vec3 a_position, Math::quat a_rotation, Math::vec3 a_scale, std::string a_name = "Game Object");
 
 				ENGINE_API virtual ~GameObject();
 
