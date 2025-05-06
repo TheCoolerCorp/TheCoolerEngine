@@ -57,7 +57,7 @@ namespace Engine
 			}
 			m_lightsDescriptor->UpdateUniforms(t_logicalDevice, 0, &m_lightsData, MAX_LIGHTS * sizeof(LightData), 0);
 
-			m_cameraComponents[a_cameraIndex]->GetCamera().Update(m_renderer, a_inputHandler, a_window, a_deltaTime);
+			//m_cameraComponents[a_cameraIndex]->GetCamera().Update(m_renderer, a_inputHandler, a_window, a_deltaTime);
 
 			UpdateMaterial(a_renderer, t_logicalDevice, t_physicalDevice, t_surface, t_commandPool, t_unlitPipeline, t_litPipeline, t_maxFrame, a_materialUpdate, a_updatedMatrix);
 		}

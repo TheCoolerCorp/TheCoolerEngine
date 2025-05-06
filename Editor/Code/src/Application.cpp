@@ -10,6 +10,7 @@
 #include "ImGuiLayer.h"
 #include "InspectorWindow.h"
 #include "LoggerWindow.h"
+#include "Core/Audio/SoundManager.h"
 
 using namespace Engine::Core;
 using namespace Engine::GamePlay;
@@ -24,6 +25,8 @@ namespace Editor
 		void Application::Create(const int a_width, const int a_height)
 		{
 			RegisterTypes();
+
+			Audio::SoundManager::Get().Init();
 
 			GraphicsAPI::VulkanRenderPassManager::AddFlag(GraphicsAPI::FLAG_VK_RHI_OVERRIDE_DEFAULT_RENDERPASS);
 
@@ -57,6 +60,8 @@ namespace Editor
 			t_imguiLayer->AddWindow(new Ui::InspectorUiWindow(m_renderer, t_imguiLayer));
 			t_imguiLayer->AddWindow(new Ui::UiLoggerWindow(m_renderer, t_imguiLayer));
 			t_imguiLayer->AddWindow(new Ui::FileExplorerWindow(m_renderer, t_imguiLayer));
+
+			Audio::SoundManager::Get().PlaySound("Assets/Sounds/fart.wav");
 		}
 
 		void Application::Run()
@@ -129,6 +134,8 @@ namespace Editor
 
 			m_mainWindow->Destroy();
 			delete m_mainWindow;
+
+			Audio::SoundManager::Get().UnInit();
 		}
 
 		void Application::UpdateDeltaTime()
