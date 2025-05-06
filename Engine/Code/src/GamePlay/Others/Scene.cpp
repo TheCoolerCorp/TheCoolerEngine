@@ -382,6 +382,10 @@ namespace Engine
 				{
 					t_objJson["RigidBodyComponent"] = SerializeRigidBodyComponent(*t_rigidBodyComponent);
 				}
+				if (const LightComponent* t_lightComponent = t_obj->GetComponent<LightComponent>())
+				{
+					t_objJson["LightComponent"] = SerializeLightComponent(*t_lightComponent);
+				}
 				if (const MeshComponent* t_meshComponent = t_obj->GetComponent<MeshComponent>())
 				{
 					t_objJson["MeshComponent"] = SerializeMeshComponent(*t_meshComponent);
@@ -894,6 +898,95 @@ namespace Engine
 			t_meshData.mAOPath = a_json.at("ao").get<std::string>();
 
 			return t_meshData;
+		}
+
+		nlohmann::ordered_json Scene::SerializeLightComponent(const LightComponent& a_lightComponent)
+		{
+			json t_json;
+			constexpr std::hash<std::string_view> t_hash{};
+
+			meta::any t_lightAny{ a_lightComponent };
+
+			const meta::handle t_lightHandle{ t_lightAny };
+
+			if (!t_lightHandle)
+			{
+				return t_json;
+			}
+
+			const meta::data t_lightDataField = t_lightHandle.type().data(t_hash("Light"));
+			if (!t_lightDataField)
+			{
+				return t_json;
+			}
+
+			meta::any t_lightDataAny = t_lightDataField.get(t_lightHandle);
+			if (!t_lightDataAny)
+			{
+				return t_json;
+			}
+
+			const meta::handle t_lightDataHandle(t_lightDataAny);
+
+			const meta::type t_lightDataType = t_lightDataHandle.type();
+
+			const meta::data t_posField = t_lightDataType.data(t_hash("position"));
+			if (t_posField)
+			{
+				meta::any t_posAny = t_posField.get(t_lightDataHandle);
+				const meta::handle t_posHandle(t_posAny);
+
+				t_json["position"] = {
+					{"x", t_posHandle.type().data(t_hash("x")).get(t_posHandle).cast<float>()},
+					{"y", t_posHandle.type().data(t_hash("y")).get(t_posHandle).cast<float>()},
+					{"z", t_posHandle.type().data(t_hash("z")).get(t_posHandle).cast<float>()}
+				};
+			}
+
+			const meta::data t_colorField = t_lightDataType.data(t_hash("color"));
+			if (t_colorField)
+			{
+				meta::any t_scaleAny = t_colorField.get(t_lightDataHandle);
+				const meta::handle t_scaleHandle(t_scaleAny);
+
+				t_json["color"] = {
+					{"x", t_scaleHandle.type().data(t_hash("x")).get(t_scaleHandle).cast<float>()},
+					{"y", t_scaleHandle.type().data(t_hash("y")).get(t_scaleHandle).cast<float>()},
+					{"z", t_scaleHandle.type().data(t_hash("z")).get(t_scaleHandle).cast<float>()}
+				};
+			}
+
+			const meta::data t_intensityField = t_lightDataType.data(t_hash("intensity"));
+			if (t_intensityField)
+			{
+				meta::any t_intensityAny = t_intensityField.get(t_lightDataHandle);
+				t_json["intensity"] = t_intensityAny.cast<float>();
+			}
+
+			return t_json;
+		}
+
+		LightData Scene::DeserializeLightComponent(const nlohmann::ordered_json& a_json)
+		{
+			LightData t_lightData;
+
+			const auto& t_pos = a_json.at("position");
+			t_lightData.m_position = {
+				t_pos.at("x").get<float>(),
+				t_pos.at("y").get<float>(),
+				t_pos.at("z").get<float>()
+			};
+
+			const auto& t_color = a_json.at("color");
+			t_lightData.m_color = {
+				t_color.at("x").get<float>(),
+				t_color.at("y").get<float>(),
+				t_color.at("z").get<float>()
+			};
+
+			t_lightData.m_intensity = a_json.at("intensity").get<float>();
+
+			return t_lightData;
 		}
 	}
 }
