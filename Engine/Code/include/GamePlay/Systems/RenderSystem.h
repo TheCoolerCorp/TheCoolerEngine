@@ -28,7 +28,7 @@ namespace Engine
 			 */
 			ENGINE_API void Create(Core::Renderer* a_renderer);
 			ENGINE_API void Update(Core::Renderer* a_renderer, std::vector<std::pair<int, Math::UniformMatrixs>> a_updatedMatrix, std::vector<std::pair<int, Math::vec3>> a_lightsUpdate, std::vector<int> a_materialUpdate, std::vector<std::pair<int, Math::mat4>> a_cameraUpdatedMatrix);
-			ENGINE_API void UpdateCamera(Core::Renderer* a_renderer, float a_deltaTime, Core::Window::IWindow* a_window, Core::Window::IInputHandler* a_inputHandler, int a_cameraIndex);
+			ENGINE_API void UpdateCamera(Core::Renderer* a_renderer, float a_deltaTime, Core::Window::IWindow* a_window, Core::Window::IInputHandler* a_inputHandler, int a_cameraIndex, Math::mat4 a_model);
 			ENGINE_API void Destroy(Core::Renderer* a_renderer);
 
 			/*

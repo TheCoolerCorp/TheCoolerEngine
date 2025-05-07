@@ -27,9 +27,9 @@ namespace Engine
 			AddComponent<CameraComponent>();
 		}
 
-		void CameraGO::Set(Math::vec3 a_up, Math::vec3 a_center, Math::vec3 a_eye, float a_fovY, float a_aspect, float a_near, float a_far, float a_speed, float a_sensitivity)
+		void CameraGO::Set(Math::vec3 a_up, Math::vec3 a_center, Math::vec3 a_eye, float a_fovY, float a_aspect, float a_near, float a_far, float a_speed, float a_sensitivity, bool a_freeCam)
 		{
-			GetComponent<CameraComponent>()->GetCamera().Set(a_up, a_center, a_eye, a_fovY, a_aspect, a_near, a_far, a_speed, a_sensitivity);
+			GetComponent<CameraComponent>()->GetCamera().Set(a_up, a_center, a_eye, a_fovY, a_aspect, a_near, a_far, a_speed, a_sensitivity, a_freeCam);
 		}
 		CameraGO::~CameraGO()
 		{

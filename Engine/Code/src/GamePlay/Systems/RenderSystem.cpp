@@ -71,12 +71,12 @@ namespace Engine
 			UpdateMaterial(a_renderer, t_logicalDevice, t_physicalDevice, t_surface, t_commandPool, t_unlitPipeline, t_litPipeline, t_maxFrame, a_materialUpdate, a_updatedMatrix);
 		}
 
-		void RenderSystem::UpdateCamera(Core::Renderer* a_renderer, float a_deltaTime, Core::Window::IWindow* a_window, Core::Window::IInputHandler* a_inputHandler, int a_cameraIndex)
+		void RenderSystem::UpdateCamera(Core::Renderer* a_renderer, float a_deltaTime, Core::Window::IWindow* a_window, Core::Window::IInputHandler* a_inputHandler, int a_cameraIndex, Math::mat4 a_model)
 		{
-			/*if (a_cameraIndex < m_cameraComponents.size())
+			if (a_cameraIndex < m_cameraComponents.size())
 			{
-				m_cameraComponents[a_cameraIndex]->GetCamera().Update(m_renderer, a_inputHandler, a_window, a_deltaTime);
-			}*/
+				m_cameraComponents[a_cameraIndex]->GetCamera().Update(m_renderer, a_inputHandler, a_window, a_deltaTime, a_model);
+			}
 		}
 
 		void RenderSystem::Destroy(Core::Renderer* a_renderer)
