@@ -185,6 +185,7 @@ namespace Editor
 			Engine::GamePlay::RigidBodyComponent::Register();
 			Engine::GamePlay::MeshComponent::Register();
 			Engine::GamePlay::LightComponent::Register();
+			Engine::GamePlay::CameraComponent::Register();
 		}
 	}
 }

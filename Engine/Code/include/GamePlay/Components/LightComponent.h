@@ -30,6 +30,7 @@ namespace Engine
 
 			ENGINE_API static void RemoveComponent(int a_id);
 
+
 		private:
 			Light m_light;
 		};

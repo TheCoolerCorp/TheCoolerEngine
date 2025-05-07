@@ -40,56 +40,55 @@ namespace Engine
 			t_defaultTexture->CreateImage(a_renderer);
 
 			m_mainCamera = new Camera(Math::vec3(0.f, 1.f, 0.f), Math::vec3(0.f, 0.f, 0.f),
-				Math::vec3(0.f, 1.f, 3.f), Math::ToRadians(70.f),
+				Math::vec3(0.f, 0.f, 3.f), Math::ToRadians(70.f),
 				static_cast<float>(a_width) / static_cast<float>(a_height), 0.1f, 100.f, 10.f, 20.f);
 			m_mainCamera->Create(a_renderer);
 
-			GameObject* t_object = new GameObject(Math::vec3(0.f, 0.f, 0.f), Math::vec3(0.f, Math::ToRadians(270.f), Math::ToRadians(270.f)), Math::vec3(1.f), "Unlit");
-			t_object->AddComponent<MeshComponent>();
-			t_object->GetComponent<MeshComponent>()->GetMaterial()->SetAlbedo("Assets/Textures/viking_room.png", a_renderer);
-			t_object->GetComponent<MeshComponent>()->GetMaterial()->Create(UNLIT);
-			t_object->GetComponent<MeshComponent>()->SetMesh("Assets/Meshes/viking_room.obj", a_renderer);
+			//GameObject* t_object = new GameObject(Math::vec3(0.f, 0.f, 0.f), Math::vec3(0.f, Math::ToRadians(270.f), Math::ToRadians(270.f)), Math::vec3(1.f), "Unlit");
+			//t_object->AddComponent<MeshComponent>();
+			//t_object->GetComponent<MeshComponent>()->GetMaterial()->SetAlbedo("Assets/Textures/viking_room.png", a_renderer);
+			//t_object->GetComponent<MeshComponent>()->GetMaterial()->Create(UNLIT);
+			//t_object->GetComponent<MeshComponent>()->SetMesh("Assets/Meshes/viking_room.obj", a_renderer);
 
-			GameObject* t_object2 = new GameObject(Math::vec3(2.5f, 0.f, 0.f), Math::vec3(0.f, Math::ToRadians(270.f), Math::ToRadians(270.f)), Math::vec3(1.f), "Lit");
-			t_object2->AddComponent<MeshComponent>();
-			t_object2->GetComponent<MeshComponent>()->SetMesh("Assets/Meshes/BaseObjects/Sphere.obj", a_renderer);
-			t_object2->GetComponent<MeshComponent>()->GetMaterial()->Create(LIT);
-			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetAlbedo("Assets/Textures/rustediron2_basecolor.png", a_renderer);
-			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetNormal("Assets/Textures/rustediron2_normal.png", a_renderer);
-			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetMetallic("Assets/Textures/rustediron2_metallic.png", a_renderer);
-			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetRoughness("Assets/Textures/rustediron2_roughness.png", a_renderer);
-			t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetAO(1.f);
+			//GameObject* t_object2 = new GameObject(Math::vec3(2.5f, 0.f, 0.f), Math::vec3(0.f, Math::ToRadians(270.f), Math::ToRadians(270.f)), Math::vec3(1.f), "Lit");
+			//t_object2->AddComponent<MeshComponent>();
+			//t_object2->GetComponent<MeshComponent>()->SetMesh("Assets/Meshes/BaseObjects/Sphere.obj", a_renderer);
+			//t_object2->GetComponent<MeshComponent>()->GetMaterial()->Create(LIT);
+			//t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetAlbedo("Assets/Textures/rustediron2_basecolor.png", a_renderer);
+			//t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetNormal("Assets/Textures/rustediron2_normal.png", a_renderer);
+			//t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetMetallic("Assets/Textures/rustediron2_metallic.png", a_renderer);
+			//t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetRoughness("Assets/Textures/rustediron2_roughness.png", a_renderer);
+			//t_object2->GetComponent<MeshComponent>()->GetMaterial()->SetAO(1.f);
 
-			GameObject* t_object3 = new GameObject(Math::vec3(5.f, 0.f, 0.f), Math::vec3(0.f, Math::ToRadians(270.f), Math::ToRadians(270.f)), Math::vec3(1.f), "Lit");
-			t_object3->AddComponent<MeshComponent>();
-			t_object3->GetComponent<MeshComponent>()->SetMesh("Assets/Meshes/BaseObjects/Sphere.obj", a_renderer);
-			t_object3->GetComponent<MeshComponent>()->GetMaterial()->Create(LIT);
-			t_object3->GetComponent<MeshComponent>()->GetMaterial()->SetAlbedo("Assets/Textures/PBR/pbr_diff.png", a_renderer);
-			t_object3->GetComponent<MeshComponent>()->GetMaterial()->SetNormal("Assets/Textures/PBR/pbr_nor.png", a_renderer);
-			t_object3->GetComponent<MeshComponent>()->GetMaterial()->SetMetallic("Assets/Textures/PBR/pbr_metal.png", a_renderer);
-			t_object3->GetComponent<MeshComponent>()->GetMaterial()->SetRoughness("Assets/Textures/PBR/pbr_rough.png", a_renderer);
-			t_object3->GetComponent<MeshComponent>()->GetMaterial()->SetAO("Assets/Textures/PBR/pbr_ao.png", a_renderer);
+			//GameObject* t_object3 = new GameObject(Math::vec3(5.f, 0.f, 0.f), Math::vec3(0.f, Math::ToRadians(270.f), Math::ToRadians(270.f)), Math::vec3(1.f), "Lit");
+			//t_object3->AddComponent<MeshComponent>();
+			//t_object3->GetComponent<MeshComponent>()->SetMesh("Assets/Meshes/BaseObjects/Sphere.obj", a_renderer);
+			//t_object3->GetComponent<MeshComponent>()->GetMaterial()->Create(LIT);
+			//t_object3->GetComponent<MeshComponent>()->GetMaterial()->SetAlbedo("Assets/Textures/PBR/pbr_diff.png", a_renderer);
+			//t_object3->GetComponent<MeshComponent>()->GetMaterial()->SetNormal("Assets/Textures/PBR/pbr_nor.png", a_renderer);
+			//t_object3->GetComponent<MeshComponent>()->GetMaterial()->SetMetallic("Assets/Textures/PBR/pbr_metal.png", a_renderer);
+			//t_object3->GetComponent<MeshComponent>()->GetMaterial()->SetRoughness("Assets/Textures/PBR/pbr_rough.png", a_renderer);
+			//t_object3->GetComponent<MeshComponent>()->GetMaterial()->SetAO("Assets/Textures/PBR/pbr_ao.png", a_renderer);
 
 
-			LightGO* t_light = new LightGO(Math::vec3(10.f, 0.f, 0.f), Math::vec3(0.f, 0.f, 0.f), Math::vec3(1.f));
-			LightGO* t_light2 = new LightGO(Math::vec3(0.f, 0.f, 0.f), Math::vec3(0.f, 0.f, 0.f), Math::vec3(1.f));
+			//LightGO* t_light = new LightGO(Math::vec3(10.f, 0.f, 0.f), Math::vec3(0.f, 0.f, 0.f), Math::vec3(1.f));
+			//LightGO* t_light2 = new LightGO(Math::vec3(0.f, 0.f, 0.f), Math::vec3(0.f, 0.f, 0.f), Math::vec3(1.f));
 
-			CameraGO* t_camera = new CameraGO(Math::vec3(0.f, 0.f, 0.f), Math::vec3(0.f, 0.f, 0.f), Math::vec3(1.f));
-			t_camera->Set(Math::vec3(0.f, 1.f, 0.f), Math::vec3(0.f, 0.f, 0.f),
-				Math::vec3(0.f, 1.f, 3.f), Math::ToRadians(70.f),
-				static_cast<float>(a_width) / static_cast<float>(a_height), 0.1f, 100.f, 10.f, 20.f);
-			t_camera->GetCameraComponent()->GetCamera().Create(a_renderer);
-			t_camera->SetParent(t_object2->GetId());
-				
-			AddGameObject(t_object);
-			AddGameObject(t_object2);
-			AddGameObject(t_object3);
-			AddGameObject(t_light);
-			AddGameObject(t_light2);
-			AddGameObject(t_camera);
-			SetMainCamera(t_camera->GetId());
+			//CameraGO* t_camera = new CameraGO(Math::vec3(0.f, 0.f, 0.f), Math::vec3(0.f, 0.f, 0.f), Math::vec3(1.f));
+			//t_camera->Set(Math::vec3(0.f, 1.f, 0.f), Math::vec3(0.f, 0.f, 0.f),
+			//	Math::vec3(0.f, 1.f, 3.f), Math::ToRadians(70.f),
+			//	static_cast<float>(a_width) / static_cast<float>(a_height), 0.1f, 100.f, 10.f, 20.f);
+			//t_camera->GetCameraComponent()->GetCamera().Create(a_renderer);
+			//t_camera->SetParent(t_object2->GetId());
+			//	
+			//AddGameObject(t_object);
+			//AddGameObject(t_object2);
+			//AddGameObject(t_object3);
+			//AddGameObject(t_light);
+			//AddGameObject(t_light2);
+			//AddGameObject(t_camera);
 
-			//Load(a_renderer);
+			Load(a_renderer);
 		}
 
 		void Scene::Update(Core::Renderer* a_renderer, Core::Window::IWindow* a_window, Core::Window::IInputHandler* a_inputHandler, float a_deltatime)
@@ -436,6 +435,10 @@ namespace Engine
 				{
 					t_objJson["MeshComponent"] = SerializeMeshComponent(*t_meshComponent);
 				}
+				if (const CameraComponent* t_cameraComponent = t_obj->GetComponent<CameraComponent>())
+				{
+					t_objJson["CameraComponent"] = SerializeCameraComponent(*t_cameraComponent);
+				}
 				t_scene.push_back(t_objJson);
 			}
 
@@ -462,6 +465,7 @@ namespace Engine
 				bool t_hasLight = false;
 				bool t_hasRigidBody = false;
 				bool t_hasMesh = false;
+				bool t_hasCamera = false;
 
 				std::string t_name = t_entry.at("GameObject").get<std::string>();
 
@@ -486,6 +490,13 @@ namespace Engine
 				{
 					t_mesh = DeserializeMeshComponent(t_entry.at("MeshComponent"));
 					t_hasMesh = true;
+				}
+
+				CameraSerializeData t_camera{};
+				if (t_entry.contains("CameraComponent"))
+				{
+					t_camera = DeserializeCameraComponent(t_entry.at("CameraComponent"));
+					t_hasCamera = true;
 				}
 
 				GameObject* t_gameObject = new GameObject(t_transform.mPos, t_transform.mRot, t_transform.mScale, t_name);
@@ -557,6 +568,15 @@ namespace Engine
 					{
 						t_material->SetAO(t_mesh.mAOPath, a_renderer);
 					}
+				}
+
+				if (t_hasCamera)
+				{
+					t_gameObject->AddComponent<CameraComponent>();
+					t_gameObject->GetComponent<CameraComponent>()->GetCamera().Set(t_camera.m_up, t_camera.m_center, t_camera.m_eye, t_camera.m_fovY, t_camera.m_aspect, t_camera.m_near, t_camera.m_far, t_camera.m_speed, t_camera.m_sensitivity, false, t_gameObject->GetComponent<TransformComponent>()->GetTransform()->GetTransformMatrix());
+					t_gameObject->GetComponent<CameraComponent>()->GetCamera().Create(a_renderer);
+					SetMainCamera(t_gameObject->GetId());
+
 				}
 
 				AddGameObject(t_gameObject);
@@ -1070,6 +1090,155 @@ namespace Engine
 			t_lightData.m_intensity = a_json.at("intensity").get<float>();
 
 			return t_lightData;
+		}
+
+		nlohmann::ordered_json Scene::SerializeCameraComponent(const CameraComponent& a_cameraComponent)
+		{
+			json t_json;
+			constexpr std::hash<std::string_view> t_hash{};
+
+			meta::any t_cameraAny{ a_cameraComponent };
+
+			const meta::handle t_cameraHandle{ t_cameraAny };
+
+			if (!t_cameraHandle)
+			{
+				return t_json;
+			}
+
+			const meta::data t_cameraDataField = t_cameraHandle.type().data(t_hash("Camera"));
+			if (!t_cameraDataField)
+			{
+				return t_json;
+			}
+
+			meta::any t_cameraDataAny = t_cameraDataField.get(t_cameraHandle);
+			if (!t_cameraDataAny)
+			{
+				return t_json;
+			}
+
+			const meta::handle t_cameraDataHandle(t_cameraDataAny);
+
+			const meta::type t_cameraDataType = t_cameraDataHandle.type();
+
+			const meta::data t_upField = t_cameraDataType.data(t_hash("up"));
+			if (t_upField)
+			{
+				meta::any t_upAny = t_upField.get(t_cameraDataHandle);
+				const meta::handle t_upHandle(t_upAny);
+
+				t_json["up"] = {
+					{"x", t_upHandle.type().data(t_hash("x")).get(t_upHandle).cast<float>()},
+					{"y", t_upHandle.type().data(t_hash("y")).get(t_upHandle).cast<float>()},
+					{"z", t_upHandle.type().data(t_hash("z")).get(t_upHandle).cast<float>()}
+				};
+			}
+
+			const meta::data t_centerField = t_cameraDataType.data(t_hash("center"));
+			if (t_centerField)
+			{
+				meta::any t_centerAny = t_centerField.get(t_cameraDataHandle);
+				const meta::handle t_centerHandle(t_centerAny);
+
+				t_json["center"] = {
+					{"x", t_centerHandle.type().data(t_hash("x")).get(t_centerHandle).cast<float>()},
+					{"y", t_centerHandle.type().data(t_hash("y")).get(t_centerHandle).cast<float>()},
+					{"z", t_centerHandle.type().data(t_hash("z")).get(t_centerHandle).cast<float>()}
+				};
+			}
+
+			const meta::data t_eyeField = t_cameraDataType.data(t_hash("eye"));
+			if (t_eyeField)
+			{
+				meta::any t_eyeAny = t_eyeField.get(t_cameraDataHandle);
+				const meta::handle t_eyeHandle(t_eyeAny);
+
+				t_json["eye"] = {
+					{"x", t_eyeHandle.type().data(t_hash("x")).get(t_eyeHandle).cast<float>()},
+					{"y", t_eyeHandle.type().data(t_hash("y")).get(t_eyeHandle).cast<float>()},
+					{"z", t_eyeHandle.type().data(t_hash("z")).get(t_eyeHandle).cast<float>()}
+				};
+			}
+
+			const meta::data t_fovYField = t_cameraDataType.data(t_hash("fovY"));
+			if (t_fovYField)
+			{
+				meta::any t_fovYAny = t_fovYField.get(t_cameraDataHandle);
+				t_json["fovY"] = t_fovYAny.cast<float>();
+			}
+
+			const meta::data t_aspectField = t_cameraDataType.data(t_hash("aspect"));
+			if (t_aspectField)
+			{
+				meta::any t_aspectYAny = t_aspectField.get(t_cameraDataHandle);
+				t_json["aspect"] = t_aspectYAny.cast<float>();
+			}
+
+			const meta::data t_nearField = t_cameraDataType.data(t_hash("near"));
+			if (t_nearField)
+			{
+				meta::any t_nearYAny = t_nearField.get(t_cameraDataHandle);
+				t_json["near"] = t_nearYAny.cast<float>();
+			}
+
+			const meta::data t_farField = t_cameraDataType.data(t_hash("far"));
+			if (t_farField)
+			{
+				meta::any t_farYAny = t_farField.get(t_cameraDataHandle);
+				t_json["far"] = t_farYAny.cast<float>();
+			}
+
+			const meta::data t_speedField = t_cameraDataType.data(t_hash("speed"));
+			if (t_speedField)
+			{
+				meta::any t_speedYAny = t_speedField.get(t_cameraDataHandle);
+				t_json["speed"] = t_speedYAny.cast<float>();
+			}
+
+			const meta::data t_sensitivityField = t_cameraDataType.data(t_hash("sensitivity"));
+			if (t_sensitivityField)
+			{
+				meta::any t_sensitivityYAny = t_sensitivityField.get(t_cameraDataHandle);
+				t_json["sensitivity"] = t_sensitivityYAny.cast<float>();
+			}
+
+			return t_json;
+		}
+
+		CameraSerializeData Scene::DeserializeCameraComponent(const nlohmann::ordered_json& a_json)
+		{
+			CameraSerializeData t_cameraData;
+
+			const auto& t_up = a_json.at("up");
+			t_cameraData.m_up = {
+				t_up.at("x").get<float>(),
+				t_up.at("y").get<float>(),
+				t_up.at("z").get<float>()
+			};
+
+			const auto& t_center = a_json.at("up");
+			t_cameraData.m_center = {
+				t_center.at("x").get<float>(),
+				t_center.at("y").get<float>(),
+				t_center.at("z").get<float>()
+			};
+
+			const auto& t_eye = a_json.at("up");
+			t_cameraData.m_eye = {
+				t_eye.at("x").get<float>(),
+				t_eye.at("y").get<float>(),
+				t_eye.at("z").get<float>()
+			};
+
+			t_cameraData.m_fovY = a_json.at("fovY").get<float>();
+			t_cameraData.m_aspect = a_json.at("aspect").get<float>();
+			t_cameraData.m_near = a_json.at("near").get<float>();
+			t_cameraData.m_far = a_json.at("far").get<float>();
+			t_cameraData.m_speed = a_json.at("speed").get<float>();
+			t_cameraData.m_sensitivity = a_json.at("sensitivity").get<float>();
+
+			return t_cameraData;
 		}
 	}
 }

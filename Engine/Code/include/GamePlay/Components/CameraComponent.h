@@ -13,6 +13,7 @@ namespace Engine
 		class CameraComponent : public Component
 		{
 		public:
+			ENGINE_API static void Register();
 			ENGINE_API CameraComponent() = default;
 			ENGINE_API ~CameraComponent() override = default;
 
@@ -27,6 +28,9 @@ namespace Engine
 			ENGINE_API static CameraComponent* GetComponent(int a_id);
 
 			ENGINE_API static void RemoveComponent(int a_id);
+
+			ENGINE_API void SetCameraData(const CameraSerializeData& a_cameraData);
+			ENGINE_API CameraSerializeData GetCameraData();
 
 		private:
 			Camera m_camera;

@@ -65,6 +65,8 @@ namespace Engine
 			static MeshData DeserializeMeshComponent(const nlohmann::ordered_json& a_json);
 			static nlohmann::ordered_json SerializeLightComponent(const LightComponent& a_lightComponent);
 			static LightData DeserializeLightComponent(const nlohmann::ordered_json& a_json);
+			static nlohmann::ordered_json SerializeCameraComponent(const CameraComponent& a_cameraComponent);
+			static CameraSerializeData DeserializeCameraComponent(const nlohmann::ordered_json& a_json);
 
 			void SetMainCamera(const int a_objectId) { m_mainCameraObjectId = a_objectId; }
 
