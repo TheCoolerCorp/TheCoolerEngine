@@ -33,9 +33,18 @@ namespace Engine
 			m_descriptor->SetUniform(a_renderer->GetLogicalDevice(), a_renderer->GetPhysicalDevice(), a_renderer->GetCommandPool(), 0, &m_data, sizeof(CameraData), 0, 1);
 		}
 
-		void Camera::Set(Math::vec3 a_up, Math::vec3 a_center, Math::vec3 a_eye, float a_fovY, float a_aspect, float a_near, float a_far, float a_speed, float a_sensitivity, const bool a_freeCam, const Math::mat4& a_model)
+		void Camera::Set(Math::vec3 a_up, Math::vec3 a_center, Math::vec3 a_eye, float a_fovY, float a_aspect, float a_near, float a_far, float a_speed, float a_sensitivity, const bool a_freeCam, Math::mat4 a_model)
 		{
 			m_isFreeCam = a_freeCam;
+			m_up = a_up;
+			m_center = a_center;
+			m_eye = a_eye;
+			m_fovY = a_fovY;
+			m_aspect = a_aspect;
+			m_near = a_near;
+			m_far = a_far;
+			m_speed = a_speed;
+			m_sensitivity = a_sensitivity;
 			m_baseForward = Math::vec3::Normalize(m_center - m_eye);
 			m_currentForward = m_baseForward;
 			m_right = Math::vec3::Normalize(Math::vec3::CrossProduct(m_currentForward, m_up));
@@ -45,19 +54,20 @@ namespace Engine
 			if (m_isFreeCam)
 			{
 				t_view = Math::mat4::View(m_up, m_center, m_eye);
+				m_data.m_pos = m_eye;
 			}
 			else
 			{
+				m_data.m_pos = a_model * Math::vec3();
 				t_view = a_model;
 				t_view.Inverse();
 			}
 			m_vp = t_proj * t_view;
 			m_vp.Transpose();
 			m_data.m_vp = m_vp;
-			m_data.m_pos = m_eye;
 		}
 
-		void Camera::Update(Core::Renderer* a_renderer, Core::Window::IInputHandler* a_inputHandler, Core::Window::IWindow* a_window, const float a_deltaTime, const Math::mat4& a_model)
+		void Camera::Update(Core::Renderer* a_renderer, Core::Window::IInputHandler* a_inputHandler, Core::Window::IWindow* a_window, const float a_deltaTime, Math::mat4 a_model)
 		{
 			ComputeInputs(a_inputHandler, a_window, a_deltaTime);
 
@@ -75,9 +85,11 @@ namespace Engine
 				if (m_isFreeCam)
 				{
 					 t_view = Math::mat4::View(m_up, m_center, m_eye);
+					 m_data.m_pos = m_eye;
 				}
 				else
 				{
+					m_data.m_pos = a_model * Math::vec3();
 					t_view = a_model;
 					t_view.Inverse();
 				}
@@ -86,7 +98,6 @@ namespace Engine
 				m_projection = t_proj;
 				m_vp.Transpose();
 				m_data.m_vp = m_vp;
-				m_data.m_pos = m_eye;
 				m_needToUpdate = false;
 			}
 

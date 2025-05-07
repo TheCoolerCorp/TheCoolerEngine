@@ -79,6 +79,7 @@ namespace Engine
 				Math::vec3(0.f, 1.f, 3.f), Math::ToRadians(70.f),
 				static_cast<float>(a_width) / static_cast<float>(a_height), 0.1f, 100.f, 10.f, 20.f);
 			t_camera->GetCameraComponent()->GetCamera().Create(a_renderer);
+			t_camera->SetParent(t_object2->GetId());
 				
 			AddGameObject(t_object);
 			AddGameObject(t_object2);
@@ -86,6 +87,7 @@ namespace Engine
 			AddGameObject(t_light);
 			AddGameObject(t_light2);
 			AddGameObject(t_camera);
+			SetMainCamera(t_camera->GetId());
 
 			//Load(a_renderer);
 		}
@@ -164,6 +166,11 @@ namespace Engine
 
 			if (!m_isPlaying)
 			{
+				if (m_lastState != m_isPlaying)
+				{
+					m_mainCamera->SetFreeCam(true);
+					m_lastState = m_isPlaying;
+				}
 				m_mainCamera->Update(a_renderer, a_inputHandler, a_window, a_deltatime);
 			}
 			else
@@ -172,8 +179,13 @@ namespace Engine
 				*	DO SOME IN GAME UPDATE STUFF
 				*
 				*/
+				if (m_lastState != m_isPlaying)
+				{
+					m_mainCamera->SetFreeCam(false);
+					m_lastState = m_isPlaying;
+				}
 				m_physicsSystem->Update(a_deltatime, t_physicsTransforms);
-				m_renderSystem->UpdateCamera(a_renderer, a_deltatime, a_window, a_inputHandler, m_gameCameraId);
+				m_renderSystem->UpdateCamera(a_renderer, a_deltatime, a_window, a_inputHandler, m_gameCameraId, m_objs[m_mainCameraObjectId]->GetComponent<TransformComponent>()->GetTransform()->GetTransformMatrix());
 			}
 
 

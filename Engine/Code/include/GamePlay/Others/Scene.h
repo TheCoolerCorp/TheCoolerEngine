@@ -66,6 +66,8 @@ namespace Engine
 			static nlohmann::ordered_json SerializeLightComponent(const LightComponent& a_lightComponent);
 			static LightData DeserializeLightComponent(const nlohmann::ordered_json& a_json);
 
+			void SetMainCamera(const int a_objectId) { m_mainCameraObjectId = a_objectId; }
+
 			std::vector<GameObject*> m_objs;
 			std::vector<int> m_deletionQueue;
 			std::vector<int> m_availableIds;
@@ -78,7 +80,9 @@ namespace Engine
 			PhysicsSystem* m_physicsSystem = nullptr;
 
 			bool m_isPlaying = false;
+			bool m_lastState = true;
 			int m_gameCameraId = 0;
+			int m_mainCameraObjectId = 0;
 		};
 	}	
 }
