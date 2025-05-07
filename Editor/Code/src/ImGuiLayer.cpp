@@ -542,12 +542,12 @@ namespace Editor::EditorLayer::Ui
 		ImGui::BeginChild("PlayPause Button", ImVec2(140, 70));
 		if (ImGui::Button("Play", ImVec2(60, ImGui::CalcTextSize("Play").y+10)))
 		{
-			
+			m_app->GetCurrentScene()->SetMode(true);
 		}
 		ImGui::SameLine();
-		if (ImGui::Button("Pause", ImVec2(60, ImGui::CalcTextSize("Pause").y + 10)))
+		if (ImGui::Button("Stop", ImVec2(60, ImGui::CalcTextSize("Stop").y + 10)))
 		{
-
+			m_app->GetCurrentScene()->SetMode(false);
 		}
 		ImGui::PopStyleColor();
 		ImGui::EndChild();

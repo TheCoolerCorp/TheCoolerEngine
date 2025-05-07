@@ -104,6 +104,7 @@ namespace Engine
 		void Material::SetRoughness(float a_roughnessValue)
 		{
 			m_values.roughness = a_roughnessValue;
+			m_needUpdate = true;
 		}
 
 		void Material::RemoveRoughness()
