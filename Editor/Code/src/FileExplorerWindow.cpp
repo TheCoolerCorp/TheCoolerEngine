@@ -15,15 +15,15 @@ Editor::EditorLayer::Ui::FileExplorerWindow::~FileExplorerWindow()
 
 void Editor::EditorLayer::Ui::FileExplorerWindow::Create()
 {
-	if (!m_folderTexture)
+	if (!m_folderTexture || m_folderTexture == nullptr)
 	{
 		m_folderTexture = new ImGuiTexture(m_renderer, "Assets/Textures/Ui/FileIcon.png");
 	}
-	if (!m_fileTexture)
+	if (!m_fileTexture || m_fileTexture == nullptr)
 	{
 		m_fileTexture = new ImGuiTexture(m_renderer, "Assets/Textures/Ui/BlankFileIcon.png");
 	}
-	if (!m_imageTexture)
+	if (!m_imageTexture || m_imageTexture == nullptr)
 	{
 		m_imageTexture = new ImGuiTexture(m_renderer, "Assets/Textures/Ui/ImageIcon.png");
 	}
@@ -328,7 +328,7 @@ std::filesystem::path Editor::EditorLayer::Ui::FileExplorerWindow::TruncatePathT
  */
 void Editor::EditorLayer::Ui::FileExplorerWindow::LoadContextImages(const std::filesystem::path& a_path)
 {
-	ClearContextImages();
+	//ClearContextImages();
 	for (const auto& entry : std::filesystem::directory_iterator(a_path))
 	{
 		if (entry.is_regular_file())

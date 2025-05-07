@@ -246,7 +246,12 @@ void Editor::EditorLayer::Ui::InspectorUiWindow::UiDrawComponentAddWindow()
 		{
 			if (ImGui::Selectable("Rigidbody"))
 			{
+				m_renderer->GetLogicalDevice()->WaitIdle();
 				m_selectedObject->AddComponent<Engine::GamePlay::RigidBodyComponent>();
+				m_selectedObject->GetComponent<Engine::GamePlay::RigidBodyComponent>()->CreateBoxRigidBody(
+					Engine::Physics::BodyType::STATIC, Engine::Physics::CollisionLayer::NON_MOVING,
+					Engine::Math::vec3(), Engine::Math::vec3(1.f), Engine::Math::quat(),
+					*m_selectedObject->GetComponent<Engine::GamePlay::TransformComponent>()->GetTransform());
 				RefreshCurrentObject();
 			}
 		}

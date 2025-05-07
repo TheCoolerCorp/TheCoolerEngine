@@ -16,6 +16,8 @@
 #include "Math/TheCoolerMath.h"
 #include "Core/Window/IInputHandler.h"
 
+#include <fstream>
+
 namespace Editor::EditorLayer::Ui
 {
 
@@ -26,6 +28,14 @@ namespace Editor::EditorLayer::Ui
 		m_imGui->SetImGuiParent(this);
 		m_imGui->Init(a_window, m_renderer);
 		SetupImGuiStyle();
+
+		ImGuiIO& t_io = ImGui::GetIO();
+		if (ImGui::GetIO().IniFilename != nullptr)
+		{
+			std::ifstream f(t_io.IniFilename);
+			if (!f.good())
+				ImGui::LoadIniSettingsFromDisk("Assets/defaultLayout.ini");
+		}
 	}
 
 	void ImGuiLayer::OnDetach()
@@ -142,6 +152,7 @@ namespace Editor::EditorLayer::Ui
 			int id = m_availableIds.back();
 			m_availableIds.pop_back();
 			m_windows[id] = a_window;
+			a_window->Create();
 			a_window->SetUid(static_cast<int>(id));
 		}
 		else
