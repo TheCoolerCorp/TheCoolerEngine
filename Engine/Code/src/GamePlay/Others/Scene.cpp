@@ -500,6 +500,7 @@ namespace Engine
 				}
 
 				GameObject* t_gameObject = new GameObject(t_transform.mPos, t_transform.mRot, t_transform.mScale, t_name);
+				AddGameObject(t_gameObject);
 				t_gameObject->GetComponent<TransformComponent>()->SetParent(t_transform.mParentId);
 
 				LOG_DEBUG(t_name);
@@ -578,8 +579,6 @@ namespace Engine
 					SetMainCamera(t_gameObject->GetId());
 
 				}
-
-				AddGameObject(t_gameObject);
 			}
 		}
 
