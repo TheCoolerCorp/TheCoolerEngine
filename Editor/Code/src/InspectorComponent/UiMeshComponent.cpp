@@ -353,6 +353,7 @@ void Editor::EditorLayer::Ui::UiMeshComponent::UiDrawAlbedoInfo()
 	if (ImGui::ColorEdit3(("Albedo Color##" + std::to_string(m_uid)).c_str(), t_colorf))
 	{
 		m_material->SetAlbedo(Engine::Math::vec3(t_colorf[0], t_colorf[1], t_colorf[2]));
+		m_material->SetNeedUpdate(true);
 	}
 }
 
@@ -360,9 +361,11 @@ void Editor::EditorLayer::Ui::UiMeshComponent::UiDrawMetallicInfo()
 {
 	float t_metallic = m_material->GetMaterialValues().metallic;
 	ImGui::Text("Metallic Value: ");
-	if (ImGui::DragFloat(("Metallic Value##" + std::to_string(m_uid)).c_str(), &t_metallic, 0.01f, 0.f, 1.f))
+	
+	if (ImGui::DragFloat(("Metallic Value##" + std::to_string(m_uid)).c_str(), &t_metallic, 0.1f, 0.f, 1.f))
 	{
 		m_material->SetMetallic(t_metallic);
+		m_material->SetNeedUpdate(true);
 	}
 }
 
@@ -370,9 +373,10 @@ void Editor::EditorLayer::Ui::UiMeshComponent::UiDrawRoughnessInfo()
 {
 	float t_roughness = m_material->GetMaterialValues().roughness;
 	ImGui::Text("Roughness Value: ");
-	if (ImGui::DragFloat(("Roughness Value##" + std::to_string(m_uid)).c_str(), &t_roughness, 0.01f, 0.f, 1.f))
+	if (ImGui::DragFloat(("Roughness Value##" + std::to_string(m_uid)).c_str(), &t_roughness, 0.01f, 0.1f, 1.f))
 	{
 		m_material->SetRoughness(t_roughness);
+		m_material->SetNeedUpdate(true);
 	}
 }
 
@@ -383,6 +387,7 @@ void Editor::EditorLayer::Ui::UiMeshComponent::UiDrawAoInfo()
 	if (ImGui::DragFloat(("AO Value##" + std::to_string(m_uid)).c_str(), &t_ao, 0.01f, 0.f, 1.f))
 	{
 		m_material->SetAO(t_ao);
+		m_material->SetNeedUpdate(true);
 	}
 }
 
