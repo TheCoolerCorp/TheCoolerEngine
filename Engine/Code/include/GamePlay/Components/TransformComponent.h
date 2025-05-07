@@ -34,6 +34,15 @@ namespace Engine
 			ENGINE_API void SetRotation(Math::vec3 a_euler);
 			ENGINE_API void SetScale(Math::vec3 a_scale);
 
+			ENGINE_API [[nodiscard]] Math::vec3 GetGlobalPos();
+			ENGINE_API [[nodiscard]] Math::vec3 GetParentGlobalPos();
+			ENGINE_API [[nodiscard]] Math::vec3 GetGlobalEuler();
+			ENGINE_API [[nodiscard]] Math::vec3 GetParentGlobalEuler();
+			ENGINE_API [[nodiscard]] Math::quat GetGlobalRotation();
+			ENGINE_API [[nodiscard]] Math::quat GetParentGlobalRotation();
+			ENGINE_API [[nodiscard]] Math::vec3 GetGlobalScale();
+			ENGINE_API [[nodiscard]] Math::vec3 GetParentGlobalScale();
+
 			ENGINE_API void Move(Math::vec3 a_pos, Math::vec3 a_rot, Math::vec3 a_scale);
 
 			ENGINE_API void SetGameObject(int a_gameObjectId) { m_gameObjectId = a_gameObjectId; }

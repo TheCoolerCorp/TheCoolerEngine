@@ -85,6 +85,62 @@ namespace Engine
 			m_transform->SetScale(a_scale);
 		}
 
+		Math::vec3 TransformComponent::GetGlobalPos()
+		{
+			if (m_parentId == -1)
+				return m_transform->GetPosition();
+			return ServiceLocator::GetTransformSystem()->GetComponent(m_parentId)->GetGlobalPos() + m_transform->GetPosition();
+		}
+
+		Math::vec3 TransformComponent::GetParentGlobalPos()
+		{
+			if (m_parentId == -1)
+				return Math::vec3(0, 0, 0);
+			return ServiceLocator::GetTransformSystem()->GetComponent(m_parentId)->GetGlobalPos();
+		}
+
+		Math::vec3 TransformComponent::GetParentGlobalEuler()
+		{
+			if (m_parentId == -1)
+				return Math::vec3(0, 0, 0);
+			return ServiceLocator::GetTransformSystem()->GetComponent(m_parentId)->GetGlobalEuler();
+		}
+
+		Math::quat TransformComponent::GetGlobalRotation()
+		{
+			if (m_parentId == -1)
+				return m_transform->GetRotation();
+			return ServiceLocator::GetTransformSystem()->GetComponent(m_parentId)->GetGlobalRotation() * m_transform->GetRotation();
+		}
+
+		Math::quat TransformComponent::GetParentGlobalRotation()
+		{
+			if (m_parentId == -1)
+				return Math::quat();
+			return ServiceLocator::GetTransformSystem()->GetComponent(m_parentId)->GetGlobalRotation();
+		}
+
+		Math::vec3 TransformComponent::GetParentGlobalScale()
+		{
+			if (m_parentId == -1)
+				return Math::vec3(1, 1, 1);
+			return ServiceLocator::GetTransformSystem()->GetComponent(m_parentId)->GetGlobalScale();
+		}
+
+		Math::vec3 TransformComponent::GetGlobalEuler()
+		{
+			if (m_parentId == -1)
+				return m_transform->GetEulerAngles();
+			return ServiceLocator::GetTransformSystem()->GetComponent(m_parentId)->GetGlobalEuler() + m_transform->GetEulerAngles();
+		}
+
+		Math::vec3 TransformComponent::GetGlobalScale()
+		{
+			if (m_parentId == -1)
+				return m_transform->GetScale();
+			return ServiceLocator::GetTransformSystem()->GetComponent(m_parentId)->GetGlobalScale() * m_transform->GetScale();
+		}
+
 		void TransformComponent::Move(Math::vec3 a_pos, Math::vec3 a_rot, Math::vec3 a_scale)
 		{
 			m_transform->Translate(a_pos);
@@ -102,10 +158,25 @@ namespace Engine
 			if (a_id == m_parentId)
 				return;
 			//tell the previous parent we are no longer their child if we have one
-			if (m_parentId != -1)
-				ServiceLocator::GetTransformSystem()->GetComponent(m_parentId)->RemoveChild(m_id);
+			RemoveParent();
 			//set the new parent and tell them we are their child
 			m_parentId = a_id;
+
+			Math::mat4 t_parentMatrix = ServiceLocator::GetTransformSystem()->GetComponent(m_parentId)->GetMatrix();
+			t_parentMatrix.Inverse();
+			Math::mat4 t_localMatrix = m_transform->GetTransformMatrix();
+			Math::mat4 t_newLocalMatrix = t_parentMatrix * t_localMatrix;
+
+			Engine::GamePlay::TransformData t_transformData;
+
+			t_transformData.mPos = Math::vec3::GetPosition(t_newLocalMatrix);
+			t_transformData.mRot = Math::quat::GetRotation(t_newLocalMatrix);
+			t_transformData.mScale = Math::vec3::GetScale(t_newLocalMatrix);
+
+			t_transformData.mParentId = m_parentId;
+
+			Set(t_transformData);
+
 			ServiceLocator::GetTransformSystem()->GetComponent(m_parentId)->AddChild(m_id);
 			m_transform->SetNeedToUpdate(true);
 		}
@@ -118,6 +189,18 @@ namespace Engine
 			//tell the previous parent we are no longer their child
 			if (m_parentId != -1)
 			{
+				Math::mat4 t_worldMatrix = m_transform->GetTransformMatrix();
+				
+				Engine::GamePlay::TransformData t_transformData;
+
+				t_transformData.mPos = Math::vec3::GetPosition(t_worldMatrix);
+				t_transformData.mRot = Math::quat::GetRotation(t_worldMatrix);
+				t_transformData.mScale = Math::vec3::GetScale(t_worldMatrix);
+
+				t_transformData.mParentId = m_parentId;
+
+				Set(t_transformData);
+
 				ServiceLocator::GetTransformSystem()->GetComponent(m_parentId)->RemoveChild(m_id);
 				m_parentId = -1;
 			}

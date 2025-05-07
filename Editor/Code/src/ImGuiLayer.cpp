@@ -274,8 +274,17 @@ namespace Editor::EditorLayer::Ui
 
 			if (ImGuizmo::Manipulate(t_viewf, t_projectionf, m_currentGizmoOperation, m_currentGizmoMode, t_objectMatrix.mElements.data()))
 			{
-				float t_translation[3], t_rotation[3], t_scale[3];
+				Engine::GamePlay::TransformComponent* t_transform = m_selectedGameObject->GetComponent<Engine::GamePlay::TransformComponent>();
+				if (t_transform->GetParentID() != -1)
+				{
+					Engine::Math::mat4 t_matrix = Engine::GamePlay::ServiceLocator::GetTransformSystem()->GetComponent(t_transform->GetParentID())->GetMatrix();
+					t_matrix.Inverse();
+					t_objectMatrix.Transpose();
+					t_objectMatrix = t_matrix * t_objectMatrix;
+					t_objectMatrix.Transpose();
+				}
 
+				float t_translation[3], t_rotation[3], t_scale[3];
 				ImGuizmo::DecomposeMatrixToComponents(t_objectMatrix.mElements.data(), t_translation, t_rotation, t_scale);
 				Engine::GamePlay::TransformData t_transformData;
 

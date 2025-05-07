@@ -33,6 +33,11 @@ namespace Editor::EditorLayer::Ui
 		void UiDrawObject(int a_transformId);
 		void UiCreateNameTextField(Engine::GamePlay::GameObject* a_object);
 		void UiAddPopupContext(Engine::GamePlay::GameObject* a_object);
+
+		//drag/drop functionality for rearanging objects in the hierarchy
+		void UiAddDragDropSource(Engine::GamePlay::GameObject* a_object);
+		void UiAddObjectDragDropTarget(Engine::GamePlay::GameObject* a_object);
+		void UiAddRootDragDropTarget();
 	};
 }
 #endif
