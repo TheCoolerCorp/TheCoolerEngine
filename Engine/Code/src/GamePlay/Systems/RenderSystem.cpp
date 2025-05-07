@@ -50,6 +50,10 @@ namespace Engine
 			}
 			for (int i = 0; i < a_lightsUpdate.size(); ++i)
 			{
+				/*
+				 *
+				 * ISSUE HERE
+				 */
 				m_lightComponents[a_lightsUpdate[i].first]->GetLight().SetPosition(a_lightsUpdate[i].second);
 				m_lightsData[a_lightsUpdate[i].first].m_position = a_lightsUpdate[i].second;
 				m_lightsData[a_lightsUpdate[i].first].m_color = m_lightComponents[a_lightsUpdate[i].first]->GetLight().GetColor();
@@ -298,6 +302,8 @@ namespace Engine
 			Core::RHI::IPhysicalDevice* a_physicalDevice, Core::RHI::ISurface* a_surface, Core::RHI::ICommandPool* a_commandPool,
 			Core::RHI::IGraphicPipeline* a_unlitPipeline, Core::RHI::IGraphicPipeline* a_litPipeine, uint32_t a_maxFrame, std::vector<std::pair<int, Math::UniformMatrixs>>& a_updatedMatrix)
 		{
+			a_logicalDevice->WaitIdle();
+
 			Core::RHI::ApiInterface* apiInterface = a_renderer->GetInterface();
 
 			std::vector<int> t_componentsToErase;
@@ -471,13 +477,15 @@ namespace Engine
 			{
 				m_cameraComponents[m_cameraPendingComponents[i]]->GetCamera().Create(m_renderer);
 			}
-			m_lightsPendingComponents.clear();
+			m_cameraPendingComponents.clear();
 		}
 
 		void RenderSystem::UpdateMaterial(Core::Renderer* a_renderer, Core::RHI::ILogicalDevice* a_logicalDevice,
 			Core::RHI::IPhysicalDevice* a_physicalDevice, Core::RHI::ISurface* a_surface, Core::RHI::ICommandPool* a_commandPool, Core::RHI::IGraphicPipeline* a_unlitPipeine,
 			Core::RHI::IGraphicPipeline* a_litPipeine, uint32_t a_maxFrame, std::vector<int>& a_indexes, std::vector<std::pair<int, Math::UniformMatrixs>>& a_updatedMatrix)
 		{
+
+			a_logicalDevice->WaitIdle();
 			Core::RHI::ApiInterface* apiInterface = a_renderer->GetInterface();
 
 			for (int i = 0; i < a_indexes.size(); ++i)

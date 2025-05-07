@@ -92,8 +92,8 @@ namespace Engine
 					std::unordered_map<RHI::DescriptorSetPipelineTarget, std::vector<RHI::IObjectDescriptor*>>& a_descriptors)
 				{
 					std::vector<RHI::IObjectDescriptor*> m_descriptors;
-					m_descriptors.emplace_back(info.scene->GetLightsDescriptors());
 					m_descriptors.emplace_back(info.scene->GetCameraDescriptor());
+					m_descriptors.emplace_back(info.scene->GetLightsDescriptors());
 
 					m_litPipeline->Bind(info.renderer->GetCommandPool(), 0, info.renderer->GetSwapChain());
 

@@ -178,6 +178,7 @@ void Editor::EditorLayer::Ui::InspectorUiWindow::AddComponent(InspectorComponent
 {
 	if (a_component == nullptr)
 		return;
+
 	m_objectComponents.push_back(a_component);
 	a_component->SetUid(static_cast<int>(m_objectComponents.size())-1);
 	a_component->SetInspectorWindow(this);
