@@ -289,7 +289,7 @@ namespace Editor::EditorLayer::Ui
 				Engine::GamePlay::TransformData t_transformData;
 
 				t_transformData.mRot = Engine::Math::quat(Engine::Math::vec3(t_rotation[0]* Engine::Math::PI/180.0f, t_rotation[1] * Engine::Math::PI / 180.0f, t_rotation[2] * Engine::Math::PI / 180.0f));
-				t_transformData.mRot = Engine::Math::quat::Normalize(t_transformData.mRot);
+				//t_transformData.mRot = Engine::Math::quat::Normalize(t_transformData.mRot);
 
 				t_transformData.mPos = Engine::Math::vec3(t_translation[0], t_translation[1], t_translation[2]);
 				t_transformData.mScale = Engine::Math::vec3(t_scale[0], t_scale[1], t_scale[2]);
