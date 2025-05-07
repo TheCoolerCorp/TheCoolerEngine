@@ -50,7 +50,7 @@ namespace Editor::EditorLayer::Ui
 		 * Since ImGuizmo functionality is so intertwined with ImGui, all functionality related to it
 		 * Will be made in the ImGuiLayer class. All ImGuizmo-related functions will start with "Gizmo" for distinction
 		 */
-
+		 
 		void GizmoBeginFrame();
 		void GizmoMainDraw();
 

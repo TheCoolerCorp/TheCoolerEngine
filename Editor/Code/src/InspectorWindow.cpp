@@ -240,15 +240,20 @@ void Editor::EditorLayer::Ui::InspectorUiWindow::UiDrawComponentAddWindow()
 				//Workaround: if you dont set a mesh the program will crash on draw. So we set a default one
 				m_selectedObject->GetComponent<Engine::GamePlay::MeshComponent>()->SetMesh("Assets/Meshes/empty.obj", m_renderer);
 				m_selectedObject->GetComponent<Engine::GamePlay::MeshComponent>()->GetMaterial()->Create(Engine::GamePlay::UNLIT);
-				RefreshCurrentObject();
+				MarkOutOfDate();
 			}
 		}
 		if (!HasComponentOfType(UiComponentType::RIGIDBODY))
 		{
 			if (ImGui::Selectable("Rigidbody"))
 			{
+				m_renderer->GetLogicalDevice()->WaitIdle();
 				m_selectedObject->AddComponent<Engine::GamePlay::RigidBodyComponent>();
-				RefreshCurrentObject();
+				m_selectedObject->GetComponent<Engine::GamePlay::RigidBodyComponent>()->CreateBoxRigidBody(
+					Engine::Physics::BodyType::STATIC, Engine::Physics::CollisionLayer::NON_MOVING,
+					Engine::Math::vec3(), Engine::Math::vec3(1.f), Engine::Math::quat(),
+					*m_selectedObject->GetComponent<Engine::GamePlay::TransformComponent>()->GetTransform());
+				MarkOutOfDate();
 			}
 		}
 		if (!HasComponentOfType(UiComponentType::LIGHT))
@@ -256,7 +261,7 @@ void Editor::EditorLayer::Ui::InspectorUiWindow::UiDrawComponentAddWindow()
 			if (ImGui::Selectable("Light"))
 			{
 				m_selectedObject->AddComponent<Engine::GamePlay::LightComponent>();
-				RefreshCurrentObject();
+				MarkOutOfDate();
 			}
 		}
 		ImGui::EndCombo();

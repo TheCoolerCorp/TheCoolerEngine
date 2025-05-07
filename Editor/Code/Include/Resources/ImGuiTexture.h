@@ -20,6 +20,9 @@ namespace Editor::EditorLayer::Ui
 
 		void DrawTexture(ImVec2 a_scale = {100.0f, 100.0f}, bool a_centered = false);
 	private:
+		bool m_ready = false;
+		Engine::Core::Renderer* m_renderer = nullptr;
+
 		Engine::Ref<Engine::Resource::Texture> m_texture;
 		VkDescriptorSet m_dSet;
 	};

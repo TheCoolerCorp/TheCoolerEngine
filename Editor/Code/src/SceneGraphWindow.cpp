@@ -24,10 +24,12 @@ void Editor::EditorLayer::Ui::SceneGraphUiWindow::UiDraw()
 	}
     if (m_scene->GetObjectCount() == 0)
 		ImGui::Text("No objects in the scene :(. Go make some");
-	ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 0.0f);
-	ImGui::BeginChild(("Empty Child" + std::to_string(m_uid)).c_str(), ImGui::GetContentRegionAvail());
-	ImGui::EndChild();
-	if (ImGui::IsItemClicked())
+	ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 0.01f);
+	ImGui::BeginChild(("Empty Child" + std::to_string(m_uid)).c_str(), ImGui::GetContentRegionAvail(), ImGuiChildFlags_Border);
+    ImGui::Dummy(ImGui::GetContentRegionAvail());
+    UiAddRootDragDropTarget();
+    ImGui::EndChild();
+    if (ImGui::IsItemClicked())
 	{
 		m_layer->DeselectObject();
 	}
@@ -63,7 +65,9 @@ void Editor::EditorLayer::Ui::SceneGraphUiWindow::UiDrawObject(int a_transformId
    		if (!t_object->HasChildren())
    		{
 	        ImGui::TreeNodeEx(std::to_string(t_object->GetId()).c_str(), ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen, t_object->GetName().c_str());
-            UiAddPopupContext(t_object);
+			UiAddDragDropSource(t_object);
+			UiAddObjectDragDropTarget(t_object);
+   			UiAddPopupContext(t_object);
    			if (ImGui::IsItemClicked())
 			{
 				m_layer->SetSelectedGameObject(t_object);
@@ -72,7 +76,9 @@ void Editor::EditorLayer::Ui::SceneGraphUiWindow::UiDrawObject(int a_transformId
    		}
 
        bool t_open = ImGui::TreeNodeEx(std::to_string(t_object->GetId()).c_str(), ImGuiTreeNodeFlags_OpenOnArrow, t_object->GetName().c_str());
-       if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen())
+	   UiAddDragDropSource(t_object);
+	   UiAddObjectDragDropTarget(t_object);
+   	   if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen())
        {
            m_layer->SetSelectedGameObject(t_object);
        }
@@ -144,5 +150,55 @@ void Editor::EditorLayer::Ui::SceneGraphUiWindow::UiAddPopupContext(GameObject* 
 			m_scene->RemoveGameObject(a_object->GetId());
 		}
 		ImGui::EndPopup();
+	}
+}
+
+void Editor::EditorLayer::Ui::SceneGraphUiWindow::UiAddDragDropSource(Engine::GamePlay::GameObject* a_object)
+{
+	static int payloadId; //static because we do not want this value to become deprecated
+	if (ImGui::BeginDragDropSource())
+	{
+		payloadId = a_object->GetComponentID<TransformComponent>();
+		ImGui::SetDragDropPayload("SCENE_OBJECT_PAYLOAD", &payloadId, sizeof(payloadId));
+		ImGui::Text(a_object->GetName().c_str());
+		ImGui::EndDragDropSource();
+	}
+}
+
+/**
+ * Adds a drag and drop target to the given object.
+ * This will allow the user to drag and drop objects onto this object.
+ * To set them as children of this object.
+ */
+void Editor::EditorLayer::Ui::SceneGraphUiWindow::UiAddObjectDragDropTarget(Engine::GamePlay::GameObject* a_object)
+{
+	if (ImGui::BeginDragDropTarget())
+	{
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("SCENE_OBJECT_PAYLOAD"))
+		{
+			int t_id = *static_cast<int*>(payload->Data);
+			if (t_id != -1)
+			{
+				a_object->AddChild(t_id);
+			}
+		}
+		ImGui::EndDragDropTarget();
+	}
+}
+
+void Editor::EditorLayer::Ui::SceneGraphUiWindow::UiAddRootDragDropTarget()
+{
+	//finds the gameobject from the payload's transform id and clears its parent
+	if (ImGui::BeginDragDropTarget())
+	{
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("SCENE_OBJECT_PAYLOAD"))
+		{
+			int t_id = *static_cast<int*>(payload->Data);
+			if (t_id != -1)
+			{
+				m_transformSystem->GetComponent(t_id)->RemoveParent();
+			}
+		}
+		ImGui::EndDragDropTarget();
 	}
 }

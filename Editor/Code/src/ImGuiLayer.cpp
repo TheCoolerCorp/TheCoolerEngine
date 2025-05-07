@@ -16,6 +16,8 @@
 #include "Math/TheCoolerMath.h"
 #include "Core/Window/IInputHandler.h"
 
+#include <fstream>
+
 namespace Editor::EditorLayer::Ui
 {
 
@@ -26,6 +28,14 @@ namespace Editor::EditorLayer::Ui
 		m_imGui->SetImGuiParent(this);
 		m_imGui->Init(a_window, m_renderer);
 		SetupImGuiStyle();
+
+		ImGuiIO& t_io = ImGui::GetIO();
+		if (ImGui::GetIO().IniFilename != nullptr)
+		{
+			std::ifstream f(t_io.IniFilename);
+			if (!f.good())
+				ImGui::LoadIniSettingsFromDisk("Assets/defaultLayout.ini");
+		}
 	}
 
 	void ImGuiLayer::OnDetach()
@@ -142,6 +152,7 @@ namespace Editor::EditorLayer::Ui
 			int id = m_availableIds.back();
 			m_availableIds.pop_back();
 			m_windows[id] = a_window;
+			a_window->Create();
 			a_window->SetUid(static_cast<int>(id));
 		}
 		else
@@ -263,8 +274,17 @@ namespace Editor::EditorLayer::Ui
 
 			if (ImGuizmo::Manipulate(t_viewf, t_projectionf, m_currentGizmoOperation, m_currentGizmoMode, t_objectMatrix.mElements.data()))
 			{
-				float t_translation[3], t_rotation[3], t_scale[3];
+				Engine::GamePlay::TransformComponent* t_transform = m_selectedGameObject->GetComponent<Engine::GamePlay::TransformComponent>();
+				if (t_transform->GetParentID() != -1)
+				{
+					Engine::Math::mat4 t_matrix = Engine::GamePlay::ServiceLocator::GetTransformSystem()->GetComponent(t_transform->GetParentID())->GetMatrix();
+					t_matrix.Inverse();
+					t_objectMatrix.Transpose();
+					t_objectMatrix = t_matrix * t_objectMatrix;
+					t_objectMatrix.Transpose();
+				}
 
+				float t_translation[3], t_rotation[3], t_scale[3];
 				ImGuizmo::DecomposeMatrixToComponents(t_objectMatrix.mElements.data(), t_translation, t_rotation, t_scale);
 				Engine::GamePlay::TransformData t_transformData;
 
