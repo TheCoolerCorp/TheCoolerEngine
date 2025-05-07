@@ -531,7 +531,7 @@ namespace Editor::EditorLayer::Ui
 			m_app->GetCurrentScene()->SetMode(true);
 		}
 		ImGui::SameLine();
-		if (ImGui::Button("Pause", ImVec2(60, ImGui::CalcTextSize("Pause").y + 10)))
+		if (ImGui::Button("Stop", ImVec2(60, ImGui::CalcTextSize("Stop").y + 10)))
 		{
 			m_app->GetCurrentScene()->SetMode(false);
 		}
