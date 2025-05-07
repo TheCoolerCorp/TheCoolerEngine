@@ -22,7 +22,7 @@ namespace Engine
 			m_lightsDescriptor->SetUniform(a_renderer->GetLogicalDevice(), a_renderer->GetPhysicalDevice(), a_renderer->GetCommandPool(), 0, &m_lightsData, t_lightsSize, 0, 1);
 		}
 
-		void RenderSystem::Update(Core::Renderer* a_renderer, float a_deltaTime, std::vector<std::pair<int,Math::UniformMatrixs>> a_updatedMatrix, std::vector<std::pair<int, Math::vec3>> a_lightsUpdate, std::vector<int> a_materialUpdate, Core::Window::IWindow* a_window, Core::Window::IInputHandler* a_inputHandler, int a_cameraIndex)
+		void RenderSystem::Update(Core::Renderer* a_renderer, std::vector<std::pair<int,Math::UniformMatrixs>> a_updatedMatrix, std::vector<std::pair<int, Math::vec3>> a_lightsUpdate, std::vector<int> a_materialUpdate, std::vector<std::pair<int, Math::mat4>> a_cameraUpdatedMatrix)
 		{
 			if (a_updatedMatrix.empty())
 			{
@@ -57,10 +57,22 @@ namespace Engine
 			}
 			m_lightsDescriptor->UpdateUniforms(t_logicalDevice, 0, &m_lightsData, MAX_LIGHTS * sizeof(LightData), 0);
 
-			if (a_cameraIndex < m_cameraComponents.size())
-				m_cameraComponents[a_cameraIndex]->GetCamera().Update(m_renderer, a_inputHandler, a_window, a_deltaTime);
+			for (int i = 0; i < a_cameraUpdatedMatrix.size(); ++i)
+			{
+				if (a_cameraUpdatedMatrix[i].first == -1)
+					continue;
+				//m_cameraComponents[a_updatedMatrix[i].first]->UpdateUniforms(t_logicalDevice, 0, &a_updatedMatrix[i].second, sizeof(Math::UniformMatrixs), a_renderer->GetSwapChain()->GetCurrentFrame());
+			}
 
 			UpdateMaterial(a_renderer, t_logicalDevice, t_physicalDevice, t_surface, t_commandPool, t_unlitPipeline, t_litPipeline, t_maxFrame, a_materialUpdate, a_updatedMatrix);
+		}
+
+		void RenderSystem::UpdateCamera(Core::Renderer* a_renderer, float a_deltaTime, Core::Window::IWindow* a_window, Core::Window::IInputHandler* a_inputHandler, int a_cameraIndex)
+		{
+			/*if (a_cameraIndex < m_cameraComponents.size())
+			{
+				m_cameraComponents[a_cameraIndex]->GetCamera().Update(m_renderer, a_inputHandler, a_window, a_deltaTime);
+			}*/
 		}
 
 		void RenderSystem::Destroy(Core::Renderer* a_renderer)

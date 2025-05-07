@@ -39,7 +39,7 @@ namespace Engine
 			m_baseForward = Math::vec3::Normalize(m_center - m_eye);
 			m_currentForward = m_baseForward;
 			m_right = Math::vec3::Normalize(Math::vec3::CrossProduct(m_currentForward, m_up));
-			Math::mat4 t_proj = Math::mat4::Perspective(m_fovY, m_aspect, m_near, m_far);
+			Math::mat4 t_proj = Math::mat4::Perspective(a_fovY, a_aspect, a_near, a_far);
 			t_proj.mElements[5] *= -1.f;
 			Math::mat4 t_view;
 			if (m_isFreeCam)
