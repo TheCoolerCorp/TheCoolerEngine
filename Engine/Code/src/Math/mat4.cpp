@@ -36,7 +36,6 @@ namespace Engine
             const float t_det = Determinant();
             if (t_det == 0.f)
             {
-                std::cout << "Cannot invert 4x4 matrix" << '\n';
                 return;
             }
 
@@ -170,12 +169,9 @@ namespace Engine
         mat4 mat4::Rotation(const quat& a_q)
         {
             const std::array<float, 16> t_elements = {
-                1.f - (2.f * powf(a_q.y, 2.f)) - (2.f * powf(a_q.z, 2.f)), (2.f * a_q.x * a_q.y) - (2.f * a_q.w * a_q.z),
-                (2.f * a_q.x * a_q.z) + (2.f * a_q.w * a_q.y), 0,
-                (2.f * a_q.x * a_q.y) + (2.f * a_q.w * a_q.z), 1.f - (2.f * powf(a_q.x, 2.f)) - (2.f * powf(a_q.z, 2.f)),
-                (2.f * a_q.z * a_q.y) - (2.f * a_q.w * a_q.x), 0,
-                (2.f * a_q.x * a_q.z) - (2.f * a_q.w * a_q.y), (2.f * a_q.z * a_q.y) + (2.f * a_q.w * a_q.x),
-                1.f - (2.f * powf(a_q.x, 2.f)) - (2.f * powf(a_q.y, 2.f)), 0,
+                1.f - (2.f * powf(a_q.y, 2.f)) - (2.f * powf(a_q.z, 2.f)), (2.f * a_q.x * a_q.y) - (2.f * a_q.w * a_q.z), (2.f * a_q.x * a_q.z) + (2.f * a_q.w * a_q.y), 0,
+                (2.f * a_q.x * a_q.y) + (2.f * a_q.w * a_q.z), 1.f - (2.f * powf(a_q.x, 2.f)) - (2.f * powf(a_q.z, 2.f)), (2.f * a_q.z * a_q.y) - (2.f * a_q.w * a_q.x), 0,
+            	(2.f * a_q.x * a_q.z) - (2.f * a_q.w * a_q.y), (2.f * a_q.z * a_q.y) + (2.f * a_q.w * a_q.x), 1.f - (2.f * powf(a_q.x, 2.f)) - (2.f * powf(a_q.y, 2.f)), 0,
                 0, 0, 0, 1
             };
 
@@ -207,11 +203,11 @@ namespace Engine
             const vec3 t_r = vec3::Normalize(vec3::CrossProduct(t_f, a_up));
             const vec3 t_u = vec3::CrossProduct(t_r, t_f);
 
-            const mat4 t_view({ t_r.x, t_r.y, t_r.z,
-                               -1.f * vec3::DotProduct(t_r, a_eye), t_u.x, t_u.y,
-                               t_u.z, -1.f * vec3::DotProduct(t_u, a_eye), -t_f.x,
-                               -t_f.y, -t_f.z, vec3::DotProduct(t_f, a_eye), 0.f,
-                               0.f, 0.f, 1.f });
+            const mat4 t_view({
+            	t_r.x,  t_r.y,  t_r.z,  -1.f * vec3::DotProduct(t_r, a_eye),
+            	t_u.x,  t_u.y,  t_u.z,  -1.f * vec3::DotProduct(t_u, a_eye),
+            	-t_f.x, -t_f.y, -t_f.z, vec3::DotProduct(t_f, a_eye),
+            	0.f,    0.f,    0.f,    1.f });
 
             return t_view;
         }

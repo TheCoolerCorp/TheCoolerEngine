@@ -88,8 +88,12 @@ Editor::EditorLayer::Ui::UiLoggerWindow::~UiLoggerWindow()
 
 void Editor::EditorLayer::Ui::UiLoggerWindow::Create()
 {
+	TCLOG_VERBOSE("Wow");
+	TCLOG_DEBUG("Hello world!");
+	TCLOG_INFO("Bonjour Chris et Lucile!!!!!!!!! :3");
 	TCLOG_WARNING("oopsies!!!!");
-	TCLOG_ERROR("INDUSTRIAL SOCIETY AND ITS FUTURE \n Introduction\n 1. The Industrial Revolution and its consequences have been a disaster for the human race.They have greatly increased the life - expectancy of those of us who live in “advanced” countries, but they have destabilized society, have made life unfulfilling, have subjected human beings to indignities, have led to widespread psychological suffering(in the Third World to physical suffering as well) and have inflicted severe damage on the natural world.The continued development of technology will worsen the situation.It will certainly subject human beings to greater indignities and inflict greater damage on the natural world, it will probably lead to greater social disruption and psychological suffering, and it may lead to increased physical suffering even in “advanced” countries. \n 2. The industrial - technological system may survive or it may break down.If it survives, it MAY eventually achieve a low level of physical and psychological suffering, but only after passing through a long and very painful period of adjustment and only at the cost of permanently reducing human beings and many other living organisms to engineered products and mere cogs in the social machine.Furthermore, if the system survives, the consequences will be inevitable : There is no way of reforming or modifying the system so as to prevent it from depriving people of dignity and autonomy.");
+	TCLOG_ERROR("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed quis arcu bibendum, dictum purus id, condimentum diam. Donec molestie erat a lacus tincidunt commodo. Aliquam cursus iaculis eros ac tristique. Phasellus condimentum molestie justo. Cras quis lacus hendrerit, feugiat tellus in, rhoncus ante. Aenean vitae vulputate libero. Cras vulputate metus at libero dignissim, eu efficitur felis accumsan. Proin ac diam diam. Ut vehicula condimentum turpis ut ultrices. Fusce finibus dui lectus, sed congue mi tempus eu. Donec ac auctor odio. Aenean risus dui, posuere nec suscipit nec, mollis eu quam. Cras mattis nulla et ex egestas egestas. Donec facilisis leo nec mi ultrices tincidunt. Quisque vitae rhoncus nisi.");
+	TCLOG_CRITICAL("Wow you done messed up");
 }
 
 void Editor::EditorLayer::Ui::UiLoggerWindow::Destroy()
