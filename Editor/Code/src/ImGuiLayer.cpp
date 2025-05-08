@@ -569,7 +569,9 @@ namespace Editor::EditorLayer::Ui
 		ImGui::BeginChild("PlayPause Button", ImVec2(140, 70));
 		if (ImGui::Button("Play", ImVec2(60, ImGui::CalcTextSize("Play").y+10)))
 		{
-			m_app->GetCurrentScene()->SetMode(true);
+			if (!m_app->GetCurrentScene()->SetMode(true))
+				TCLOG_ERROR("Can't launch game mode without camera in scene !");
+			//Editor::Debugging::TCLog()
 		}
 		ImGui::SameLine();
 		if (ImGui::Button("Stop", ImVec2(60, ImGui::CalcTextSize("Stop").y + 10)))
