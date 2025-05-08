@@ -13,12 +13,18 @@ namespace Engine
 	{
 		namespace GraphicsAPI
 		{
-			// Can ha ve only ONE SET, count = number of set (for frame in flight for example), but can have multiple uniform with different size, and type to allocate pool
+			/* Create the descriptor without data at creation, need to use SetUniform or SetTextures to copy data into the uniform and UpdateUniform functions to update the descriptor
+			* Type represent the type of descriptor (common to all like a camera or per object like model matrix)
+			* SetCounnt represent the number of set (for example frame in flight for object that need constant update)
+			* UniformCount represent the number of set for uniform 
+			* SubuniformCount represent the number of buffer for each set of uniform (for example 3 for the uniform matrix and only 1 for materials data) 
+			* Tyes represent ALL the types of data you wish to send to this descriptor, int in enum represent the int in vulkan, can easily add types
+			*/
 			void VulkanObjectDescriptor::Create(RHI::ILogicalDevice* a_logicalDevice, RHI::IGraphicPipeline* a_graphicPipeline, RHI::DescriptorSetTarget a_type, uint32_t a_setCount, uint32_t a_uniformCount, std::vector<uint32_t> a_subUniformCount, std::vector<RHI::DescriptorSetDataType> a_types)
 			{
-				// Type : Common to all object in shader or per object.
 				m_type = a_type;
 
+				// Pipeline target
 				if (a_graphicPipeline->GetType() == RHI::PipelineType::Lit)
 				{
 					m_pipelineType = RHI::LitDescriptor;
@@ -29,7 +35,6 @@ namespace Engine
 				// Choose the right layout (shader set, example : layout(set = 0, binding = ...)
 				const VkDescriptorSetLayout t_layout = ChooseLayout(a_graphicPipeline->CastVulkan()->GetSetLayouts(), a_type);
 
-				// Cast RHI type of resources into vulkan, then create the pool
 				std::vector<VkDescriptorType> t_types = std::vector<VkDescriptorType>(a_types.size());
 				for (int i = 0; i < a_types.size(); ++i)
 				{
@@ -63,6 +68,10 @@ namespace Engine
 				DestroyBuffers();
 			}
 
+			/* Set the texture
+			* Destination binding l : (layout(set = ..., binding = 0)
+			* Count represent the number of descriptor
+			*/
 			void VulkanObjectDescriptor::SetTexture(RHI::ILogicalDevice* a_logicalDevice, RHI::IImage* a_image, uint32_t a_dstBinding, uint32_t a_count)
 			{
 				const VkDevice t_device = a_logicalDevice->CastVulkan()->GetVkDevice();
@@ -90,6 +99,11 @@ namespace Engine
 				}
 			}
 
+			/* Set the uniform
+			* BufferIndex : which set to sent those data
+			* Destination binding l : (layout(set = ..., binding = 0)
+			* DescriptorCount represent the number of descriptor
+			*/
 			void VulkanObjectDescriptor::SetUniform(RHI::ILogicalDevice* a_logicalDevice, RHI::IPhysicalDevice* a_physicalDevice, RHI::ICommandPool* a_commandPool, uint32_t a_bufferIndex, void* a_data, uint32_t a_dataSize, uint32_t a_dstBinding, uint32_t a_descriptorCount)
 			{
 				const VkDevice t_device = a_logicalDevice->CastVulkan()->GetVkDevice();
@@ -134,6 +148,10 @@ namespace Engine
 				}
 			}
 
+			/* Update the uniform buffer
+			* BufferIndex : which set to sent those data
+			* ImageIndex : which uniform in the set to update (for example depending on the currently rendering frame index from swapchain)
+			*/
 			void VulkanObjectDescriptor::UpdateUniforms(RHI::ILogicalDevice* a_logicalDevice, uint32_t a_bufferIndex,void* a_data, uint32_t a_dataSize, int a_imageIndex)
 			{
 				VkDevice t_logicalDevice = a_logicalDevice->CastVulkan()->GetVkDevice();
