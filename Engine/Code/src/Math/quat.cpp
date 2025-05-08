@@ -166,9 +166,9 @@ namespace Engine
 
             mat4 t_rotMat;
             t_rotMat.mElements = {
-                a_m.mElements[0] / t_scale.x, a_m.mElements[1] / t_scale.x, a_m.mElements[2] / t_scale.x, 0.f,
-                a_m.mElements[4] / t_scale.y, a_m.mElements[5] / t_scale.y, a_m.mElements[6] / t_scale.y, 0.f,
-                a_m.mElements[8] / t_scale.z, a_m.mElements[9] / t_scale.z, a_m.mElements[10] / t_scale.z, 0.f,
+                a_m.mElements[0] / t_scale.x, a_m.mElements[1] / t_scale.y, a_m.mElements[2] / t_scale.z, 0.f,
+                a_m.mElements[4] / t_scale.x, a_m.mElements[5] / t_scale.y, a_m.mElements[6] / t_scale.z, 0.f,
+                a_m.mElements[8] / t_scale.x, a_m.mElements[9] / t_scale.y, a_m.mElements[10] / t_scale.z, 0.f,
                 0.f,                         0.f,                         0.f,                         1.f
             };
 

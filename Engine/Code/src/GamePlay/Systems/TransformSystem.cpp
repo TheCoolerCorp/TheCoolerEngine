@@ -13,38 +13,80 @@ namespace Engine
 
 		void TransformSystem::Update()
 		{
+			/*
+			 * We update each transform recurisvely: we start with those which are at the root (parentId == -1), and then do their children recursively
+			 * This allows us to automatically make any changes to the parent apply to the children, as the parent will have been update just before
+			 */
 			for (TransformComponent* t_component : m_components)
 			{
 				if (!t_component)
 					continue;
-				int t_componentParentId = t_component->GetParentID();
 				Math::Transform* t_transform = t_component->GetTransform();
-
-				if (t_transform->GetNeedToUpdate())
+				if (t_component->GetParentID() == -1) //only update the root elements
 				{
-					if (t_componentParentId != -1)
+					if (t_component->GetTransform()->GetNeedToUpdate()) //if we need to update it, update and forcefully update children
 					{
 						Math::mat4 newLocalMatrix = Math::mat4::TRS(t_transform->GetPosition(), t_transform->GetRotation(), t_transform->GetScale());
-						Math::mat4 GlobalParentMatrix = GetParentsMatrix(t_componentParentId);
-						Math::mat4 newGlobalMatrix = GlobalParentMatrix * newLocalMatrix;
 
-						t_component->GetTransform()->SetMatrix(newGlobalMatrix);
+						t_component->GetTransform()->SetMatrix(newLocalMatrix);
 						t_transform->SetGlobalPositionFromMatrix();
 						t_transform->SetGlobalRotationFromMatrix();
 						t_transform->SetGlobalScaleFromMatrix();
-						
-						continue;
-					}
+						t_component->GetTransform()->SetNeedToUpdate(false);
 
-					Math::vec3 pos = t_transform->GetPosition();
-					Math::quat rot = t_transform->GetRotation();
-					Math::vec3 scale = t_transform->GetScale();
-					Math::mat4 t_trs = Math::mat4::TRS(pos, rot, scale);
-					t_transform->SetMatrix(t_trs);
-					t_transform->SetGlobalPositionFromMatrix();
-					t_transform->SetGlobalRotationFromMatrix();
-					t_transform->SetGlobalScaleFromMatrix();
-					t_transform->SetNeedToUpdate(false);
+						for (int t_childId : t_component->GetChildrenIDs()) //force update on children as the parent has been modified
+						{
+							UpdateChild(t_childId, true);
+						}
+					}
+					else // the children might need to be updated, so we go through them no matter what
+					{
+						for (int t_childId : t_component->GetChildrenIDs())
+						{
+							UpdateChild(t_childId);
+						}
+					}
+				}
+			}
+		}
+
+		/**
+		 * updates the given child transform. If a_force is set to true, it will force an update, even if GetNeedToUpdate is false
+		 * this is for when the parent is updated, and we need to update the child
+		 * @param a_id the id of the child transform
+		 */
+		void TransformSystem::UpdateChild(int a_id, bool a_force)
+		{
+			if (!IsValidId(a_id))
+				return;
+			TransformComponent* t_component = m_components[a_id]; //get the component from the id
+
+			if (t_component->GetParentID() == -1) //this function is only for updating children, so we make sure no edge-cases happen
+				return;
+
+			Math::Transform* t_transform = t_component->GetTransform();
+			if (t_component->GetTransform()->GetNeedToUpdate() || a_force)
+			{
+				Math::mat4 newLocalMatrix = Math::mat4::TRS(t_transform->GetPosition(), t_transform->GetRotation(), t_transform->GetScale());
+				Math::mat4 GlobalParentMatrix = GetParentsMatrix(t_component->GetParentID());
+				Math::mat4 newGlobalMatrix = GlobalParentMatrix * newLocalMatrix;
+
+				t_component->GetTransform()->SetMatrix(newGlobalMatrix);
+				t_transform->SetGlobalPositionFromMatrix();
+				t_transform->SetGlobalRotationFromMatrix();
+				t_transform->SetGlobalScaleFromMatrix();
+				t_component->GetTransform()->SetNeedToUpdate(false);
+
+				for (int t_childId : t_component->GetChildrenIDs()) //force update on children as the parent has been modified
+				{
+					UpdateChild(t_childId, true);
+				}
+			}
+			else
+			{
+				for (int t_childId : t_component->GetChildrenIDs()) // the children might need to be updated, so we go through them
+				{
+					UpdateChild(t_childId);
 				}
 			}
 		}

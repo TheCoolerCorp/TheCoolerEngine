@@ -275,24 +275,31 @@ namespace Editor::EditorLayer::Ui
 			if (ImGuizmo::Manipulate(t_viewf, t_projectionf, m_currentGizmoOperation, m_currentGizmoMode, t_objectMatrix.mElements.data()))
 			{
 				Engine::GamePlay::TransformComponent* t_transform = m_selectedGameObject->GetComponent<Engine::GamePlay::TransformComponent>();
-				if (t_transform->GetParentID() != -1)
+				t_objectMatrix.Transpose();
+				if (t_transform->GetParentID() != -1) // we need to reconvert the matrix to local if the object has a child
 				{
 					Engine::Math::mat4 t_matrix = Engine::GamePlay::ServiceLocator::GetTransformSystem()->GetComponent(t_transform->GetParentID())->GetMatrix();
 					t_matrix.Inverse();
-					t_objectMatrix.Transpose();
 					t_objectMatrix = t_matrix * t_objectMatrix;
-					t_objectMatrix.Transpose();
 				}
 
-				float t_translation[3], t_rotation[3], t_scale[3];
-				ImGuizmo::DecomposeMatrixToComponents(t_objectMatrix.mElements.data(), t_translation, t_rotation, t_scale);
 				Engine::GamePlay::TransformData t_transformData;
+				t_transformData.mPos = t_transform->GetTransform()->GetPosition();
+				t_transformData.mRot = t_transform->GetTransform()->GetRotation();
+				t_transformData.mScale = t_transform->GetTransform()->GetScale();
 
-				t_transformData.mRot = Engine::Math::quat(Engine::Math::vec3(t_rotation[0]* Engine::Math::PI/180.0f, t_rotation[1] * Engine::Math::PI / 180.0f, t_rotation[2] * Engine::Math::PI / 180.0f));
-				//t_transformData.mRot = Engine::Math::quat::Normalize(t_transformData.mRot);
-
-				t_transformData.mPos = Engine::Math::vec3(t_translation[0], t_translation[1], t_translation[2]);
-				t_transformData.mScale = Engine::Math::vec3(t_scale[0], t_scale[1], t_scale[2]);
+				switch (m_currentGizmoOperation)
+				{
+				case ImGuizmo::TRANSLATE:
+					t_transformData.mPos = Engine::Math::vec3::GetPosition(t_objectMatrix);
+					break;
+				case ImGuizmo::ROTATE:
+					t_transformData.mRot = Engine::Math::quat::GetRotation(t_objectMatrix);
+					break;
+				case ImGuizmo::SCALE:
+					t_transformData.mScale = Engine::Math::vec3::GetScale(t_objectMatrix);
+					break;
+				}
 
 				t_transformData.mParentId = m_selectedGameObject->GetComponent<Engine::GamePlay::TransformComponent>()->GetParentID();
 
