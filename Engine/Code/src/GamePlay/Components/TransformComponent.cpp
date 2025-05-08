@@ -80,6 +80,11 @@ namespace Engine
 			m_transform->SetRotation(a_euler);
 		}
 
+		void TransformComponent::SetRotation(Math::quat a_quat)
+		{
+			m_transform->SetRotation(a_quat);
+		}
+
 		void TransformComponent::SetScale(Math::vec3 a_scale)
 		{
 			m_transform->SetScale(a_scale);

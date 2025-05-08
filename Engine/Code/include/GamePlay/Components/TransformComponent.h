@@ -32,6 +32,7 @@ namespace Engine
 			ENGINE_API void Set(const TransformData& a_data);
 			ENGINE_API void SetPosition(Math::vec3 a_pos);
 			ENGINE_API void SetRotation(Math::vec3 a_euler);
+			ENGINE_API void SetRotation(Math::quat a_quat);
 			ENGINE_API void SetScale(Math::vec3 a_scale);
 
 			ENGINE_API [[nodiscard]] Math::vec3 GetGlobalPos();

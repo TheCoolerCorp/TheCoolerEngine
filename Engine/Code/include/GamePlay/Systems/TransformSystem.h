@@ -18,6 +18,7 @@ namespace Engine
 
 			ENGINE_API void Create();
 			ENGINE_API void Update();
+			ENGINE_API void UpdateChild(int a_id, bool a_force = false);
 			ENGINE_API void Destroy();
 
 			ENGINE_API int AddComponent(TransformComponent* a_component);
