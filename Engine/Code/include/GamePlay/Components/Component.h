@@ -29,6 +29,11 @@ namespace Engine
 
 			ENGINE_API virtual ComponentType Create(int& a_outId) = 0;
 			ENGINE_API virtual void Destroy() = 0;
+
+			ENGINE_API void SetGameObject(int a_gameObjectId) { m_gameObjectId = a_gameObjectId; }
+			[[nodiscard]] ENGINE_API int GetGameObjectID() const { return m_gameObjectId; }
+		private:
+			int m_gameObjectId = -1;
 		};
 
 	}

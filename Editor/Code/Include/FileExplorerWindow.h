@@ -23,7 +23,7 @@ namespace Editor::EditorLayer::Ui
 
 		static void SetRootPath(const std::filesystem::path& a_path) { m_rootPath = a_path; }
 	private:
-		bool m_previewImages = false;
+		bool m_previewImages = true;
 
 		std::filesystem::path m_currentPath;
 		static std::filesystem::path m_rootPath;

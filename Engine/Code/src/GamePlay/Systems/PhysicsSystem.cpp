@@ -202,6 +202,9 @@ namespace Engine
 		{
 			for (size_t i = 0; i < m_components.size(); ++i)
 			{
+				//the almost correct fix
+				//m_components[i]->UpdateFromTransform(a_transforms[m_components[i]->GetGameObjectID()]);
+				//this is broken and assumes no gameobjects other than physics component exits. Needs a scene reference in the function to fix
 				m_components[i]->UpdateFromTransform(a_transforms[i]);
 			}
 		}

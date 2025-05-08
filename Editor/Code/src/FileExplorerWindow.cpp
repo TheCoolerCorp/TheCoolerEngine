@@ -86,7 +86,7 @@ void Editor::EditorLayer::Ui::FileExplorerWindow::UiDraw()
 			ClearContextImages();
 		}
 	}
-	ImGui::SetItemTooltip("Makes the images preview in the file explorer. \n !!WARNING!! : Loading is done in the main thread and, as such, the program will freeze loading a lot of images for the first time \n Once an image has been loaded, there will no longer be an issue");
+	ImGui::SetItemTooltip("Makes the images preview in the file explorer. Can be ram-intensive if many images are loaded");
 	ImGui::SameLine();
 	ImGui::Text(m_currentPath.string().c_str());
 	ImGui::EndChild();

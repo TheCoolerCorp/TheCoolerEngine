@@ -50,6 +50,9 @@ namespace Engine
 			ENGINE_API void LockRotation(const char a_axis);
 			ENGINE_API void UnlockRotation(const char a_axis);
 
+			ENGINE_API void SetObjectLayer(CollisionLayer a_layer);
+			ENGINE_API void SetBodyType(BodyType a_type);
+
 			ENGINE_API [[nodiscard]] bool IsTrigger() const { return m_body->IsSensor(); }
 			ENGINE_API [[nodiscard]] bool IsRotLockedX() const;
 			ENGINE_API [[nodiscard]] bool IsRotLockedY() const;

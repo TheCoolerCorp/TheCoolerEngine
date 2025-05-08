@@ -48,7 +48,7 @@ namespace Engine
 					static_assert(std::is_member_function_pointer<decltype(&ComponentClass::Create)>::value);
 
 					ComponentClass* t_newComponent = new ComponentClass();
-
+					t_newComponent->SetGameObject(m_id);
 					int id = -1;
 					ComponentType t_componentType = t_newComponent->Create(id);
 

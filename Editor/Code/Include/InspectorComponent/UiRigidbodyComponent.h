@@ -36,6 +36,9 @@ namespace Editor::EditorLayer::Ui
 
 		void UiShowColliderInfo();
 		void UiShowBodyType();
+		void UiDrawBodyTypeCombo(std::string a_activeComponent);
+		void UiShowCollisionLayer();
+		void UiDrawCollisionLayerCombo(std::string a_activeComponent);
 	};
 }
 

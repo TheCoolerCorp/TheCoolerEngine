@@ -38,6 +38,7 @@ namespace Engine
 			JPH::BodyCreationSettings t_bodySettings(new JPH::BoxShape(t_halfExtent), t_position, t_rotation, t_motionType, t_layer);
 			t_bodySettings.mOverrideMassProperties = JPH::EOverrideMassProperties::CalculateInertia;
 			t_bodySettings.mMassPropertiesOverride.mMass = a_mass;
+			t_bodySettings.mAllowDynamicOrKinematic = true;
 			m_mass = a_mass;
 			m_body = t_bodyInterface->CreateBody(t_bodySettings);
 			t_bodyInterface->AddBody(m_body->GetID(), t_activation);
@@ -65,6 +66,7 @@ namespace Engine
 			JPH::BodyCreationSettings t_bodySettings(new JPH::SphereShape(a_radius), t_position, t_rotation, t_motionType, t_layer);
 			t_bodySettings.mOverrideMassProperties = JPH::EOverrideMassProperties::CalculateInertia;
 			t_bodySettings.mMassPropertiesOverride.mMass = a_mass;
+			t_bodySettings.mAllowDynamicOrKinematic = true;
 			m_mass = a_mass;
 			m_body = t_bodyInterface->CreateBody(t_bodySettings);
 			t_bodyInterface->AddBody(m_body->GetID(), t_activation);
@@ -93,6 +95,7 @@ namespace Engine
 			JPH::BodyCreationSettings t_bodySettings(new JPH::CapsuleShape(m_halfHeight, m_radius), t_position, t_rotation, t_motionType, t_layer);
 			t_bodySettings.mOverrideMassProperties = JPH::EOverrideMassProperties::CalculateInertia;
 			t_bodySettings.mMassPropertiesOverride.mMass = a_mass;
+			t_bodySettings.mAllowDynamicOrKinematic = true;
 			m_mass = a_mass;
 			m_body = t_bodyInterface->CreateBody(t_bodySettings);
 			t_bodyInterface->AddBody(m_body->GetID(), t_activation);
@@ -278,6 +281,29 @@ namespace Engine
 
 			m_lockedRotationAxes.erase(t_it);
 		}
+
+		void RigidBody::SetObjectLayer(CollisionLayer a_layer)
+		{
+			m_collisionLayer = a_layer;
+			JPH::BodyInterface* t_bodyInterface = GamePlay::ServiceLocator::GetPhysicsSystem()->GetBodyInterface();
+
+			t_bodyInterface->DeactivateBody(m_body->GetID());
+			t_bodyInterface->RemoveBody(m_body->GetID());
+
+			t_bodyInterface->SetObjectLayer(m_body->GetID(),CollisionLayerToJPHLayer(a_layer));
+
+			t_bodyInterface->AddBody(m_body->GetID(), JPH::EActivation::Activate);
+		}
+
+		void RigidBody::SetBodyType(BodyType a_type)
+		{
+			m_bodyType = a_type;
+			JPH::BodyInterface* t_bodyInterface = GamePlay::ServiceLocator::GetPhysicsSystem()->GetBodyInterface();
+
+			t_bodyInterface->DeactivateBody(m_body->GetID());
+			t_bodyInterface->SetMotionType(m_body->GetID(), BodyTypeToJPHType(a_type), JPH::EActivation::Activate);
+			t_bodyInterface->ActivateBody(m_body->GetID());
+			}
 
 		bool RigidBody::IsRotLockedX() const
 		{

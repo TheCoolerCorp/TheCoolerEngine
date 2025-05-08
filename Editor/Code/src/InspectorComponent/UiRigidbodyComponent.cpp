@@ -59,7 +59,7 @@ void Editor::EditorLayer::Ui::UiRigidbodyComponent::UiDraw()
 		m_rigidBody->SetDebug(t_isDebug);
 	}
 
-	UiShowBodyType();
+	
 	UiShowColliderInfo();
 	if (ImGui::DragFloat3(("Position##" + std::to_string(m_uid)).c_str(), t_fPos, 0.1f, -FLT_MAX, +FLT_MAX))
 	{
@@ -69,8 +69,8 @@ void Editor::EditorLayer::Ui::UiRigidbodyComponent::UiDraw()
 	{
 		m_rigidBody->SetRotation(Engine::Math::quat(Engine::Math::vec3(t_fRot[0], t_fRot[1], t_fRot[2])));
 	}
-	
-
+	UiShowBodyType();
+	UiShowCollisionLayer();
 }
 
 void Editor::EditorLayer::Ui::UiRigidbodyComponent::Destroy()
@@ -89,7 +89,7 @@ void Editor::EditorLayer::Ui::UiRigidbodyComponent::UiShowColliderInfo()
 		Engine::Math::vec3 t_scale = m_rigidBody->GetBody()->GetScale();
 		float t_fScale[4] = { t_scale.x, t_scale.y, t_scale.z, 0.f };
 
-		if (ImGui::DragFloat3(("Scale##" + std::to_string(m_uid)).c_str(), t_fScale, 0.1f, -FLT_MAX, +FLT_MAX))
+		if (ImGui::DragFloat3(("Scale##" + std::to_string(m_uid)).c_str(), t_fScale, 0.1f,0.01f, +FLT_MAX))
 		{
 			m_rigidBody->GetBody()->SetScale(Engine::Math::vec3(t_fScale[0], t_fScale[1], t_fScale[2]));
 		}
@@ -128,13 +128,98 @@ void Editor::EditorLayer::Ui::UiRigidbodyComponent::UiShowBodyType()
 	switch (m_rigidBody->GetBody()->GetBodyType())
 	{
 	case Engine::Physics::BodyType::STATIC:
-		ImGui::Text("Static");
+		UiDrawBodyTypeCombo("Static");
 		break;
 	case Engine::Physics::BodyType::KINEMATIC:
-		ImGui::Text("Kinematic");
+		UiDrawBodyTypeCombo("Kinematic");
 		break;
 	case Engine::Physics::BodyType::DYNAMIC:
-		ImGui::Text("Dynamic");
+		UiDrawBodyTypeCombo("Dynamic");
 		break;
+	}
+}
+
+void Editor::EditorLayer::Ui::UiRigidbodyComponent::UiDrawBodyTypeCombo(std::string a_activeComponent)
+{
+	if (ImGui::BeginCombo((a_activeComponent + "##" + std::to_string(m_uid)).c_str(), a_activeComponent.c_str()))
+	{
+		if (m_rigidBody->GetBody()->GetBodyType() != Engine::Physics::BodyType::STATIC)
+		{
+			if (ImGui::Selectable("Static"))
+			{
+				m_rigidBody->GetBody()->SetBodyType(Engine::Physics::BodyType::STATIC);
+			}
+		}
+		if (m_rigidBody->GetBody()->GetBodyType() != Engine::Physics::BodyType::KINEMATIC)
+		{
+			if (ImGui::Selectable("Kinematic"))
+			{
+				m_rigidBody->GetBody()->SetBodyType(Engine::Physics::BodyType::KINEMATIC);
+			}
+		}
+		if (m_rigidBody->GetBody()->GetBodyType() != Engine::Physics::BodyType::DYNAMIC)
+		{
+			if (ImGui::Selectable("Dynamic"))
+			{
+				m_rigidBody->GetBody()->SetBodyType(Engine::Physics::BodyType::DYNAMIC);
+			}
+		}
+		ImGui::EndCombo();
+	}
+}
+
+void Editor::EditorLayer::Ui::UiRigidbodyComponent::UiShowCollisionLayer()
+{
+	switch (m_rigidBody->GetBody()->GetLayer())
+	{
+	case Engine::Physics::CollisionLayer::NON_MOVING:
+		UiDrawCollisionLayerCombo("Non-Moving");
+		break;
+	case Engine::Physics::CollisionLayer::MOVING:
+		UiDrawCollisionLayerCombo("Moving");
+		break;
+	case Engine::Physics::CollisionLayer::TRIGGER:
+		UiDrawCollisionLayerCombo("Trigger");
+		break;
+	case Engine::Physics::CollisionLayer::DISABLED:
+		UiDrawCollisionLayerCombo("Disabled");
+		break;
+	}
+}
+
+void Editor::EditorLayer::Ui::UiRigidbodyComponent::UiDrawCollisionLayerCombo(std::string a_activeComponent)
+{
+	if (ImGui::BeginCombo((a_activeComponent + "##" + std::to_string(m_uid)).c_str(), a_activeComponent.c_str()))
+	{
+		if (m_rigidBody->GetBody()->GetLayer() != Engine::Physics::CollisionLayer::NON_MOVING)
+		{
+			if (ImGui::Selectable("Non-Moving"))
+			{
+				m_rigidBody->GetBody()->SetObjectLayer(Engine::Physics::CollisionLayer::NON_MOVING);
+			}
+		}
+		if (m_rigidBody->GetBody()->GetLayer() != Engine::Physics::CollisionLayer::MOVING)
+		{
+			if (ImGui::Selectable("Moving"))
+			{
+				m_rigidBody->GetBody()->SetObjectLayer(Engine::Physics::CollisionLayer::MOVING);
+			}
+		}
+		if (m_rigidBody->GetBody()->GetLayer() != Engine::Physics::CollisionLayer::TRIGGER)
+		{
+			if (ImGui::Selectable("Trigger"))
+			{
+				m_rigidBody->GetBody()->SetObjectLayer(Engine::Physics::CollisionLayer::TRIGGER);
+			}
+		}
+		if (m_rigidBody->GetBody()->GetLayer() != Engine::Physics::CollisionLayer::DISABLED)
+		{
+			if (ImGui::Selectable("Disabled"))
+			{
+				m_rigidBody->GetBody()->SetObjectLayer(Engine::Physics::CollisionLayer::DISABLED);
+			}
+		}
+
+		ImGui::EndCombo();
 	}
 }

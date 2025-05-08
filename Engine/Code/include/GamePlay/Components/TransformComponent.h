@@ -46,7 +46,7 @@ namespace Engine
 
 			ENGINE_API void Move(Math::vec3 a_pos, Math::vec3 a_rot, Math::vec3 a_scale);
 
-			ENGINE_API void SetGameObject(int a_gameObjectId) { m_gameObjectId = a_gameObjectId; }
+			
 			ENGINE_API void SetParent(int a_id);
 			ENGINE_API void RemoveParent();
 			ENGINE_API void AddChild(int a_id);
@@ -56,7 +56,6 @@ namespace Engine
 			[[nodiscard]] ENGINE_API Math::Transform* GetTransform() const { return m_transform; }
 			[[nodiscard]] ENGINE_API TransformData GetTransformData() const;
 			[[nodiscard]] ENGINE_API int GetID() const { return m_id; }
-			[[nodiscard]] ENGINE_API int GetGameObjectID() const { return m_gameObjectId; }
 			[[nodiscard]] ENGINE_API int GetParentID() const { return m_parentId; }
 			[[nodiscard]] ENGINE_API std::vector<int> GetChildrenIDs() const { return m_childrenIds; }
 			[[nodiscard]] ENGINE_API Math::mat4 GetMatrix() { return m_transform->GetTransformMatrix(); }
