@@ -171,6 +171,17 @@ namespace Engine
 				{
 					m_mainCamera->SetFreeCam(true);
 					m_lastState = m_isPlaying;
+					for (int i = 0; i < m_objs.size(); ++i)
+					{
+						m_objs[i]->GetComponent<TransformComponent>()->Destroy();
+						delete m_objs[i];
+					}
+					m_objs.clear();
+
+					m_renderSystem->Destroy(a_renderer);
+					m_renderSystem->Create(a_renderer);
+					Load(a_renderer);
+					m_justReloaded = true;
 				}
 				m_mainCamera->Update(a_renderer, a_inputHandler, a_window, a_deltatime);
 			}
@@ -190,10 +201,17 @@ namespace Engine
 			}
 
 
-			m_renderSystem->Update(a_renderer, t_syncro, t_lightSyncro, t_materialUpdate, t_cameraSyncro);
+			if (!m_justReloaded)
+			{
+				m_renderSystem->Update(a_renderer, t_syncro, t_lightSyncro, t_materialUpdate, t_cameraSyncro);
+			}
 
 			t_physicsTransforms.clear();
 			t_syncro.clear();
+			t_lightSyncro.clear();
+			t_materialUpdate.clear();
+			t_cameraSyncro.clear();
+			m_justReloaded = false;
 		}
 
 		/**
@@ -294,8 +312,6 @@ namespace Engine
 
 		void Scene::Destroy(Core::Renderer* a_renderer)
 		{
-			Save();
-
 			for (int i = 0; i < m_objs.size(); ++i)
 			{
 				delete m_objs[i];
@@ -454,7 +470,7 @@ namespace Engine
 				t_scene.push_back(t_objJson);
 			}
 
-			std::ofstream t_file(m_name + ".json");
+			std::ofstream t_file("Assets/Scenes/" + m_name + ".json");
 			if (t_file.is_open())
 			{
 				t_file << t_scene.dump(4);
@@ -465,7 +481,7 @@ namespace Engine
 		void Scene::Load(Core::Renderer* a_renderer)
 		{
 			//std::ifstream t_file("Assets/Scenes/" + m_name + ".json");
-			std::ifstream t_file(m_name + ".json");
+			std::ifstream t_file("Assets/Scenes/" + m_name + ".json");
 			if (!t_file.is_open())
 			{
 				return;
@@ -516,8 +532,6 @@ namespace Engine
 				AddGameObject(t_gameObject);
 				t_gameObject->GetComponent<TransformComponent>()->SetParent(t_transform.mParentId);
 
-				LOG_DEBUG(t_name);
-
 				if (t_hasLight)
 				{
 					t_gameObject->AddComponent<LightComponent>();
@@ -526,33 +540,47 @@ namespace Engine
 
 				if (t_hasRigidBody)
 				{
-					LOG_DEBUG("RigidBody :");
-					LOG_DEBUG("body type :");
-					LOG_DEBUG(Core::Debugging::ToString(t_rigidBody.mBodyType));
-					LOG_DEBUG("layer :");
-					LOG_DEBUG(Core::Debugging::ToString(t_rigidBody.mLayer));
-					LOG_DEBUG("collider type :");
-					LOG_DEBUG(Core::Debugging::ToString(t_rigidBody.mColliderType));
-					LOG_DEBUG("pos :");
-					t_rigidBody.mPos.Print();
-					LOG_DEBUG("scale :");
-					t_rigidBody.mScale.Print();
-					LOG_DEBUG("radius :");
-					LOG_DEBUG(Core::Debugging::ToString(t_rigidBody.mRadius));
-					LOG_DEBUG("half height :");
-					LOG_DEBUG(Core::Debugging::ToString(t_rigidBody.mHalfHeight));
-					LOG_DEBUG("rot :");
-					t_rigidBody.mRot.Print();
-					LOG_DEBUG("mass :");
-					LOG_DEBUG(Core::Debugging::ToString(t_rigidBody.mMass));
-					LOG_DEBUG("enable :");
-					LOG_DEBUG(Core::Debugging::ToString(t_rigidBody.mEnable));
-					LOG_DEBUG("lock rotation X :");
-					LOG_DEBUG(Core::Debugging::ToString(t_rigidBody.mLockRotX));
-					LOG_DEBUG("lock rotation Y :");
-					LOG_DEBUG(Core::Debugging::ToString(t_rigidBody.mLockRotY));
-					LOG_DEBUG("lock rotation Z :");
-					LOG_DEBUG(Core::Debugging::ToString(t_rigidBody.mLockRotZ));
+					t_gameObject->AddComponent<RigidBodyComponent>();
+					RigidBodyComponent* t_rigidBodyComponent = t_gameObject->GetComponent<RigidBodyComponent>();
+					Physics::BodyType t_bodyType = static_cast<Physics::BodyType>(t_rigidBody.mBodyType);
+					Physics::CollisionLayer t_layer = static_cast<Physics::CollisionLayer>(t_rigidBody.mLayer);
+					Math::vec3 t_pos = t_rigidBody.mPos;
+					Math::vec3 t_scale = t_rigidBody.mScale;
+					float t_radius = t_rigidBody.mRadius;
+					float t_halfHeight = t_rigidBody.mHalfHeight;
+					Math::quat t_rot = t_rigidBody.mRot;
+					float t_mass = t_rigidBody.mMass;
+					bool t_enable = t_rigidBody.mEnable;
+					bool t_lockRotX = t_rigidBody.mLockRotX;
+					bool t_lockRotY = t_rigidBody.mLockRotY;
+					bool t_lockRotZ = t_rigidBody.mLockRotZ;
+					Math::Transform t_transform = *t_gameObject->GetComponent<TransformComponent>()->GetTransform();
+
+					switch (t_rigidBody.mColliderType)
+					{
+					case 0:
+						t_rigidBodyComponent->CreateBoxRigidBody(t_bodyType, t_layer, t_pos, t_scale, t_rot, t_transform, t_mass, t_enable);
+						break;
+					case 1:
+						t_rigidBodyComponent->CreateSphereRigidBody(t_bodyType, t_layer, t_pos, t_radius, t_rot, t_transform, t_mass, t_enable);
+						break;
+					case 2:
+						t_rigidBodyComponent->CreateCapsuleRigidBody(t_bodyType, t_layer, t_pos, t_halfHeight, t_radius, t_rot, t_transform, t_mass, t_enable);
+						break;
+					}
+
+					if (t_lockRotX)
+					{
+						t_rigidBodyComponent->LockRotation('x');
+					}
+					if (t_lockRotY)
+					{
+						t_rigidBodyComponent->LockRotation('y');
+					}
+					if (t_lockRotZ)
+					{
+						t_rigidBodyComponent->LockRotation('z');
+					}
 				}
 
 				if (t_hasMesh)
@@ -590,7 +618,6 @@ namespace Engine
 					t_gameObject->GetComponent<CameraComponent>()->GetCamera().Set(t_camera.m_up, t_camera.m_center, t_camera.m_eye, t_camera.m_fovY, t_camera.m_aspect, t_camera.m_near, t_camera.m_far, t_camera.m_speed, t_camera.m_sensitivity, false, t_gameObject->GetComponent<TransformComponent>()->GetTransform()->GetTransformMatrix());
 					t_gameObject->GetComponent<CameraComponent>()->GetCamera().Create(a_renderer);
 					SetMainCamera(t_gameObject->GetId());
-
 				}
 			}
 		}

@@ -564,12 +564,14 @@ namespace Editor::EditorLayer::Ui
 		{
 			if (!m_app->GetCurrentScene()->SetMode(true))
 				TCLOG_ERROR("Can't launch game mode without camera in scene !");
+			m_selectedGameObject = nullptr;
 			//Editor::Debugging::TCLog()
 		}
 		ImGui::SameLine();
 		if (ImGui::Button("Stop", ImVec2(60, ImGui::CalcTextSize("Stop").y + 10)))
 		{
 			m_app->GetCurrentScene()->SetMode(false);
+			m_selectedGameObject = nullptr;
 		}
 		ImGui::PopStyleColor();
 		ImGui::EndChild();

@@ -17,7 +17,18 @@ void Editor::EditorLayer::Ui::UiTransformComponent::Create()
 
 void Editor::EditorLayer::Ui::UiTransformComponent::UiDraw()
 {
+	if (!m_transform)
+	{
+		return;
+	}
+
 	Transform* t_transform = m_transform->GetTransform();
+
+	if (!t_transform)
+	{
+		return;
+	}
+
 	vec3 t_pos = t_transform->GetPosition();
 	vec3 t_rot = UtilsToDeg(t_transform->GetEulerAngles());
 	vec3 t_scale = t_transform->GetScale();

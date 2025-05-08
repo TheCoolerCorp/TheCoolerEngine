@@ -82,7 +82,8 @@ namespace Engine
 			PhysicsSystem* m_physicsSystem = nullptr;
 
 			bool m_isPlaying = false;
-			bool m_lastState = true;
+			bool m_lastState = false;
+			bool m_justReloaded = false;
 			int m_gameCameraId = 0;
 			int m_mainCameraObjectId = 0;
 

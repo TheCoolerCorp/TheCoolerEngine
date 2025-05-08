@@ -1,1 +1,223 @@
-null
+[
+    {
+        "GameObject": "Unlit",
+        "TransformComponent": {
+            "position": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "rotation": {
+                "x": -0.4999998211860657,
+                "y": -0.4999998211860657,
+                "z": -0.4999998211860657,
+                "w": 0.5000003576278687
+            },
+            "scale": {
+                "x": 0.9999995827674866,
+                "y": 0.9999995827674866,
+                "z": 0.9999995827674866
+            },
+            "parent": -1
+        },
+        "MeshComponent": {
+            "mesh": "Assets\\Meshes\\viking_room.obj",
+            "type": 0,
+            "albedo": "Assets\\Textures\\viking_room.png",
+            "normal": "",
+            "metallic": "",
+            "roughness": "",
+            "ao": ""
+        }
+    },
+    {
+        "GameObject": "Lit",
+        "TransformComponent": {
+            "position": {
+                "x": 2.5,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "rotation": {
+                "x": -0.4999998211860657,
+                "y": -0.4999998211860657,
+                "z": -0.4999998211860657,
+                "w": 0.5000003576278687
+            },
+            "scale": {
+                "x": 0.9999995827674866,
+                "y": 0.9999995827674866,
+                "z": 0.9999995827674866
+            },
+            "parent": -1
+        },
+        "MeshComponent": {
+            "mesh": "Assets\\Meshes\\BaseObjects\\Sphere.obj",
+            "type": 1,
+            "albedo": "Assets\\Textures\\rustediron2_basecolor.png",
+            "normal": "Assets\\Textures\\rustediron2_normal.png",
+            "metallic": "Assets\\Textures\\rustediron2_metallic.png",
+            "roughness": "Assets\\Textures\\rustediron2_roughness.png",
+            "ao": ""
+        }
+    },
+    {
+        "GameObject": "Lit",
+        "TransformComponent": {
+            "position": {
+                "x": 5.462393283843994,
+                "y": -0.04125852510333061,
+                "z": 1.0521148443222046
+            },
+            "rotation": {
+                "x": -0.47682926058769226,
+                "y": -0.5221433043479919,
+                "z": -0.4768291413784027,
+                "w": 0.5221439003944397
+            },
+            "scale": {
+                "x": 0.9999997019767761,
+                "y": 0.9999995827674866,
+                "z": 0.9999996423721313
+            },
+            "parent": -1
+        },
+        "LightComponent": {
+            "position": {
+                "x": 5.462393283843994,
+                "y": -0.04125852510333061,
+                "z": 1.0521148443222046
+            },
+            "color": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "intensity": 15.0
+        },
+        "MeshComponent": {
+            "mesh": "Assets\\Meshes\\BaseObjects\\Sphere.obj",
+            "type": 1,
+            "albedo": "Assets\\Textures\\PBR\\pbr_diff.png",
+            "normal": "Assets\\Textures\\PBR\\pbr_nor.png",
+            "metallic": "Assets\\Textures\\PBR\\pbr_metal.png",
+            "roughness": "Assets\\Textures\\PBR\\pbr_rough.png",
+            "ao": "Assets\\Textures\\PBR\\pbr_ao.png"
+        }
+    },
+    {
+        "GameObject": "Light",
+        "TransformComponent": {
+            "position": {
+                "x": 10.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0,
+                "w": 1.0
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "parent": -1
+        },
+        "LightComponent": {
+            "position": {
+                "x": 10.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "color": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "intensity": 15.0
+        }
+    },
+    {
+        "GameObject": "Light",
+        "TransformComponent": {
+            "position": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0,
+                "w": 1.0
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "parent": -1
+        },
+        "LightComponent": {
+            "position": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "color": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "intensity": 15.0
+        }
+    },
+    {
+        "GameObject": "Camera",
+        "TransformComponent": {
+            "position": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 3.9000000953674316
+            },
+            "rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0,
+                "w": 1.0
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "parent": -1
+        },
+        "CameraComponent": {
+            "up": {
+                "x": 0.0,
+                "y": 1.0,
+                "z": 0.0
+            },
+            "center": {
+                "x": 0.0,
+                "y": 1.0,
+                "z": 0.0
+            },
+            "eye": {
+                "x": 0.0,
+                "y": 1.0,
+                "z": 0.0
+            },
+            "fovY": 1.2217304706573486,
+            "aspect": 1.8699780702590942,
+            "near": 0.10000000149011612,
+            "far": 100.0,
+            "speed": 10.0,
+            "sensitivity": 20.0
+        }
+    }
+]

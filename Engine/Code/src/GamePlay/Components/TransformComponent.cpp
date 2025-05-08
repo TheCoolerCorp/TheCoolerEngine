@@ -46,6 +46,7 @@ namespace Engine
 		void TransformComponent::Destroy()
 		{
 			delete m_transform;
+			m_transform = nullptr;
 		}
 
 		void TransformComponent::Set(const TransformData& a_data)
