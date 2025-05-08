@@ -18,12 +18,17 @@ namespace Engine
 	{
 		namespace GraphicsAPI
 		{
+			/*
+			* Automaticely read shader data extract using spir-v reflect to create the shader and set the layout(s) and all binding
+			* Only the shader part is abstract, didn't have time to abstract all the rest (rasterization mode, etc...)
+			*/
 			void VulkanGraphicPipeline::Create(RHI::ILogicalDevice* a_logicalDevice, RHI::IRenderPass* a_renderPass, RHI::PipelineType a_type, std::array<RHI::IShader*, 2> a_vertFragShaders, std::vector<RHI::IShader*> a_additionalShaders)
 			{
 				m_type = a_type;
 
 				#pragma region Shader
 				std::vector<VkPipelineShaderStageCreateInfo> shaderStages = std::vector<VkPipelineShaderStageCreateInfo>(2 + a_additionalShaders.size());
+
 				// Vertex and fragment shaders
 				for (int i = 0; i < 2; ++i)
 				{
@@ -36,7 +41,7 @@ namespace Engine
 					shaderStages[i] = shaderStageInfo;
 				}
 
-				// Additional shaders like tesselation or compute shaders
+				// Additional shaders like tesselation or compute shaders (not implemented for now)
 				/*for (int i = 0; i < a_additionalShaders.size(); ++i)
 				{
 					VkPipelineShaderStageCreateInfo shaderStageInfo{};
@@ -231,73 +236,12 @@ namespace Engine
 				{
 					const VkCommandBuffer t_commandBuffer = t_commandPool->mCommandBuffers[a_commandBufferIndex][a_swapChain->GetCurrentFrame()];
 					vkCmdBindPipeline(t_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_pipeline);
-
-					/*VkViewport t_viewport;
-					t_viewport.x = 0.0f;
-					t_viewport.y = 0.0f;
-					t_viewport.width = static_cast<float>(a_swapChain->CastVulkan()->GetExtent2D().width);
-					t_viewport.height = static_cast<float>(a_swapChain->CastVulkan()->GetExtent2D().height);
-					t_viewport.minDepth = 0.0f;
-					t_viewport.maxDepth = 1.0f;
-					vkCmdSetViewport(t_commandBuffer, 0, 1, &t_viewport);
-
-					VkRect2D t_scissor;
-					t_scissor.offset = { .x = 0, .y = 0 };
-					t_scissor.extent = a_swapChain->CastVulkan()->GetExtent2D();
-					vkCmdSetScissor(t_commandBuffer, 0, 1, &t_scissor);*/
 				}
 			}
 
 			void VulkanGraphicPipeline::BindObjects(RHI::ICommandPool* a_commandPool, uint32_t a_commandBufferIndex, uint32_t a_currentFrame, uint32_t  a_imageIndex, std::vector<RHI::IBuffer*> a_indexBuffers,
 													std::vector<RHI::IBuffer*> a_vertexBuffers, std::vector<uint32_t> a_indicesCount, std::vector<RHI::IObjectDescriptor*> a_objectsDescriptors)
 			{
-				/*const VulkanCommandPool* t_commandPool = a_commandPool->CastVulkan();
-
-				if (t_commandPool->mCommandBuffers[a_commandBufferIndex].empty())
-				{
-					return;
-				}
-
-				const VkCommandBuffer t_commandBuffer = t_commandPool->mCommandBuffers[a_commandBufferIndex][a_currentFrame];
-				const VkDeviceSize t_offsets[] = { 0 };
-
-				for (int i = 0; i < a_vertexBuffers.size(); ++i)
-				{
-					if (!a_vertexBuffers.at(i))
-					{
-						continue;
-					}
-
-					if (a_vertexBuffers.at(i)->CastVulkan()->GetBuffer() != nullptr)
-					{
-						VkBuffer t_vertexBuffer = a_vertexBuffers.at(i)->CastVulkan()->GetBuffer();
-
-						vkCmdBindVertexBuffers(t_commandBuffer, 0, 1, &t_vertexBuffer, t_offsets);
-					}
-
-					if (a_indexBuffers.at(i)->CastVulkan()->GetBuffer() != nullptr)
-					{
-						VkBuffer t_indexBuffer = a_indexBuffers.at(i)->CastVulkan()->GetBuffer();
-
-						vkCmdBindIndexBuffer(t_commandBuffer, t_indexBuffer, 0, VK_INDEX_TYPE_UINT32);
-					}
-
-
-					VulkanObjectDescriptor* t_objectDescriptor = a_objectsDescriptors.at(i)->CastVulkan();
-
-					uint32_t t_descriptorIndex = a_imageIndex;
-					if (t_objectDescriptor->GetDescriptorSets().size() != t_commandPool->mCommandBuffers[a_commandBufferIndex].size() && !t_objectDescriptor->GetDescriptorSets().empty())
-					{
-						t_descriptorIndex = static_cast<uint32_t>(t_objectDescriptor->GetDescriptorSets().size()) - 1;
-					}
-					vkCmdBindDescriptorSets(t_commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, m_layout, (int)t_objectDescriptor->GetType(), 1, &t_objectDescriptor->GetDescriptorSets()[t_descriptorIndex], 0, nullptr);
-
-					if (a_indicesCount.at(i))
-					{
-						vkCmdDrawIndexed(t_commandBuffer, a_indicesCount.at(i), 1, 0, 0, 0);
-					}
-				}*/
-
 				const VulkanCommandPool* t_commandPool = a_commandPool->CastVulkan();
 
 				if (t_commandPool->mCommandBuffers[a_commandBufferIndex].empty())
