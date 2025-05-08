@@ -53,7 +53,7 @@ namespace Engine
 
 			ENGINE_API void Save();
 			ENGINE_API void Load(Core::Renderer* a_renderer);
-			ENGINE_API void SetMode(bool a_mode) { m_isPlaying = a_mode; }
+			ENGINE_API bool SetMode(bool a_mode);
 			ENGINE_API bool IsPlaying() { return m_isPlaying; }
 			ENGINE_API bool HasObject(int a_id);
 		private:
@@ -85,6 +85,9 @@ namespace Engine
 			bool m_lastState = true;
 			int m_gameCameraId = 0;
 			int m_mainCameraObjectId = 0;
+
+			int m_width = 0;
+			int m_height = 0;
 		};
 	}	
 }

@@ -22,6 +22,8 @@ namespace Engine
 			m_renderer = a_renderer;
 			m_name = a_name;
 
+			m_width = a_width;
+			m_height= a_height;
 			m_transformSystem = new TransformSystem;
 
 			m_renderSystem = new RenderSystem;
@@ -79,14 +81,14 @@ namespace Engine
 			//	Math::vec3(0.f, 1.f, 3.f), Math::ToRadians(70.f),
 			//	static_cast<float>(a_width) / static_cast<float>(a_height), 0.1f, 100.f, 10.f, 20.f);
 			//t_camera->GetCameraComponent()->GetCamera().Create(a_renderer);
-			//t_camera->SetParent(t_object2->GetId());
-			//	
+			////	
 			//AddGameObject(t_object);
 			//AddGameObject(t_object2);
 			//AddGameObject(t_object3);
 			//AddGameObject(t_light);
 			//AddGameObject(t_light2);
 			//AddGameObject(t_camera);
+			//SetMainCamera(t_camera->GetId());
 
 			Load(a_renderer);
 		}
@@ -318,9 +320,17 @@ namespace Engine
 		{
 			if (IsPlaying())
 			{
-				return m_renderSystem->GetCameraDescriptor(m_gameCameraId);
+				if (m_renderSystem->GetCameraDescriptor(m_gameCameraId))
+				{
+					return m_renderSystem->GetCameraDescriptor(m_gameCameraId);
+				}
 			}
-			return m_mainCamera->GetDescriptor();
+
+			if (m_mainCamera->GetDescriptor())
+			{
+				return m_mainCamera->GetDescriptor();
+			}
+			return nullptr;
 		}
 		/**
 		 * Adds game object to the scene, sets up its id and parent/child relationships.
@@ -357,37 +367,40 @@ namespace Engine
 			std::vector<uint32_t> a_childTransformIds)
 		{
 			GameObject* t_object = nullptr;
+			t_object = new GameObject(Math::vec3(0.f, 0.f, 0.f), Math::vec3(0.f, 0.f, 0.f), Math::vec3(1.f));
+			AddGameObject(t_object, a_parentTransformId, a_childTransformIds);
 			switch (a_type)
 			{
 			case OBJECTTYPE_EMPTY:
-				t_object = new GameObject();
 				t_object->SetName("Empty");
 				break;
 			case OBJECTTYPE_CUBE:
-				t_object = new GameObject(Math::vec3(0.f, 0.f, 0.f), Math::vec3(0.f, 0.f, 0.f), Math::vec3(1.f));
 				t_object->SetName("Cube");
 				t_object->AddComponent<MeshComponent>();
 				t_object->GetComponent<MeshComponent>()->SetMesh("Assets/Meshes/BaseObjects/Cube.obj", m_renderer);
 				break;
 			case OBJECTTYPE_SPHERE:
-				t_object = new GameObject(Math::vec3(0.f, 0.f, 0.f), Math::vec3(0.f, 0.f, 0.f), Math::vec3(1.f));
 				t_object->SetName("Sphere");
 				t_object->AddComponent<MeshComponent>();
 				t_object->GetComponent<MeshComponent>()->SetMesh("Assets/Meshes/BaseObjects/Sphere.obj", m_renderer);
 				break;
 			case OBJECTTYPE_PLANE:
-				t_object = new GameObject(Math::vec3(0.f, 0.f, 0.f), Math::vec3(0.f, 0.f, 0.f), Math::vec3(1.f));
 				t_object->SetName("Plane");
 				t_object->AddComponent<MeshComponent>();
 				t_object->GetComponent<MeshComponent>()->SetMesh("Assets/Meshes/BaseObjects/plane.obj", m_renderer);
 				break;
 			case OBJECTTYPE_LIGHT:
-				t_object = new GameObject(Math::vec3(0.f, 0.f, 0.f), Math::vec3(0.f, 0.f, 0.f), Math::vec3(1.f));
 				t_object->SetName("Light");
 				t_object->AddComponent<LightComponent>();
 				break;
 			case OBJECTTYPE_CAMERA:
-				return nullptr;
+				t_object->SetName("Camera");
+				t_object->AddComponent<CameraComponent>();
+				t_object->GetComponent<CameraComponent>()->GetCamera().Set(Math::vec3(0.f, 1.f, 0.f), Math::vec3(0.f, 0.f, 0.f),
+						Math::vec3(0.f, 1.f, 3.f), Math::ToRadians(70.f),
+						static_cast<float>(m_width) / static_cast<float>(m_height), 0.1f, 100.f, 10.f, 20.f);
+				t_object->GetComponent<CameraComponent>()->GetCamera().Create(m_renderer);
+				SetMainCamera(t_object->GetId());
 				break;
 			default:
 				break;
@@ -397,7 +410,6 @@ namespace Engine
 				t_object->GetComponent<MeshComponent>()->GetMaterial()->SetAlbedo("Assets/Textures/BaseObjectTexture.png", m_renderer);
 				t_object->GetComponent<MeshComponent>()->GetMaterial()->SetType(UNLIT);
 			}
-			AddGameObject(t_object, a_parentTransformId, a_childTransformIds);
 			return t_object;
 		}
 
@@ -452,6 +464,7 @@ namespace Engine
 
 		void Scene::Load(Core::Renderer* a_renderer)
 		{
+			//std::ifstream t_file("Assets/Scenes/" + m_name + ".json");
 			std::ifstream t_file(m_name + ".json");
 			if (!t_file.is_open())
 			{
@@ -580,6 +593,18 @@ namespace Engine
 
 				}
 			}
+		}
+		
+		bool Scene::SetMode(bool a_mode)
+		{
+			bool sucess = true;
+			if (a_mode && !m_renderSystem->GetCameraDescriptor(m_gameCameraId))
+			{
+				sucess = false;
+				return sucess;
+			}
+			m_isPlaying = a_mode; 
+			return sucess;
 		}
 
 		bool Scene::HasObject(int a_id)
