@@ -150,6 +150,7 @@ namespace Engine
 				if (m_lastState != m_isPlaying)
 				{
 					m_mainCamera->SetFreeCam(false);
+					Save();
 					m_lastState = m_isPlaying;
 				}
 				m_physicsSystem->Update(a_deltatime, t_physicsTransforms);

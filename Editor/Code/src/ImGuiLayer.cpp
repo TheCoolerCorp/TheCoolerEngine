@@ -479,7 +479,7 @@ namespace Editor::EditorLayer::Ui
 			{
 				if (ImGui::MenuItem("Save Scene"))//placeholder for when this gets implemented
 				{
-					//m_app->GetCurrentScene()->SaveScene();
+					m_app->GetCurrentScene()->Save();
 				}
 				if (ImGui::MenuItem("Load Scene"))
 				{
