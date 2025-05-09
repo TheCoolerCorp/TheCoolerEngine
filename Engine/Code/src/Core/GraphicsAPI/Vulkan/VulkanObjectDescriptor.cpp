@@ -29,6 +29,10 @@ namespace Engine
 				{
 					m_pipelineType = RHI::LitDescriptor;
 				}
+				else if (a_graphicPipeline->GetType() == RHI::PipelineType::Other)
+				{
+					m_pipelineType = RHI::SkyBoxDescriptor;
+				}
 
 				const VkDevice t_device = a_logicalDevice->CastVulkan()->GetVkDevice();
 

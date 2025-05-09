@@ -49,6 +49,7 @@ namespace Engine
 			RHI::IPhysicalDevice* GetPhysicalDevice() { return m_physicalDevice; }
 			RHI::IGraphicPipeline* GetUnlitPipeline() { return m_unlitPipeline; }
 			RHI::IGraphicPipeline* GetLitPipeline() { return m_litPipeline; }
+			RHI::IGraphicPipeline* GetSkyBoxPipeline() { return m_skyBoxPipeline; }
 			RHI::ICommandPool* GetCommandPool() { return m_commandPool; }
 			RHI::ISwapChain* GetSwapChain() { return m_swapChain; }
 			RHI::ISurface* GetSurface() { return m_surface; }
@@ -69,8 +70,11 @@ namespace Engine
 
 			RHI::ISwapChain* m_swapChain = nullptr;
 			RHI::IRenderPass* m_renderPass = nullptr;
+
 			RHI::IGraphicPipeline* m_unlitPipeline = nullptr;
 			RHI::IGraphicPipeline* m_litPipeline = nullptr;
+			RHI::IGraphicPipeline* m_skyBoxPipeline = nullptr;
+
 			RHI::ICommandPool* m_commandPool = nullptr;
 
 			

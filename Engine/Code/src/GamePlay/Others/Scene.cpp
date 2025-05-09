@@ -49,6 +49,8 @@ namespace Engine
 			Ref<Resource::Texture> t_cubemap = t_resourceManager->CreateResource<Resource::Texture>("Assets/Textures/CubeMap/cubemap.png");
 			t_cubemap->Load();
 			t_cubemap->CreateImage(a_renderer);
+
+
 			//Load(a_renderer);
 		}
 

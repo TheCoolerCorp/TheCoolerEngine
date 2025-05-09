@@ -105,6 +105,29 @@ namespace Engine
 
 				}
 			);
+
+			m_skyBoxPipeline->Create(m_logicalDevice, m_renderPass, RHI::Other, t_litVertAndFrag); // Change to own shader later.
+			m_skyBoxPipeline->CastVulkan()->SetDrawFunc([this](const GraphicsAPI::RecordRenderPassinfo& info,
+				std::unordered_map<RHI::DescriptorSetPipelineTarget, std::vector<RHI::IBuffer*>>& a_vertexBuffers,
+				std::unordered_map<RHI::DescriptorSetPipelineTarget, std::vector<RHI::IBuffer*>>& a_indexBuffers,
+				std::unordered_map<RHI::DescriptorSetPipelineTarget, std::vector<uint32_t>>& a_nbIndices,
+				std::unordered_map<RHI::DescriptorSetPipelineTarget, std::vector<RHI::IObjectDescriptor*>>& a_descriptors)
+				{
+					std::vector<RHI::IObjectDescriptor*> m_descriptors;
+					m_descriptors.emplace_back(info.scene->GetCameraDescriptor());
+					m_descriptors.emplace_back(info.scene->GetLightsDescriptors());
+
+					m_skyBoxPipeline->Bind(info.renderer->GetCommandPool(), 0, info.renderer->GetSwapChain());
+
+					info.renderer->GetSkyBoxPipeline()->BindSingleDescriptors(info.renderer->GetCommandPool(), 0, info.renderer->GetSwapChain()->GetCurrentFrame(),
+						info.imageIndex, m_descriptors);
+
+					info.renderer->GetSkyBoxPipeline()->BindObjects(info.renderer->GetCommandPool(), 0, info.renderer->GetSwapChain()->GetCurrentFrame(),
+						info.imageIndex, a_indexBuffers[RHI::SkyBoxDescriptor], a_vertexBuffers[RHI::SkyBoxDescriptor], a_nbIndices[RHI::SkyBoxDescriptor], a_descriptors[RHI::SkyBoxDescriptor]);
+
+				}
+			);
+
 			t_vertexShader->Destroy(m_logicalDevice);
 			t_unlitFragmentShader->Destroy(m_logicalDevice);
 			t_litFragmentShader->Destroy(m_logicalDevice);
@@ -132,6 +155,8 @@ namespace Engine
 			m_interface->DestroyGraphicPipeline(m_unlitPipeline);
 			m_litPipeline->Destroy(m_logicalDevice);
 			m_interface->DestroyGraphicPipeline(m_litPipeline);
+			m_skyBoxPipeline->Destroy(m_logicalDevice);
+			m_interface->DestroyGraphicPipeline(m_skyBoxPipeline);
 
 			m_renderPass->Destroy(m_logicalDevice);
 			m_interface->DestroyRenderPass(m_renderPass);

@@ -34,7 +34,8 @@ namespace Engine
 			enum DescriptorSetPipelineTarget : int
 			{
 				UnlitDescriptor,
-				LitDescriptor
+				LitDescriptor,
+				SkyBoxDescriptor
 			};
 
 			enum DescriptorSetDataType : int
