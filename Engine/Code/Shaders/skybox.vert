@@ -12,8 +12,9 @@ layout(location = 2) in vec2 inTexCoord;
 
 layout(location = 0) out vec3 outPos;
 
+
 void main()
 {
     outPos = inPos;
-    gl_Position = (common_camModel.vp * vec4(inPos, 1.0)).xyzz;
+    gl_Position = (common_camModel.vp * vec4(inPos, 1.0));
 } 

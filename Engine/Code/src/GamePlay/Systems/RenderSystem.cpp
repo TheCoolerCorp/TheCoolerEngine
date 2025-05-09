@@ -47,6 +47,8 @@ namespace Engine
 			{
 				if (a_updatedMatrix[i].first == -1)
 					continue;
+				if (m_objectsDescriptors[a_updatedMatrix[i].first]->GetPipelineTargetType() == SKYBOX)
+					continue;
 				m_objectsDescriptors[a_updatedMatrix[i].first]->UpdateUniforms(t_logicalDevice, 0, &a_updatedMatrix[i].second, sizeof(Math::UniformMatrixs), a_renderer->GetSwapChain()->GetCurrentFrame());
 			}
 			for (int i = 0; i < a_lightsUpdate.size(); ++i)
@@ -598,11 +600,16 @@ namespace Engine
 					t_newRenderObject->SetUniform(a_logicalDevice, a_physicalDevice, a_commandPool, 1, &t_material->GetMaterialValues(), sizeof(MaterialValues), 6, 1);
 					t_newRenderObject->SetUniform(a_logicalDevice, a_physicalDevice, a_commandPool, 2, &t_material->GetHasTextures(), sizeof(HasMaterialTextures), 7, 1);
 				}
+				else if (t_material->GetType() == SKYBOX)
+				{
+					continue;
+				}
 				else
 				{
 					LOG_ERROR("Not other type of pipeline has been implemented");
 				}
-				t_newRenderObject->SetUniform(a_logicalDevice, a_physicalDevice, a_commandPool, 0, &a_updatedMatrix.at(a_indexes[i]).second, sizeof(Math::UniformMatrixs), 0, 1);
+				if (t_material->GetType() != SKYBOX)
+					t_newRenderObject->SetUniform(a_logicalDevice, a_physicalDevice, a_commandPool, 0, &a_updatedMatrix.at(a_indexes[i]).second, sizeof(Math::UniformMatrixs), 0, 1);
 
 				Ref<Resource::Texture> t_albedo = t_material->GetAlbedo();
 				if (t_albedo)

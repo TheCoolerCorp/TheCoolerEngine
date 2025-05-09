@@ -65,8 +65,10 @@ void Editor::EditorLayer::Ui::UiMeshComponent::UiDraw()
 		int t_itemSelectedIdx = 0;
 		if (m_material->GetType() == Engine::GamePlay::LIT)
 			t_itemSelectedIdx = 1;
+		else if (m_material->GetType() == Engine::GamePlay::SKYBOX)
+			t_itemSelectedIdx = 2;
 
-		const char* t_items[] = { "Unlit", "Lit" };
+		const char* t_items[] = { "Unlit", "Lit", "SkyBox" };
 
 		if (ImGui::BeginCombo(("Material Type##"+std::to_string(m_uid)).c_str(), t_items[t_itemSelectedIdx]))
 		{
@@ -78,8 +80,10 @@ void Editor::EditorLayer::Ui::UiMeshComponent::UiDraw()
 					t_itemSelectedIdx = n;
 					if (t_itemSelectedIdx == 0)
 						m_material->SetType(Engine::GamePlay::UNLIT);
-					else
+					else if (t_itemSelectedIdx == 1)
 						m_material->SetType(Engine::GamePlay::LIT);
+					else
+						m_material->SetType(Engine::GamePlay::SKYBOX);
 				}
 
 				// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
