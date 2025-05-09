@@ -56,6 +56,7 @@ namespace Engine
 			t_skyBox->GetComponent<MeshComponent>()->GetMaterial()->SetType(SKYBOX);
 			t_skyBox->GetComponent<MeshComponent>()->GetMaterial()->SetAlbedo(t_cubemap);
 
+			AddGameObject(t_skyBox);
 			//Load(a_renderer);
 		}
 

@@ -419,14 +419,17 @@ namespace Engine
 				{
 					LOG_ERROR("Not other type of pipeline has been implemented");
 				}
-				t_newRenderObject->SetUniform(a_logicalDevice, a_physicalDevice, a_commandPool, 0, &a_updatedMatrix.at(m_pendingComponents.at(i)).second.m_transform, sizeof(Math::UniformMatrixs), 0, 1);
+				if (t_material->GetType() != SKYBOX)
+				{
+					t_newRenderObject->SetUniform(a_logicalDevice, a_physicalDevice, a_commandPool, 0, &a_updatedMatrix.at(m_pendingComponents.at(i)).second.m_transform, sizeof(Math::UniformMatrixs), 0, 1);
+				}
 
 				Ref<Resource::Texture> t_albedo = t_material->GetAlbedo();
 				if (t_albedo)
 				{
 					if (t_albedo->IsCreated())
 					{
-						t_newRenderObject->SetTexture(a_logicalDevice, t_albedo->GetImage(), 1, 1);
+ 						t_newRenderObject->SetTexture(a_logicalDevice, t_albedo->GetImage(), 1, 1);
 
 					}
 					else
