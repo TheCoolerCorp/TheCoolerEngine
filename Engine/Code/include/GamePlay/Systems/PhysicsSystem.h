@@ -26,6 +26,7 @@ namespace Engine
 			ENGINE_API uint32_t AddComponent(RigidBodyComponent* a_component);
 			ENGINE_API RigidBodyComponent* GetComponent(uint32_t a_id) const;
 			ENGINE_API void RemoveComponent(uint32_t a_id);
+			ENGINE_API void RemoveAllComponents();
 
 			ENGINE_API void EnqueueLinearVelocity(JPH::BodyID a_bodyID, Math::vec3 a_linearVelocity);
 			ENGINE_API void EnqueueAddForce(JPH::BodyID a_bodyID, Math::vec3 a_force);

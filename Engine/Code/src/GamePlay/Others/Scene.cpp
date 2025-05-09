@@ -129,6 +129,7 @@ namespace Engine
 
 					m_renderSystem->Destroy(a_renderer);
 					m_renderSystem->Create(a_renderer);
+					m_physicsSystem->RemoveAllComponents();
 					Load(a_renderer);
 					m_justReloaded = true;
 				}

@@ -122,6 +122,17 @@ namespace Engine
 			m_availableIds.push_back(a_id);
 		}
 
+		void PhysicsSystem::RemoveAllComponents()
+		{
+			for (RigidBodyComponent* t_component : m_components)
+			{
+				t_component->Destroy();
+				delete t_component;
+			}
+			m_components.clear();
+			m_availableIds.clear();
+		}
+
 		void PhysicsSystem::EnqueueLinearVelocity(JPH::BodyID a_bodyID, Math::vec3 a_linearVelocity)
 		{
 			m_linearVelocityQueue.emplace_back(a_bodyID, a_linearVelocity);
