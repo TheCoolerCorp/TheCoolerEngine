@@ -37,9 +37,10 @@ namespace Engine
 			Core::RHI::ICommandPool* t_commandPool = a_renderer->GetCommandPool();
 			Core::RHI::IGraphicPipeline* t_unlitPipeline = a_renderer->GetUnlitPipeline();
 			Core::RHI::IGraphicPipeline* t_litPipeline = a_renderer->GetLitPipeline();
+			Core::RHI::IGraphicPipeline* a_ksyBoxPipeline = a_renderer->GetSkyBoxPipeline();
 			int t_maxFrame = a_renderer->GetSwapChain()->GetMaxFrame();
 
-			CreatePendingComponentsDescriptors(a_renderer, t_logicalDevice, t_physicalDevice, t_surface, t_commandPool, t_unlitPipeline, t_litPipeline,t_maxFrame, a_updatedMatrix);
+			CreatePendingComponentsDescriptors(a_renderer, t_logicalDevice, t_physicalDevice, t_surface, t_commandPool, t_unlitPipeline, t_litPipeline, a_ksyBoxPipeline, t_maxFrame, a_updatedMatrix);
 			CreatePendingLightComponentsDescriptors(a_renderer->GetInterface(), t_logicalDevice, t_physicalDevice, t_surface, t_commandPool, t_litPipeline, 1);
 
 			for (int i = 0; i < a_updatedMatrix.size(); ++i)
@@ -300,7 +301,7 @@ namespace Engine
 
 		void RenderSystem::CreatePendingComponentsDescriptors(Core::Renderer* a_renderer, Core::RHI::ILogicalDevice* a_logicalDevice,
 			Core::RHI::IPhysicalDevice* a_physicalDevice, Core::RHI::ISurface* a_surface, Core::RHI::ICommandPool* a_commandPool,
-			Core::RHI::IGraphicPipeline* a_unlitPipeline, Core::RHI::IGraphicPipeline* a_litPipeine, uint32_t a_maxFrame, std::vector<std::pair<int, Math::UniformMatrixs>>& a_updatedMatrix)
+			Core::RHI::IGraphicPipeline* a_unlitPipeline, Core::RHI::IGraphicPipeline* a_litPipeine, Core::RHI::IGraphicPipeline* a_skyBoxPipeline,uint32_t a_maxFrame, std::vector<std::pair<int, Math::UniformMatrixs>>& a_updatedMatrix)
 		{
 			a_logicalDevice->WaitIdle();
 
@@ -324,6 +325,11 @@ namespace Engine
 				{
 					m_types = {Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_UNIFORM_BUFFER , Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_COMBINED_IMAGE_SAMPLER};
 					t_newRenderObject->Create(a_logicalDevice, a_unlitPipeline, Core::RHI::Object, 3, 1, { a_maxFrame }, m_types);
+				}
+				else if (t_material->GetType() == SKYBOX)
+				{
+					m_types = {Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_COMBINED_IMAGE_SAMPLER };
+					t_newRenderObject->Create(a_logicalDevice, a_skyBoxPipeline, Core::RHI::Object, 1, 1, { 1 }, m_types);
 				}
 				else if (t_material->GetType() == LIT)
 				{

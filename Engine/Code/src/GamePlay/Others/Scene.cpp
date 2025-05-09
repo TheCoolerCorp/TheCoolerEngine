@@ -50,6 +50,11 @@ namespace Engine
 			t_cubemap->Load();
 			t_cubemap->CreateImage(a_renderer);
 
+			GameObject* t_skyBox = new GameObject("SkyBox");
+			t_skyBox->AddComponent<MeshComponent>();
+			t_skyBox->GetComponent<MeshComponent>()->SetMesh("aheuaeijaeiek)oàae", a_renderer);
+			t_skyBox->GetComponent<MeshComponent>()->GetMaterial()->SetType(SKYBOX);
+			t_skyBox->GetComponent<MeshComponent>()->GetMaterial()->SetAlbedo(t_cubemap);
 
 			//Load(a_renderer);
 		}

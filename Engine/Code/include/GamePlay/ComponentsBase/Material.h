@@ -45,7 +45,8 @@ namespace Engine
 		enum MaterialType
 		{
 			UNLIT = 0,
-			LIT = 1
+			LIT = 1,
+			SKYBOX = 2
 		};
 
 		class Material

@@ -115,7 +115,7 @@ namespace Engine
 				{
 					std::vector<RHI::IObjectDescriptor*> m_descriptors;
 					m_descriptors.emplace_back(info.scene->GetCameraDescriptor());
-					m_descriptors.emplace_back(info.scene->GetLightsDescriptors());
+					//m_descriptors.emplace_back(info.scene->SkyBoxDescriptor());
 
 					m_skyBoxPipeline->Bind(info.renderer->GetCommandPool(), 0, info.renderer->GetSwapChain());
 
