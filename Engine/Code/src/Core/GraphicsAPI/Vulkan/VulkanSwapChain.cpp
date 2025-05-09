@@ -103,7 +103,7 @@ namespace Engine
 				// Create imagesViews;
 				for (int i = 0; i < m_images.size(); ++i)
 				{
-					VulkanImage::CreateImageView(m_images[i], &m_imageViews[i], t_device, m_swapChainImageFormat, VK_IMAGE_ASPECT_COLOR_BIT);
+					VulkanImage::CreateImageView(m_images[i], &m_imageViews[i], t_device, VK_IMAGE_VIEW_TYPE_2D, m_swapChainImageFormat, VK_IMAGE_ASPECT_COLOR_BIT);
 
 
 					m_depthFormat = a_physicalDevice->CastVulkan()->FindSupportedFormat({ VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT },
@@ -124,7 +124,7 @@ namespace Engine
 				                         VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
 				                         VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
 				VulkanImage::CreateImageView(m_depthImage, &m_depthImageView,
-				                             a_logicalDevice->CastVulkan()->GetVkDevice(), m_depthFormat,
+				                             a_logicalDevice->CastVulkan()->GetVkDevice(), VK_IMAGE_VIEW_TYPE_2D, m_depthFormat,
 				                             VK_IMAGE_ASPECT_DEPTH_BIT);
 				VulkanImage::TransitionImageLayout(m_depthImage, a_logicalDevice->CastVulkan()->GetVkDevice(),
 				                                   a_logicalDevice->CastVulkan()->GetGraphicsQueue(),

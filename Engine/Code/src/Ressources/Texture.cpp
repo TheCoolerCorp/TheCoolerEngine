@@ -42,6 +42,7 @@ namespace Engine
             m_width = t_texWidth;
             m_height = t_texHeight;
             m_channels = 4; // Automaticely set to 4 
+            m_imageType = Core::RHI::ImageType::TEXTURE;
             if (m_path.find("ao") != std::string::npos)
             {
                 m_type = TextureType::RGB;
@@ -71,12 +72,12 @@ namespace Engine
                 m_width = t_tileWidth;
                 m_height = t_tileHeight;
                 m_type = TextureType::RGB;
+                m_imageType = Core::RHI::ImageType::CUBEMAP;
             }
             else
             {
                 m_type = TextureType::SRGB;
             }
-
             m_isLoaded.store(true, std::memory_order_release);
             m_isLoading.store(false, std::memory_order_release);
         }
@@ -108,11 +109,11 @@ namespace Engine
             {
             case TextureType::SRGB:
 
-				m_image->Create(Core::RHI::ImageType::TEXTURE, Core::RHI::ImageFormat::FORMAT_R8G8B8A8_SRBG, t_imageData, t_physicalDevice, t_logicalDevice, t_commandPool); // Modif here
+				m_image->Create(m_imageType, Core::RHI::ImageFormat::FORMAT_R8G8B8A8_SRBG, t_imageData, t_physicalDevice, t_logicalDevice, t_commandPool); // Modif here
                 break;
             case TextureType::RGB:
                 // Normal, metallic, roughness, etc...  
-                m_image->Create(Core::RHI::ImageType::TEXTURE, Core::RHI::ImageFormat::FORMAT_R8G8B8A8_UNORM, t_imageData, t_physicalDevice, t_logicalDevice, t_commandPool);
+                m_image->Create(m_imageType, Core::RHI::ImageFormat::FORMAT_R8G8B8A8_UNORM, t_imageData, t_physicalDevice, t_logicalDevice, t_commandPool);
                 break;
             }
 

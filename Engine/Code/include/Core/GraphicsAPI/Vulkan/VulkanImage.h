@@ -30,11 +30,18 @@ namespace Engine
 				[[nodiscard]] ENGINE_API VkDeviceMemory GetMemory() { return m_memory; }
 				[[nodiscard]] ENGINE_API VkSampler GetSampler() { return m_sampler; }
 		
-				ENGINE_API static void CreateImage(VkImage* a_image, VkDeviceMemory* a_memory, VkDevice a_logicalDevice, VkPhysicalDevice a_physicalDevice, uint32_t a_width, uint32_t a_height, VkFormat a_format, VkImageTiling a_tiling, VkImageUsageFlags a_usage, VkMemoryPropertyFlags a_properties);
+				ENGINE_API static void CreateImage(VkImage* a_image, VkDeviceMemory* a_memory, const VkDevice a_logicalDevice,
+					const VkPhysicalDevice a_physicalDevice, const uint32_t a_width,
+					const uint32_t a_height, const VkFormat a_format,
+					const VkImageTiling a_tiling, const VkImageUsageFlags a_usage,
+					const VkMemoryPropertyFlags a_properties, const int a_layers = 1, const VkImageCreateFlags a_flags = {});
 				// FINISH LATER
 				ENGINE_API static void CreateSampler(VkSampler* a_sampler, VkDevice a_logicalDevice, VkPhysicalDevice a_physicalDevice);
-				ENGINE_API static void CreateImageView(VkImage a_image, VkImageView* a_view, VkDevice a_logicalDevice, VkFormat a_format, VkImageAspectFlags a_aspectFlags);
-				ENGINE_API static void TransitionImageLayout(VkImage a_image, VkDevice a_logicalDevice, VkQueue a_queue, VkCommandPool a_commandPool, VkFormat a_format, VkImageLayout a_oldLayout, VkImageLayout a_newLayout);
+				ENGINE_API static void CreateImageView(const VkImage a_image, VkImageView* a_view, const VkDevice a_logicalDevice, const VkImageViewType a_viewType, const VkFormat a_format, const VkImageAspectFlags a_aspectFlags, const int a_layerCount =1);
+				ENGINE_API static void TransitionImageLayout(const VkImage a_image, const VkDevice a_logicalDevice,
+					const VkQueue a_queue, const VkCommandPool a_commandPool,
+					const VkFormat a_format, const VkImageLayout a_oldLayout,
+					const VkImageLayout a_newLayout, int a_layerCount = 1);
 				ENGINE_API static void CopyBufferToImage(VkDevice a_logicalDevice, VkQueue a_queue, VkCommandPool a_commandPool, VkBuffer a_buffer, VkImage a_image, uint32_t a_width, uint32_t a_height);
 
 				ENGINE_API static bool HasStencilComponent(VkFormat a_format);

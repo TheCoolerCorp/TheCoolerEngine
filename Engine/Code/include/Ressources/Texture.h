@@ -64,6 +64,7 @@ namespace Engine
 			int m_channels = 0;
 
 			TextureType m_type = TextureType::Undefined;
+			Core::RHI::ImageType m_imageType = Core::RHI::ImageType::UNDEFINED;
 			Core::RHI::IImage* m_image = nullptr;
 		};
 	}

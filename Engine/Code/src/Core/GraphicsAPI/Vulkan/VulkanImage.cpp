@@ -39,7 +39,7 @@ namespace Engine
 					vkDestroyBuffer(t_logicalDevice, t_stagingBuffer, nullptr);
 					vkFreeMemory(t_logicalDevice, t_stagingBufferMemory, nullptr);
 
-					CreateImageView(m_image, &m_view, t_logicalDevice, t_format, VK_IMAGE_ASPECT_COLOR_BIT);
+					CreateImageView(m_image, &m_view, t_logicalDevice, VK_IMAGE_VIEW_TYPE_2D ,t_format, VK_IMAGE_ASPECT_COLOR_BIT);
 
 				}
 				else if (a_type == RHI::ImageType::DEPTH)
@@ -49,7 +49,7 @@ namespace Engine
 																									VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
 
 					CreateImage(&m_image, &m_memory,t_logicalDevice, t_physicalDevice, a_data.mWidth, a_data.mHeight, t_format, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
-					CreateImageView(m_image, &m_view,t_logicalDevice, t_format, VK_IMAGE_ASPECT_DEPTH_BIT);
+					CreateImageView(m_image, &m_view,t_logicalDevice, VK_IMAGE_VIEW_TYPE_2D, t_format, VK_IMAGE_ASPECT_DEPTH_BIT);
 					TransitionImageLayout(m_image, a_logicalDevice->CastVulkan()->GetVkDevice(),
 					                      a_logicalDevice->CastVulkan()->GetGraphicsQueue(),
 					                      a_commandPool->CastVulkan()->GetVkCommandPool(), t_format,
@@ -57,33 +57,37 @@ namespace Engine
 				}
 				else if (a_type == RHI::ImageType::CUBEMAP)
 				{
-					const VkDeviceSize t_imageSize = a_data.mWidth * a_data.mHeight * a_data.channels * 6; // 6 for faces count total size
-
-
-					for (int i = 0; i < 6; ++i)
-					{
-						// Parse staging buffer while parsing texture
-						//std::memcmp()
-					}
-					//const VkDeviceSize t_imageSize = a_data.mWidth * a_data.mHeight * a_data.channels;
+					// unique staging buffer holding all the cubemap texture (big chunk of memory)
+					const VkDeviceSize t_imageSize = a_data.mWidth * a_data.mHeight * a_data.channels * 6;
 					VkBuffer t_stagingBuffer;
 					VkDeviceMemory t_stagingBufferMemory;
 					VulkanBuffer::CreateBuffer(t_imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, t_stagingBuffer, t_stagingBufferMemory, t_logicalDevice, t_physicalDevice);
+
+
 					void* t_data;
 					vkMapMemory(t_logicalDevice, t_stagingBufferMemory, 0, t_imageSize, 0, &t_data);
 					memcpy(t_data, a_data.data, static_cast<size_t>(t_imageSize));
 					vkUnmapMemory(t_logicalDevice, t_stagingBufferMemory);
 
+					// Do not need to change for cubemap
 					CreateSampler(&m_sampler, t_logicalDevice, t_physicalDevice);
-					CreateImage(&m_image, &m_memory, t_logicalDevice, t_physicalDevice, a_data.mWidth, a_data.mHeight, t_format, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
-					TransitionImageLayout(m_image, t_logicalDevice, a_logicalDevice->CastVulkan()->GetGraphicsQueue(), t_commandPool, t_format, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+
+					// Has been change for cubemap
+					CreateImage(&m_image, &m_memory, t_logicalDevice, t_physicalDevice, a_data.mWidth, a_data.mHeight, t_format, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, 6, VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT);
+
+					// Has been change for cubemap
+					TransitionImageLayout(m_image, t_logicalDevice, a_logicalDevice->CastVulkan()->GetGraphicsQueue(), t_commandPool, t_format, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 6);
+
+					// Do not need to change for cubemap
 					CopyBufferToImage(t_logicalDevice, a_logicalDevice->CastVulkan()->GetGraphicsQueue(), t_commandPool, t_stagingBuffer, m_image, a_data.mWidth, a_data.mHeight);
-					TransitionImageLayout(m_image, t_logicalDevice, a_logicalDevice->CastVulkan()->GetGraphicsQueue(), t_commandPool, t_format, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+
+					TransitionImageLayout(m_image, t_logicalDevice, a_logicalDevice->CastVulkan()->GetGraphicsQueue(), t_commandPool, t_format, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, 6);
 
 					vkDestroyBuffer(t_logicalDevice, t_stagingBuffer, nullptr);
 					vkFreeMemory(t_logicalDevice, t_stagingBufferMemory, nullptr);
 
-					CreateImageView(m_image, &m_view, t_logicalDevice, t_format, VK_IMAGE_ASPECT_COLOR_BIT);
+					// Need to change 
+					CreateImageView(m_image, &m_view, t_logicalDevice, VK_IMAGE_VIEW_TYPE_CUBE,t_format, VK_IMAGE_ASPECT_COLOR_BIT, 6);
 				}
 				else
 				{
@@ -102,10 +106,10 @@ namespace Engine
 			}
 
 			void VulkanImage::CreateImage(VkImage* a_image, VkDeviceMemory* a_memory, const VkDevice a_logicalDevice,
-			                              const VkPhysicalDevice a_physicalDevice, const uint32_t a_width,
-			                              const uint32_t a_height, const VkFormat a_format,
-			                              const VkImageTiling a_tiling, const VkImageUsageFlags a_usage,
-			                              const VkMemoryPropertyFlags a_properties)
+											const VkPhysicalDevice a_physicalDevice, const uint32_t a_width,
+											const uint32_t a_height, const VkFormat a_format,
+											const VkImageTiling a_tiling, const VkImageUsageFlags a_usage,
+											const VkMemoryPropertyFlags a_properties, const int a_layers, const VkImageCreateFlags a_flags)
 			{
 				VkImageCreateInfo t_imageInfo{};
 				t_imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
@@ -114,13 +118,14 @@ namespace Engine
 				t_imageInfo.extent.height = a_height;
 				t_imageInfo.extent.depth = 1;
 				t_imageInfo.mipLevels = 1;
-				t_imageInfo.arrayLayers = 1;  // 6 for cubemap + flag CUBEMAP_COMPATIBLE_BIT
+				t_imageInfo.arrayLayers = a_layers;  // Base = 1, 6 for cubemap
 				t_imageInfo.format = a_format;
 				t_imageInfo.tiling = a_tiling;
 				t_imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
 				t_imageInfo.usage = a_usage;
 				t_imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
 				t_imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+				t_imageInfo.flags = a_flags; // only usefull for cubemap (VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT)
 
 				VK_CHECK(vkCreateImage(a_logicalDevice, &t_imageInfo, nullptr, a_image), "Failed to create image!");
 
@@ -167,18 +172,18 @@ namespace Engine
 
 				VK_CHECK(vkCreateSampler(a_logicalDevice, &samplerInfo, nullptr, a_sampler), "Can't Create texture sampler");
 			}
-			void VulkanImage::CreateImageView(const VkImage a_image, VkImageView* a_view, const VkDevice a_logicalDevice, const VkFormat a_format, const VkImageAspectFlags a_aspectFlags)
+			void VulkanImage::CreateImageView(const VkImage a_image, VkImageView* a_view, const VkDevice a_logicalDevice, const VkImageViewType a_viewType, const VkFormat a_format, const VkImageAspectFlags a_aspectFlags, const int a_layerCount)
 			{
 				VkImageViewCreateInfo t_viewInfo{};
 				t_viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
 				t_viewInfo.image = a_image;
-				t_viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+				t_viewInfo.viewType = a_viewType;
 				t_viewInfo.format = a_format;
 				t_viewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT; // CUBEMAP
 				t_viewInfo.subresourceRange.baseMipLevel = 0;
 				t_viewInfo.subresourceRange.levelCount = 1;
 				t_viewInfo.subresourceRange.baseArrayLayer = 0;
-				t_viewInfo.subresourceRange.layerCount = 1; // 6 for cubemap
+				t_viewInfo.subresourceRange.layerCount = a_layerCount; // 6 for cubemap 1 for base 
 				t_viewInfo.subresourceRange.aspectMask = a_aspectFlags;
 
 				VK_CHECK(vkCreateImageView(a_logicalDevice, &t_viewInfo, nullptr, a_view), "Failed to create image view");
@@ -187,7 +192,7 @@ namespace Engine
 			auto VulkanImage::TransitionImageLayout(const VkImage a_image, const VkDevice a_logicalDevice,
 			                                        const VkQueue a_queue, const VkCommandPool a_commandPool,
 			                                        const VkFormat a_format, const VkImageLayout a_oldLayout,
-			                                        const VkImageLayout a_newLayout) -> void
+			                                        const VkImageLayout a_newLayout, int a_layerCount) -> void
 			{
 				const VkCommandBuffer t_commandBuffer = VulkanCommandPool::BeginSingleTimeCommands(a_logicalDevice, a_commandPool);
 
@@ -201,7 +206,7 @@ namespace Engine
 				t_barrier.subresourceRange.baseMipLevel = 0;
 				t_barrier.subresourceRange.levelCount = 1;
 				t_barrier.subresourceRange.baseArrayLayer = 0;
-				t_barrier.subresourceRange.layerCount = 1;
+				t_barrier.subresourceRange.layerCount = a_layerCount; // Base = 1, 6 for cubemap
 
 				VkPipelineStageFlags t_sourceStage = {};
 				VkPipelineStageFlags t_destinationStage = {};
