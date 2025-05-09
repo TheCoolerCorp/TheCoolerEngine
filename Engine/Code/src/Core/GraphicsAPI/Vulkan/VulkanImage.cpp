@@ -31,7 +31,7 @@ namespace Engine
 					vkUnmapMemory(t_logicalDevice, t_stagingBufferMemory);
 
 					CreateSampler(&m_sampler, t_logicalDevice, t_physicalDevice);
-					CreateImage(&m_image, &m_memory, t_logicalDevice, t_physicalDevice, a_data.mWidth, a_data.mHeight, t_format, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+					CreateImage(&m_image, &m_memory, t_logicalDevice, t_physicalDevice,a_data.mWidth, a_data.mHeight, t_format, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
 					TransitionImageLayout(m_image, t_logicalDevice, a_logicalDevice->CastVulkan()->GetGraphicsQueue(), t_commandPool, t_format, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
 					CopyBufferToImage(t_logicalDevice, a_logicalDevice->CastVulkan()->GetGraphicsQueue(), t_commandPool, t_stagingBuffer, m_image, a_data.mWidth, a_data.mHeight);
 					TransitionImageLayout(m_image, t_logicalDevice, a_logicalDevice->CastVulkan()->GetGraphicsQueue(), t_commandPool, t_format, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
@@ -54,6 +54,28 @@ namespace Engine
 					                      a_logicalDevice->CastVulkan()->GetGraphicsQueue(),
 					                      a_commandPool->CastVulkan()->GetVkCommandPool(), t_format,
 					                      VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
+				}
+				else if (a_type == RHI::ImageType::CUBEMAP)
+				{
+					const VkDeviceSize t_imageSize = a_data.mWidth * a_data.mHeight * a_data.channels;
+					VkBuffer t_stagingBuffer;
+					VkDeviceMemory t_stagingBufferMemory;
+					VulkanBuffer::CreateBuffer(t_imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, t_stagingBuffer, t_stagingBufferMemory, t_logicalDevice, t_physicalDevice);
+					void* t_data;
+					vkMapMemory(t_logicalDevice, t_stagingBufferMemory, 0, t_imageSize, 0, &t_data);
+					memcpy(t_data, a_data.data, static_cast<size_t>(t_imageSize));
+					vkUnmapMemory(t_logicalDevice, t_stagingBufferMemory);
+
+					CreateSampler(&m_sampler, t_logicalDevice, t_physicalDevice);
+					CreateImage(&m_image, &m_memory, t_logicalDevice, t_physicalDevice, a_data.mWidth, a_data.mHeight, t_format, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+					TransitionImageLayout(m_image, t_logicalDevice, a_logicalDevice->CastVulkan()->GetGraphicsQueue(), t_commandPool, t_format, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+					CopyBufferToImage(t_logicalDevice, a_logicalDevice->CastVulkan()->GetGraphicsQueue(), t_commandPool, t_stagingBuffer, m_image, a_data.mWidth, a_data.mHeight);
+					TransitionImageLayout(m_image, t_logicalDevice, a_logicalDevice->CastVulkan()->GetGraphicsQueue(), t_commandPool, t_format, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+
+					vkDestroyBuffer(t_logicalDevice, t_stagingBuffer, nullptr);
+					vkFreeMemory(t_logicalDevice, t_stagingBufferMemory, nullptr);
+
+					CreateImageView(m_image, &m_view, t_logicalDevice, t_format, VK_IMAGE_ASPECT_COLOR_BIT);
 				}
 				else
 				{
@@ -84,7 +106,7 @@ namespace Engine
 				t_imageInfo.extent.height = a_height;
 				t_imageInfo.extent.depth = 1;
 				t_imageInfo.mipLevels = 1;
-				t_imageInfo.arrayLayers = 1;
+				t_imageInfo.arrayLayers = 1;  // 6 for cubemap + flag CUBEMAP_COMPATIBLE_BIT
 				t_imageInfo.format = a_format;
 				t_imageInfo.tiling = a_tiling;
 				t_imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
@@ -133,7 +155,7 @@ namespace Engine
 				samplerInfo.unnormalizedCoordinates = VK_FALSE;
 				samplerInfo.compareEnable = VK_FALSE;
 				samplerInfo.compareOp = VK_COMPARE_OP_ALWAYS;
-				samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
+				samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR; // CUBEMAP
 
 				VK_CHECK(vkCreateSampler(a_logicalDevice, &samplerInfo, nullptr, a_sampler), "Can't Create texture sampler");
 			}

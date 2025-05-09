@@ -52,6 +52,7 @@ namespace Engine
 			[[nodiscard]] ENGINE_API const std::string& GetPath() const { return m_path; }
 			[[nodiscard]] ENGINE_API Math::vec2 GetSize() const { return Math::vec2(static_cast<float>(m_width), static_cast<float>(m_height)); }
 		private:
+			ENGINE_API void CutImage(int a_totalWidth, int a_totalHeight, int a_channelsCount, unsigned char* a_inData, unsigned char* a_outSortedData);
 			std::string m_path;
 
 			std::atomic<bool> m_isCreated = false;

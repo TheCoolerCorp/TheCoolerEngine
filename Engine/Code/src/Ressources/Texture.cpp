@@ -38,7 +38,7 @@ namespace Engine
                 LOG_ERROR("Can't load image");
                 LOG_ERROR(stbi_failure_reason());
             }
-
+            m_data = t_pixels;
             if (m_path.find("ao") != std::string::npos)
             {
                 m_type = TextureType::RGB;
@@ -55,6 +55,12 @@ namespace Engine
             {
                 m_type = TextureType::RGB;
             }
+            else if (m_path.find("cm") != std::string::npos || m_path.find("cubemap") != std::string::npos)
+            {
+                m_data = new unsigned char[(t_texWidth/4) * (t_texHeight/3) * 6 * t_texChannels];
+                CutImage(t_texWidth, t_texHeight,t_texChannels, t_pixels,m_data);
+                m_type = TextureType::RGB;
+            }
             else
             {
                 m_type = TextureType::SRGB;
@@ -62,7 +68,6 @@ namespace Engine
 
             m_width = t_texWidth;
             m_height = t_texHeight;
-            m_data = t_pixels;
             m_channels = 4;
 
             m_isLoaded.store(true, std::memory_order_release);
@@ -96,7 +101,7 @@ namespace Engine
             {
             case TextureType::SRGB:
 
-				m_image->Create(Core::RHI::ImageType::TEXTURE, Core::RHI::ImageFormat::FORMAT_R8G8B8A8_SRBG, t_imageData, t_physicalDevice, t_logicalDevice, t_commandPool);
+				m_image->Create(Core::RHI::ImageType::TEXTURE, Core::RHI::ImageFormat::FORMAT_R8G8B8A8_SRBG, t_imageData, t_physicalDevice, t_logicalDevice, t_commandPool); // Modif here
                 break;
             case TextureType::RGB:
                 // Normal, metallic, roughness, etc...  
@@ -147,6 +152,55 @@ namespace Engine
 
             m_isLoaded = false;
             m_isCreated = false;
+        }
+
+        void Texture::CutImage(int a_totalWidth, int a_totalHeight, int a_channelsCount, unsigned char* a_inData, unsigned char* a_outSortedData)
+        {
+            int t_facesCount = 6;
+            int t_faceWidth = a_totalWidth / 4; 
+            int t_faceHeight = a_totalHeight / 3;
+
+            /*
+             *      +----+
+             *      | +Y |
+             * +----+----+----+----+
+             * | -X | +Z | +X | -Z |
+             * +----+----+----+----+
+             *      | -Y |
+             *      +----+
+             */
+            std::vector<std::pair<int, int>> t_facesCoords // Order depend on graphic API (in my case Vulkan)
+            {
+                {2, 1}, // +X (index 0)
+                {0, 1}, // -X (index 1)
+                {1, 0}, // +Y (index 2)
+                {1, 2}, // -Y (index 3)
+                {1, 1}, // +Z (index 4)
+                {3, 1}  // -Z (index 5)
+            };
+
+
+            for (int face = 0; face < t_facesCount; ++face)
+            {
+                auto [tileX, tileY] = t_facesCoords[face];
+
+                for (int y = 0; y < t_faceHeight; ++y)
+                {
+                    int srcY = tileY * t_faceHeight + y;
+                    int dstY = y;
+
+                    for (int x = 0; x < t_faceWidth; ++x)
+                    {
+                        int srcX = tileX * t_faceWidth + x;
+                        int dstX = x;
+
+                        int srcIndex = (srcY * a_totalWidth + srcX) * a_channelsCount;
+                        int dstIndex = (face * t_faceWidth * t_faceHeight + dstY * t_faceWidth + dstX) * a_channelsCount;
+
+                        std::memcpy(&a_outSortedData[dstIndex], &a_inData[srcIndex], a_channelsCount);
+                    }
+                }
+            }
         }
 
     }

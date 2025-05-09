@@ -46,7 +46,6 @@ namespace Engine
 			ENGINE_API GameObject* AddGameObject(GameObjectType a_type, uint32_t a_parentTransformId = -1, std::vector<uint32_t> a_childTransformIds = {});
 			ENGINE_API void RemoveGameObject(uint32_t a_id);
 			ENGINE_API [[nodiscard]] GameObject* GetGameObject(const uint32_t a_id) const { return m_objs[a_id]; }
-			ENGINE_API [[nodiscard]] int GetObjectCount() const { return static_cast<int>(m_objs.size()); }
 			ENGINE_API [[nodiscard]] std::string& GetName() { return m_name; }
 			ENGINE_API [[nodiscard]] RenderSystem* GetRenderSystem() { return m_renderSystem; }
 			ENGINE_API [[nodiscard]] Camera* GetMainCamera() const { return m_mainCamera; }
