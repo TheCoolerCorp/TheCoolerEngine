@@ -52,7 +52,7 @@ namespace Engine
 
 			GameObject* t_skyBox = new GameObject("SkyBox");
 			t_skyBox->AddComponent<MeshComponent>();
-			t_skyBox->GetComponent<MeshComponent>()->SetMesh("aheuaeijaeiek)oàae", a_renderer);
+			t_skyBox->GetComponent<MeshComponent>()->SetMesh("Assets/Meshes/SkyboxCube.obj", a_renderer);
 			t_skyBox->GetComponent<MeshComponent>()->GetMaterial()->SetType(SKYBOX);
 			t_skyBox->GetComponent<MeshComponent>()->GetMaterial()->SetAlbedo(t_cubemap);
 

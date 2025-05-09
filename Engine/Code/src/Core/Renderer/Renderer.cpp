@@ -24,6 +24,7 @@ namespace Engine
 			m_renderPass = m_interface->InstantiateRenderPass();
 			m_unlitPipeline = m_interface->InstantiateGraphicPipeline();
 			m_litPipeline = m_interface->InstantiateGraphicPipeline();
+			m_skyBoxPipeline = m_interface->InstantiateGraphicPipeline();
 			m_commandPool = m_interface->InstantiateCommandPool();
 		}
 
@@ -68,6 +69,12 @@ namespace Engine
 			std::array<RHI::IShader*, 2> t_unlitVertAndFrag = { t_vertexShader, t_unlitFragmentShader };
 			std::array<RHI::IShader*, 2> t_litVertAndFrag = { t_vertexShader, t_litFragmentShader };
 
+			RHI::IShader* t_skyboxVertexShader = m_interface->InstantiateShader();
+			t_skyboxVertexShader->Create("Assets/Shaders/skyboxVert.spv", m_logicalDevice);
+			RHI::IShader* t_skyboxFragmentShader = m_interface->InstantiateShader();
+			t_skyboxFragmentShader->Create("Assets/Shaders/skyboxFrag.spv", m_logicalDevice);
+			std::array<RHI::IShader*, 2> t_skyboxVertAndFrag = { t_skyboxVertexShader, t_skyboxFragmentShader };
+
 			m_unlitPipeline->Create(m_logicalDevice, m_renderPass, RHI::Unlit, t_unlitVertAndFrag);
 			m_unlitPipeline->CastVulkan()->SetDrawFunc([this](const GraphicsAPI::RecordRenderPassinfo& info, 
 				std::unordered_map<RHI::DescriptorSetPipelineTarget, std::vector<RHI::IBuffer*>>& a_vertexBuffers,
@@ -106,7 +113,7 @@ namespace Engine
 				}
 			);
 
-			m_skyBoxPipeline->Create(m_logicalDevice, m_renderPass, RHI::Other, t_litVertAndFrag); // Change to own shader later.
+			m_skyBoxPipeline->Create(m_logicalDevice, m_renderPass, RHI::Other, t_skyboxVertAndFrag); // Change to own shader later.
 			m_skyBoxPipeline->CastVulkan()->SetDrawFunc([this](const GraphicsAPI::RecordRenderPassinfo& info,
 				std::unordered_map<RHI::DescriptorSetPipelineTarget, std::vector<RHI::IBuffer*>>& a_vertexBuffers,
 				std::unordered_map<RHI::DescriptorSetPipelineTarget, std::vector<RHI::IBuffer*>>& a_indexBuffers,
