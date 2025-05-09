@@ -57,7 +57,15 @@ namespace Engine
 				}
 				else if (a_type == RHI::ImageType::CUBEMAP)
 				{
-					const VkDeviceSize t_imageSize = a_data.mWidth * a_data.mHeight * a_data.channels;
+					const VkDeviceSize t_imageSize = a_data.mWidth * a_data.mHeight * a_data.channels * 6; // 6 for faces count total size
+
+
+					for (int i = 0; i < 6; ++i)
+					{
+						// Parse staging buffer while parsing texture
+						//std::memcmp()
+					}
+					//const VkDeviceSize t_imageSize = a_data.mWidth * a_data.mHeight * a_data.channels;
 					VkBuffer t_stagingBuffer;
 					VkDeviceMemory t_stagingBufferMemory;
 					VulkanBuffer::CreateBuffer(t_imageSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, t_stagingBuffer, t_stagingBufferMemory, t_logicalDevice, t_physicalDevice);
@@ -166,11 +174,11 @@ namespace Engine
 				t_viewInfo.image = a_image;
 				t_viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
 				t_viewInfo.format = a_format;
-				t_viewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+				t_viewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT; // CUBEMAP
 				t_viewInfo.subresourceRange.baseMipLevel = 0;
 				t_viewInfo.subresourceRange.levelCount = 1;
 				t_viewInfo.subresourceRange.baseArrayLayer = 0;
-				t_viewInfo.subresourceRange.layerCount = 1;
+				t_viewInfo.subresourceRange.layerCount = 1; // 6 for cubemap
 				t_viewInfo.subresourceRange.aspectMask = a_aspectFlags;
 
 				VK_CHECK(vkCreateImageView(a_logicalDevice, &t_viewInfo, nullptr, a_view), "Failed to create image view");

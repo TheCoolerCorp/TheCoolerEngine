@@ -39,6 +39,9 @@ namespace Engine
                 LOG_ERROR(stbi_failure_reason());
             }
             m_data = t_pixels;
+            m_width = t_texWidth;
+            m_height = t_texHeight;
+            m_channels = 4; // Automaticely set to 4 
             if (m_path.find("ao") != std::string::npos)
             {
                 m_type = TextureType::RGB;
@@ -57,18 +60,22 @@ namespace Engine
             }
             else if (m_path.find("cm") != std::string::npos || m_path.find("cubemap") != std::string::npos)
             {
-                m_data = new unsigned char[(t_texWidth/4) * (t_texHeight/3) * 6 * t_texChannels];
+                //int t_imageSize = (t_texWidth / 4) * (t_texHeight / 3) * 6 * 4;
+
+                int t_tileWidth= (t_texWidth / 4);
+                int t_tileHeight = (t_texHeight / 3);
+                
+
+                m_data = new unsigned char[t_tileWidth * t_tileHeight * 6 * m_channels];
                 CutImage(t_texWidth, t_texHeight,t_texChannels, t_pixels,m_data);
+                m_width = t_tileWidth;
+                m_height = t_tileHeight;
                 m_type = TextureType::RGB;
             }
             else
             {
                 m_type = TextureType::SRGB;
             }
-
-            m_width = t_texWidth;
-            m_height = t_texHeight;
-            m_channels = 4;
 
             m_isLoaded.store(true, std::memory_order_release);
             m_isLoading.store(false, std::memory_order_release);
