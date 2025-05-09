@@ -54,9 +54,9 @@ namespace Editor::EditorLayer::Ui
 		void GizmoBeginFrame();
 		void GizmoMainDraw();
 
-		ImGuizmo::OPERATION GizmoGetCurrentOperation() const { return m_currentGizmoOperation; }
+		[[nodiscard]] ImGuizmo::OPERATION GizmoGetCurrentOperation() const { return m_currentGizmoOperation; }
 		void GizmoSetCurrentOperation(ImGuizmo::OPERATION a_operation) { m_currentGizmoOperation = a_operation; }
-		ImGuizmo::MODE GizmoGetCurrentMode() const { return m_currentGizmoMode; }
+		[[nodiscard]] ImGuizmo::MODE GizmoGetCurrentMode() const { return m_currentGizmoMode; }
 		void GizmoSetCurrentMode(ImGuizmo::MODE a_mode) { m_currentGizmoMode = a_mode; }
 	private:
 		//the selected game object, used for gizmo manipulation and by the inspector window

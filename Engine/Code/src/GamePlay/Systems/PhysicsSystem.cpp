@@ -67,6 +67,8 @@ namespace Engine
 
 			for (RigidBodyComponent* t_component : m_components)
 			{
+				if (t_component == nullptr)
+					continue;
 				t_component->Destroy();
 				delete t_component;
 			}
@@ -202,10 +204,10 @@ namespace Engine
 		{
 			for (size_t i = 0; i < m_components.size(); ++i)
 			{
-				//the almost correct fix
-				//m_components[i]->UpdateFromTransform(a_transforms[m_components[i]->GetGameObjectID()]);
-				//this is broken and assumes no gameobjects other than physics component exits. Needs a scene reference in the function to fix
-				m_components[i]->UpdateFromTransform(a_transforms[i]);
+				if (m_components[i] == nullptr)
+					continue;
+				//To ensure correct access, we get the transform directly from the scene by getting the parent GameObject
+				m_components[i]->UpdateFromTransform(a_scene->GetGameObject(m_components[i]->GetGameObjectID())->GetComponent<TransformComponent>()->GetTransform());
 			}
 		}
 
@@ -213,7 +215,9 @@ namespace Engine
 		{
 			for (size_t i = 0; i < m_components.size(); ++i)
 			{
-				m_components[i]->UpdateObjectTransform(a_transforms[i]);
+				if (m_components[i] == nullptr)
+					continue;
+				m_components[i]->UpdateObjectTransform(a_scene->GetGameObject(m_components[i]->GetGameObjectID())->GetComponent<TransformComponent>()->GetTransform());
 			}
 		}
 

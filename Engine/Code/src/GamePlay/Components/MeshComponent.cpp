@@ -32,6 +32,7 @@ namespace Engine
 			m_material = CreateRef<Material>();
 
 			a_outId = ServiceLocator::GetRendererSystem()->AddComponent(this);
+			SetId(a_outId);
 			return ComponentType::MESH;
 
 		}

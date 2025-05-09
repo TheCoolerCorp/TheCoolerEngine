@@ -38,6 +38,7 @@ namespace Engine
 		{
 			m_rigidBody = new Physics::RigidBody;
 			a_outId = ServiceLocator::GetPhysicsSystem()->AddComponent(this);
+			SetId(a_outId);
 			return ComponentType::RIGIDBODY;
 		}
 
@@ -327,6 +328,11 @@ namespace Engine
 		RigidBodyComponent* RigidBodyComponent::GetComponent(const uint32_t a_id)
 		{
 			return ServiceLocator::GetPhysicsSystem()->GetComponent(a_id);
+		}
+
+		void RigidBodyComponent::RemoveComponent(int a_id)
+		{
+			ServiceLocator::GetPhysicsSystem()->RemoveComponent(a_id);
 		}
 	}
 }

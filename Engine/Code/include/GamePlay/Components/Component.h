@@ -32,8 +32,11 @@ namespace Engine
 
 			ENGINE_API void SetGameObject(int a_gameObjectId) { m_gameObjectId = a_gameObjectId; }
 			[[nodiscard]] ENGINE_API int GetGameObjectID() const { return m_gameObjectId; }
-		private:
+			[[nodiscard]] ENGINE_API int GetID() const { return m_uid; }
+			ENGINE_API void SetId(int a_uid) { m_uid = a_uid; }
+		protected:
 			int m_gameObjectId = -1;
+			int m_uid = -1;
 		};
 
 	}

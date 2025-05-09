@@ -38,8 +38,8 @@ namespace Engine
 		ComponentType TransformComponent::Create(int& a_outId)
 		{
 			m_transform = new Math::Transform();
-			m_id = ServiceLocator::GetTransformSystem()->AddComponent(this);
-			a_outId = m_id;
+			m_uid = ServiceLocator::GetTransformSystem()->AddComponent(this);
+			a_outId = m_uid;
 			return ComponentType::TRANSFORM;
 		}
 
@@ -183,7 +183,7 @@ namespace Engine
 
 			Set(t_transformData);
 
-			ServiceLocator::GetTransformSystem()->GetComponent(m_parentId)->AddChild(m_id);
+			ServiceLocator::GetTransformSystem()->GetComponent(m_parentId)->AddChild(m_uid);
 			m_transform->SetNeedToUpdate(true);
 		}
 
@@ -207,7 +207,7 @@ namespace Engine
 
 				Set(t_transformData);
 
-				ServiceLocator::GetTransformSystem()->GetComponent(m_parentId)->RemoveChild(m_id);
+				ServiceLocator::GetTransformSystem()->GetComponent(m_parentId)->RemoveChild(m_uid);
 				m_parentId = -1;
 			}
 		}
@@ -223,7 +223,7 @@ namespace Engine
 			{
 				m_childrenIds.push_back(a_id);
 				//now tell the child we are their new parent
-				ServiceLocator::GetTransformSystem()->GetComponent(a_id)->SetParent(m_id);
+				ServiceLocator::GetTransformSystem()->GetComponent(a_id)->SetParent(m_uid);
 				m_transform->SetNeedToUpdate(true);
 			}
 			

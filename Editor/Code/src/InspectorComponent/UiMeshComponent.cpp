@@ -303,7 +303,7 @@ void Editor::EditorLayer::Ui::UiMeshComponent::UiAddDragDropImageTarget(ImageTyp
 		if (const ImGuiPayload* t_payload = ImGui::AcceptDragDropPayload("IMAGE_PATH_PAYLOAD"))
 		{
 			const char* t_path = static_cast<const char*>(t_payload->Data);
-			const int t_id = m_meshComp->GetUid();
+			const int t_id = m_meshComp->GetID();
 			Engine::Core::RHI::IObjectDescriptor* t_descriptor = m_layer->GetScene()->GetRenderSystem()->GetMeshDescriptor(t_id);
 			switch (a_type)
 			{

@@ -30,13 +30,13 @@ void Editor::EditorLayer::Ui::UiRigidbodyComponent::UiDraw()
 	bool t_isDebug = m_rigidBody->GetDebug();
 
 	ImGui::SeparatorText("Rigidbody Component");
-	/*ImGui::SameLine();
-	if (ImGui::Button("Remove Component"))
+	ImGui::SameLine();
+	if (ImGui::Button(("Remove##Rigidbody"+std::to_string(m_uid)).c_str()))
 	{
 		m_window->GetSelectedObject()->RemoveComponent<Engine::GamePlay::RigidBodyComponent>();
 		m_window->MarkOutOfDate();
 		return;
-	}*/
+	}
 
 	ImGui::Text("Active: ");
 	ImGui::SameLine();
