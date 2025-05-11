@@ -1,31 +1,31 @@
 # Cube.obj
 o SkyboxCube
 
-v -1.0  1.0 -1.0
-v -1.0 -1.0 -1.0
-v  1.0 -1.0 -1.0
-v  1.0  1.0 -1.0
+v -1.0  1.0 -1.0  # Vertex 1
+v -1.0 -1.0 -1.0  # Vertex 2
+v  1.0 -1.0 -1.0  # Vertex 3
+v  1.0  1.0 -1.0  # Vertex 4
 
-v -1.0 -1.0  1.0
-v -1.0  1.0  1.0
-v  1.0 -1.0  1.0
-v  1.0  1.0  1.0
+v -1.0 -1.0  1.0  # Vertex 5
+v -1.0  1.0  1.0  # Vertex 6
+v  1.0 -1.0  1.0  # Vertex 7
+v  1.0  1.0  1.0  # Vertex 8
 
 # Faces (6 sides, 2 triangles per side)
-f 1 2 3
+f 1 2 3  # Triangle for the -Z face (back)
 f 1 3 4
 
-f 2 5 6
+f 2 5 6  # Triangle for the +X face (left)
 f 2 6 1
 
-f 3 7 8
+f 3 7 8  # Triangle for the +Z face (front)
 f 3 8 4
 
-f 5 6 8
+f 5 6 8  # Triangle for the +Y face (top)
 f 5 8 7
 
-f 6 1 4
+f 6 1 4  # Triangle for the -Y face (bottom)
 f 6 4 8
 
-f 2 5 7
+f 2 5 7  # Triangle for the -X face (right)
 f 2 7 3

@@ -79,14 +79,13 @@ namespace Engine
 					TransitionImageLayout(m_image, t_logicalDevice, a_logicalDevice->CastVulkan()->GetGraphicsQueue(), t_commandPool, t_format, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 6);
 
 					// Do not need to change for cubemap
-					CopyBufferToImage(t_logicalDevice, a_logicalDevice->CastVulkan()->GetGraphicsQueue(), t_commandPool, t_stagingBuffer, m_image, a_data.mWidth, a_data.mHeight);
+					CopyBufferToImage(t_logicalDevice, a_logicalDevice->CastVulkan()->GetGraphicsQueue(), t_commandPool, t_stagingBuffer, m_image, a_data.mWidth, a_data.mHeight, 6);
 
 					TransitionImageLayout(m_image, t_logicalDevice, a_logicalDevice->CastVulkan()->GetGraphicsQueue(), t_commandPool, t_format, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, 6);
 
 					vkDestroyBuffer(t_logicalDevice, t_stagingBuffer, nullptr);
 					vkFreeMemory(t_logicalDevice, t_stagingBufferMemory, nullptr);
-
-					// Need to change 
+					
 					CreateImageView(m_image, &m_view, t_logicalDevice, VK_IMAGE_VIEW_TYPE_CUBE,t_format, VK_IMAGE_ASPECT_COLOR_BIT, 6);
 				}
 				else
@@ -179,12 +178,11 @@ namespace Engine
 				t_viewInfo.image = a_image;
 				t_viewInfo.viewType = a_viewType;
 				t_viewInfo.format = a_format;
-				t_viewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT; // CUBEMAP
+				t_viewInfo.subresourceRange.aspectMask = a_aspectFlags;
 				t_viewInfo.subresourceRange.baseMipLevel = 0;
 				t_viewInfo.subresourceRange.levelCount = 1;
 				t_viewInfo.subresourceRange.baseArrayLayer = 0;
-				t_viewInfo.subresourceRange.layerCount = a_layerCount; // 6 for cubemap 1 for base 
-				t_viewInfo.subresourceRange.aspectMask = a_aspectFlags;
+				t_viewInfo.subresourceRange.layerCount = a_layerCount;
 
 				VK_CHECK(vkCreateImageView(a_logicalDevice, &t_viewInfo, nullptr, a_view), "Failed to create image view");
 			}
@@ -259,11 +257,28 @@ namespace Engine
 
 			auto VulkanImage::CopyBufferToImage(const VkDevice a_logicalDevice, const VkQueue a_queue, const VkCommandPool a_commandPool,
 			                                    const VkBuffer a_buffer, const VkImage a_image, const uint32_t a_width,
-			                                    const uint32_t a_height) -> void
+			                                    const uint32_t a_height, const int a_layerCount) -> void
 			{
 				const VkCommandBuffer t_commandBuffer = VulkanCommandPool::BeginSingleTimeCommands(a_logicalDevice, a_commandPool);
 
-				VkBufferImageCopy t_region{};
+				std::vector<VkBufferImageCopy> t_regions(a_layerCount);
+
+				for (int i = 0; i < a_layerCount; ++i) {
+					t_regions[i].bufferOffset = static_cast<VkDeviceSize>(a_width) * a_height * 4 * i;
+					t_regions[i].bufferRowLength = 0;
+					t_regions[i].bufferImageHeight = 0;
+					t_regions[i].imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+					t_regions[i].imageSubresource.mipLevel = 0;
+					t_regions[i].imageSubresource.baseArrayLayer = i;
+					t_regions[i].imageSubresource.layerCount = 1;
+					t_regions[i].imageOffset = { 0, 0, 0 };
+					t_regions[i].imageExtent = { a_width, a_height, 1 };
+				}
+
+				vkCmdCopyBufferToImage(t_commandBuffer, a_buffer, a_image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+					static_cast<uint32_t>(t_regions.size()), t_regions.data());
+
+				/*VkBufferImageCopy t_region{};
 				t_region.bufferOffset = 0;
 				t_region.bufferRowLength = 0;
 				t_region.bufferImageHeight = 0;
@@ -274,7 +289,7 @@ namespace Engine
 				t_region.imageOffset = { .x= 0, .y= 0, .z= 0};
 				t_region.imageExtent = { .width= a_width,.height= a_height,.depth= 1};
 
-				vkCmdCopyBufferToImage(t_commandBuffer, a_buffer, a_image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,1,&t_region);
+				vkCmdCopyBufferToImage(t_commandBuffer, a_buffer, a_image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,1,&t_region);*/
 
 				VulkanCommandPool::EndSingleTimeCommands(t_commandBuffer, a_commandPool, a_logicalDevice, a_queue);
 			}

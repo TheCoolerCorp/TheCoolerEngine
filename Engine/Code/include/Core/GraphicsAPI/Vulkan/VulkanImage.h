@@ -42,7 +42,7 @@ namespace Engine
 					const VkQueue a_queue, const VkCommandPool a_commandPool,
 					const VkFormat a_format, const VkImageLayout a_oldLayout,
 					const VkImageLayout a_newLayout, int a_layerCount = 1);
-				ENGINE_API static void CopyBufferToImage(VkDevice a_logicalDevice, VkQueue a_queue, VkCommandPool a_commandPool, VkBuffer a_buffer, VkImage a_image, uint32_t a_width, uint32_t a_height);
+				ENGINE_API static void CopyBufferToImage(VkDevice a_logicalDevice, VkQueue a_queue, VkCommandPool a_commandPool, VkBuffer a_buffer, VkImage a_image, uint32_t a_width, uint32_t a_height, const int a_layerCount = 1);
 
 				ENGINE_API static bool HasStencilComponent(VkFormat a_format);
 
