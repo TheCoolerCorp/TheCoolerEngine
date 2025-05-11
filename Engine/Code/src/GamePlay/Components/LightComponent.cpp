@@ -25,6 +25,7 @@ namespace Engine
 		ComponentType LightComponent::Create(int& a_outID)
 		{
 			a_outID = ServiceLocator::GetRendererSystem()->AddComponent(this);
+			SetId(a_outID);
 			return ComponentType::LIGHT;
 		}
 

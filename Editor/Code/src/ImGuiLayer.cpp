@@ -477,11 +477,11 @@ namespace Editor::EditorLayer::Ui
 			}
 			if (ImGui::BeginMenu("Scene"))
 			{
-				if (ImGui::MenuItem("Save Scene"))//placeholder for when this gets implemented
+				if (ImGui::MenuItem("Save Scene"))
 				{
 					m_app->GetCurrentScene()->Save();
 				}
-				if (ImGui::MenuItem("Load Scene"))
+				if (ImGui::MenuItem("Load Scene"))//placeholder for when this gets implemented
 				{
 					//m_app->GetCurrentScene()->LoadScene();
 				}
@@ -504,8 +504,9 @@ namespace Editor::EditorLayer::Ui
 		ImGui::Begin("Viewport", nullptr, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
 		m_imGui->DrawSceneAsImage();
 
-		//gizmo draw inside the viewport
-		GizmoMainDraw();
+		//gizmo draw inside the viewport when not in play mode
+		if (!m_app->GetCurrentScene()->IsPlaying())
+			GizmoMainDraw();
 
 		if (m_selectedGameObject != nullptr)
 		{

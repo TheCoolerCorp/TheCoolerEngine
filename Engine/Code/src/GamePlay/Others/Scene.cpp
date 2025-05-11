@@ -86,7 +86,6 @@ namespace Engine
 			std::vector<std::pair<int, Math::UniformMatrixs>> t_syncro;
 			std::vector<std::pair<int, Math::vec3>> t_lightSyncro;
 			std::vector<std::pair<int, Math::mat4>> t_cameraSyncro;
-			std::vector<Math::Transform*> t_physicsTransforms;
 			std::vector<int> t_materialUpdate;
 
 			for (GameObject* t_obj : m_objs)
@@ -95,12 +94,6 @@ namespace Engine
 				{
 					t_syncro.emplace_back(-1, Math::UniformMatrixs(Math::mat4(true), Math::mat4(true)));
 					continue;
-				}
-				const uint32_t t_rigidBodyId = t_obj->GetComponentID<RigidBodyComponent>();
-				if (std::cmp_not_equal(t_rigidBodyId, -1))
-				{
-					Math::Transform* t_transform = t_obj->GetComponent<TransformComponent>()->GetTransform();
-					t_physicsTransforms.push_back(t_transform);
 				}
 				t_obj->UpdateColliderMat();
 
@@ -147,6 +140,7 @@ namespace Engine
 
 					m_renderSystem->Destroy(a_renderer);
 					m_renderSystem->Create(a_renderer);
+					m_physicsSystem->RemoveAllComponents();
 					Load(a_renderer);
 					m_justReloaded = true;
 				}
@@ -164,7 +158,7 @@ namespace Engine
 					Save();
 					m_lastState = m_isPlaying;
 				}
-				m_physicsSystem->Update(a_deltatime, t_physicsTransforms);
+				m_physicsSystem->Update(a_deltatime, this);
 				m_renderSystem->UpdateCamera(a_renderer, a_deltatime, a_window, a_inputHandler, m_gameCameraId, m_objs[m_mainCameraObjectId]->GetComponent<TransformComponent>()->GetTransform()->GetTransformMatrix());
 			}
 
@@ -174,7 +168,6 @@ namespace Engine
 				m_renderSystem->Update(a_renderer, t_syncro, t_lightSyncro, t_materialUpdate, t_cameraSyncro);
 			}
 
-			t_physicsTransforms.clear();
 			t_syncro.clear();
 			t_lightSyncro.clear();
 			t_materialUpdate.clear();

@@ -4,6 +4,8 @@
 #include "Jolt/Physics/Body/BodyCreationSettings.h"
 #include "Jolt/Physics/Collision/Shape/BoxShape.h"
 
+#include "GamePlay/Others/Scene.h"
+
 namespace Engine
 {
 	namespace GamePlay
@@ -40,9 +42,9 @@ namespace Engine
 			m_bodyInterface->AddBody(m_dummy->GetID(), JPH::EActivation::DontActivate);
 		}
 
-		void PhysicsSystem::Update(const float a_deltaTime, const std::vector<Math::Transform*>& a_transforms)
+		void PhysicsSystem::Update(const float a_deltaTime, Scene* a_scene)
 		{
-			UpdatesFromTransforms(a_transforms);
+			UpdatesFromTransforms(a_scene);
 
 			constexpr float t_stepSize = 1.0f / 60.0f;
 			const int t_collisionSteps = static_cast<int>(ceil(a_deltaTime / t_stepSize));
@@ -56,7 +58,7 @@ namespace Engine
 
 			m_physicsSystem.Update(a_deltaTime, t_collisionSteps, m_tempAllocator, m_jobSystem);
 
-			UpdateTransforms(a_transforms);
+			UpdateTransforms(a_scene);
 		}
 
 		void PhysicsSystem::Destroy()
@@ -67,6 +69,8 @@ namespace Engine
 
 			for (RigidBodyComponent* t_component : m_components)
 			{
+				if (t_component == nullptr)
+					continue;
 				t_component->Destroy();
 				delete t_component;
 			}
@@ -118,6 +122,17 @@ namespace Engine
 			delete m_components[a_id];
 			m_components[a_id] = nullptr;
 			m_availableIds.push_back(a_id);
+		}
+
+		void PhysicsSystem::RemoveAllComponents()
+		{
+			for (RigidBodyComponent* t_component : m_components)
+			{
+				t_component->Destroy();
+				delete t_component;
+			}
+			m_components.clear();
+			m_availableIds.clear();
 		}
 
 		void PhysicsSystem::EnqueueLinearVelocity(JPH::BodyID a_bodyID, Math::vec3 a_linearVelocity)
@@ -198,22 +213,24 @@ namespace Engine
 			t_rigidBodyComponent2->NotifyCollision(t_collisionEvent, t_rigidBodyComponent1);
 		}
 
-		void PhysicsSystem::UpdatesFromTransforms(const std::vector<Math::Transform*>& a_transforms) const
+		void PhysicsSystem::UpdatesFromTransforms(Scene* a_scene) const
 		{
 			for (size_t i = 0; i < m_components.size(); ++i)
 			{
-				//the almost correct fix
-				//m_components[i]->UpdateFromTransform(a_transforms[m_components[i]->GetGameObjectID()]);
-				//this is broken and assumes no gameobjects other than physics component exits. Needs a scene reference in the function to fix
-				m_components[i]->UpdateFromTransform(a_transforms[i]);
+				if (m_components[i] == nullptr)
+					continue;
+				//To ensure correct access, we get the transform directly from the scene by getting the parent GameObject
+				m_components[i]->UpdateFromTransform(a_scene->GetGameObject(m_components[i]->GetGameObjectID())->GetComponent<TransformComponent>()->GetTransform());
 			}
 		}
 
-		void PhysicsSystem::UpdateTransforms(const std::vector<Math::Transform*>& a_transforms) const
+		void PhysicsSystem::UpdateTransforms(Scene* a_scene) const
 		{
 			for (size_t i = 0; i < m_components.size(); ++i)
 			{
-				m_components[i]->UpdateObjectTransform(a_transforms[i]);
+				if (m_components[i] == nullptr)
+					continue;
+				m_components[i]->UpdateObjectTransform(a_scene->GetGameObject(m_components[i]->GetGameObjectID())->GetComponent<TransformComponent>()->GetTransform());
 			}
 		}
 

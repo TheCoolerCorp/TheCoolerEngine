@@ -11,6 +11,8 @@ namespace Engine
 {
 	namespace GamePlay
 	{
+		class Scene;
+
 		class PhysicsSystem : System
 		{
 		public:
@@ -18,12 +20,13 @@ namespace Engine
 			ENGINE_API ~PhysicsSystem() override = default;
 
 			ENGINE_API void Create();
-			ENGINE_API void Update(const float a_deltaTime, const std::vector<Math::Transform*>& a_transforms);
+			ENGINE_API void Update(const float a_deltaTime, Scene* a_scene);
 			ENGINE_API void Destroy();
 
 			ENGINE_API uint32_t AddComponent(RigidBodyComponent* a_component);
 			ENGINE_API RigidBodyComponent* GetComponent(uint32_t a_id) const;
 			ENGINE_API void RemoveComponent(uint32_t a_id);
+			ENGINE_API void RemoveAllComponents();
 
 			ENGINE_API void EnqueueLinearVelocity(JPH::BodyID a_bodyID, Math::vec3 a_linearVelocity);
 			ENGINE_API void EnqueueAddForce(JPH::BodyID a_bodyID, Math::vec3 a_force);
@@ -40,8 +43,8 @@ namespace Engine
 			ENGINE_API [[nodiscard]] JPH::BodyInterface* GetBodyInterface() const { return m_bodyInterface; }
 
 		private:
-			void UpdatesFromTransforms(const std::vector<Math::Transform*>& a_transforms) const;
-			void UpdateTransforms(const std::vector<Math::Transform*>& a_transforms) const;
+			void UpdatesFromTransforms(Scene* a_scene) const;
+			void UpdateTransforms(Scene* a_scene) const;
 			void UpdateEnqueued();
 
 			std::vector<RigidBodyComponent*> m_components{};

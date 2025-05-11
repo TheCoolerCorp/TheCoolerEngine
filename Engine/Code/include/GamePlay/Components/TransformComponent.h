@@ -55,7 +55,6 @@ namespace Engine
 
 			[[nodiscard]] ENGINE_API Math::Transform* GetTransform() const { return m_transform; }
 			[[nodiscard]] ENGINE_API TransformData GetTransformData() const;
-			[[nodiscard]] ENGINE_API int GetID() const { return m_id; }
 			[[nodiscard]] ENGINE_API int GetParentID() const { return m_parentId; }
 			[[nodiscard]] ENGINE_API std::vector<int> GetChildrenIDs() const { return m_childrenIds; }
 			[[nodiscard]] ENGINE_API Math::mat4 GetMatrix() { return m_transform->GetTransformMatrix(); }
@@ -68,7 +67,6 @@ namespace Engine
 		private:
 			Math::Transform* m_transform = nullptr;
 
-			int m_id = -1;
 			int m_gameObjectId = -1;
 			int m_parentId = -1;
 			std::vector<int> m_childrenIds{};

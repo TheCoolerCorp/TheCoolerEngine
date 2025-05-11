@@ -53,10 +53,7 @@ namespace Engine
 			ENGINE_API Ref<Material> GetMaterial() { return m_material; }
 			//static MeshComponent* FindComponent(uint32_t a_id)
 
-			void SetUid(int a_uid) { m_uid = a_uid; }
-			int GetUid() { return m_uid; }
 		private:
-			int m_uid;
 
 			Ref<Resource::Mesh> m_mesh = nullptr;
 			Ref<Material> m_material = nullptr;
