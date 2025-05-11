@@ -12,24 +12,17 @@ layout(location = 2) in vec2 inTexCoord;
 
 layout(location = 0) out vec3 outPos;
 
-
-
 void main()
 {
     outPos = inPos;
-    //outPos = vec3(inPos.x, -inPos.y, inPos.z);
-    //mat4(mat3(common_camModel.vp));
-    //gl_Position = (mat4(mat3(common_camModel.vp)); * vec4(inPos, 1.0));
-    gl_Position = (common_camModel.vp * vec4(inPos, 1.0));
 
+    // move the cube to follow the camera (simulate view matrix without translation)
+    vec3 worldPos = inPos + common_camModel.pos;
 
+    // transform with original VP
+    vec4 clipPos = common_camModel.vp * vec4(worldPos, 1.0);
 
-   // TRY SOMETHING
-   //outPos = inPos;
+    // force to far plane: set z = w, little 0.9999 to push in the far clip, avoids depth precision limits
+    gl_Position = vec4(clipPos.xy, clipPos.w * 0.9999, clipPos.w);
 
-    //mat4 viewRotOnly = mat4(mat3(common_camModel.vp));
-    //gl_Position = viewRotOnly * vec4(inPos, 1.0);
-
-    // Fixer la profondeur à 1.0 pour placer au fond
-    //gl_Position.z = gl_Position.w;
-} 
+}
