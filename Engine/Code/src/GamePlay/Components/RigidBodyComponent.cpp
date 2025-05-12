@@ -254,13 +254,9 @@ namespace Engine
 			m_rigidBody = nullptr;
 		}
 
-		void RigidBodyComponent::SetPosition(const Math::vec3& a_pos, const bool a_enable) const
+		void RigidBodyComponent::SetPosition(const Math::vec3& a_pos, const bool a_enable)
 		{
-			JPH::BodyInterface* t_bodyInterface = ServiceLocator::GetPhysicsSystem()->GetBodyInterface();
-			const JPH::EActivation t_activation = a_enable ? JPH::EActivation::Activate : JPH::EActivation::DontActivate;
-			SetActive(a_enable);
-
-			t_bodyInterface->SetPosition(m_rigidBody->GetBodyID(), { a_pos.x, a_pos.y, a_pos.z }, t_activation);
+			m_localPos = a_pos;
 		}
 
 		void RigidBodyComponent::Rotate(const Math::quat& a_rot, const bool a_enable)
@@ -285,14 +281,7 @@ namespace Engine
 
 		void RigidBodyComponent::SetRotation(const Math::quat& a_rot, bool a_enable)
 		{
-			JPH::BodyInterface* t_bodyInterface = ServiceLocator::GetPhysicsSystem()->GetBodyInterface();
-
 			m_localRot = a_rot;
-
-			const JPH::EActivation t_activation = a_enable ? JPH::EActivation::Activate : JPH::EActivation::DontActivate;
-			t_bodyInterface->SetRotation(m_rigidBody->GetBodyID(), { a_rot.x, a_rot.y, a_rot.z, a_rot.w }, t_activation);
-
-			m_bodyRot = a_rot;
 		}
 
 		void RigidBodyComponent::LockRotation(const char a_axis) const

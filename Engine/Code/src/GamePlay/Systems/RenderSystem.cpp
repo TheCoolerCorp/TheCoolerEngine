@@ -37,10 +37,10 @@ namespace Engine
 			Core::RHI::ICommandPool* t_commandPool = a_renderer->GetCommandPool();
 			Core::RHI::IGraphicPipeline* t_unlitPipeline = a_renderer->GetUnlitPipeline();
 			Core::RHI::IGraphicPipeline* t_litPipeline = a_renderer->GetLitPipeline();
-			Core::RHI::IGraphicPipeline* a_ksyBoxPipeline = a_renderer->GetSkyBoxPipeline();
+			Core::RHI::IGraphicPipeline* t_skyBoxPipeline = a_renderer->GetSkyBoxPipeline();
 			int t_maxFrame = a_renderer->GetSwapChain()->GetMaxFrame();
 
-			CreatePendingComponentsDescriptors(a_renderer, t_logicalDevice, t_physicalDevice, t_surface, t_commandPool, t_unlitPipeline, t_litPipeline, a_ksyBoxPipeline, t_maxFrame, a_updatedMatrix);
+			CreatePendingComponentsDescriptors(a_renderer, t_logicalDevice, t_physicalDevice, t_surface, t_commandPool, t_unlitPipeline, t_litPipeline, t_skyBoxPipeline, t_maxFrame, a_updatedMatrix);
 			CreatePendingLightComponentsDescriptors(a_renderer->GetInterface(), t_logicalDevice, t_physicalDevice, t_surface, t_commandPool, t_litPipeline, 1);
 
 			for (int i = 0; i < a_updatedMatrix.size(); ++i)

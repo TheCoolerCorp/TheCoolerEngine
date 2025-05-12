@@ -66,7 +66,7 @@ namespace Engine
 
 			ENGINE_API void Destroy();
 
-			ENGINE_API void SetPosition(const Math::vec3& a_pos, bool a_enable = true) const;
+			ENGINE_API void SetPosition(const Math::vec3& a_pos, bool a_enable = true);
 			ENGINE_API void Rotate(const Math::quat& a_rot, bool a_enable = true);
 			ENGINE_API void SetRotation(const Math::quat& a_rot, bool a_enable = true);
 			ENGINE_API void SetDebug(const bool a_debug) { m_debug = a_debug; }
@@ -83,8 +83,8 @@ namespace Engine
 			ENGINE_API [[nodiscard]] bool IsTrigger() const { return m_rigidBody->IsTrigger(); }
 			ENGINE_API [[nodiscard]] Physics::ColliderType GetColliderType() const { return m_rigidBody->GetColliderType(); }
 			ENGINE_API [[nodiscard]] Physics::RigidBody* GetBody() const { return m_rigidBody; }
-			ENGINE_API [[nodiscard]] Math::vec3 GetPos() const { return m_bodyPos; }
-			ENGINE_API [[nodiscard]] Math::quat GetRot() const { return m_bodyRot; }
+			ENGINE_API [[nodiscard]] Math::vec3 GetPos() const { return m_localPos; }
+			ENGINE_API [[nodiscard]] Math::quat GetRot() const { return m_localRot; }
 			ENGINE_API [[nodiscard]] bool GetDebug() const { return m_debug; }
 			ENGINE_API [[nodiscard]] float GetMass() const { return m_rigidBody->GetMass(); }
 			ENGINE_API [[nodiscard]] RigidBodyData GetRigidBodyData() const;
