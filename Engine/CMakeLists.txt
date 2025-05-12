@@ -8,7 +8,7 @@ file(GLOB_RECURSE ENGINE_SOURCES "Code/*.cpp")
 #---------------------------------------#
 #			BUILD MODE					#
 #---------------------------------------#
-add_library(Engine SHARED ${ENGINE_SOURCES})
+add_library(Engine SHARED ${ENGINE_SOURCES} "Code/include/GamePlay/Systems/ComponentSystem.h" "Code/include/GamePlay/Components/GameComponent.h")
 
 #---------------------------------------#
 #				INCLUDE					#

@@ -133,6 +133,10 @@ namespace Engine
 					m_compsId.erase(t_componentType);
 				}
 
+				ENGINE_API void SceneUpdate();
+				ENGINE_API void Update();
+				ENGINE_API void ProcessInputs(Core::Window::IInputHandler* a_inputHandler, float a_deltaTime);
+
 				ENGINE_API void SetId(int a_id);
 				ENGINE_API void SetName(const std::string& a_name) { m_name = a_name; }
 				ENGINE_API void SetParent(int a_transformId);

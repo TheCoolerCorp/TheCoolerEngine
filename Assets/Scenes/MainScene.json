@@ -21,7 +21,38 @@
             "parent": -1
         },
         "MeshComponent": {
-            "mesh": "Assets\\Meshes\\SkyboxCube.obj",
+            "mesh": "Assets\\Meshes\\BaseObjects\\Cube.obj",
+            "type": 2,
+            "albedo": "Assets\\Textures\\CubeMap\\cubemap.png",
+            "normal": "",
+            "metallic": "",
+            "roughness": "",
+            "ao": ""
+        }
+    },
+    {
+        "GameObject": "SkyBox",
+        "TransformComponent": {
+            "position": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0,
+                "w": 1.0
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "parent": -1
+        },
+        "MeshComponent": {
+            "mesh": "Assets\\Meshes\\BaseObjects\\Cube.obj",
             "type": 2,
             "albedo": "Assets\\Textures\\CubeMap\\cubemap.png",
             "normal": "",
@@ -50,6 +81,34 @@
                 "z": 1.0
             },
             "parent": -1
+        },
+        "RigidBodyComponent": {
+            "body type": 0,
+            "layer": 0,
+            "collider type": 0,
+            "position": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 10.0,
+                "y": 0.10000000149011612,
+                "z": 10.0
+            },
+            "radius": 1.0,
+            "half height": 1.0,
+            "rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0,
+                "w": 1.0
+            },
+            "mass": 1.0,
+            "enable": true,
+            "lock rotation X": false,
+            "lock rotation Y": false,
+            "lock rotation Z": false
         },
         "MeshComponent": {
             "mesh": "Assets\\Meshes\\ShowcaseAssets\\Ground.obj",
@@ -120,9 +179,9 @@
                 "z": -0.3296009302139282
             },
             "color": {
-                "x": 1.0,
-                "y": 0.6784313917160034,
-                "z": 0.3686274588108063
+                "x": 0.563725471496582,
+                "y": 0.5273141264915466,
+                "z": 0.40897729992866516
             },
             "intensity": 152.0
         }
@@ -232,6 +291,78 @@
             "metallic": "",
             "roughness": "Assets\\Textures\\ShowcaseTextures\\RedBrick\\red_brick_rough_2k.jpg",
             "ao": "Assets\\Textures\\ShowcaseTextures\\RedBrick\\red_brick_ao_2k.jpg"
+        }
+    },
+    {
+        "GameObject": "LightSphere",
+        "TransformComponent": {
+            "position": {
+                "x": -0.037858664989471436,
+                "y": 1.0483328104019165,
+                "z": -0.35638856887817383
+            },
+            "rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0,
+                "w": 1.0
+            },
+            "scale": {
+                "x": 0.20000000298023224,
+                "y": 0.20000000298023224,
+                "z": 0.20000000298023224
+            },
+            "parent": -1
+        },
+        "RigidBodyComponent": {
+            "body type": 2,
+            "layer": 1,
+            "collider type": 1,
+            "position": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "radius": 0.20000000298023224,
+            "half height": 1.0,
+            "rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0,
+                "w": 1.0
+            },
+            "mass": 1.0,
+            "enable": true,
+            "lock rotation X": false,
+            "lock rotation Y": false,
+            "lock rotation Z": false
+        },
+        "LightComponent": {
+            "position": {
+                "x": -0.037858664989471436,
+                "y": 1.0483328104019165,
+                "z": -0.35638856887817383
+            },
+            "color": {
+                "x": 0.0,
+                "y": 0.47058820724487305,
+                "z": 1.0
+            },
+            "intensity": 8.899999618530273
+        },
+        "MeshComponent": {
+            "mesh": "Assets\\Meshes\\BaseObjects\\Sphere.obj",
+            "type": 0,
+            "albedo": "Assets\\Textures\\BaseObjectTexture.png",
+            "normal": "",
+            "metallic": "",
+            "roughness": "",
+            "ao": ""
         }
     }
 ]

@@ -286,7 +286,7 @@ namespace Engine
 		{
 			if (a_type == m_colliderType)
 				return;
-			
+			m_colliderType = a_type;
 			switch (a_type)
 			{
 			case ColliderType::BOX:
