@@ -112,6 +112,18 @@ namespace Engine
 					}
 				}
 
+				if (const RigidBodyComponent* t_rigidBodyComponent = t_obj->GetComponent<RigidBodyComponent>(); t_rigidBodyComponent)
+				{
+					if (const int t_colliderMeshId = t_obj->GetComponent<RigidBodyComponent>()->GetMeshID(); t_colliderMeshId != -1)
+					{
+						Math::UniformMatrixs t_uniformMatrixs = {
+							.m_transform= t_rigidBodyComponent->GetDebug() ? t_obj->GetColliderMat() : Math::mat4(),
+							.m_normalMatrix= Math::mat4()
+						};
+						t_syncro.emplace_back(t_colliderMeshId, t_uniformMatrixs);
+					}
+				}
+
 				const int t_lightId = t_obj->GetComponentID<LightComponent>();
 				if (std::cmp_not_equal(t_lightId, -1))
 				{
@@ -124,6 +136,8 @@ namespace Engine
 					//t_lightSyncro.emplace_back(t_cameraId, t_obj->GetComponent<TransformComponent>()->GetTransform()->GetUniformsMatrixs().m_transform);
 				}
 			}
+
+			m_physicsSystem->UpdatesFromTransforms(this);
 
 			if (!m_isPlaying)
 			{

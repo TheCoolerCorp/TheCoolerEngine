@@ -24,12 +24,14 @@ namespace Engine
 			ENGINE_API static void ProvideTransformSystem(TransformSystem* a_transformSystem);
 			ENGINE_API static void ProvideRenderSystem(RenderSystem* a_meshRendererSystem);
 			ENGINE_API static void ProvidePhysicsSystem(PhysicsSystem* a_physicsSystem);
+			ENGINE_API static void ProvideRenderer(Core::Renderer* a_renderer);
 
 			ENGINE_API static Core::Multithread::ThreadPool* GetThreadPool();
 			ENGINE_API static Resource::ResourceManager* GetResourceManager();
 			ENGINE_API static TransformSystem* GetTransformSystem();
 			ENGINE_API static RenderSystem* GetRendererSystem();
 			ENGINE_API static PhysicsSystem* GetPhysicsSystem();
+			ENGINE_API static Core::Renderer* GetRenderer();
 
 		private:
 			static Core::Multithread::ThreadPool* m_threadPool;
@@ -37,6 +39,7 @@ namespace Engine
 			static TransformSystem* m_transformSystem;
 			static RenderSystem* m_meshRendererSystem;
 			static PhysicsSystem* m_physicsSystem;
+			static Core::Renderer* m_renderer;
 		};
 	}
 }
