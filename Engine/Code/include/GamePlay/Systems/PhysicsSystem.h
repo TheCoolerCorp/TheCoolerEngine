@@ -21,6 +21,7 @@ namespace Engine
 
 			ENGINE_API void Create();
 			ENGINE_API void Update(const float a_deltaTime, Scene* a_scene);
+			ENGINE_API void UpdatesFromTransforms(Scene* a_scene) const;
 			ENGINE_API void Destroy();
 
 			ENGINE_API uint32_t AddComponent(RigidBodyComponent* a_component);
@@ -43,7 +44,6 @@ namespace Engine
 			ENGINE_API [[nodiscard]] JPH::BodyInterface* GetBodyInterface() const { return m_bodyInterface; }
 
 		private:
-			void UpdatesFromTransforms(Scene* a_scene) const;
 			void UpdateTransforms(Scene* a_scene) const;
 			void UpdateEnqueued();
 

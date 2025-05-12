@@ -44,8 +44,6 @@ namespace Engine
 
 		void PhysicsSystem::Update(const float a_deltaTime, Scene* a_scene)
 		{
-			UpdatesFromTransforms(a_scene);
-
 			constexpr float t_stepSize = 1.0f / 60.0f;
 			const int t_collisionSteps = static_cast<int>(ceil(a_deltaTime / t_stepSize));
 
