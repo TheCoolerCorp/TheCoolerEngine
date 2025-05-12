@@ -82,12 +82,10 @@ namespace Engine
 				rasterizer.rasterizerDiscardEnable = VK_FALSE;
 				rasterizer.polygonMode = VK_POLYGON_MODE_FILL;
 				rasterizer.lineWidth = 1.0f;
-				//rasterizer.cullMode = VK_CULL_MODE_BACK_BIT;
-				// SWITCH HERE TO MAKE THE -X face appear
 
 				if (a_type == RHI::PipelineType::Other)
 				{
-					rasterizer.cullMode = VK_CULL_MODE_NONE;
+					rasterizer.cullMode = VK_CULL_MODE_FRONT_BIT;
 					rasterizer.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
 				}
 				else
