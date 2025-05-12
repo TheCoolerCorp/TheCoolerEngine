@@ -50,6 +50,7 @@ namespace Engine
 			RHI::IGraphicPipeline* GetUnlitPipeline() { return m_unlitPipeline; }
 			RHI::IGraphicPipeline* GetLitPipeline() { return m_litPipeline; }
 			RHI::IGraphicPipeline* GetSkyBoxPipeline() { return m_skyBoxPipeline; }
+			RHI::IGraphicPipeline* GetGridPipeline() { return m_gridPipeline; }
 			RHI::ICommandPool* GetCommandPool() { return m_commandPool; }
 			RHI::ISwapChain* GetSwapChain() { return m_swapChain; }
 			RHI::ISurface* GetSurface() { return m_surface; }
@@ -74,6 +75,7 @@ namespace Engine
 			RHI::IGraphicPipeline* m_unlitPipeline = nullptr;
 			RHI::IGraphicPipeline* m_litPipeline = nullptr;
 			RHI::IGraphicPipeline* m_skyBoxPipeline = nullptr;
+			RHI::IGraphicPipeline* m_gridPipeline = nullptr;
 
 			RHI::ICommandPool* m_commandPool = nullptr;
 
