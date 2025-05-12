@@ -9,6 +9,7 @@ namespace Engine
 		TransformSystem* ServiceLocator::m_transformSystem = nullptr;
 		RenderSystem* ServiceLocator::m_meshRendererSystem = nullptr;
 		PhysicsSystem* ServiceLocator::m_physicsSystem = nullptr;
+		Core::Renderer* ServiceLocator::m_renderer = nullptr;
 
 		void ServiceLocator::ProvideThreadPool(Core::Multithread::ThreadPool* a_threadPool)
 		{
@@ -35,6 +36,11 @@ namespace Engine
 			m_physicsSystem = a_physicsSystem;
 		}
 
+		void ServiceLocator::ProvideRenderer(Core::Renderer* a_renderer)
+		{
+			m_renderer = a_renderer;
+		}
+
 		Core::Multithread::ThreadPool* ServiceLocator::GetThreadPool()
 		{
 			return m_threadPool;
@@ -58,6 +64,11 @@ namespace Engine
 		PhysicsSystem* ServiceLocator::GetPhysicsSystem()
 		{
 			return m_physicsSystem;
+		}
+
+		Core::Renderer* ServiceLocator::GetRenderer()
+		{
+			return m_renderer;
 		}
 	}
 }

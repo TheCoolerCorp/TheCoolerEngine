@@ -12,6 +12,10 @@
 #include "Physics/Layers.h"
 #include "Physics/ContactListener.h"
 
+namespace Engine::GamePlay {
+	class MeshComponent;
+}
+
 namespace Engine
 {
 	namespace GamePlay
@@ -31,6 +35,8 @@ namespace Engine
 			bool mLockRotX;
 			bool mLockRotY;
 			bool mLockRotZ;
+			int mMeshId;
+			MeshComponent* mMeshComponent;
 		};
 
 		class RigidBodyComponent : public Component
@@ -66,7 +72,7 @@ namespace Engine
 
 			ENGINE_API void Destroy();
 
-			ENGINE_API void SetPosition(const Math::vec3& a_pos, bool a_enable = true) const;
+			ENGINE_API void SetPosition(const Math::vec3& a_pos, bool a_enable = true);
 			ENGINE_API void Rotate(const Math::quat& a_rot, bool a_enable = true);
 			ENGINE_API void SetRotation(const Math::quat& a_rot, bool a_enable = true);
 			ENGINE_API void SetDebug(const bool a_debug) { m_debug = a_debug; }
@@ -83,11 +89,15 @@ namespace Engine
 			ENGINE_API [[nodiscard]] bool IsTrigger() const { return m_rigidBody->IsTrigger(); }
 			ENGINE_API [[nodiscard]] Physics::ColliderType GetColliderType() const { return m_rigidBody->GetColliderType(); }
 			ENGINE_API [[nodiscard]] Physics::RigidBody* GetBody() const { return m_rigidBody; }
-			ENGINE_API [[nodiscard]] Math::vec3 GetPos() const { return m_bodyPos; }
-			ENGINE_API [[nodiscard]] Math::quat GetRot() const { return m_bodyRot; }
+			ENGINE_API [[nodiscard]] Math::vec3 GetPos() const { return m_localPos; }
+			ENGINE_API [[nodiscard]] Math::vec3 GetGlobalPos() const { return m_bodyPos; }
+			ENGINE_API [[nodiscard]] Math::quat GetRot() const { return m_localRot; }
+			ENGINE_API [[nodiscard]] Math::quat GetGlobalRot() const { return m_bodyRot; }
 			ENGINE_API [[nodiscard]] bool GetDebug() const { return m_debug; }
 			ENGINE_API [[nodiscard]] float GetMass() const { return m_rigidBody->GetMass(); }
 			ENGINE_API [[nodiscard]] RigidBodyData GetRigidBodyData() const;
+			ENGINE_API [[nodiscard]] MeshComponent* GetMeshComponent() const { return m_meshComponent; }
+			ENGINE_API [[nodiscard]] int GetMeshID() const { return m_meshId; }
 
 			ENGINE_API static ComponentType GetType() { return ComponentType::RIGIDBODY; }
 			ENGINE_API static RigidBodyComponent* GetComponent(uint32_t a_id);
@@ -106,6 +116,8 @@ namespace Engine
 			Math::vec3 m_bodyPos;
 			Math::quat m_bodyRot;
 			bool m_debug = false;
+			MeshComponent* m_meshComponent = nullptr;
+			int m_meshId = -1;
 			std::function<void(RigidBodyComponent*)> m_onCollisionEnter;
 			std::function<void(RigidBodyComponent*)> m_onCollisionStay;
 			std::function<void(RigidBodyComponent*)> m_onCollisionExit;

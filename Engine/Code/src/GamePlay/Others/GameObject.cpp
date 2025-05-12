@@ -38,18 +38,19 @@ namespace Engine
 			if (!GetComponent<RigidBodyComponent>())
 				return;
 			const Physics::ColliderType t_colliderType = GetComponent<RigidBodyComponent>()->GetColliderType();
-			GetComponent<TransformComponent>()->GetTransform()->SetGlobalPositionFromMatrix();
-			const Math::vec3 t_pos = GetComponent<RigidBodyComponent>()->GetPos();
-			const Math::quat t_rotation = GetComponent<RigidBodyComponent>()->GetRot();
+			GetComponent<TransformComponent>()->GetTransform()->SetGlobalScaleFromMatrix();
+			const Math::vec3 t_objScale = GetComponent<TransformComponent>()->GetTransform()->GetGlobalScale();
+			const Math::vec3 t_pos = GetComponent<RigidBodyComponent>()->GetGlobalPos();
+			const Math::quat t_rotation = GetComponent<RigidBodyComponent>()->GetGlobalRot();
 
 			switch (t_colliderType)
 			{
 			case Physics::ColliderType::BOX:
-				m_colliderMat = Math::mat4::TRS(t_pos, t_rotation, GetComponent<RigidBodyComponent>()->GetBody()->GetScale());
+				m_colliderMat = Math::mat4::TRS(t_pos, t_rotation, GetComponent<RigidBodyComponent>()->GetBody()->GetScale() * t_objScale);
 				break;
 			case Physics::ColliderType::SPHERE:
 				{
-					const Math::vec3 t_sphereScale = Math::vec3(GetComponent<RigidBodyComponent>()->GetBody()->GetRadius());
+					const Math::vec3 t_sphereScale = Math::vec3(GetComponent<RigidBodyComponent>()->GetBody()->GetRadius()) * t_objScale;
 					m_colliderMat = Math::mat4::TRS(t_pos, t_rotation, t_sphereScale);
 				}
 				break;
@@ -57,7 +58,7 @@ namespace Engine
 				{
 					const float t_xZScale = GetComponent<RigidBodyComponent>()->GetBody()->GetRadius();
 					const float t_yScale = GetComponent<RigidBodyComponent>()->GetBody()->GetHalfHeight();
-					const Math::vec3 t_capsuleScale = Math::vec3(t_xZScale, t_yScale, t_xZScale);
+					const Math::vec3 t_capsuleScale = Math::vec3(t_xZScale, t_yScale, t_xZScale) * t_objScale;
 					m_colliderMat = Math::mat4::TRS(t_pos, t_rotation, t_capsuleScale);
 				}
 				break;

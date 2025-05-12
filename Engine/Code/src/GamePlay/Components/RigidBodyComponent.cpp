@@ -28,7 +28,9 @@ namespace Engine
 				.data<&RigidBodyData::mEnable>(t_hash("enable"))
 				.data<&RigidBodyData::mLockRotX>(t_hash("lock rotation X"))
 				.data<&RigidBodyData::mLockRotY>(t_hash("lock rotation Y"))
-				.data<&RigidBodyData::mLockRotZ>(t_hash("lock rotation Z"));
+				.data<&RigidBodyData::mLockRotZ>(t_hash("lock rotation Z"))
+				.data<&RigidBodyData::mMeshId>(t_hash("mesh ID"))
+				.data<&RigidBodyData::mMeshComponent>(t_hash("mesh component"));
 			
 			meta::reflect<RigidBodyComponent>(t_hash("RigidBodyComponent"))
 				.data<&RigidBodyComponent::SetFromData, &RigidBodyComponent::GetRigidBodyData>(t_hash("RigidBody")); 
@@ -53,6 +55,15 @@ namespace Engine
 			m_bodyRot = t_rot;
 
 			m_rigidBody->CreateBoxBody(a_type, a_layer, t_pos, a_scale, t_rot, a_mass, a_enable);
+
+			Core::Renderer* t_renderer = ServiceLocator::GetRenderer();
+
+			m_meshComponent = new MeshComponent;
+			m_meshComponent->Create(m_meshId);
+			m_meshComponent->SetMesh("Assets/Meshes/WireframeCube.obj", t_renderer);
+			Ref<Material> t_material = m_meshComponent->GetMaterial();
+			t_material->Create(static_cast<MaterialType>(UNLIT));
+			t_material->SetAlbedo("Assets/Textures/ColliderTexture.png", t_renderer);
 		}
 
 		void RigidBodyComponent::CreateSphereRigidBody(Physics::BodyType a_type, Physics::CollisionLayer a_layer,
@@ -66,6 +77,15 @@ namespace Engine
 			m_bodyRot = t_rot;
 
 			m_rigidBody->CreateSphereBody(a_type, a_layer, t_pos, a_radius, t_rot, a_mass, a_enable);
+
+			Core::Renderer* t_renderer = ServiceLocator::GetRenderer();
+
+			m_meshComponent = new MeshComponent;
+			m_meshComponent->Create(m_meshId);
+			m_meshComponent->SetMesh("Assets/Meshes/WireframeSphere.obj", t_renderer);
+			Ref<Material> t_material = m_meshComponent->GetMaterial();
+			t_material->Create(static_cast<MaterialType>(UNLIT));
+			t_material->SetAlbedo("Assets/Textures/ColliderTexture.png", t_renderer);
 		}
 
 		void RigidBodyComponent::CreateCapsuleRigidBody(Physics::BodyType a_type, Physics::CollisionLayer a_layer,
@@ -79,6 +99,15 @@ namespace Engine
 			m_bodyRot = t_rot;
 
 			m_rigidBody->CreateCapsuleBody(a_type, a_layer, t_pos, a_halfHeight, a_radius, t_rot, a_mass, a_enable);
+
+			Core::Renderer* t_renderer = ServiceLocator::GetRenderer();
+
+			m_meshComponent = new MeshComponent;
+			m_meshComponent->Create(m_meshId);
+			m_meshComponent->SetMesh("Assets/Meshes/WireframeCapsule.obj", t_renderer);
+			Ref<Material> t_material = m_meshComponent->GetMaterial();
+			t_material->Create(static_cast<MaterialType>(UNLIT));
+			t_material->SetAlbedo("Assets/Textures/ColliderTexture.png", t_renderer);
 		}
 
 		void RigidBodyComponent::UpdateFromTransform(const Math::Transform* a_transform, const bool a_enable)
@@ -254,13 +283,9 @@ namespace Engine
 			m_rigidBody = nullptr;
 		}
 
-		void RigidBodyComponent::SetPosition(const Math::vec3& a_pos, const bool a_enable) const
+		void RigidBodyComponent::SetPosition(const Math::vec3& a_pos, const bool a_enable)
 		{
-			JPH::BodyInterface* t_bodyInterface = ServiceLocator::GetPhysicsSystem()->GetBodyInterface();
-			const JPH::EActivation t_activation = a_enable ? JPH::EActivation::Activate : JPH::EActivation::DontActivate;
-			SetActive(a_enable);
-
-			t_bodyInterface->SetPosition(m_rigidBody->GetBodyID(), { a_pos.x, a_pos.y, a_pos.z }, t_activation);
+			m_localPos = a_pos;
 		}
 
 		void RigidBodyComponent::Rotate(const Math::quat& a_rot, const bool a_enable)
@@ -285,14 +310,7 @@ namespace Engine
 
 		void RigidBodyComponent::SetRotation(const Math::quat& a_rot, bool a_enable)
 		{
-			JPH::BodyInterface* t_bodyInterface = ServiceLocator::GetPhysicsSystem()->GetBodyInterface();
-
 			m_localRot = a_rot;
-
-			const JPH::EActivation t_activation = a_enable ? JPH::EActivation::Activate : JPH::EActivation::DontActivate;
-			t_bodyInterface->SetRotation(m_rigidBody->GetBodyID(), { a_rot.x, a_rot.y, a_rot.z, a_rot.w }, t_activation);
-
-			m_bodyRot = a_rot;
 		}
 
 		void RigidBodyComponent::LockRotation(const char a_axis) const
@@ -320,6 +338,8 @@ namespace Engine
 				.mLockRotX= m_rigidBody->IsRotLockedX(),
 				.mLockRotY= m_rigidBody->IsRotLockedY(),
 				.mLockRotZ = m_rigidBody->IsRotLockedZ(),
+				.mMeshId = GetMeshID(),
+				.mMeshComponent = GetMeshComponent()
 			};
 
 			return t_data;

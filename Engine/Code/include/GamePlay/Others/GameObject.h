@@ -37,7 +37,7 @@ namespace Engine
 				ENGINE_API virtual ~GameObject();
 
 				//ENGINE_API void Create(Core::Renderer* a_renderer);
-				ENGINE_API [[nodiscard]] Math::mat4 GetColliderMat() const { return m_colliderMat; }
+				ENGINE_API [[nodiscard]] Math::mat4 GetColliderMat() { m_colliderMat.Transpose(); return m_colliderMat; }
 				ENGINE_API void UpdateColliderMat();
 
 				template<typename ComponentClass>
