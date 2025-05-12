@@ -59,7 +59,7 @@ void Editor::EditorLayer::Ui::UiRigidbodyComponent::UiDraw()
 		m_rigidBody->SetDebug(t_isDebug);
 	}
 
-	
+	//Show collider values
 	UiShowColliderInfo();
 	if (ImGui::DragFloat3(("Position##" + std::to_string(m_uid)).c_str(), t_fPos, 0.1f, -FLT_MAX, +FLT_MAX))
 	{
@@ -77,6 +77,9 @@ void Editor::EditorLayer::Ui::UiRigidbodyComponent::Destroy()
 {
 }
 
+/**
+ * Shows different info in the ui based on the collider type.
+ */
 void Editor::EditorLayer::Ui::UiRigidbodyComponent::UiShowColliderInfo()
 {
 	ImGui::Text("Collider Type: ");
@@ -85,7 +88,7 @@ void Editor::EditorLayer::Ui::UiRigidbodyComponent::UiShowColliderInfo()
 	{
 	case Engine::Physics::ColliderType::BOX:
 	{
-		ImGui::Text("Box");
+		UiDrawColliderTypeCombo("Box");
 		Engine::Math::vec3 t_scale = m_rigidBody->GetBody()->GetScale();
 		float t_fScale[4] = { t_scale.x, t_scale.y, t_scale.z, 0.f };
 
@@ -97,7 +100,7 @@ void Editor::EditorLayer::Ui::UiRigidbodyComponent::UiShowColliderInfo()
 	}
 	case Engine::Physics::ColliderType::SPHERE:
 	{
-		ImGui::Text("Sphere");
+		UiDrawColliderTypeCombo("Sphere");
 		float t_radius = m_rigidBody->GetBody()->GetRadius();
 		if (ImGui::DragFloat(("Radius##" + std::to_string(m_uid)).c_str(), &t_radius, 0.1f, -FLT_MAX, +FLT_MAX))
 		{
@@ -107,7 +110,7 @@ void Editor::EditorLayer::Ui::UiRigidbodyComponent::UiShowColliderInfo()
 	}
 	case Engine::Physics::ColliderType::CAPSULE:
 	{
-		ImGui::Text("Capsule");
+		UiDrawColliderTypeCombo("Capsule");
 		float t_radius = m_rigidBody->GetBody()->GetRadius();
 		float t_halfHeight = m_rigidBody->GetBody()->GetHalfHeight();
 		if (ImGui::DragFloat(("HalfHeight##" + std::to_string(m_uid)).c_str(), &t_halfHeight, 0.1f, -FLT_MAX, +FLT_MAX))
@@ -120,6 +123,40 @@ void Editor::EditorLayer::Ui::UiRigidbodyComponent::UiShowColliderInfo()
 		}
 		break;
 	}
+	}
+	float t_mass = m_rigidBody->GetBody()->GetMass();
+	if (ImGui::DragFloat(("Mass##" + std::to_string(m_uid)).c_str(), &t_mass, 0.1f, -FLT_MAX, +FLT_MAX))
+	{
+		m_rigidBody->GetBody()->SetMass(t_mass);
+	}
+}
+
+void Editor::EditorLayer::Ui::UiRigidbodyComponent::UiDrawColliderTypeCombo(const std::string& a_activeComponent)
+{
+	if (ImGui::BeginCombo(("##"+a_activeComponent + std::to_string(m_uid)).c_str(), a_activeComponent.c_str()))
+	{
+		if (m_rigidBody->GetColliderType() != Engine::Physics::ColliderType::BOX)
+		{
+			if (ImGui::Selectable("Box"))
+			{
+				m_rigidBody->GetBody()->SetColliderType(Engine::Physics::ColliderType::BOX);
+			}
+		}
+		if (m_rigidBody->GetColliderType() != Engine::Physics::ColliderType::SPHERE)
+		{
+			if (ImGui::Selectable("Sphere"))
+			{
+				m_rigidBody->GetBody()->SetColliderType(Engine::Physics::ColliderType::SPHERE);
+			}
+		}
+		if (m_rigidBody->GetColliderType() != Engine::Physics::ColliderType::CAPSULE)
+		{
+			if (ImGui::Selectable("Capsule"))
+			{
+				m_rigidBody->GetBody()->SetColliderType(Engine::Physics::ColliderType::CAPSULE);
+			}
+		}
+		ImGui::EndCombo();
 	}
 }
 

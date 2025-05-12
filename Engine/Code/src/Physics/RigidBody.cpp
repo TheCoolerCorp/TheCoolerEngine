@@ -282,6 +282,41 @@ namespace Engine
 			m_lockedRotationAxes.erase(t_it);
 		}
 
+		void RigidBody::SetColliderType(ColliderType a_type)
+		{
+			if (a_type == m_colliderType)
+				return;
+			
+			switch (a_type)
+			{
+			case ColliderType::BOX:
+				{
+				JPH::BodyInterface* t_bodyInterface = GamePlay::ServiceLocator::GetPhysicsSystem()->GetBodyInterface();
+
+				t_bodyInterface->DeactivateBody(m_body->GetID());
+
+				const JPH::Vec3 t_halfExtent = { m_scale.x * 0.5f, m_scale.y * 0.5f, m_scale.z * 0.5f };
+				JPH::Shape* newShape = new JPH::BoxShape(t_halfExtent);
+
+				t_bodyInterface->SetShape(m_body->GetID(), newShape, true, JPH::EActivation::Activate); // 'true' means update mass properties
+				}
+			case ColliderType::CAPSULE:
+			{
+				JPH::BodyInterface* t_bodyInterface = GamePlay::ServiceLocator::GetPhysicsSystem()->GetBodyInterface();
+				t_bodyInterface->DeactivateBody(m_body->GetID());
+				JPH::Shape* newShape = new JPH::CapsuleShape(m_halfHeight, m_radius);
+				t_bodyInterface->SetShape(m_body->GetID(), newShape, true, JPH::EActivation::Activate); // 'true' means update mass properties
+			}
+			case ColliderType::SPHERE:
+			{
+				JPH::BodyInterface* t_bodyInterface = GamePlay::ServiceLocator::GetPhysicsSystem()->GetBodyInterface();
+				t_bodyInterface->DeactivateBody(m_body->GetID());
+				JPH::Shape* newShape = new JPH::SphereShape(m_radius);
+				t_bodyInterface->SetShape(m_body->GetID(), newShape, true, JPH::EActivation::Activate); // 'true' means update mass properties
+			}
+			}
+		}
+
 		void RigidBody::SetObjectLayer(CollisionLayer a_layer)
 		{
 			m_collisionLayer = a_layer;

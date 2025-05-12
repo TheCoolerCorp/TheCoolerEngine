@@ -50,6 +50,7 @@ namespace Engine
 			ENGINE_API void LockRotation(const char a_axis);
 			ENGINE_API void UnlockRotation(const char a_axis);
 
+			ENGINE_API void SetColliderType(ColliderType a_type);
 			ENGINE_API void SetObjectLayer(CollisionLayer a_layer);
 			ENGINE_API void SetBodyType(BodyType a_type);
 
@@ -74,14 +75,14 @@ namespace Engine
 			JPH::Body* m_body = nullptr;
 
 			Math::vec3 m_scale = Math::vec3();
-			float m_radius = 0.f, m_halfHeight = 0.f;
+			float m_radius = 1.f, m_halfHeight = 1.f;
 
 			ColliderType m_colliderType = ColliderType::BOX;
 			BodyType m_bodyType = BodyType::STATIC;
 			CollisionLayer m_collisionLayer = CollisionLayer::DISABLED;
 			bool m_isActive = false;
 
-			float m_mass = 0.f;
+			float m_mass = 1.f;
 
 			std::unordered_map<char, JPH::SixDOFConstraint*> m_lockedRotationAxes{};
 

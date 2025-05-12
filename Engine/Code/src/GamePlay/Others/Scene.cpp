@@ -46,18 +46,18 @@ namespace Engine
 				static_cast<float>(a_width) / static_cast<float>(a_height), 0.1f, 100.f, 10.f, 20.f);
 			m_mainCamera->Create(a_renderer);
 
-			Ref<Resource::Texture> t_cubemap = t_resourceManager->CreateResource<Resource::Texture>("Assets/Textures/CubeMap/cubemap.png");
-			t_cubemap->Load();
-			t_cubemap->CreateImage(a_renderer);
+			//Ref<Resource::Texture> t_cubemap = t_resourceManager->CreateResource<Resource::Texture>("Assets/Textures/CubeMap/cubemap.png");
+			//t_cubemap->Load();
+			//t_cubemap->CreateImage(a_renderer);
 
-			GameObject* t_skyBox = new GameObject("SkyBox");
-			t_skyBox->AddComponent<MeshComponent>();
-			t_skyBox->GetComponent<MeshComponent>()->SetMesh("Assets/Meshes/SkyboxCube.obj", a_renderer);
-			t_skyBox->GetComponent<MeshComponent>()->GetMaterial()->SetType(SKYBOX);
-			t_skyBox->GetComponent<MeshComponent>()->GetMaterial()->SetAlbedo(t_cubemap);
+			//GameObject* t_skyBox = new GameObject("SkyBox");
+			//t_skyBox->AddComponent<MeshComponent>();
+			//t_skyBox->GetComponent<MeshComponent>()->SetMesh("Assets/Meshes/SkyboxCube.obj", a_renderer);
+			//t_skyBox->GetComponent<MeshComponent>()->GetMaterial()->SetType(SKYBOX);
+			//t_skyBox->GetComponent<MeshComponent>()->GetMaterial()->SetAlbedo(t_cubemap);
 
-			AddGameObject(t_skyBox);
-			//Load(a_renderer);
+			//AddGameObject(t_skyBox);
+			Load(a_renderer);
 		}
 
 		void Scene::Update(Core::Renderer* a_renderer, Core::Window::IWindow* a_window, Core::Window::IInputHandler* a_inputHandler, float a_deltatime)

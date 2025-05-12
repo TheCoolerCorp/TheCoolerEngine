@@ -1,57 +1,29 @@
 [
     {
-        "GameObject": "Unlit",
+        "GameObject": "SkyBox",
         "TransformComponent": {
-            "position": {
-                "x": -0.8510030508041382,
-                "y": 2.880987892694975e-07,
-                "z": -4.4026657519680157e-07
-            },
-            "rotation": {
-                "x": -0.4999995231628418,
-                "y": -0.4999995231628418,
-                "z": -0.4999995231628418,
-                "w": 0.5000012516975403
-            },
-            "scale": {
-                "x": 0.9999986886978149,
-                "y": 0.9999986886978149,
-                "z": 0.9999986886978149
-            },
-            "parent": -1
-        },
-        "RigidBodyComponent": {
-            "body type": 2,
-            "layer": 1,
-            "collider type": 0,
             "position": {
                 "x": 0.0,
                 "y": 0.0,
                 "z": 0.0
             },
-            "scale": {
-                "x": 1.0,
-                "y": 1.0,
-                "z": 1.0
-            },
-            "radius": 0.0,
-            "half height": 0.0,
             "rotation": {
                 "x": 0.0,
                 "y": 0.0,
                 "z": 0.0,
                 "w": 1.0
             },
-            "mass": 1.0,
-            "enable": true,
-            "lock rotation X": false,
-            "lock rotation Y": false,
-            "lock rotation Z": false
+            "scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "parent": -1
         },
         "MeshComponent": {
-            "mesh": "Assets\\Meshes\\viking_room.obj",
-            "type": 0,
-            "albedo": "Assets\\Textures\\viking_room.png",
+            "mesh": "Assets\\Meshes\\SkyboxCube.obj",
+            "type": 2,
+            "albedo": "Assets\\Textures\\CubeMap\\cubemap.png",
             "normal": "",
             "metallic": "",
             "roughness": "",
@@ -59,117 +31,7 @@
         }
     },
     {
-        "GameObject": "Lit",
-        "TransformComponent": {
-            "position": {
-                "x": 2.5,
-                "y": 0.0,
-                "z": 0.0
-            },
-            "rotation": {
-                "x": -0.4999995231628418,
-                "y": -0.4999995231628418,
-                "z": -0.4999995231628418,
-                "w": 0.5000012516975403
-            },
-            "scale": {
-                "x": 0.9999986886978149,
-                "y": 0.9999986886978149,
-                "z": 0.9999986886978149
-            },
-            "parent": -1
-        },
-        "MeshComponent": {
-            "mesh": "Assets\\Meshes\\BaseObjects\\Sphere.obj",
-            "type": 1,
-            "albedo": "Assets\\Textures\\rustediron2_basecolor.png",
-            "normal": "Assets\\Textures\\rustediron2_normal.png",
-            "metallic": "Assets\\Textures\\rustediron2_metallic.png",
-            "roughness": "Assets\\Textures\\rustediron2_roughness.png",
-            "ao": ""
-        }
-    },
-    {
-        "GameObject": "Lit",
-        "TransformComponent": {
-            "position": {
-                "x": 5.462393283843994,
-                "y": -0.04125852510333061,
-                "z": 1.0521148443222046
-            },
-            "rotation": {
-                "x": -0.47682976722717285,
-                "y": -0.5221437811851501,
-                "z": -0.4768296778202057,
-                "w": 0.5221429467201233
-            },
-            "scale": {
-                "x": 1.0000004768371582,
-                "y": 1.000000238418579,
-                "z": 1.0000004768371582
-            },
-            "parent": -1
-        },
-        "LightComponent": {
-            "position": {
-                "x": 5.462393283843994,
-                "y": -0.04125852510333061,
-                "z": 1.0521148443222046
-            },
-            "color": {
-                "x": 1.0,
-                "y": 1.0,
-                "z": 1.0
-            },
-            "intensity": 15.0
-        },
-        "MeshComponent": {
-            "mesh": "Assets\\Meshes\\BaseObjects\\Sphere.obj",
-            "type": 1,
-            "albedo": "Assets\\Textures\\PBR\\pbr_diff.png",
-            "normal": "Assets\\Textures\\PBR\\pbr_nor.png",
-            "metallic": "Assets\\Textures\\PBR\\pbr_metal.png",
-            "roughness": "Assets\\Textures\\PBR\\pbr_rough.png",
-            "ao": "Assets\\Textures\\PBR\\pbr_ao.png"
-        }
-    },
-    {
-        "GameObject": "Light",
-        "TransformComponent": {
-            "position": {
-                "x": 10.0,
-                "y": 0.0,
-                "z": 0.0
-            },
-            "rotation": {
-                "x": 0.0,
-                "y": 0.0,
-                "z": 0.0,
-                "w": 1.0
-            },
-            "scale": {
-                "x": 1.0,
-                "y": 1.0,
-                "z": 1.0
-            },
-            "parent": -1
-        },
-        "LightComponent": {
-            "position": {
-                "x": 10.0,
-                "y": 0.0,
-                "z": 0.0
-            },
-            "color": {
-                "x": 1.0,
-                "y": 1.0,
-                "z": 1.0
-            },
-            "intensity": 15.0
-        }
-    },
-    {
-        "GameObject": "Light",
+        "GameObject": "Ground",
         "TransformComponent": {
             "position": {
                 "x": 0.0,
@@ -189,18 +51,80 @@
             },
             "parent": -1
         },
-        "LightComponent": {
+        "MeshComponent": {
+            "mesh": "Assets\\Meshes\\ShowcaseAssets\\Ground.obj",
+            "type": 1,
+            "albedo": "Assets\\Textures\\ShowcaseTextures\\ForestGround\\forrest_ground_01_diff_2k.jpg",
+            "normal": "Assets\\Textures\\ShowcaseTextures\\ForestGround\\forrest_ground_01_nor_dx_2k.jpg",
+            "metallic": "",
+            "roughness": "Assets\\Textures\\ShowcaseTextures\\ForestGround\\forrest_ground_01_rough_2k.jpg",
+            "ao": "Assets\\Textures\\ShowcaseTextures\\ForestGround\\forrest_ground_01_ao_2k.jpg"
+        }
+    },
+    {
+        "GameObject": "Path",
+        "TransformComponent": {
             "position": {
                 "x": 0.0,
                 "y": 0.0,
                 "z": 0.0
             },
-            "color": {
+            "rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0,
+                "w": 1.0
+            },
+            "scale": {
                 "x": 1.0,
                 "y": 1.0,
                 "z": 1.0
             },
-            "intensity": 15.0
+            "parent": -1
+        },
+        "MeshComponent": {
+            "mesh": "Assets\\Meshes\\ShowcaseAssets\\Path.obj",
+            "type": 1,
+            "albedo": "Assets\\Textures\\ShowcaseTextures\\CobblestoneFloor\\cobblestone_floor_04_diff_2k.jpg",
+            "normal": "Assets\\Textures\\ShowcaseTextures\\CobblestoneFloor\\cobblestone_floor_04_nor_dx_2k.jpg",
+            "metallic": "",
+            "roughness": "Assets\\Textures\\ShowcaseTextures\\CobblestoneFloor\\cobblestone_floor_04_rough_2k.jpg",
+            "ao": "Assets\\Textures\\ShowcaseTextures\\CobblestoneFloor\\cobblestone_floor_04_ao_2k.jpg"
+        }
+    },
+    {
+        "GameObject": "Light",
+        "TransformComponent": {
+            "position": {
+                "x": -0.019397079944610596,
+                "y": 3.5998058319091797,
+                "z": -0.3296009302139282
+            },
+            "rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0,
+                "w": 1.0
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "parent": -1
+        },
+        "LightComponent": {
+            "position": {
+                "x": -0.019397079944610596,
+                "y": 3.5998058319091797,
+                "z": -0.3296009302139282
+            },
+            "color": {
+                "x": 1.0,
+                "y": 0.6784313917160034,
+                "z": 0.3686274588108063
+            },
+            "intensity": 152.0
         }
     },
     {
@@ -246,6 +170,68 @@
             "far": 100.0,
             "speed": 10.0,
             "sensitivity": 20.0
+        }
+    },
+    {
+        "GameObject": "Wall",
+        "TransformComponent": {
+            "position": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0,
+                "w": 1.0
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "parent": -1
+        },
+        "MeshComponent": {
+            "mesh": "Assets\\Meshes\\ShowcaseAssets\\Wall.obj",
+            "type": 1,
+            "albedo": "Assets\\Textures\\ShowcaseTextures\\RedBrick\\red_brick_diff_2k.jpg",
+            "normal": "Assets\\Textures\\ShowcaseTextures\\RedBrick\\red_brick_nor_dx_2k.jpg",
+            "metallic": "",
+            "roughness": "Assets\\Textures\\ShowcaseTextures\\RedBrick\\red_brick_rough_2k.jpg",
+            "ao": "Assets\\Textures\\ShowcaseTextures\\RedBrick\\red_brick_ao_2k.jpg"
+        }
+    },
+    {
+        "GameObject": "Wall 2",
+        "TransformComponent": {
+            "position": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "rotation": {
+                "x": 0.0,
+                "y": 1.0,
+                "z": 0.0,
+                "w": -4.371138828673793e-08
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "parent": -1
+        },
+        "MeshComponent": {
+            "mesh": "Assets\\Meshes\\ShowcaseAssets\\Wall.obj",
+            "type": 1,
+            "albedo": "Assets\\Textures\\ShowcaseTextures\\RedBrick\\red_brick_diff_2k.jpg",
+            "normal": "Assets\\Textures\\ShowcaseTextures\\RedBrick\\red_brick_nor_dx_2k.jpg",
+            "metallic": "",
+            "roughness": "Assets\\Textures\\ShowcaseTextures\\RedBrick\\red_brick_rough_2k.jpg",
+            "ao": "Assets\\Textures\\ShowcaseTextures\\RedBrick\\red_brick_ao_2k.jpg"
         }
     }
 ]

@@ -35,6 +35,7 @@ namespace Editor::EditorLayer::Ui
 		Engine::GamePlay::RigidBodyComponent* m_rigidBody = nullptr;
 
 		void UiShowColliderInfo();
+		void UiDrawColliderTypeCombo(const std::string& a_activeComponent);
 		void UiShowBodyType();
 		void UiDrawBodyTypeCombo(std::string a_activeComponent);
 		void UiShowCollisionLayer();
