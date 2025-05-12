@@ -251,9 +251,9 @@ void Editor::EditorLayer::Ui::InspectorUiWindow::UiDrawComponentAddWindow()
 				m_selectedObject->AddComponent<Engine::GamePlay::RigidBodyComponent>();
 				m_selectedObject->GetComponent<Engine::GamePlay::RigidBodyComponent>()->CreateBoxRigidBody(
 					Engine::Physics::BodyType::STATIC, Engine::Physics::CollisionLayer::NON_MOVING,
-					m_selectedObject->GetComponent<Engine::GamePlay::TransformComponent>()->GetTransform()->GetPosition(), 
-					m_selectedObject->GetComponent<Engine::GamePlay::TransformComponent>()->GetTransform()->GetScale(), 
-					m_selectedObject->GetComponent<Engine::GamePlay::TransformComponent>()->GetTransform()->GetRotation(),
+					Engine::Math::vec3(),
+					Engine::Math::vec3(1.f),
+					Engine::Math::quat(),
 					*m_selectedObject->GetComponent<Engine::GamePlay::TransformComponent>()->GetTransform());
 				MarkOutOfDate();
 			}
