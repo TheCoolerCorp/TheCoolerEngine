@@ -13,13 +13,17 @@ namespace Engine
 		{
 			m_renderer = a_renderer;
 			m_lightsDescriptor = a_renderer->GetInterface()->InstantiateObjectDescriptor();
-			m_lightsDescriptor->Create(a_renderer->GetLogicalDevice(), a_renderer->GetLitPipeline(), Core::RHI::Lights, 1, 1, { 1 }, { Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_UNIFORM_BUFFER });
-			uint32_t t_lightsSize = MAX_LIGHTS * sizeof(LightData);
+			m_lightsDescriptor->Create(a_renderer->GetLogicalDevice(), a_renderer->GetLitPipeline(), Core::RHI::Lights, 1, 2, { 1, 1 }, { Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_UNIFORM_BUFFER, Core::RHI::DescriptorSetDataType::DESCRIPTOR_SET_TYPE_UNIFORM_BUFFER });
+			uint32_t t_PlightsSize = MAX_LIGHTS * sizeof(PointLightData);
+			uint32_t t_DlightsSize = MAX_LIGHTS * sizeof(DirectionalLight);
+
 			for (int i = 0; i < MAX_LIGHTS; ++i)
 			{
-				m_lightsData[i] = { Math::vec3(0.f), Math::vec3(0.f), 0.f };
+				m_PlightsData[i] = new PointLightData{ Math::vec3(0.f), Math::vec3(0.f), 0.f };
+				m_DlightsData[i] = new DirectionalLightData{ Math::vec3(0.f), Math::vec3(0.f), 0.f, Math::vec3(0.f, 0.f, 1.f)};
 			}
-			m_lightsDescriptor->SetUniform(a_renderer->GetLogicalDevice(), a_renderer->GetPhysicalDevice(), a_renderer->GetCommandPool(), 0, &m_lightsData, t_lightsSize, 0, 1);
+			m_lightsDescriptor->SetUniform(a_renderer->GetLogicalDevice(), a_renderer->GetPhysicalDevice(), a_renderer->GetCommandPool(), 0, &m_PlightsData, t_PlightsSize, 0, 1);
+			m_lightsDescriptor->SetUniform(a_renderer->GetLogicalDevice(), a_renderer->GetPhysicalDevice(), a_renderer->GetCommandPool(), 1, &m_DlightsData, t_PlightsSize, 1, 1);
 		}
 
 		void RenderSystem::Update(Core::Renderer* a_renderer, std::vector<std::pair<int,Math::UniformMatrixs>> a_updatedMatrix, std::vector<std::pair<int, Math::vec3>> a_lightsUpdate, std::vector<int> a_materialUpdate, std::vector<std::pair<int, Math::mat4>> a_cameraUpdatedMatrix)
@@ -53,10 +57,6 @@ namespace Engine
 			}
 			for (int i = 0; i < a_lightsUpdate.size(); ++i)
 			{
-				/*
-				 *
-				 * ISSUE HERE
-				 */
 				m_lightComponents[a_lightsUpdate[i].first]->GetLight().SetPosition(a_lightsUpdate[i].second);
 				m_lightsData[a_lightsUpdate[i].first].m_position = a_lightsUpdate[i].second;
 				m_lightsData[a_lightsUpdate[i].first].m_color = m_lightComponents[a_lightsUpdate[i].first]->GetLight().GetColor();

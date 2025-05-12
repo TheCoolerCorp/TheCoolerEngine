@@ -29,24 +29,38 @@ namespace Engine
 			return ComponentType::LIGHT;
 		}
 
-		void LightComponent::SetLight(Light& a_light)
+		void LightComponent::SetLight(LightType a_type)
 		{
-			m_light = a_light;
+			if (a_type == LightType::POINT)
+			{
+				m_light = new PointLight;
+			}
+			else
+			{
+				m_light = new DirectionalLight;
+			}
 		}
 
-		void LightComponent::SetLightFromData(const LightData& a_lightData)
+		void LightComponent::SetLightFromData(const LightData& a_lightData, LightType a_type)
 		{
-			m_light = Light(a_lightData.m_position, a_lightData.m_color, a_lightData.m_intensity);
+			if (a_type == LightType::POINT)
+			{
+				m_light = new PointLight(a_lightData.m_position, a_lightData.m_color, a_lightData.m_intensity);
+			}
+			else
+			{
+				m_light = new DirectionalLight(a_lightData.m_position, a_lightData.m_color, a_lightData.m_intensity, { 0.f, 0.f, 1.f });
+			}
 		}
 
 		void LightComponent::Destroy()
 		{
-			// Do nothing for now
+			delete m_light;
 		}
 
-		LightData LightComponent::GetData()
+		LightData* LightComponent::GetData()
 		{
-			return m_light.GetData();
+			return m_light->GetData();
 		}
 
 		LightComponent* LightComponent::GetComponent(int a_id)
@@ -60,5 +74,3 @@ namespace Engine
 		}
 	}
 }
-
-

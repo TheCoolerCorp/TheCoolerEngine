@@ -71,9 +71,12 @@ namespace Engine
 
 		private:
 		#pragma region LIGHTS
-			LightData m_lightsData[MAX_LIGHTS];
-			std::vector<LightComponent*> m_lightComponents;
+			PointLightData* m_PlightsData[MAX_LIGHTS];
+			DirectionalLightData* m_DlightsData[MAX_LIGHTS];
+
 			Core::RHI::IObjectDescriptor* m_lightsDescriptor;
+
+			std::vector<LightComponent*> m_lightComponents;
 			std::vector<int> m_lightsAvailableIndexes;
 			std::vector<int> m_lightsPendingComponents;
 		#pragma endregion

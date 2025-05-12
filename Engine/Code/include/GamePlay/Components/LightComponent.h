@@ -17,22 +17,22 @@ namespace Engine
 
 			ENGINE_API static void Register();
 			ENGINE_API ComponentType Create(int& a_outID) override;
-			ENGINE_API void SetLight(Light& a_light);
-			ENGINE_API void SetLightFromData(const LightData& a_lightData);
+			ENGINE_API void SetLight(LightType a_type);
+			ENGINE_API void SetLightFromData(const LightData& a_lightData, LightType a_type);
 			ENGINE_API void Destroy() override;
 
-			[[nodiscard]] ENGINE_API Light& GetLight() { return m_light; }
-			[[nodiscard]] ENGINE_API LightData GetData();
+			[[nodiscard]] ENGINE_API Light* GetLight() { return m_light; }
+			[[nodiscard]] ENGINE_API LightData* GetData();
 
 			ENGINE_API static ComponentType GetType() { return ComponentType::LIGHT; }
-			
+
 			ENGINE_API static LightComponent* GetComponent(int a_id);
 
 			ENGINE_API static void RemoveComponent(int a_id);
 
 
 		private:
-			Light m_light;
+			Light* m_light;
 		};
 	}
 }

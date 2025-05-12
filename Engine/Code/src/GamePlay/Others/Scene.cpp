@@ -84,7 +84,8 @@ namespace Engine
 			m_transformSystem->Update();
 
 			std::vector<std::pair<int, Math::UniformMatrixs>> t_syncro;
-			std::vector<std::pair<int, Math::vec3>> t_lightSyncro;
+			std::vector<std::pair<int, Math::vec3>> t_PlightSyncro;
+			std::vector<std::tuple<int, Math::vec3, Math::vec3>> t_DlightSyncro;
 			std::vector<std::pair<int, Math::mat4>> t_cameraSyncro;
 			std::vector<int> t_materialUpdate;
 
@@ -115,13 +116,14 @@ namespace Engine
 				const int t_lightId = t_obj->GetComponentID<LightComponent>();
 				if (std::cmp_not_equal(t_lightId, -1))
 				{
-					t_lightSyncro.emplace_back(t_lightId, t_obj->GetComponent<TransformComponent>()->GetTransform()->GetGlobalPosition());
-				}
-
-				const uint32_t t_cameraId = t_obj->GetComponentID<CameraComponent>();
-				if (std::cmp_not_equal(t_cameraId, -1))
-				{
-					//t_lightSyncro.emplace_back(t_cameraId, t_obj->GetComponent<TransformComponent>()->GetTransform()->GetUniformsMatrixs().m_transform);
+					if (t_obj->GetComponent<LightComponent>()->GetLight()->GetType() == LightType::POINT)
+					{
+						t_PlightSyncro.emplace_back(t_lightId, t_obj->GetComponent<TransformComponent>()->GetTransform()->GetGlobalPosition());
+					}
+					else
+					{
+						t_DlightSyncro.emplace_back(t_lightId, t_obj->GetComponent<TransformComponent>()->GetTransform()->GetGlobalPosition(), Math::quat::ToEulerAngles(t_obj->GetComponent<TransformComponent>()->GetTransform()->GetGlobalRotation()));
+					}
 				}
 			}
 
@@ -148,6 +150,8 @@ namespace Engine
 			}
 			else
 			{
+				
+
 				/*
 				*	DO SOME IN GAME UPDATE STUFF
 				*
@@ -165,11 +169,13 @@ namespace Engine
 
 			if (!m_justReloaded)
 			{
-				m_renderSystem->Update(a_renderer, t_syncro, t_lightSyncro, t_materialUpdate, t_cameraSyncro);
+				// Add update directional Light
+				m_renderSystem->Update(a_renderer, t_syncro, t_PlightSyncro, t_materialUpdate, t_cameraSyncro);
 			}
 
 			t_syncro.clear();
-			t_lightSyncro.clear();
+			t_PlightSyncro.clear();
+			// Add clear Directional
 			t_materialUpdate.clear();
 			t_cameraSyncro.clear();
 			m_justReloaded = false;
@@ -495,8 +501,9 @@ namespace Engine
 
 				if (t_hasLight)
 				{
+					// TODO : Fix here to adapt type of light
 					t_gameObject->AddComponent<LightComponent>();
-					t_gameObject->GetComponent<LightComponent>()->SetLightFromData(t_light);
+					t_gameObject->GetComponent<LightComponent>()->SetLightFromData(t_light, LightType::POINT);
 				}
 
 				if (t_hasRigidBody)
