@@ -22,7 +22,7 @@ namespace Engine
 			* Automaticely read shader data extract using spir-v reflect to create the shader and set the layout(s) and all binding
 			* Only the shader part is abstract, didn't have time to abstract all the rest (rasterization mode, etc...)
 			*/
-			void VulkanGraphicPipeline::Create(RHI::ILogicalDevice* a_logicalDevice, RHI::IRenderPass* a_renderPass, RHI::PipelineType a_type, std::array<RHI::IShader*, 2> a_vertFragShaders, std::vector<RHI::IShader*> a_additionalShaders)
+			void VulkanGraphicPipeline::Create(RHI::ILogicalDevice* a_logicalDevice, RHI::IRenderPass* a_renderPass, RHI::PipelineType a_type, std::array<RHI::IShader*, 2> a_vertFragShaders, std::vector<RHI::IShader*> a_additionalShaders, bool a_expectVertexBuffers)
 			{
 				m_type = a_type;
 
@@ -56,13 +56,24 @@ namespace Engine
 
 				#pragma region VertexInput
 				VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
-				vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
-				auto bindingDescription = Resource::VulkanVertexSpec::getBindingDescription();
-				auto attributeDescriptions = Resource::VulkanVertexSpec::getAttributeDescriptions();
-				vertexInputInfo.vertexBindingDescriptionCount = 1;
-				vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());
-				vertexInputInfo.pVertexBindingDescriptions = &bindingDescription;
-				vertexInputInfo.pVertexAttributeDescriptions = attributeDescriptions.data();
+				if (a_expectVertexBuffers)
+				{
+					vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
+					auto bindingDescription = Resource::VulkanVertexSpec::getBindingDescription();
+					auto attributeDescriptions = Resource::VulkanVertexSpec::getAttributeDescriptions();
+					vertexInputInfo.vertexBindingDescriptionCount = 1;
+					vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());
+					vertexInputInfo.pVertexBindingDescriptions = &bindingDescription;
+					vertexInputInfo.pVertexAttributeDescriptions = attributeDescriptions.data();
+				}
+				else
+				{
+					vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
+					vertexInputInfo.vertexBindingDescriptionCount = 0;
+					vertexInputInfo.vertexAttributeDescriptionCount = 0;
+					vertexInputInfo.pVertexBindingDescriptions = nullptr;
+					vertexInputInfo.pVertexAttributeDescriptions = nullptr;
+				}
 				#pragma endregion
 
 				#pragma region Spec
@@ -104,12 +115,24 @@ namespace Engine
 
 				// Depth activate by default, need to be modular later
 				VkPipelineDepthStencilStateCreateInfo depthStencil{};
-				depthStencil.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
-				depthStencil.depthTestEnable = VK_TRUE;
-				depthStencil.depthWriteEnable = VK_TRUE;
-				depthStencil.depthCompareOp = VK_COMPARE_OP_LESS;
-				depthStencil.depthBoundsTestEnable = VK_FALSE;
-				depthStencil.stencilTestEnable = VK_FALSE;
+				if (a_expectVertexBuffers)
+				{
+					depthStencil.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
+					depthStencil.depthTestEnable = VK_TRUE;
+					depthStencil.depthWriteEnable = VK_TRUE;
+					depthStencil.depthCompareOp = VK_COMPARE_OP_LESS;
+					depthStencil.depthBoundsTestEnable = VK_FALSE;
+					depthStencil.stencilTestEnable = VK_FALSE;
+				}
+				else
+				{
+					depthStencil.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
+					depthStencil.depthTestEnable = VK_FALSE;
+					depthStencil.depthWriteEnable = VK_FALSE;
+					depthStencil.depthCompareOp = VK_COMPARE_OP_LESS;
+					depthStencil.depthBoundsTestEnable = VK_FALSE;
+					depthStencil.stencilTestEnable = VK_FALSE;
+				}
 
 				VkPipelineColorBlendAttachmentState colorBlendAttachment{};
 				colorBlendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
@@ -249,7 +272,7 @@ namespace Engine
 			}
 
 			void VulkanGraphicPipeline::BindObjects(RHI::ICommandPool* a_commandPool, uint32_t a_commandBufferIndex, uint32_t a_currentFrame, uint32_t  a_imageIndex, std::vector<RHI::IBuffer*> a_indexBuffers,
-													std::vector<RHI::IBuffer*> a_vertexBuffers, std::vector<uint32_t> a_indicesCount, std::vector<RHI::IObjectDescriptor*> a_objectsDescriptors)
+													std::vector<RHI::IBuffer*> a_vertexBuffers, std::vector<uint32_t> a_indicesCount, std::vector<RHI::IObjectDescriptor*> a_objectsDescriptors, bool a_expectVertexBuffer)
 			{
 				const VulkanCommandPool* t_commandPool = a_commandPool->CastVulkan();
 
@@ -260,6 +283,12 @@ namespace Engine
 
 				const VkCommandBuffer t_commandBuffer = t_commandPool->mCommandBuffers[a_commandBufferIndex][a_currentFrame];
 				const VkDeviceSize t_offsets[] = { 0 };
+
+				if (!a_expectVertexBuffer)
+				{
+					vkCmdDraw(t_commandBuffer, 3, 1, 0, 0);
+					return;
+				}
 
 				for (int i = 0; i < a_objectsDescriptors.size(); ++i)
 				{

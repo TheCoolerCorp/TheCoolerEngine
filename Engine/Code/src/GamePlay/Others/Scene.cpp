@@ -57,7 +57,7 @@ namespace Engine
 			t_skyBox->GetComponent<MeshComponent>()->GetMaterial()->SetAlbedo(t_cubemap);
 
 			AddGameObject(t_skyBox);
-			Load(a_renderer);
+			//Load(a_renderer);
 		}
 
 		void Scene::Update(Core::Renderer* a_renderer, Core::Window::IWindow* a_window, Core::Window::IInputHandler* a_inputHandler, float a_deltatime)
