@@ -263,7 +263,8 @@ namespace Engine
 
 				std::vector<VkBufferImageCopy> t_regions(a_layerCount);
 
-				for (int i = 0; i < a_layerCount; ++i) {
+				for (int i = 0; i < a_layerCount; ++i) 
+				{
 					t_regions[i].bufferOffset = static_cast<VkDeviceSize>(a_width) * a_height * 4 * i;
 					t_regions[i].bufferRowLength = 0;
 					t_regions[i].bufferImageHeight = 0;

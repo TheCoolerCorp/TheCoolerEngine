@@ -138,9 +138,13 @@ namespace Engine
 			t_vertexShader->Destroy(m_logicalDevice);
 			t_unlitFragmentShader->Destroy(m_logicalDevice);
 			t_litFragmentShader->Destroy(m_logicalDevice);
+			t_skyboxFragmentShader->Destroy(m_logicalDevice);
+			t_skyboxVertexShader->Destroy(m_logicalDevice);
 			m_interface->DestroyShader(t_vertexShader);
 			m_interface->DestroyShader(t_unlitFragmentShader);
 			m_interface->DestroyShader(t_litFragmentShader);
+			m_interface->DestroyShader(t_skyboxFragmentShader);
+			m_interface->DestroyShader(t_skyboxVertexShader);
 
 			m_commandPool = m_interface->InstantiateCommandPool();
 			m_commandPool->Create(m_physicalDevice, m_surface, m_logicalDevice);
