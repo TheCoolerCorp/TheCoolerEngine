@@ -305,8 +305,8 @@ bool Editor::EditorLayer::Ui::FileExplorerWindow::IsModel(const std::filesystem:
 {
 	std::string t_extension = a_path.extension().string();
 	std::ranges::transform(t_extension, t_extension.begin(), ::tolower);
-	return t_extension == ".obj"; //only .obj is supported for now
-	//return (t_extension == ".fbx" || t_extension == ".obj" || t_extension == ".gltf" || t_extension == ".glb");
+	//return t_extension == ".obj"; //only .obj is supported for now
+	return (t_extension == ".fbx" || t_extension == ".obj" || t_extension == ".gltf" || t_extension == ".glb");
 }
 
 /**
