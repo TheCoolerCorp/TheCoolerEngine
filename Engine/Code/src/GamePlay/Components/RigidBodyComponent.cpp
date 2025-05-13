@@ -277,8 +277,6 @@ namespace Engine
 
 		void RigidBodyComponent::Destroy()
 		{
-			m_meshComponent = nullptr;
-			m_meshId = -1;
 			m_rigidBody->Remove();
 			m_rigidBody->Destroy();
 			delete m_rigidBody;

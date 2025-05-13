@@ -198,7 +198,7 @@ namespace Engine
 			for (int i = 0; i < m_renderSystem->GetMeshComponents().size(); ++i)
 			{
 				MeshComponent* t_meshComponent = m_renderSystem->GetMeshComponents().at(i);
-				if (!t_meshComponent || !t_meshComponent->GetMesh()->IsLoaded())
+				if (!t_meshComponent || !t_meshComponent->GetMesh()->IsBound())
 				{
 					continue;
 				}
@@ -217,7 +217,7 @@ namespace Engine
 			for (int i = 0; i < m_renderSystem->GetMeshComponents().size(); ++i)
 			{
 				MeshComponent* t_meshComponent = m_renderSystem->GetMeshComponents().at(i);
-				if (!t_meshComponent || !t_meshComponent->GetMesh()->IsLoaded())
+				if (!t_meshComponent || !t_meshComponent->GetMesh()->IsBound())
 				{
 					continue;
 				}
@@ -237,7 +237,7 @@ namespace Engine
 			for (int i = 0; i < m_renderSystem->GetMeshComponents().size(); ++i)
 			{
 				MeshComponent* t_meshComponent = m_renderSystem->GetMeshComponents().at(i);
-				if (!t_meshComponent || !t_meshComponent->GetMesh()->IsLoaded())
+				if (!t_meshComponent || !t_meshComponent->GetMesh()->IsBound())
 				{
 					continue;
 				}
