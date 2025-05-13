@@ -159,6 +159,7 @@ namespace Engine
 
 			return t_index;
 			// ADD PENDING INDEX
+
 		}
 
 		int RenderSystem::AddComponent(LightComponent* a_lightComponent)
