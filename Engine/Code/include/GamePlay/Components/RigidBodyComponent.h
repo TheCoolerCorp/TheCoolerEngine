@@ -95,6 +95,8 @@ namespace Engine
 			ENGINE_API [[nodiscard]] Math::quat GetGlobalRot() const { return m_bodyRot; }
 			ENGINE_API [[nodiscard]] bool GetDebug() const { return m_debug; }
 			ENGINE_API [[nodiscard]] float GetMass() const { return m_rigidBody->GetMass(); }
+			ENGINE_API [[nodiscard]] float GetFriction() const { return m_rigidBody->GetFriction(); }
+			ENGINE_API [[nodiscard]] float GetRestitution() const { return m_rigidBody->GetRestitution(); }
 			ENGINE_API [[nodiscard]] RigidBodyData GetRigidBodyData() const;
 			ENGINE_API [[nodiscard]] MeshComponent* GetMeshComponent() const { return m_meshComponent; }
 			ENGINE_API [[nodiscard]] int GetMeshID() const { return m_meshId; }

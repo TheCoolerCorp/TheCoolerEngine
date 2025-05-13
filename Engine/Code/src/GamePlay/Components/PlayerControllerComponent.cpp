@@ -92,6 +92,14 @@ namespace Engine::GamePlay
 			t_movement = t_movement * 100 * m_moveSpeed * a_deltaTime;
 			t_rigidBody->AddForce(Math::vec3(t_movement.z, 0, t_movement.x));
 		}
+		Math::vec3 t_velocity = t_rigidBody->GetVelocity();
+		if (Math::vec3::Norm(Math::vec3(t_velocity.x, 0, t_velocity.z)) > m_maxSpeed)
+		{
+			t_velocity = Math::vec3(t_velocity.x, 0, t_velocity.z);
+			t_velocity = Math::vec3::Normalize(t_velocity) * m_maxSpeed;;
+			t_velocity.y = t_rigidBody->GetVelocity().y;
+			t_rigidBody->SetLinearVelocity(t_velocity);
+		}
 	}
 
 	void PlayerControllerComponent::RemoveComponent(int a_id)

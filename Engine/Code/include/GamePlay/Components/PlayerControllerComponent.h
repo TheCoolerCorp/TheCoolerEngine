@@ -52,10 +52,10 @@ namespace Engine::GamePlay
 		int m_transformRotateComponentId = -1;
 		int m_rigidBodyComponentId = -1;
 
-		float m_maxSpeed = 100.f;
+		float m_maxSpeed = 3;
 		float m_sensitivity = 1.f;
-		float m_jumpForce = 100.f;
-		float m_moveSpeed = 10.f;
+		float m_jumpForce = 10.f;
+		float m_moveSpeed = 30.f;
 
 		float m_maxUpAngle = 85.f;
 		float m_maxDownAngle = 85.f;

@@ -49,6 +49,8 @@ namespace Engine
 			ENGINE_API void SetMass(float a_mass);
 			ENGINE_API void LockRotation(const char a_axis);
 			ENGINE_API void UnlockRotation(const char a_axis);
+			ENGINE_API void SetFriction(float a_friction);
+			ENGINE_API void SetRestitution(float a_restitution);
 
 			ENGINE_API void SetColliderType(ColliderType a_type);
 			ENGINE_API void SetObjectLayer(CollisionLayer a_layer);
@@ -68,6 +70,8 @@ namespace Engine
 			ENGINE_API [[nodiscard]] float GetRadius() const { return m_radius; }
 			ENGINE_API [[nodiscard]] float GetHalfHeight() const { return m_halfHeight; }
 			ENGINE_API [[nodiscard]] float GetMass() const { return m_mass; }
+			ENGINE_API [[nodiscard]] float GetFriction() const { return m_friction; }
+			ENGINE_API [[nodiscard]] float GetRestitution() const { return m_restitution; }
 			ENGINE_API void Remove() const;
 			ENGINE_API void Destroy();
 
@@ -81,6 +85,8 @@ namespace Engine
 			BodyType m_bodyType = BodyType::STATIC;
 			CollisionLayer m_collisionLayer = CollisionLayer::DISABLED;
 			bool m_isActive = false;
+			float m_friction = 0.5f;
+			float m_restitution = 0.0f;
 
 			float m_mass = 1.f;
 

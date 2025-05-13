@@ -164,6 +164,18 @@ void Editor::EditorLayer::Ui::UiRigidbodyComponent::UiShowColliderInfo()
 	{
 		m_rigidBody->GetBody()->SetMass(t_mass);
 	}
+	float t_friction = m_rigidBody->GetBody()->GetFriction();
+	if (ImGui::DragFloat(("Friction##" + std::to_string(m_uid)).c_str(), &t_friction, 0.1f, 0.001f, +FLT_MAX))
+	{
+		t_friction = std::clamp(t_friction, 0.f, +FLT_MAX);
+		m_rigidBody->GetBody()->SetFriction(t_friction);
+	}
+	float t_restitution = m_rigidBody->GetBody()->GetRestitution();
+	if (ImGui::DragFloat(("Restitution##" + std::to_string(m_uid)).c_str(), &t_restitution, 0.1f, 0.001f, 1))
+	{
+		t_restitution = std::clamp(t_restitution, 0.f, 1.f);
+		m_rigidBody->GetBody()->SetRestitution(t_restitution);
+	}
 }
 
 void Editor::EditorLayer::Ui::UiRigidbodyComponent::UiDrawColliderTypeCombo(const std::string& a_activeComponent)
