@@ -15,10 +15,11 @@ namespace Editor::EditorLayer::Ui
 
 	void ImGuiTexture::Create(Engine::Core::Renderer* a_renderer, const std::string& a_path)
 	{
-
 		Engine::Resource::ResourceManager* t_resourceManager = Engine::GamePlay::ServiceLocator::GetResourceManager();
 
-		m_texture = t_resourceManager->CreateResource<Engine::Resource::Texture>(a_path);
+		const std::string t_path = (a_path.find("cm") != std::string::npos || a_path.find("cubemap") != std::string::npos) ? "Assets/Textures/UI/ImageIcon.png" : a_path;
+
+		m_texture = t_resourceManager->CreateResource<Engine::Resource::Texture>(t_path);
 		if (!m_texture->IsCreated())
 			m_texture->LoadAsync();
 	}
