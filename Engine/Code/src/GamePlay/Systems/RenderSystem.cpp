@@ -433,14 +433,11 @@ namespace Engine
 					if (t_albedo->IsCreated())
 					{
  						t_newRenderObject->SetTexture(a_logicalDevice, t_albedo->GetImage(), 1, 1);
-
 					}
 					else
 					{
-						Resource::ResourceManager* t_resourceManager = ServiceLocator::GetResourceManager();
-						const Ref<Resource::Texture> t_defaultTexture = t_material->GetType() == SKYBOX ? t_resourceManager->GetResource<Resource::Texture>("Assets/Textures/CubeMap/default_cubemap.png") : t_resourceManager->GetResource<Resource::Texture>("Assets/Textures/DefaultTexture.png");
-						t_newRenderObject->SetTexture(a_logicalDevice, t_defaultTexture->GetImage(), 1, 1);
 						t_albedo->CreateImage(a_renderer);
+						t_newRenderObject->SetTexture(a_logicalDevice, t_albedo->GetImage(), 1, 1);
 					}
 				}
 				else

@@ -28,7 +28,7 @@ namespace Engine
             m_isLoading.store(true, std::memory_order_release);
 
             Assimp::Importer t_importer{};
-            const aiScene* t_scene = t_importer.ReadFile(m_path, aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_PreTransformVertices);
+            const aiScene* t_scene = t_importer.ReadFile(m_path, aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_SortByPType | aiProcess_ImproveCacheLocality | aiProcess_RemoveRedundantMaterials | aiProcess_FindDegenerates | aiProcess_FindInvalidData | aiProcess_OptimizeMeshes | aiProcess_OptimizeGraph | aiProcess_GenSmoothNormals | aiProcess_FixInfacingNormals);
             if (!t_scene || !t_scene->mRootNode)
             {
                 LOG_ERROR("ERROR::ASSIMP::" + Core::Debugging::ToString(t_importer.GetErrorString()));
