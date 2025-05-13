@@ -52,6 +52,7 @@ namespace Editor
 			Ref<Resource::Mesh> t_cubeMesh = m_resourceManager->CreateResource<Resource::Mesh>("Assets/Meshes/WireframeCube.obj");
 			Ref<Resource::Mesh> t_sphereMesh = m_resourceManager->CreateResource<Resource::Mesh>("Assets/Meshes/WireframeSphere.obj");
 			Ref<Resource::Texture> t_colliderTexture = m_resourceManager->CreateResource<Resource::Texture>("Assets/Textures/ColliderTexture.png");
+			Ref<Resource::Texture> t_defaultCubemapTexture = m_resourceManager->CreateResource<Resource::Texture>("Assets/Textures/CubeMap/default_cubemap.png");
 			t_capsuleMesh->Load();
 			t_capsuleMesh->BindBuffers(m_renderer);
 			t_cubeMesh->Load();
@@ -60,6 +61,8 @@ namespace Editor
 			t_sphereMesh->BindBuffers(m_renderer);
 			t_colliderTexture->Load();
 			t_colliderTexture->CreateImage(m_renderer);
+			t_defaultCubemapTexture->Load();
+			t_defaultCubemapTexture->CreateImage(m_renderer);
 
 			m_currentScene = new Scene();
 			m_currentScene->Create(m_renderer, "MainScene", a_width, a_height);
