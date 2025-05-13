@@ -29,8 +29,8 @@ void main()
     vec3 pos = worldPosNear.xyz + rayDir * t;
     pos.y -= 0.001;
 
-    float majorGrid = grid(pos.xz, 10.0, 0.4);
-    float minorGrid = grid(pos.xz, 5.0, 0.2);
+    float majorGrid = grid(pos.xz, 3.0, 0.4);
+    float minorGrid = grid(pos.xz, 1.5, 0.2);
 
     float d = distance(incamPos, pos);
     float fade = clamp(1.0 - d / 100.0, 0.0, 1.0);

@@ -128,7 +128,7 @@ vec3 BRDF(float D, float G, vec3 F, vec3 camDir, vec3 lightDir, vec3 albedo, flo
     vec3 numerator    = D * G * F; 
     float denominator = 4.0 * max(dot(normal, camDir), 0.0) * max(dot(normal, lightDir), 0.0) + 0.0001;
     vec3 specular = numerator / denominator;
-        
+
     vec3 kS = F;
     vec3 kD = vec3(1.0) - kS;
     kD *= 1.0 - metallic;	  
