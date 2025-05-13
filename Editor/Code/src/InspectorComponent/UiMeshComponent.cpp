@@ -140,7 +140,10 @@ void Editor::EditorLayer::Ui::UiMeshComponent::CreateImageDescriptorSets()
 
 		if (t_albedo->IsCreated())
 		{
-			m_imageSets[ALBEDO] = ImGui_ImplVulkan_AddTexture(t_albedo->GetImage()->CastVulkan()->GetSampler(), m_meshComp->GetMaterial()->GetAlbedo()->GetImage()->CastVulkan()->GetView(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+			if (m_material->GetType() != Engine::GamePlay::MaterialType::SKYBOX)
+			{
+				m_imageSets[ALBEDO] = ImGui_ImplVulkan_AddTexture(t_albedo->GetImage()->CastVulkan()->GetSampler(), m_meshComp->GetMaterial()->GetAlbedo()->GetImage()->CastVulkan()->GetView(), VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
+			}
 			t_descriptor->SetTexture(m_layer->GetRenderer()->GetLogicalDevice(), t_albedo->GetImage(), 1, 1);
 		}
 		else
