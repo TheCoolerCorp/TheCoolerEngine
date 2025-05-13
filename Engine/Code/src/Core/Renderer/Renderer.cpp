@@ -111,6 +111,11 @@ namespace Engine
 				std::unordered_map<RHI::DescriptorSetPipelineTarget, std::vector<uint32_t>>& a_nbIndices,
 				std::unordered_map<RHI::DescriptorSetPipelineTarget, std::vector<RHI::IObjectDescriptor*>>& a_descriptors)
 				{
+					if (a_info.scene->IsPlaying())
+					{
+						return;
+					}
+
 					std::vector<RHI::IObjectDescriptor*> t_descriptors;
 					t_descriptors.emplace_back(a_info.scene->GetCameraDescriptor());
 
