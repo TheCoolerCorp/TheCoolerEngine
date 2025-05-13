@@ -170,14 +170,15 @@ namespace Engine
 				m_lightsPendingComponents.push_back(t_nbComps);
 				return t_nbComps;
 			}
-			for (const int t_availableIndex : m_lightsAvailableIndexes)
+			int t_availableIndex = m_lightsAvailableIndexes.back();
+			if (m_lightComponents.at(t_availableIndex) == nullptr)
 			{
-				if (m_lightComponents.at(t_availableIndex) == nullptr)
-				{
-					m_lightComponents.at(t_availableIndex) = a_lightComponent;
-					m_lightsPendingComponents.push_back(t_availableIndex);
-					return t_availableIndex;
-				}
+				m_lightComponents.at(t_availableIndex) = a_lightComponent;
+
+				m_lightsPendingComponents.push_back(t_availableIndex);
+				m_lightsAvailableIndexes.pop_back();
+
+				return t_availableIndex;
 			}
 			return -1;
 			// ADD PENDING INDEX
@@ -233,10 +234,12 @@ namespace Engine
 					m_lightComponents.at(a_id)->Destroy();
 					delete m_lightComponents.at(a_id);
 					m_lightComponents[a_id] = nullptr;
-					m_availableIndexes.push_back(a_id);
+					m_lightsAvailableIndexes.push_back(a_id);
 
 					m_lightsData[a_id].m_position = Math::vec3(0.f);
 					m_lightsData[a_id].m_color = Math::vec3(0.f);
+					m_lightsData[a_id].m_dir = Math::vec3(0.f);
+					m_lightsData[a_id].m_bDir = 0;
 					m_lightsData[a_id].m_intensity = 0.f;
 				}
 			}
