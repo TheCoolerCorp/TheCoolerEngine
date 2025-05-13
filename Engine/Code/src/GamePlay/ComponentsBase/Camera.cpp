@@ -118,33 +118,6 @@ namespace Engine
 				return;
 			}
 
-			const float t_deltaSpeed = m_speed * a_deltaTime;
-
-			if (a_inputHandler->IsKeyDown(Core::Window::Key::KEY_W))
-			{
-				m_center += m_currentForward * t_deltaSpeed;
-				m_eye += m_currentForward * t_deltaSpeed;
-				m_needToUpdate = true;
-			}
-			if (a_inputHandler->IsKeyDown(Core::Window::Key::KEY_S))
-			{
-				m_center -= m_currentForward * t_deltaSpeed;
-				m_eye -= m_currentForward * t_deltaSpeed;
-				m_needToUpdate = true;
-			}
-			if (a_inputHandler->IsKeyDown(Core::Window::Key::KEY_D))
-			{
-				m_center += m_right * t_deltaSpeed;
-				m_eye += m_right * t_deltaSpeed;
-				m_needToUpdate = true;
-			}
-			if (a_inputHandler->IsKeyDown(Core::Window::Key::KEY_A))
-			{
-				m_center -= m_right * t_deltaSpeed;
-				m_eye -= m_right * t_deltaSpeed;
-				m_needToUpdate = true;
-			}
-
 			if (a_inputHandler->IsMouseButtonDown(Core::Window::MouseButton::MOUSE_BUTTON_RIGHT))
 			{
 				a_window->CaptureCursor();
@@ -152,6 +125,33 @@ namespace Engine
 				{
 					m_oldMousePos = a_inputHandler->GetCursorPosition();
 					m_hasClicked = true;
+				}
+
+				const float t_deltaSpeed = m_speed * a_deltaTime;
+
+				if (a_inputHandler->IsKeyDown(Core::Window::Key::KEY_W))
+				{
+					m_center += m_currentForward * t_deltaSpeed;
+					m_eye += m_currentForward * t_deltaSpeed;
+					m_needToUpdate = true;
+				}
+				if (a_inputHandler->IsKeyDown(Core::Window::Key::KEY_S))
+				{
+					m_center -= m_currentForward * t_deltaSpeed;
+					m_eye -= m_currentForward * t_deltaSpeed;
+					m_needToUpdate = true;
+				}
+				if (a_inputHandler->IsKeyDown(Core::Window::Key::KEY_D))
+				{
+					m_center += m_right * t_deltaSpeed;
+					m_eye += m_right * t_deltaSpeed;
+					m_needToUpdate = true;
+				}
+				if (a_inputHandler->IsKeyDown(Core::Window::Key::KEY_A))
+				{
+					m_center -= m_right * t_deltaSpeed;
+					m_eye -= m_right * t_deltaSpeed;
+					m_needToUpdate = true;
 				}
 
 				const Math::vec2 t_currentMousePos = a_inputHandler->GetCursorPosition();
