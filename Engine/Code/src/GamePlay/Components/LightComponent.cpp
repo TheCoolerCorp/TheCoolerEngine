@@ -36,7 +36,12 @@ namespace Engine
 
 		void LightComponent::SetLightFromData(const LightData& a_lightData)
 		{
-			m_light = Light(a_lightData.m_position, a_lightData.m_color, a_lightData.m_intensity);
+			LightType a_type = LightType::POINT;
+			if (a_lightData.m_bDir)
+			{
+				a_type = LightType::DIR;
+			}
+			m_light = Light(a_lightData.m_position, a_lightData.m_dir, a_lightData.m_color, a_lightData.m_intensity, a_type);
 		}
 
 		void LightComponent::Destroy()
