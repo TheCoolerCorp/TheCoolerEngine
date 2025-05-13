@@ -141,6 +141,11 @@ namespace Engine
 					m_lastState = m_isPlaying;
 					for (int i = 0; i < m_objs.size(); ++i)
 					{
+						if (!m_objs[i])
+						{
+							continue;
+						}
+
 						m_objs[i]->GetComponent<TransformComponent>()->Destroy();
 						delete m_objs[i];
 					}
@@ -167,7 +172,7 @@ namespace Engine
 					m_lastState = m_isPlaying;
 				}
 				m_physicsSystem->Update(a_deltatime, this);
-				m_renderSystem->UpdateCamera(a_renderer, a_deltatime, a_window, a_inputHandler, m_gameCameraId, m_objs[m_mainCameraObjectId]->GetComponent<TransformComponent>()->GetTransform()->GetTransformMatrix());
+				m_renderSystem->UpdateCamera(a_renderer, a_deltatime, a_window, a_inputHandler, m_gameCameraId, m_objs[m_mainCameraObjectId] ? m_objs[m_mainCameraObjectId]->GetComponent<TransformComponent>()->GetTransform()->GetTransformMatrix() : Math::mat4());
 			}
 
 
@@ -332,9 +337,18 @@ namespace Engine
 			}
 			else
 			{
-				m_objs[m_availableIds.back()] = a_object;
-				a_object->SetId(m_availableIds.back());
-				m_availableIds.pop_back();
+				if (m_objs.empty())
+				{
+					m_objs.push_back(a_object);
+					a_object->SetId(static_cast<uint32_t>(m_objs.size()) - 1);
+					m_availableIds.clear();
+				}
+				else
+				{
+					m_objs[m_availableIds.back()] = a_object;
+					a_object->SetId(m_availableIds.back());
+					m_availableIds.pop_back();
+				}
 			}
 
 			if (a_parentTransformId != -1)
