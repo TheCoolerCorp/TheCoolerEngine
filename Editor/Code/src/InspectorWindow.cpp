@@ -6,7 +6,9 @@
 #include "../Include/InspectorComponent/UiTransformComponent.h"
 #include "../Include/InspectorComponent/UiMeshComponent.h"
 #include "../Include/UiWindow.h"
+#include "GamePlay/Components/PlayerControllerComponent.h"
 #include "InspectorComponent/UiLightComponent.h"
+#include "InspectorComponent/UiPlayerControllerComponent.h"
 #include "InspectorComponent/UiRigidbodyComponent.h"
 
 Editor::EditorLayer::Ui::InspectorUiWindow::~InspectorUiWindow()
@@ -147,6 +149,9 @@ void Editor::EditorLayer::Ui::InspectorUiWindow::RefreshCurrentObject()
 		case Engine::GamePlay::ComponentType::LIGHT:
 			AddComponent(new UiLightComponent(m_layer, m_selectedObject->GetComponent<Engine::GamePlay::LightComponent>()));
 			break;
+		case Engine::GamePlay::ComponentType::PLAYERCONTROLLER:
+			AddComponent(new UiPlayerControllerComponent(m_layer, m_selectedObject->GetComponent<Engine::GamePlay::PlayerControllerComponent>()));
+			break;
 		}
 	}
 }
@@ -263,6 +268,14 @@ void Editor::EditorLayer::Ui::InspectorUiWindow::UiDrawComponentAddWindow()
 			if (ImGui::Selectable("Light"))
 			{
 				m_selectedObject->AddComponent<Engine::GamePlay::LightComponent>();
+				MarkOutOfDate();
+			}
+		}
+		if (!HasComponentOfType(UiComponentType::PLAYERCONTROLLER))
+		{
+			if (ImGui::Selectable("PlayerController"))
+			{
+				m_selectedObject->AddComponent<Engine::GamePlay::PlayerControllerComponent>();
 				MarkOutOfDate();
 			}
 		}

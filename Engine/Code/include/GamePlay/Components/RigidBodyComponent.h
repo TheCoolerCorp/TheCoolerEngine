@@ -98,6 +98,7 @@ namespace Engine
 			ENGINE_API [[nodiscard]] RigidBodyData GetRigidBodyData() const;
 			ENGINE_API [[nodiscard]] MeshComponent* GetMeshComponent() const { return m_meshComponent; }
 			ENGINE_API [[nodiscard]] int GetMeshID() const { return m_meshId; }
+			ENGINE_API [[nodiscard]] Math::vec3 GetVelocity();
 
 			ENGINE_API static ComponentType GetType() { return ComponentType::RIGIDBODY; }
 			ENGINE_API static RigidBodyComponent* GetComponent(uint32_t a_id);

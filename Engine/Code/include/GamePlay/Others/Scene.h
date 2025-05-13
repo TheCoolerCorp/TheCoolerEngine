@@ -10,7 +10,7 @@
 #include "GamePlay/Others/GameObject.h"
 #include <nlohmann/json.hpp>
 #include "GamePlay/ComponentsBase/Camera.h"
-
+#include "GamePlay/Systems/EventSystem.h"
 namespace Engine
 {
 	namespace GamePlay
@@ -50,6 +50,9 @@ namespace Engine
 			ENGINE_API [[nodiscard]] std::string& GetName() { return m_name; }
 			ENGINE_API [[nodiscard]] RenderSystem* GetRenderSystem() { return m_renderSystem; }
 			ENGINE_API [[nodiscard]] Camera* GetMainCamera() const { return m_mainCamera; }
+			ENGINE_API [[nodiscard]] CoolerEvent<>& GetBeginPlayEvent() { return m_beginPlayEvent; }
+			ENGINE_API [[nodiscard]] CoolerEvent<>& GetEndPlayEvent() { return m_endPlayEvent; }
+
 
 			ENGINE_API void Save();
 			ENGINE_API void Load(Core::Renderer* a_renderer);
@@ -57,6 +60,8 @@ namespace Engine
 			[[nodiscard]] ENGINE_API bool IsPlaying() const { return m_isPlaying; }
 			ENGINE_API bool IsPlaying() { return m_isPlaying; }
 			ENGINE_API bool HasObject(int a_id);
+
+
 		private:
 			static nlohmann::ordered_json SerializeTransformComponent(const TransformComponent& a_transform);
 			static TransformData DeserializeTransformComponent(const nlohmann::ordered_json& a_json);
@@ -71,6 +76,9 @@ namespace Engine
 
 			void SetMainCamera(const int a_objectId) { m_mainCameraObjectId = a_objectId; }
 
+			CoolerEvent<> m_beginPlayEvent = CoolerEvent<>();
+			CoolerEvent<> m_endPlayEvent = CoolerEvent<>();
+
 			std::vector<GameObject*> m_objs;
 			std::vector<int> m_deletionQueue;
 			std::vector<int> m_availableIds;
@@ -81,6 +89,7 @@ namespace Engine
 			TransformSystem* m_transformSystem = nullptr;
 			RenderSystem* m_renderSystem = nullptr;
 			PhysicsSystem* m_physicsSystem = nullptr;
+			GameComponentSystem* m_gameComponentSystem = nullptr;
 
 			bool m_isPlaying = false;
 			bool m_lastState = false;

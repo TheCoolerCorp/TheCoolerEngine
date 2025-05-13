@@ -10,6 +10,7 @@ namespace Engine
 		RenderSystem* ServiceLocator::m_meshRendererSystem = nullptr;
 		PhysicsSystem* ServiceLocator::m_physicsSystem = nullptr;
 		Core::Renderer* ServiceLocator::m_renderer = nullptr;
+		GameComponentSystem* ServiceLocator::m_gameComponentSystem = nullptr;
 
 		void ServiceLocator::ProvideThreadPool(Core::Multithread::ThreadPool* a_threadPool)
 		{
@@ -39,6 +40,16 @@ namespace Engine
 		void ServiceLocator::ProvideRenderer(Core::Renderer* a_renderer)
 		{
 			m_renderer = a_renderer;
+		}
+
+		void ServiceLocator::ProvideGameComponentSystem(GameComponentSystem* a_gameComponentSystem)
+		{
+			m_gameComponentSystem = a_gameComponentSystem;
+		}
+
+		GameComponentSystem* ServiceLocator::GetGameComponentSystem()
+		{
+			return m_gameComponentSystem;
 		}
 
 		Core::Multithread::ThreadPool* ServiceLocator::GetThreadPool()

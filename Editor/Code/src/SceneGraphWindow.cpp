@@ -68,9 +68,9 @@ void Editor::EditorLayer::Ui::SceneGraphUiWindow::UiDrawObject(int a_transformId
 			UiAddDragDropSource(t_object);
 			UiAddObjectDragDropTarget(t_object);
    			UiAddPopupContext(t_object);
-   			if (ImGui::IsItemClicked())
+   			if (ImGui::IsItemHovered() && ImGui::IsMouseReleased(ImGuiMouseButton_Left) && !ImGui::IsMouseDragging(ImGuiMouseButton_Left))
 			{
-				m_layer->SetSelectedGameObject(t_object);
+   				m_layer->SetSelectedGameObject(t_object);
 			}
    			return;
    		}
@@ -78,9 +78,9 @@ void Editor::EditorLayer::Ui::SceneGraphUiWindow::UiDrawObject(int a_transformId
        bool t_open = ImGui::TreeNodeEx(std::to_string(t_object->GetId()).c_str(), ImGuiTreeNodeFlags_OpenOnArrow, t_object->GetName().c_str());
 	   UiAddDragDropSource(t_object);
 	   UiAddObjectDragDropTarget(t_object);
-   	   if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen())
+   	   if (ImGui::IsItemHovered() && ImGui::IsMouseReleased(ImGuiMouseButton_Left) && !ImGui::IsMouseDragging(ImGuiMouseButton_Left) && !ImGui::IsItemToggledOpen())
        {
-           m_layer->SetSelectedGameObject(t_object);
+   	   		m_layer->SetSelectedGameObject(t_object);
        }
        UiAddPopupContext(t_object);
 

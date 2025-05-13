@@ -64,6 +64,11 @@ namespace Engine
 
 			ENGINE_API void SetNeedToUpdate(const bool a_needToUpdate) { m_needUpdate = a_needToUpdate; }
 
+
+			ENGINE_API vec3 GetForward();
+			ENGINE_API vec3 GetRight();
+			ENGINE_API vec3 GetUp();
+
 		private:
 			bool m_needUpdate = true;
 			vec3 m_pos;

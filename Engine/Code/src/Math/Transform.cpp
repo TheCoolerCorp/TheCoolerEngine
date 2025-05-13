@@ -54,6 +54,28 @@ namespace Engine
 			m_globalScale = vec3::GetScale(m_transform);
 		}
 
+		vec3 Transform::GetForward()
+		{
+			Math::vec3 t_forward = vec3(0, 0, -1);
+			Math::vec3 t_result = m_globalRot * t_forward;
+			t_result.x = -t_result.x;
+			return t_result;
+		}
+
+		vec3 Transform::GetRight()
+		{
+			Math::vec3 t_right = vec3(1, 0, 0);
+			Math::vec3 t_result = m_globalRot * t_right;
+			t_result.x = -t_result.x;
+			return t_result;
+		}
+
+		vec3 Transform::GetUp()
+		{
+			Math::vec3 t_up = vec3(0, 1, 0);
+			return m_globalRot * t_up;
+		}
+
 		UniformMatrixs& Transform::GetUniformsMatrixs()
 		{
 			m_uniforms = { m_transform, m_normalMatrix };

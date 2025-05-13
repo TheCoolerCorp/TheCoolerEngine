@@ -59,6 +59,10 @@ namespace Engine
 			[[nodiscard]] ENGINE_API std::vector<int> GetChildrenIDs() const { return m_childrenIds; }
 			[[nodiscard]] ENGINE_API Math::mat4 GetMatrix() { return m_transform->GetTransformMatrix(); }
 
+			[[nodiscard]] ENGINE_API Math::vec3 GetForward() { return m_transform->GetForward(); }
+			[[nodiscard]] ENGINE_API Math::vec3 GetRight() { return m_transform->GetRight(); }
+			[[nodiscard]] ENGINE_API Math::vec3 GetUp() { return m_transform->GetUp(); }
+
 			ENGINE_API static TransformComponent* GetComponent(int a_id);
 			ENGINE_API static void RemoveComponent(int a_id);
 
@@ -67,7 +71,6 @@ namespace Engine
 		private:
 			Math::Transform* m_transform = nullptr;
 
-			int m_gameObjectId = -1;
 			int m_parentId = -1;
 			std::vector<int> m_childrenIds{};
 		};

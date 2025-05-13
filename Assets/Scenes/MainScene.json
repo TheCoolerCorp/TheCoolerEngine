@@ -31,37 +31,6 @@
         }
     },
     {
-        "GameObject": "SkyBox",
-        "TransformComponent": {
-            "position": {
-                "x": 0.0,
-                "y": 0.0,
-                "z": 0.0
-            },
-            "rotation": {
-                "x": 0.0,
-                "y": 0.0,
-                "z": 0.0,
-                "w": 1.0
-            },
-            "scale": {
-                "x": 1.0,
-                "y": 1.0,
-                "z": 1.0
-            },
-            "parent": -1
-        },
-        "MeshComponent": {
-            "mesh": "Assets\\Meshes\\BaseObjects\\Cube.obj",
-            "type": 2,
-            "albedo": "Assets\\Textures\\CubeMap\\cubemap.png",
-            "normal": "",
-            "metallic": "",
-            "roughness": "",
-            "ao": ""
-        }
-    },
-    {
         "GameObject": "Ground",
         "TransformComponent": {
             "position": {
@@ -190,9 +159,9 @@
         "GameObject": "Camera",
         "TransformComponent": {
             "position": {
-                "x": 0.0,
-                "y": 0.0,
-                "z": 3.9000000953674316
+                "x": -0.017102420330047607,
+                "y": 1.2293474674224854,
+                "z": 3.1751925945281982
             },
             "rotation": {
                 "x": 0.0,
@@ -201,11 +170,11 @@
                 "w": 1.0
             },
             "scale": {
-                "x": 1.0,
-                "y": 1.0,
-                "z": 1.0
+                "x": 0.4000000059604645,
+                "y": 0.4000000059604645,
+                "z": 0.4000000059604645
             },
-            "parent": -1
+            "parent": 8
         },
         "CameraComponent": {
             "up": {
@@ -357,6 +326,65 @@
         },
         "MeshComponent": {
             "mesh": "Assets\\Meshes\\BaseObjects\\Sphere.obj",
+            "type": 0,
+            "albedo": "Assets\\Textures\\BaseObjectTexture.png",
+            "normal": "",
+            "metallic": "",
+            "roughness": "",
+            "ao": ""
+        }
+    },
+    {
+        "GameObject": "Player",
+        "TransformComponent": {
+            "position": {
+                "x": -0.017102420330047607,
+                "y": 0.8293474912643433,
+                "z": 3.1751925945281982
+            },
+            "rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0,
+                "w": 1.0
+            },
+            "scale": {
+                "x": 0.4000000059604645,
+                "y": 0.4000000059604645,
+                "z": 0.4000000059604645
+            },
+            "parent": -1
+        },
+        "RigidBodyComponent": {
+            "body type": 2,
+            "layer": 1,
+            "collider type": 0,
+            "position": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "radius": 1.0,
+            "half height": 1.0,
+            "rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0,
+                "w": 1.0
+            },
+            "mass": 1.0,
+            "enable": true,
+            "lock rotation X": true,
+            "lock rotation Y": true,
+            "lock rotation Z": true
+        },
+        "MeshComponent": {
+            "mesh": "Assets\\Meshes\\BaseObjects\\Capsule.obj",
             "type": 0,
             "albedo": "Assets\\Textures\\BaseObjectTexture.png",
             "normal": "",
