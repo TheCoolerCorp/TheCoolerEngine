@@ -17,12 +17,12 @@ namespace Engine
 			uint32_t t_lightsSize = MAX_LIGHTS * sizeof(LightData);
 			for (int i = 0; i < MAX_LIGHTS; ++i)
 			{
-				m_lightsData[i] = { Math::vec3(0.f), Math::vec3(0.f), 0.f };
+				m_lightsData[i] = { Math::vec3(0.f), Math::vec3(0.f), Math::vec3(0.f, 0.f, 1.f), 0.f, false };
 			}
 			m_lightsDescriptor->SetUniform(a_renderer->GetLogicalDevice(), a_renderer->GetPhysicalDevice(), a_renderer->GetCommandPool(), 0, &m_lightsData, t_lightsSize, 0, 1);
 		}
 
-		void RenderSystem::Update(Core::Renderer* a_renderer, std::vector<std::pair<int,Math::UniformMatrixs>> a_updatedMatrix, std::vector<std::pair<int, Math::vec3>> a_lightsUpdate, std::vector<int> a_materialUpdate, std::vector<std::pair<int, Math::mat4>> a_cameraUpdatedMatrix)
+		void RenderSystem::Update(Core::Renderer* a_renderer, std::vector<std::pair<int,Math::UniformMatrixs>> a_updatedMatrix, std::vector<std::tuple<int, Math::vec3, Math::vec3>> a_lightsUpdate, std::vector<int> a_materialUpdate, std::vector<std::pair<int, Math::mat4>> a_cameraUpdatedMatrix)
 		{
 			if (a_updatedMatrix.empty())
 			{
@@ -57,10 +57,13 @@ namespace Engine
 				 *
 				 * ISSUE HERE
 				 */
-				m_lightComponents[a_lightsUpdate[i].first]->GetLight().SetPosition(a_lightsUpdate[i].second);
-				m_lightsData[a_lightsUpdate[i].first].m_position = a_lightsUpdate[i].second;
-				m_lightsData[a_lightsUpdate[i].first].m_color = m_lightComponents[a_lightsUpdate[i].first]->GetLight().GetColor();
-				m_lightsData[a_lightsUpdate[i].first].m_intensity = m_lightComponents[a_lightsUpdate[i].first]->GetLight().GetIntensisty();
+				m_lightComponents[std::get<0>(a_lightsUpdate[i])]->GetLight().SetPosition(std::get<1>(a_lightsUpdate[i]));
+				m_lightComponents[std::get<0>(a_lightsUpdate[i])]->GetLight().SetDir(std::get<2>(a_lightsUpdate[i]));
+				m_lightsData[std::get<0>(a_lightsUpdate[i])].m_position = std::get<1>(a_lightsUpdate[i]);
+				m_lightsData[std::get<0>(a_lightsUpdate[i])].m_color = m_lightComponents[std::get<0>(a_lightsUpdate[i])]->GetLight().GetColor();
+				m_lightsData[std::get<0>(a_lightsUpdate[i])].m_dir = m_lightComponents[std::get<0>(a_lightsUpdate[i])]->GetLight().GetDir();
+				m_lightsData[std::get<0>(a_lightsUpdate[i])].m_intensity = m_lightComponents[std::get<0>(a_lightsUpdate[i])]->GetLight().GetIntensisty();
+				m_lightsData[std::get<0>(a_lightsUpdate[i])].m_bDir = m_lightComponents[std::get<0>(a_lightsUpdate[i])]->GetLight().GetIsDir();
 			}
 			m_lightsDescriptor->UpdateUniforms(t_logicalDevice, 0, &m_lightsData, MAX_LIGHTS * sizeof(LightData), 0);
 

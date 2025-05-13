@@ -223,10 +223,13 @@ namespace Editor::EditorLayer::Ui
 				if (ImGui::MenuItem("Point Light"))
 				{
 					SetSelectedGameObject(m_app->GetCurrentScene()->AddGameObject(Engine::GamePlay::GameObjectType::OBJECTTYPE_LIGHT));
+					m_selectedGameObject->SetName("Point Light");
 				}
 				if (ImGui::MenuItem("Directional Light"))
 				{
-					//m_app->GetCurrentScene()->AddGameObject(Engine::GamePlay::GameObjectType::OBJECTTYPE_LIGHT);
+					SetSelectedGameObject(m_app->GetCurrentScene()->AddGameObject(Engine::GamePlay::GameObjectType::OBJECTTYPE_LIGHT));
+					m_selectedGameObject->GetComponent<Engine::GamePlay::LightComponent>()->GetLight().SetIsDir(true);
+					m_selectedGameObject->SetName("Directional Light");
 				}
 				if (ImGui::MenuItem("Spot Light"))
 				{

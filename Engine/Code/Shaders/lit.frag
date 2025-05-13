@@ -32,13 +32,15 @@ struct LightData
 {
     vec3 position;
     vec3 color;
+    vec3 dir;
     float intensity;
+    bool isDir;
 };
 
 // Lights
 layout(set = 2, binding = 0) uniform LightDatas 
 {
-    LightData data[5];
+    LightData data[10];
 
 } light_lhtValues;
 
@@ -200,13 +202,31 @@ void main()
 
      vec3 Lo = vec3(0.0);
 
-    for(int i = 0; i < 5; ++i)  
+    for(int i = 0; i < 10; ++i)  
     {
-        vec3 lightVec = light_lhtValues.data[i].position - inWorldPos;
+        vec3 lightVec;
+        if (light_lhtValues.data[i].isDir)
+        {
+            //lightVec = light_lhtValues.data[i].dir - inWorldPos;
+            lightVec = -light_lhtValues.data[i].dir;
+        }
+        else
+        {
+            lightVec = light_lhtValues.data[i].position - inWorldPos;
+        }
+
         vec3 lightDir = normalize(lightVec);
         vec3 halfwayVec = normalize(camDir + lightDir);
         
-        vec3 radiance = Radiance(lightVec, light_lhtValues.data[i].color, light_lhtValues.data[i].intensity);
+        vec3 radiance;
+        if (light_lhtValues.data[i].isDir)
+        {
+           radiance = light_lhtValues.data[i].color * light_lhtValues.data[i].intensity;
+        }
+        else
+        {
+            radiance = Radiance(lightVec, light_lhtValues.data[i].color, light_lhtValues.data[i].intensity);
+        }
 
         float D   = Distribution(halfwayVec, roughness, normal);   
         float G   = Geometry(camDir, lightDir, roughness, normal);      
