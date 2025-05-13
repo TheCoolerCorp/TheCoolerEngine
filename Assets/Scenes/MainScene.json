@@ -21,7 +21,7 @@
             "parent": -1
         },
         "MeshComponent": {
-            "mesh": "Assets\\Meshes\\SkyboxCube.obj",
+            "mesh": "Assets\\Meshes\\BaseObjects\\Cube.obj",
             "type": 2,
             "albedo": "Assets\\Textures\\CubeMap\\cubemap.png",
             "normal": "",
