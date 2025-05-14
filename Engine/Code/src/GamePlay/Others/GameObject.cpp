@@ -187,6 +187,7 @@ namespace Engine
 		{
 			RemoveComponent<TransformComponent>();
 			RemoveComponent<MeshComponent>();
+			RemoveComponent<RigidBodyComponent>();
 			RemoveComponent<LightComponent>();
 		}
 	}
