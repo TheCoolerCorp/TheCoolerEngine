@@ -103,6 +103,8 @@ namespace Engine
 			ENGINE_API [[nodiscard]] int GetMeshID() const { return m_meshId; }
 			ENGINE_API [[nodiscard]] Math::vec3 GetVelocity();
 
+			ENGINE_API [[nodiscard]] bool IsGrounded(Math::vec3 a_pos, Math::quat a_rot);
+
 			ENGINE_API static ComponentType GetType() { return ComponentType::RIGIDBODY; }
 			ENGINE_API static RigidBodyComponent* GetComponent(uint32_t a_id);
 

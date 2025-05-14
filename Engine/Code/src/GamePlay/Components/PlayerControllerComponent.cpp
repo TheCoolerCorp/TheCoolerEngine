@@ -72,7 +72,10 @@ namespace Engine::GamePlay
 		}
 		if (a_inputHandler->IsKeyDown(Core::Window::Key::KEY_SPACE))
 		{
-			t_rigidBody->AddImpulse(t_transform->GetUp() * a_deltaTime * m_jumpForce);
+			if (t_rigidBody->GetVelocity().y < 0.01 && t_rigidBody->IsGrounded(t_transform->GetTransform()->GetGlobalPosition(), t_transform->GetTransform()->GetGlobalRotation())) //a rather simplistic solution for jumping,, for now
+			{
+				t_rigidBody->AddImpulse(t_transform->GetUp() * m_jumpForce);
+			}
 		}
 
 		//mouse movement
@@ -95,10 +98,11 @@ namespace Engine::GamePlay
 			t_rigidBody->AddForce(Math::vec3(t_movement.z, 0, t_movement.x));
 		}
 		Math::vec3 t_velocity = t_rigidBody->GetVelocity();
-		if (Math::vec3::Norm(Math::vec3(t_velocity.x, 0, t_velocity.z)) > m_maxSpeed)
+		float t_norm = Math::vec3::Norm(Math::vec3(t_velocity.x, 0, t_velocity.z));
+		if (t_norm > m_maxSpeed)
 		{
 			t_velocity = Math::vec3(t_velocity.x, 0, t_velocity.z);
-			t_velocity = Math::vec3::Normalize(t_velocity) * m_maxSpeed;;
+			t_velocity = Math::vec3::Normalize(t_velocity) * m_maxSpeed;
 			t_velocity.y = t_rigidBody->GetVelocity().y;
 			t_rigidBody->SetLinearVelocity(t_velocity);
 		}

@@ -6,6 +6,8 @@
 
 #include "GamePlay/Components/Meshcomponent.h"
 #include "Core/Utils.h"
+#include "GamePlay/Components/PlayerControllerComponent.h"
+
 namespace Engine
 {
 	namespace GamePlay
@@ -188,6 +190,7 @@ namespace Engine
 			RemoveComponent<TransformComponent>();
 			RemoveComponent<MeshComponent>();
 			RemoveComponent<LightComponent>();
+			RemoveComponent<PlayerControllerComponent>();
 		}
 	}
 }

@@ -9,6 +9,8 @@
 #include <Jolt/Physics/Body/BodyCreationSettings.h>
 
 #include "Gameplay/ServiceLocator.h"
+#include "Jolt/Physics/Collision/CollisionCollectorImpl.h"
+#include "Jolt/Physics/Collision/ShapeCast.h"
 #include "Jolt/Physics/Collision/Shape/CapsuleShape.h"
 
 namespace Engine
@@ -35,7 +37,8 @@ namespace Engine
 			const JPH::EActivation t_activation = a_enable ? JPH::EActivation::Activate : JPH::EActivation::DontActivate;
 			SetActive(a_enable);
 
-			JPH::BodyCreationSettings t_bodySettings(new JPH::BoxShape(t_halfExtent), t_position, t_rotation, t_motionType, t_layer);
+			m_shape = new JPH::BoxShape(t_halfExtent);
+			JPH::BodyCreationSettings t_bodySettings(m_shape, t_position, t_rotation, t_motionType, t_layer);
 			t_bodySettings.mOverrideMassProperties = JPH::EOverrideMassProperties::CalculateInertia;
 			t_bodySettings.mMassPropertiesOverride.mMass = a_mass;
 			t_bodySettings.mAllowDynamicOrKinematic = true;
@@ -63,7 +66,8 @@ namespace Engine
 			const JPH::EActivation t_activation = a_enable ? JPH::EActivation::Activate : JPH::EActivation::DontActivate;
 			SetActive(a_enable);
 
-			JPH::BodyCreationSettings t_bodySettings(new JPH::SphereShape(a_radius), t_position, t_rotation, t_motionType, t_layer);
+			m_shape = new JPH::SphereShape(a_radius);
+			JPH::BodyCreationSettings t_bodySettings(m_shape, t_position, t_rotation, t_motionType, t_layer);
 			t_bodySettings.mOverrideMassProperties = JPH::EOverrideMassProperties::CalculateInertia;
 			t_bodySettings.mMassPropertiesOverride.mMass = a_mass;
 			t_bodySettings.mAllowDynamicOrKinematic = true;
@@ -92,7 +96,8 @@ namespace Engine
 			const JPH::EActivation t_activation = a_enable ? JPH::EActivation::Activate : JPH::EActivation::DontActivate;
 			SetActive(a_enable);
 
-			JPH::BodyCreationSettings t_bodySettings(new JPH::CapsuleShape(m_halfHeight, m_radius), t_position, t_rotation, t_motionType, t_layer);
+			m_shape = new JPH::CapsuleShape(m_halfHeight, m_radius);
+			JPH::BodyCreationSettings t_bodySettings(m_shape, t_position, t_rotation, t_motionType, t_layer);
 			t_bodySettings.mOverrideMassProperties = JPH::EOverrideMassProperties::CalculateInertia;
 			t_bodySettings.mMassPropertiesOverride.mMass = a_mass;
 			t_bodySettings.mAllowDynamicOrKinematic = true;
@@ -308,23 +313,23 @@ namespace Engine
 				t_bodyInterface->DeactivateBody(m_body->GetID());
 
 				const JPH::Vec3 t_halfExtent = { m_scale.x * 0.5f, m_scale.y * 0.5f, m_scale.z * 0.5f };
-				JPH::Shape* newShape = new JPH::BoxShape(t_halfExtent);
+				m_shape = new JPH::BoxShape(t_halfExtent);
 
-				t_bodyInterface->SetShape(m_body->GetID(), newShape, true, JPH::EActivation::Activate); // 'true' means update mass properties
+				t_bodyInterface->SetShape(m_body->GetID(), m_shape, true, JPH::EActivation::Activate); // 'true' means update mass properties
 				}
 			case ColliderType::CAPSULE:
 			{
 				JPH::BodyInterface* t_bodyInterface = GamePlay::ServiceLocator::GetPhysicsSystem()->GetBodyInterface();
 				t_bodyInterface->DeactivateBody(m_body->GetID());
-				JPH::Shape* newShape = new JPH::CapsuleShape(m_halfHeight, m_radius);
-				t_bodyInterface->SetShape(m_body->GetID(), newShape, true, JPH::EActivation::Activate); // 'true' means update mass properties
+				m_shape = new JPH::CapsuleShape(m_halfHeight, m_radius);
+				t_bodyInterface->SetShape(m_body->GetID(), m_shape, true, JPH::EActivation::Activate); // 'true' means update mass properties
 			}
 			case ColliderType::SPHERE:
 			{
 				JPH::BodyInterface* t_bodyInterface = GamePlay::ServiceLocator::GetPhysicsSystem()->GetBodyInterface();
 				t_bodyInterface->DeactivateBody(m_body->GetID());
-				JPH::Shape* newShape = new JPH::SphereShape(m_radius);
-				t_bodyInterface->SetShape(m_body->GetID(), newShape, true, JPH::EActivation::Activate); // 'true' means update mass properties
+				m_shape = new JPH::SphereShape(m_radius);
+				t_bodyInterface->SetShape(m_body->GetID(), m_shape, true, JPH::EActivation::Activate); // 'true' means update mass properties
 			}
 			}
 		}
@@ -373,6 +378,44 @@ namespace Engine
 		JPH::BodyID RigidBody::GetBodyID() const
 		{
 			return m_body->GetID();
+		}
+
+		/**
+		 * Function returning a bool to check if an object is 'grounded' or not. Does a raycast towards the ground
+		 * Needs the object's position and rotation to correctly set the starting position.
+		 */
+		bool RigidBody::IsGrounded(Math::vec3 a_pos, Math::quat a_rot)
+		{
+			JPH::Vec3 jphPosition(a_pos.x, a_pos.y, a_pos.z);
+			JPH::Quat jphRotation(a_rot.x, a_rot.y, a_rot.z, a_rot.w);
+
+			JPH::Mat44 startTransform = JPH::Mat44::sRotationTranslation(jphRotation, jphPosition);
+
+
+			JPH::RShapeCast t_shapeCast
+			{
+				m_shape,
+				{1,1,1},
+				startTransform,
+				{0,-1,0}
+			};
+
+			JPH::ShapeCastSettings t_filter;
+			IgnoreBodyFilter ignoreSelfFilter(m_body->GetID());
+			JPH::BroadPhaseLayerFilter t_layerFilter; //blank elements we need so i can access the BodyFilter of the CastShape function
+			JPH::ObjectLayerFilter t_objectLayerFilter;
+			JPH::ClosestHitCollisionCollector<JPH::CastShapeCollector> t_collector;
+
+			JPH::PhysicsSystem* t_physicsSystem = GamePlay::ServiceLocator::GetPhysicsSystem()->GetPhysicsSystem();
+			//this thing was genuinely torturous. Terrible documentation and just look at all the stuff i had to do
+			t_physicsSystem->GetNarrowPhaseQuery().CastShape(t_shapeCast, t_filter, JPH::Vec3(0,0,0), t_collector, t_layerFilter,t_objectLayerFilter, ignoreSelfFilter);
+
+			if (t_collector.HadHit()) {
+				const auto& t_hit = t_collector.mHit;
+				if (t_hit.mFraction < 0.1f)
+					return true;
+			}
+			return false;
 		}
 
 		void RigidBody::Remove() const

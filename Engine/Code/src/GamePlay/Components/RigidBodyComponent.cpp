@@ -353,6 +353,12 @@ namespace Engine
 			return { t_velocity.GetX(), t_velocity.GetY(), t_velocity.GetZ() };
 		}
 
+		//shapecast towards the ground to check if anything is colliding within a specific distance threshold
+		bool RigidBodyComponent::IsGrounded(Math::vec3 a_pos, Math::quat a_rot)
+		{
+			return m_rigidBody->IsGrounded(a_pos, a_rot);
+		}
+
 		RigidBodyComponent* RigidBodyComponent::GetComponent(const uint32_t a_id)
 		{
 			return ServiceLocator::GetPhysicsSystem()->GetComponent(a_id);
