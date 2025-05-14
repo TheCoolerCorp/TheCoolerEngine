@@ -13,7 +13,8 @@ namespace Editor::EditorLayer::Ui
 		TRANSFORM,
 		MESH,
 		RIGIDBODY,
-		LIGHT
+		LIGHT,
+		PLAYERCONTROLLER
 	};
 
 	class InspectorComponent;

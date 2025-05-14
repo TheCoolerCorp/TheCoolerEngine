@@ -65,7 +65,7 @@ namespace Editor
 			t_defaultCubemapTexture->CreateImage(m_renderer);
 
 			m_currentScene = new Scene();
-			m_currentScene->Create(m_renderer, "MainScene", a_width, a_height);
+			m_currentScene->Create(m_renderer, m_mainWindow, "MainScene", a_width, a_height);
 
 			t_imguiLayer->AddWindow(new Ui::SceneGraphUiWindow(m_renderer, t_imguiLayer, m_currentScene));
 			t_imguiLayer->AddWindow(new Ui::InspectorUiWindow(m_renderer, t_imguiLayer));
@@ -85,7 +85,7 @@ namespace Editor
 				LayerProcessInput(m_inputHandler, m_deltaTime);
 
 				/*
-				 * Basic begin frame to acquired the next image index in the swapchain to draw in for presentation on screen
+				 * Basic begin frame to acquire the next image index in the swapchain to draw in for presentation on screen
 				 */
 				uint32_t t_imageIndex = 0;
 				m_renderer->GetSwapChain()->BeginFrame(m_renderer->GetLogicalDevice(), &t_imageIndex);
@@ -165,7 +165,6 @@ namespace Editor
 			for (Layer* layer : m_layers)
 			{
 				layer->OnUpdate(m_deltaTime);
-				//layer->OnUiRender();
 			}
 		}
 

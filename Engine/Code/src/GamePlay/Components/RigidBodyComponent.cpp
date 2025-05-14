@@ -345,6 +345,14 @@ namespace Engine
 			return t_data;
 		}
 
+		Math::vec3 RigidBodyComponent::GetVelocity()
+		{
+			JPH::BodyInterface* t_bodyInterface = ServiceLocator::GetPhysicsSystem()->GetBodyInterface();
+			const JPH::BodyID t_bodyId = m_rigidBody->GetBodyID();
+			const JPH::Vec3 t_velocity = t_bodyInterface->GetLinearVelocity(t_bodyId);
+			return { t_velocity.GetX(), t_velocity.GetY(), t_velocity.GetZ() };
+		}
+
 		RigidBodyComponent* RigidBodyComponent::GetComponent(const uint32_t a_id)
 		{
 			return ServiceLocator::GetPhysicsSystem()->GetComponent(a_id);

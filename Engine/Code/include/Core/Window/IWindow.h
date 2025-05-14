@@ -6,6 +6,7 @@
 #include "EngineExport.h"
 
 #include "Core/Logger/Logger.h"
+#include "GamePlay/Systems/EventSystem.h"
 
 namespace Engine
 {
@@ -44,6 +45,13 @@ namespace Engine
 				ENGINE_API virtual void ResizeFramebuffer() = 0;
 
 				ENGINE_API virtual void CaptureCursor(bool a_capture = true) = 0;
+
+				ENGINE_API CoolerEvent<bool>& GetMouseCapturedEvent()
+				{
+					return m_mouseCapturedEvent;
+				}
+			private:
+				CoolerEvent<bool> m_mouseCapturedEvent;
 			};
 		}
 	}

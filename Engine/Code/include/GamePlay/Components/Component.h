@@ -19,7 +19,9 @@ namespace Engine
 			RIGIDBODY = 3,
 			COLLIDERMESH = 4,
 			LIGHT = 5,
-			CAMERA = 6
+			CAMERA = 6,
+			GAMECOMPONENT = 7,
+			PLAYERCONTROLLER = 8,
 		};
 
 		class Component

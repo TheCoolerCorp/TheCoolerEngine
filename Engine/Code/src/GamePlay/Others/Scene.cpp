@@ -17,7 +17,7 @@ namespace Engine
 {
 	namespace GamePlay
 	{
-		void Scene::Create(Core::Renderer* a_renderer, const char* a_name, int a_width, int a_height)
+		void Scene::Create(Core::Renderer* a_renderer, Core::Window::IWindow* a_window, const char* a_name, int a_width, int a_height)
 		{
 			m_renderer = a_renderer;
 			m_name = a_name;
@@ -32,10 +32,14 @@ namespace Engine
 			m_physicsSystem = new PhysicsSystem;
 			m_physicsSystem->Create();
 
+			m_gameComponentSystem = new GameComponentSystem;
+			m_gameComponentSystem->Create(this, a_window);
+
 			Resource::ResourceManager* t_resourceManager = ServiceLocator::GetResourceManager();
 			ServiceLocator::ProvideTransformSystem(m_transformSystem);
 			ServiceLocator::ProvideRenderSystem(m_renderSystem);
 			ServiceLocator::ProvidePhysicsSystem(m_physicsSystem);
+			ServiceLocator::ProvideGameComponentSystem(m_gameComponentSystem);
 
 			Ref<Resource::Texture> t_defaultTexture= t_resourceManager->CreateResource<Resource::Texture>("Assets/Textures/DefaultTexture.png");
 			t_defaultTexture->Load();
@@ -46,17 +50,6 @@ namespace Engine
 				static_cast<float>(a_width) / static_cast<float>(a_height), 0.1f, 100.f, 10.f, 20.f);
 			m_mainCamera->Create(a_renderer);
 
-			/*Ref<Resource::Texture> t_cubemap = t_resourceManager->CreateResource<Resource::Texture>("Assets/Textures/CubeMap/cubemap.png");
-			t_cubemap->Load();
-			t_cubemap->CreateImage(a_renderer);*/
-
-			/*GameObject* t_skyBox = new GameObject("SkyBox");
-			t_skyBox->AddComponent<MeshComponent>();
-			t_skyBox->GetComponent<MeshComponent>()->SetMesh("Assets/Meshes/BaseObjects/Cube.obj", a_renderer);
-			t_skyBox->GetComponent<MeshComponent>()->GetMaterial()->SetType(SKYBOX);
-			t_skyBox->GetComponent<MeshComponent>()->GetMaterial()->SetAlbedo("Assets/Textures/CubeMap/cubemap.png", a_renderer);
-
-			AddGameObject(t_skyBox);*/
 			Load(a_renderer);
 		}
 
@@ -158,6 +151,7 @@ namespace Engine
 					m_justReloaded = true;
 				}
 				m_mainCamera->Update(a_renderer, a_inputHandler, a_window, a_deltatime);
+				m_gameComponentSystem->SceneUpdate();
 			}
 			else
 			{
@@ -174,6 +168,8 @@ namespace Engine
 				}
 				m_physicsSystem->Update(a_deltatime, this);
 				m_renderSystem->UpdateCamera(a_renderer, a_deltatime, a_window, a_inputHandler, m_gameCameraId, m_objs[m_mainCameraObjectId] ? m_objs[m_mainCameraObjectId]->GetComponent<TransformComponent>()->GetTransform()->GetTransformMatrix() : Math::mat4());
+				m_gameComponentSystem->Update();
+				m_gameComponentSystem->ProcessInputs(a_inputHandler, a_deltatime);
 			}
 
 
@@ -514,7 +510,6 @@ namespace Engine
 
 				GameObject* t_gameObject = new GameObject(t_transform.mPos, t_transform.mRot, t_transform.mScale, t_name);
 				AddGameObject(t_gameObject);
-				t_gameObject->GetComponent<TransformComponent>()->SetParent(t_transform.mParentId);
 
 				if (t_hasLight)
 				{
@@ -604,6 +599,13 @@ namespace Engine
 					SetMainCamera(t_gameObject->GetId());
 				}
 			}
+			int i = 0;
+			for (const auto& t_entry : t_scene)
+			{
+				TransformData t_transform = DeserializeTransformComponent(t_entry.at("TransformComponent"));
+				GetGameObject(i)->GetComponent<TransformComponent>()->SetParent(t_transform.mParentId);
+				i++;
+			}
 		}
 		
 		bool Scene::SetMode(bool a_mode)
@@ -614,7 +616,15 @@ namespace Engine
 				sucess = false;
 				return sucess;
 			}
-			m_isPlaying = a_mode; 
+			m_isPlaying = a_mode;
+			if (m_isPlaying)
+			{
+				m_beginPlayEvent.Invoke();
+			}
+			else
+			{
+				m_endPlayEvent.Invoke();
+			}
 			return sucess;
 		}
 

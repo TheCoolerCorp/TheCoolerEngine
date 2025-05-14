@@ -282,11 +282,23 @@ namespace Engine
 			m_lockedRotationAxes.erase(t_it);
 		}
 
+		void RigidBody::SetFriction(float a_friction)
+		{
+			m_friction = a_friction;
+			m_body->SetFriction(a_friction);
+		}
+
+		void RigidBody::SetRestitution(float a_restitution)
+		{
+			m_restitution = a_restitution;
+			m_body->SetRestitution(a_restitution);
+		}
+
 		void RigidBody::SetColliderType(ColliderType a_type)
 		{
 			if (a_type == m_colliderType)
 				return;
-			
+			m_colliderType = a_type;
 			switch (a_type)
 			{
 			case ColliderType::BOX:

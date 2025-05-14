@@ -72,6 +72,18 @@ namespace Engine
 			ClearComponents();
 		}
 
+		void GameObject::SceneUpdate()
+		{
+		}
+
+		void GameObject::Update()
+		{
+		}
+
+		void GameObject::ProcessInputs(Core::Window::IInputHandler* a_inputHandler, float a_deltaTime)
+		{
+		}
+
 		void GameObject::SetId(int a_id)
 		{
 			m_id = a_id;

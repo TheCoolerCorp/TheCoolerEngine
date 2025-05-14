@@ -12,7 +12,7 @@ namespace Editor::EditorLayer::Ui
 {
 	/*
 	* The Ui Counterpart of the RigidbodyComponent.
-	* Allows the user to see but not edit the properties of the MeshComponent.
+	* Allows the user to see and edit the properties of the MeshComponent.
 	*/
 	class UiRigidbodyComponent : public InspectorComponent
 	{
@@ -34,6 +34,7 @@ namespace Editor::EditorLayer::Ui
 	private:
 		Engine::GamePlay::RigidBodyComponent* m_rigidBody = nullptr;
 
+		void UiShowAxisLockCheckboxes();
 		void UiShowColliderInfo();
 		void UiDrawColliderTypeCombo(const std::string& a_activeComponent);
 		void UiShowBodyType();

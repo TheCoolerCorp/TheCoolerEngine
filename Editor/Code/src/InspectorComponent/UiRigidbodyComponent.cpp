@@ -1,3 +1,5 @@
+#include <algorithm>
+
 #include "../Include/InspectorComponent/UiRigidbodyComponent.h"
 
 #include "imgui.h"
@@ -58,23 +60,52 @@ void Editor::EditorLayer::Ui::UiRigidbodyComponent::UiDraw()
 	{
 		m_rigidBody->SetDebug(t_isDebug);
 	}
-
 	//Show collider values
 	UiShowColliderInfo();
-	if (ImGui::DragFloat3(("Position##" + std::to_string(m_uid)).c_str(), t_fPos, 0.1f, -FLT_MAX, +FLT_MAX))
-	{
-		m_rigidBody->SetPosition(Engine::Math::vec3(t_fPos[0], t_fPos[1], t_fPos[2]));
-	}
-	if (ImGui::DragFloat3(("Rotation##" + std::to_string(m_uid)).c_str(), t_fRot, 0.1f, -FLT_MAX, +FLT_MAX))
-	{
-		m_rigidBody->SetRotation(Engine::Math::quat(Engine::Math::vec3(t_fRot[0], t_fRot[1], t_fRot[2])));
-	}
 	UiShowBodyType();
 	UiShowCollisionLayer();
+	//Show axis lock checkboxes
+	UiShowAxisLockCheckboxes();
 }
 
 void Editor::EditorLayer::Ui::UiRigidbodyComponent::Destroy()
 {
+	//nothing to destroy
+}
+
+/**
+ * Allows the user to lock/unlock the rotational axes of the rigidbody.
+ */
+void Editor::EditorLayer::Ui::UiRigidbodyComponent::UiShowAxisLockCheckboxes()
+{
+	ImGui::Text("Lock Rotation: ");
+	ImGui::SameLine();
+	bool t_lockX = m_rigidBody->GetBody()->IsRotLockedX();
+	if (ImGui::Checkbox(("X##" + std::to_string(m_uid)).c_str(), &t_lockX))
+	{
+		if (t_lockX)
+			m_rigidBody->GetBody()->LockRotation('x');
+		else
+			m_rigidBody->GetBody()->UnlockRotation('x');
+	}
+	ImGui::SameLine();
+	bool t_lockY = m_rigidBody->GetBody()->IsRotLockedY();
+	if (ImGui::Checkbox(("Y##" + std::to_string(m_uid)).c_str(), &t_lockY))
+	{
+		if (t_lockY)
+			m_rigidBody->GetBody()->LockRotation('y');
+		else
+			m_rigidBody->GetBody()->UnlockRotation('y');
+	}
+	ImGui::SameLine();
+	bool t_lockZ = m_rigidBody->GetBody()->IsRotLockedZ();
+	if (ImGui::Checkbox(("Z##" + std::to_string(m_uid)).c_str(), &t_lockZ))
+	{
+		if (t_lockZ)
+			m_rigidBody->GetBody()->LockRotation('z');
+		else
+			m_rigidBody->GetBody()->UnlockRotation('z');
+	}
 }
 
 /**
@@ -94,6 +125,10 @@ void Editor::EditorLayer::Ui::UiRigidbodyComponent::UiShowColliderInfo()
 
 		if (ImGui::DragFloat3(("Scale##" + std::to_string(m_uid)).c_str(), t_fScale, 0.1f,0.01f, +FLT_MAX))
 		{
+			for (int i = 0; i < 4; i++)
+			{
+				t_fScale[i] = std::max(t_fScale[i], 0.1f);
+			}
 			m_rigidBody->GetBody()->SetScale(Engine::Math::vec3(t_fScale[0], t_fScale[1], t_fScale[2]));
 		}
 		break;
@@ -102,7 +137,7 @@ void Editor::EditorLayer::Ui::UiRigidbodyComponent::UiShowColliderInfo()
 	{
 		UiDrawColliderTypeCombo("Sphere");
 		float t_radius = m_rigidBody->GetBody()->GetRadius();
-		if (ImGui::DragFloat(("Radius##" + std::to_string(m_uid)).c_str(), &t_radius, 0.1f, -FLT_MAX, +FLT_MAX))
+		if (ImGui::DragFloat(("Radius##" + std::to_string(m_uid)).c_str(), &t_radius, 0.1f, 0.001f, +FLT_MAX))
 		{
 			m_rigidBody->GetBody()->SetRadius(t_radius);
 		}
@@ -113,11 +148,11 @@ void Editor::EditorLayer::Ui::UiRigidbodyComponent::UiShowColliderInfo()
 		UiDrawColliderTypeCombo("Capsule");
 		float t_radius = m_rigidBody->GetBody()->GetRadius();
 		float t_halfHeight = m_rigidBody->GetBody()->GetHalfHeight();
-		if (ImGui::DragFloat(("HalfHeight##" + std::to_string(m_uid)).c_str(), &t_halfHeight, 0.1f, -FLT_MAX, +FLT_MAX))
+		if (ImGui::DragFloat(("HalfHeight##" + std::to_string(m_uid)).c_str(), &t_halfHeight, 0.1f, 0.001f, +FLT_MAX))
 		{
 			m_rigidBody->GetBody()->SetHalfHeight(t_halfHeight);
 		}
-		if (ImGui::DragFloat(("Radius##" + std::to_string(m_uid)).c_str(), &t_radius, 0.1f, -FLT_MAX, +FLT_MAX))
+		if (ImGui::DragFloat(("Radius##" + std::to_string(m_uid)).c_str(), &t_radius, 0.1f, 0.001f, +FLT_MAX))
 		{
 			m_rigidBody->GetBody()->SetRadius(t_radius);
 		}
@@ -125,9 +160,21 @@ void Editor::EditorLayer::Ui::UiRigidbodyComponent::UiShowColliderInfo()
 	}
 	}
 	float t_mass = m_rigidBody->GetBody()->GetMass();
-	if (ImGui::DragFloat(("Mass##" + std::to_string(m_uid)).c_str(), &t_mass, 0.1f, -FLT_MAX, +FLT_MAX))
+	if (ImGui::DragFloat(("Mass##" + std::to_string(m_uid)).c_str(), &t_mass, 0.1f, 0.001f, +FLT_MAX))
 	{
 		m_rigidBody->GetBody()->SetMass(t_mass);
+	}
+	float t_friction = m_rigidBody->GetBody()->GetFriction();
+	if (ImGui::DragFloat(("Friction##" + std::to_string(m_uid)).c_str(), &t_friction, 0.1f, 0.001f, +FLT_MAX))
+	{
+		t_friction = std::clamp(t_friction, 0.f, +FLT_MAX);
+		m_rigidBody->GetBody()->SetFriction(t_friction);
+	}
+	float t_restitution = m_rigidBody->GetBody()->GetRestitution();
+	if (ImGui::DragFloat(("Restitution##" + std::to_string(m_uid)).c_str(), &t_restitution, 0.1f, 0.001f, 1))
+	{
+		t_restitution = std::clamp(t_restitution, 0.f, 1.f);
+		m_rigidBody->GetBody()->SetRestitution(t_restitution);
 	}
 }
 
