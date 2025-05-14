@@ -17,6 +17,19 @@ namespace Engine::GamePlay
 	class TransformComponent;
 	class RigidBodyComponent;
 
+	struct PlayerControllerData
+	{
+		float m_maxSpeed;
+		float m_sensitivity;
+		float m_jumpForce;
+		float m_moveSpeed;
+
+		float m_maxUpAngle;
+		float m_maxDownAngle;
+
+		int m_transformRotateComponentId;
+	};
+
 	class PlayerControllerComponent : public Engine::GamePlay::GameComponent
 	{
 	public:
@@ -28,7 +41,11 @@ namespace Engine::GamePlay
 		ENGINE_API void Update() override;
 		ENGINE_API void SceneUpdate() override;
 		ENGINE_API void ProcessInputs(Engine::Core::Window::IInputHandler* a_inputHandler, float a_deltaTime) override;
-	
+
+		ENGINE_API static void Register();
+		ENGINE_API void Set(const PlayerControllerData& a_data);
+		ENGINE_API PlayerControllerData GetData() const;
+
 		ENGINE_API static ComponentType GetType() { return ComponentType::PLAYERCONTROLLER; }
 		ENGINE_API static void RemoveComponent(int a_id);
 		ENGINE_API static PlayerControllerComponent* GetComponent(int a_id);

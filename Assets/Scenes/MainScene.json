@@ -160,7 +160,7 @@
         "TransformComponent": {
             "position": {
                 "x": -0.017102420330047607,
-                "y": 1.2293474674224854,
+                "y": 0.8293474912643433,
                 "z": 3.1751925945281982
             },
             "rotation": {
@@ -391,6 +391,15 @@
             "metallic": "",
             "roughness": "",
             "ao": ""
+        },
+        "PlayerControllerComponent": {
+            "maxSpeed": 3.0,
+            "sensitivity": 1.0,
+            "jumpForce": 10.0,
+            "moveSpeed": 30.0,
+            "maxUpAngle": 85.0,
+            "maxDownAngle": 85.0,
+            "transformRotateComponentId": 4
         }
     }
 ]

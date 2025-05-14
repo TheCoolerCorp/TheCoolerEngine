@@ -5,6 +5,7 @@
 #include <meta/meta.hpp>
 
 #include "Gameplay/ServiceLocator.h"
+#include "GamePlay/Components/PlayerControllerComponent.h"
 #include "GamePlay/Others/GameObject.h"
 #include "GamePlay/Others/LightGO.h"
 #include "GamePlay/Others/CameraGO.h"
@@ -450,6 +451,10 @@ namespace Engine
 				{
 					t_objJson["CameraComponent"] = SerializeCameraComponent(*t_cameraComponent);
 				}
+				if (const PlayerControllerComponent* t_playerControllerComponent = t_obj->GetComponent<PlayerControllerComponent>())
+				{
+					t_objJson["PlayerControllerComponent"] = SerializePlayerControllerComponent(*t_playerControllerComponent);
+				}
 				t_scene.push_back(t_objJson);
 			}
 
@@ -478,6 +483,7 @@ namespace Engine
 				bool t_hasRigidBody = false;
 				bool t_hasMesh = false;
 				bool t_hasCamera = false;
+				bool t_hasPlayerController = false;
 
 				std::string t_name = t_entry.at("GameObject").get<std::string>();
 
@@ -509,6 +515,13 @@ namespace Engine
 				{
 					t_camera = DeserializeCameraComponent(t_entry.at("CameraComponent"));
 					t_hasCamera = true;
+				}
+
+				PlayerControllerData t_playerController{};
+				if (t_entry.contains("PlayerControllerComponent"))
+				{
+					t_playerController = DeserializePlayerControllerComponent(t_entry.at("PlayerControllerComponent"));
+					t_hasPlayerController = true;
 				}
 
 				GameObject* t_gameObject = new GameObject(t_transform.mPos, t_transform.mRot, t_transform.mScale, t_name);
@@ -600,6 +613,11 @@ namespace Engine
 					t_gameObject->GetComponent<CameraComponent>()->GetCamera().Set(t_camera.m_up, t_camera.m_center, t_camera.m_eye, t_camera.m_fovY, t_camera.m_aspect, t_camera.m_near, t_camera.m_far, t_camera.m_speed, t_camera.m_sensitivity, false, t_gameObject->GetComponent<TransformComponent>()->GetTransform()->GetTransformMatrix());
 					t_gameObject->GetComponent<CameraComponent>()->GetCamera().Create(a_renderer);
 					SetMainCamera(t_gameObject->GetId());
+				}
+				if (t_hasPlayerController)
+				{
+					t_gameObject->AddComponent<PlayerControllerComponent>();
+					t_gameObject->GetComponent<PlayerControllerComponent>()->Set(t_playerController);
 				}
 			}
 			int i = 0;
@@ -1287,6 +1305,87 @@ namespace Engine
 			t_cameraData.m_sensitivity = a_json.at("sensitivity").get<float>();
 
 			return t_cameraData;
+		}
+
+		nlohmann::ordered_json Scene::SerializePlayerControllerComponent(const PlayerControllerComponent& a_gameObject)
+		{
+			json t_json;
+			constexpr std::hash<std::string_view> t_hash{};
+			meta::any t_playerControllerAny{ a_gameObject };
+			const meta::handle t_playerControllerHandle{ t_playerControllerAny };
+			if (!t_playerControllerHandle)
+			{
+				return t_json;
+			}
+			const meta::data t_playerControllerDataField = t_playerControllerHandle.type().data(t_hash("PlayerController"));
+			if (!t_playerControllerDataField)
+			{
+				return t_json;
+			}
+			meta::any t_playerControllerDataAny = t_playerControllerDataField.get(t_playerControllerHandle);
+			if (!t_playerControllerDataAny)
+			{
+				return t_json;
+			}
+			const meta::handle t_playerControllerDataHandle(t_playerControllerDataAny);
+			const meta::type t_playerControllerDataType = t_playerControllerDataHandle.type();
+
+			const meta::data t_maxSpeedField = t_playerControllerDataType.data(t_hash("maxSpeed"));
+			if (t_maxSpeedField)
+			{
+				meta::any t_speedAny = t_maxSpeedField.get(t_playerControllerDataHandle);
+				t_json["maxSpeed"] = t_speedAny.cast<float>();
+			}
+			const meta::data t_sensitivityField = t_playerControllerDataType.data(t_hash("sensitivity"));
+			if (t_sensitivityField)
+			{
+				meta::any t_sensitivityAny = t_sensitivityField.get(t_playerControllerDataHandle);
+				t_json["sensitivity"] = t_sensitivityAny.cast<float>();
+			}
+			const meta::data t_jumpForceField = t_playerControllerDataType.data(t_hash("jumpForce"));
+			if (t_jumpForceField)
+			{
+				meta::any t_jumpForceAny = t_jumpForceField.get(t_playerControllerDataHandle);
+				t_json["jumpForce"] = t_jumpForceAny.cast<float>();
+			}
+			const meta::data t_moveSpeedField = t_playerControllerDataType.data(t_hash("moveSpeed"));
+			if (t_moveSpeedField)
+			{
+				meta::any t_moveSpeedAny = t_moveSpeedField.get(t_playerControllerDataHandle);
+				t_json["moveSpeed"] = t_moveSpeedAny.cast<float>();
+			}
+			const meta::data t_maxUpAngle = t_playerControllerDataType.data(t_hash("maxUpAngle"));
+			if (t_maxUpAngle)
+			{
+				meta::any t_maxUpAngleAny = t_maxUpAngle.get(t_playerControllerDataHandle);
+				t_json["maxUpAngle"] = t_maxUpAngleAny.cast<float>();
+			}
+			const meta::data t_maxDownAngle = t_playerControllerDataType.data(t_hash("maxDownAngle"));
+			if (t_maxDownAngle)
+			{
+				meta::any t_maxDownAngleAny = t_maxDownAngle.get(t_playerControllerDataHandle);
+				t_json["maxDownAngle"] = t_maxDownAngleAny.cast<float>();
+			}
+			const meta::data t_transformRotateComponentId = t_playerControllerDataType.data(t_hash("transformRotateComponentId"));
+			if (t_transformRotateComponentId)
+			{
+				meta::any t_transformRotateComponentIdAny = t_transformRotateComponentId.get(t_playerControllerDataHandle);
+				t_json["transformRotateComponentId"] = t_transformRotateComponentIdAny.cast<int>();
+			}
+			return t_json;
+		}
+
+		PlayerControllerData Scene::DeserializePlayerControllerComponent(const nlohmann::ordered_json& a_json)
+		{
+			PlayerControllerData t_playerControllerData;
+			t_playerControllerData.m_maxSpeed = a_json.at("maxSpeed").get<float>();
+			t_playerControllerData.m_sensitivity = a_json.at("sensitivity").get<float>();
+			t_playerControllerData.m_jumpForce = a_json.at("jumpForce").get<float>();
+			t_playerControllerData.m_moveSpeed = a_json.at("moveSpeed").get<float>();
+			t_playerControllerData.m_maxUpAngle = a_json.at("maxUpAngle").get<float>();
+			t_playerControllerData.m_maxDownAngle = a_json.at("maxDownAngle").get<float>();
+			t_playerControllerData.m_transformRotateComponentId = a_json.at("transformRotateComponentId").get<int>();
+			return t_playerControllerData;
 		}
 	}
 }

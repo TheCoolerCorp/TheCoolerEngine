@@ -8,6 +8,9 @@
 #include "GamePlay/Systems/GameComponentSystem.h"
 #include "Math/TheCoolerMath.h"
 
+#include <meta/factory.hpp>
+#include <meta/meta.hpp>
+
 namespace Engine::GamePlay
 {
 	PlayerControllerComponent::PlayerControllerComponent()
@@ -99,6 +102,43 @@ namespace Engine::GamePlay
 			t_velocity.y = t_rigidBody->GetVelocity().y;
 			t_rigidBody->SetLinearVelocity(t_velocity);
 		}
+	}
+
+	void PlayerControllerComponent::Register()
+	{
+		constexpr std::hash<std::string_view> t_hash{};
+
+		meta::reflect<PlayerControllerData>(t_hash("PlayerControllerData"))
+			.data<&PlayerControllerData::m_maxSpeed>(t_hash("maxSpeed"))
+			.data<&PlayerControllerData::m_sensitivity>(t_hash("sensitivity"))
+			.data<&PlayerControllerData::m_jumpForce>(t_hash("jumpForce"))
+			.data<&PlayerControllerData::m_moveSpeed>(t_hash("moveSpeed"))
+			.data<&PlayerControllerData::m_maxUpAngle>(t_hash("maxUpAngle"))
+			.data<&PlayerControllerData::m_maxDownAngle>(t_hash("maxDownAngle"))
+			.data<&PlayerControllerData::m_transformRotateComponentId>(t_hash("transformRotateComponentId"));
+
+		meta::reflect<PlayerControllerComponent>(t_hash("PlayerControllerComponent"))
+			.data<&PlayerControllerComponent::Set, &PlayerControllerComponent::GetData>(t_hash("PlayerController"));
+	}
+
+	void PlayerControllerComponent::Set(const PlayerControllerData& a_data)
+	{
+		m_maxSpeed = a_data.m_maxSpeed;
+		m_sensitivity = a_data.m_sensitivity;
+		m_jumpForce = a_data.m_jumpForce;
+		m_moveSpeed = a_data.m_moveSpeed;
+		m_maxUpAngle = a_data.m_maxUpAngle;
+		m_maxDownAngle = a_data.m_maxDownAngle;
+		m_transformRotateComponentId = a_data.m_transformRotateComponentId;
+	}
+
+	PlayerControllerData PlayerControllerComponent::GetData() const
+	{
+		return { .m_maxSpeed= m_maxSpeed, .m_sensitivity= m_sensitivity, .m_jumpForce= m_jumpForce, .m_moveSpeed=
+			m_moveSpeed,
+			.m_maxUpAngle= m_maxUpAngle, .m_maxDownAngle= m_maxDownAngle, .m_transformRotateComponentId=
+			m_transformRotateComponentId
+		};
 	}
 
 	void PlayerControllerComponent::RemoveComponent(int a_id)

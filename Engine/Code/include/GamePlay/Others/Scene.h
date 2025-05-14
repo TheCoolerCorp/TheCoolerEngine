@@ -9,6 +9,8 @@
 #include "Ressources/ResourceManager.h"
 #include "GamePlay/Others/GameObject.h"
 #include <nlohmann/json.hpp>
+
+#include "GamePlay/Components/PlayerControllerComponent.h"
 #include "GamePlay/ComponentsBase/Camera.h"
 #include "GamePlay/Systems/EventSystem.h"
 namespace Engine
@@ -73,6 +75,8 @@ namespace Engine
 			static LightData DeserializeLightComponent(const nlohmann::ordered_json& a_json);
 			static nlohmann::ordered_json SerializeCameraComponent(const CameraComponent& a_cameraComponent);
 			static CameraSerializeData DeserializeCameraComponent(const nlohmann::ordered_json& a_json);
+			static nlohmann::ordered_json SerializePlayerControllerComponent(const PlayerControllerComponent& a_gameObject);
+			static PlayerControllerData DeserializePlayerControllerComponent(const nlohmann::ordered_json& a_json);
 
 			void SetMainCamera(const int a_objectId) { m_mainCameraObjectId = a_objectId; }
 
