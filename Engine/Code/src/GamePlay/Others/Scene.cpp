@@ -145,6 +145,7 @@ namespace Engine
 					m_renderSystem->Destroy(a_renderer);
 					m_renderSystem->Create(a_renderer);
 					m_physicsSystem->RemoveAllComponents();
+					m_transformSystem->Destroy();
 					Load(a_renderer);
 					m_justReloaded = true;
 				}
@@ -486,6 +487,8 @@ namespace Engine
 			json t_scene;
 			t_file >> t_scene;
 
+			std::vector<TransformData> t_transformDatas{};
+
 			for (const auto& t_entry : t_scene) {
 				bool t_hasLight = false;
 				bool t_hasRigidBody = false;
@@ -495,6 +498,7 @@ namespace Engine
 				std::string t_name = t_entry.at("GameObject").get<std::string>();
 
 				TransformData t_transform = DeserializeTransformComponent(t_entry.at("TransformComponent"));
+				t_transformDatas.emplace_back(t_transform);
 
 				LightData t_light{};
 				if (t_entry.contains("LightComponent"))
@@ -615,13 +619,13 @@ namespace Engine
 					SetMainCamera(t_gameObject->GetId());
 				}
 			}
-			int i = 0;
-			for (const auto& t_entry : t_scene)
+
+			for (uint32_t i = 0; i < t_transformDatas.size(); ++i)
 			{
-				TransformData t_transform = DeserializeTransformComponent(t_entry.at("TransformComponent"));
-				GetGameObject(i)->GetComponent<TransformComponent>()->SetParent(t_transform.mParentId);
-				i++;
+				TransformComponent* t_transformComponent = GetGameObject(i)->GetComponent<TransformComponent>();
+				t_transformComponent->SetParent(t_transformDatas[i].mParentId);
 			}
+			t_transformDatas.clear();
 		}
 		
 		bool Scene::SetMode(bool a_mode)
