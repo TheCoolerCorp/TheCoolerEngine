@@ -275,6 +275,26 @@ namespace Engine
 			ServiceLocator::GetPhysicsSystem()->EnqueueAddImpulse(m_rigidBody->GetBodyID(), a_impulse);
 		}
 
+		void RigidBodyComponent::SetColliderType(Physics::ColliderType a_type)
+		{
+			m_rigidBody->SetColliderType(a_type);
+
+			Core::Renderer* t_renderer = ServiceLocator::GetRenderer();
+
+			switch (a_type)
+			{
+			case Physics::ColliderType::BOX:
+				m_meshComponent->SetMesh("Assets/Meshes/WireframeCube.obj", t_renderer);
+				break;
+			case Physics::ColliderType::SPHERE:
+				m_meshComponent->SetMesh("Assets/Meshes/WireframeSphere.obj", t_renderer);
+				break;
+			case Physics::ColliderType::CAPSULE:
+				m_meshComponent->SetMesh("Assets/Meshes/WireframeCapsule.obj", t_renderer);
+				break;
+			}
+		}
+
 		void RigidBodyComponent::Destroy()
 		{
 			m_rigidBody->Remove();

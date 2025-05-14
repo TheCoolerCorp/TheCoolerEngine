@@ -186,21 +186,21 @@ void Editor::EditorLayer::Ui::UiRigidbodyComponent::UiDrawColliderTypeCombo(cons
 		{
 			if (ImGui::Selectable("Box"))
 			{
-				m_rigidBody->GetBody()->SetColliderType(Engine::Physics::ColliderType::BOX);
+				m_rigidBody->SetColliderType(Engine::Physics::ColliderType::BOX);
 			}
 		}
 		if (m_rigidBody->GetColliderType() != Engine::Physics::ColliderType::SPHERE)
 		{
 			if (ImGui::Selectable("Sphere"))
 			{
-				m_rigidBody->GetBody()->SetColliderType(Engine::Physics::ColliderType::SPHERE);
+				m_rigidBody->SetColliderType(Engine::Physics::ColliderType::SPHERE);
 			}
 		}
 		if (m_rigidBody->GetColliderType() != Engine::Physics::ColliderType::CAPSULE)
 		{
 			if (ImGui::Selectable("Capsule"))
 			{
-				m_rigidBody->GetBody()->SetColliderType(Engine::Physics::ColliderType::CAPSULE);
+				m_rigidBody->SetColliderType(Engine::Physics::ColliderType::CAPSULE);
 			}
 		}
 		ImGui::EndCombo();

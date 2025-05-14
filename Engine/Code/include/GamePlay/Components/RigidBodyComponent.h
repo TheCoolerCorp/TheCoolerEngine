@@ -70,6 +70,8 @@ namespace Engine
 
 			ENGINE_API void SetFromData(const RigidBodyData& a_data) {}
 
+			ENGINE_API void SetColliderType(Physics::ColliderType a_type);
+
 			ENGINE_API void Destroy();
 
 			ENGINE_API void SetPosition(const Math::vec3& a_pos, bool a_enable = true);
