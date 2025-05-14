@@ -63,7 +63,7 @@ namespace Engine
 
 
 		private:
-			static nlohmann::ordered_json SerializeTransformComponent(const TransformComponent& a_transform);
+			static nlohmann::ordered_json SerializeTransformComponent(const TransformComponent& a_transform, std::vector<std::pair<int, int>> a_oldAndNewIndexes);
 			static TransformData DeserializeTransformComponent(const nlohmann::ordered_json& a_json);
 			static nlohmann::ordered_json SerializeRigidBodyComponent(const RigidBodyComponent& a_rigidBody);
 			static RigidBodyData DeserializeRigidBodyComponent(const nlohmann::ordered_json& a_json);

@@ -427,8 +427,26 @@ namespace Engine
 				if (!t_obj)
 					continue;
 				json t_objJson;
+
+				int newIndex = 0;
+				std::vector<std::pair<int, int>> t_oldAndNewIndexes;
+
+				for (int oldIndex = 0; oldIndex < m_transformSystem->GetSize(); ++oldIndex)
+				{
+					if (m_transformSystem->GetComponent(oldIndex) != nullptr)
+					{
+						if (oldIndex != newIndex)
+						{
+							t_oldAndNewIndexes.emplace_back(oldIndex, newIndex);
+						}
+						++newIndex;
+					}
+				}
+
 				t_objJson["GameObject"] = t_obj->GetName();
-				t_objJson["TransformComponent"] = SerializeTransformComponent(*t_obj->GetComponent<TransformComponent>());
+				t_objJson["TransformComponent"] = SerializeTransformComponent(*t_obj->GetComponent<TransformComponent>(), t_oldAndNewIndexes);
+
+
 				if (const RigidBodyComponent* t_rigidBodyComponent = t_obj->GetComponent<RigidBodyComponent>())
 				{
 					t_objJson["RigidBodyComponent"] = SerializeRigidBodyComponent(*t_rigidBodyComponent);
@@ -640,7 +658,7 @@ namespace Engine
 			return false;
 		}
 
-		nlohmann::ordered_json Scene::SerializeTransformComponent(const TransformComponent& a_transform)
+		nlohmann::ordered_json Scene::SerializeTransformComponent(const TransformComponent& a_transform, std::vector<std::pair<int, int>> a_oldAndNewIndexes)
 		{
 			json t_json;
 			constexpr std::hash<std::string_view> t_hash{};
@@ -714,6 +732,18 @@ namespace Engine
 			if (t_parentField)
 			{
 				meta::any t_parentAny = t_parentField.get(t_transformDataHandle);
+
+
+				if (t_parentAny.cast<int>() != -1)
+				{
+					for (int i = 0; i < a_oldAndNewIndexes.size(); ++i)
+					{
+						if (a_oldAndNewIndexes[i].first == t_parentAny.cast<int>())
+						{
+							t_parentAny = a_oldAndNewIndexes[i].second;
+						}
+					}
+				}
 				t_json["parent"] = t_parentAny.cast<int>();
 			}
 
