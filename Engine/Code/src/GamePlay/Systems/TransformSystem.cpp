@@ -127,8 +127,8 @@ namespace Engine
 				m_components.emplace_back(a_component);
 				return static_cast<int>(m_components.size()) - 1u;
 			}
-			int t_index = m_availableIds.back();
-			m_availableIds.pop_back();
+			int t_index = m_availableIds.front();
+			m_availableIds.erase(m_availableIds.begin());
 			m_components.at(t_index) = a_component;
 			return t_index;
 		}

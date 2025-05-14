@@ -138,8 +138,6 @@ namespace Engine
 						{
 							continue;
 						}
-
-						m_objs[i]->GetComponent<TransformComponent>()->Destroy();
 						delete m_objs[i];
 					}
 					m_objs.clear();
