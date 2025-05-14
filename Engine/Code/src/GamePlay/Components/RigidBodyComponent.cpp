@@ -354,5 +354,10 @@ namespace Engine
 		{
 			ServiceLocator::GetPhysicsSystem()->RemoveComponent(a_id);
 		}
+
+		void RigidBodyComponent::RemoveMesh()
+		{
+			MeshComponent::RemoveComponent(m_meshId);
+		}
 	}
 }

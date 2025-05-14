@@ -170,6 +170,7 @@ namespace Engine
 					m_mainCamera->SetFreeCam(false);
 					Save();
 					m_lastState = m_isPlaying;
+					m_physicsSystem->SetComponentsForPlay();
 				}
 				m_physicsSystem->Update(a_deltatime, this);
 				m_renderSystem->UpdateCamera(a_renderer, a_deltatime, a_window, a_inputHandler, m_gameCameraId, m_objs[m_mainCameraObjectId] ? m_objs[m_mainCameraObjectId]->GetComponent<TransformComponent>()->GetTransform()->GetTransformMatrix() : Math::mat4());

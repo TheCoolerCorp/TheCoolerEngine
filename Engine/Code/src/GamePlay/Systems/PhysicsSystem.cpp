@@ -222,7 +222,15 @@ namespace Engine
 			}
 		}
 
-		void PhysicsSystem::UpdateTransforms(Scene* a_scene) const
+		void PhysicsSystem::SetComponentsForPlay() const
+		{
+			for (RigidBodyComponent* t_component : m_components)
+			{
+				t_component->SetDebug(false);
+			}
+		}
+
+		void PhysicsSystem::UpdateTransforms(const Scene* a_scene) const
 		{
 			for (size_t i = 0; i < m_components.size(); ++i)
 			{

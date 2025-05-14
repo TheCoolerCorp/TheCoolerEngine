@@ -85,6 +85,7 @@ namespace Engine
 			ENGINE_API void UnlockRotation(const char a_axis) const;
 
 			ENGINE_API static void RemoveComponent(int a_id);
+			ENGINE_API void RemoveMesh();
 
 			ENGINE_API [[nodiscard]] bool IsTrigger() const { return m_rigidBody->IsTrigger(); }
 			ENGINE_API [[nodiscard]] Physics::ColliderType GetColliderType() const { return m_rigidBody->GetColliderType(); }
