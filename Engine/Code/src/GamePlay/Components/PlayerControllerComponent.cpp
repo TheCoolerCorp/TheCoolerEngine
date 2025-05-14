@@ -35,7 +35,7 @@ namespace Engine::GamePlay
 		{
 			LOG_ERROR("Player Controller: no rigidbody assigned to gameobject!");
 		}
-
+		CaptureCursor();
 	}
 
 	void PlayerControllerComponent::Update()
@@ -71,30 +71,20 @@ namespace Engine::GamePlay
 		{
 			t_rigidBody->AddImpulse(t_transform->GetUp() * a_deltaTime * m_jumpForce);
 		}
-		if (a_inputHandler->IsMouseButtonDown(Core::Window::MouseButton::MOUSE_BUTTON_RIGHT))
-		{
-			if (!m_isMouseCaptured)
-			{
-				m_isMouseCaptured = true;
-				CaptureCursor();
-			}
-			const Math::vec2 t_currentMousePos = a_inputHandler->GetCursorPosition();
-			Math::vec2 t_deltaMousePos = t_currentMousePos - m_oldMousePos;
 
-			float t_pitch = -t_deltaMousePos.y * m_sensitivity * a_deltaTime;
-			float t_yaw = -t_deltaMousePos.x * m_sensitivity * a_deltaTime;
+		//mouse movement
+		const Math::vec2 t_currentMousePos = a_inputHandler->GetCursorPosition();
+		Math::vec2 t_deltaMousePos = t_currentMousePos - m_oldMousePos;
 
-			Math::vec3 t_rotation = t_transformRotate->GetTransform()->GetEulerAngles();
-			t_rotation.x = ClampAngle(t_rotation.x+t_pitch);
-			t_rotation.y += t_yaw;
-			t_transformRotate->GetTransform()->SetRotation(t_rotation);
-		}
-		else if (a_inputHandler->IsMouseButtonReleased(Core::Window::MouseButton::MOUSE_BUTTON_RIGHT))
-		{
-			CaptureCursor(false);
-			m_isMouseCaptured = false;
-		}
+		float t_pitch = -t_deltaMousePos.y * m_sensitivity * a_deltaTime;
+		float t_yaw = -t_deltaMousePos.x * m_sensitivity * a_deltaTime;
+
+		Math::vec3 t_rotation = t_transformRotate->GetTransform()->GetEulerAngles();
+		t_rotation.x = ClampAngle(t_rotation.x+t_pitch);
+		t_rotation.y += t_yaw;
+		t_transformRotate->GetTransform()->SetRotation(t_rotation);
 		m_oldMousePos = a_inputHandler->GetCursorPosition();
+
 		if (Math::vec3::Norm(t_movement) >= 0.003 || Math::vec3::Norm(t_movement) <= -0.003)
 		{
 			t_movement = Math::vec3::Normalize(t_movement);

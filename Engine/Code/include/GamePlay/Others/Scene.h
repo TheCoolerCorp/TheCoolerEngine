@@ -52,7 +52,7 @@ namespace Engine
 			ENGINE_API [[nodiscard]] Camera* GetMainCamera() const { return m_mainCamera; }
 			ENGINE_API [[nodiscard]] CoolerEvent<>& GetBeginPlayEvent() { return m_beginPlayEvent; }
 			ENGINE_API [[nodiscard]] CoolerEvent<>& GetEndPlayEvent() { return m_endPlayEvent; }
-
+			ENGINE_API [[nodiscard]] static bool ProcessKeyboardInputs() { return m_processKeyboardInputs; }
 
 			ENGINE_API void Save();
 			ENGINE_API void Load(Core::Renderer* a_renderer);
@@ -60,7 +60,7 @@ namespace Engine
 			[[nodiscard]] ENGINE_API bool IsPlaying() const { return m_isPlaying; }
 			ENGINE_API bool IsPlaying() { return m_isPlaying; }
 			ENGINE_API bool HasObject(int a_id);
-
+			ENGINE_API static void SetProcessKeyboardInputs(bool a_process) { m_processKeyboardInputs = a_process; }
 
 		private:
 			static nlohmann::ordered_json SerializeTransformComponent(const TransformComponent& a_transform);
@@ -94,6 +94,7 @@ namespace Engine
 			bool m_isPlaying = false;
 			bool m_lastState = false;
 			bool m_justReloaded = false;
+			static bool m_processKeyboardInputs;
 			int m_gameCameraId = 0;
 			int m_mainCameraObjectId = 0;
 
