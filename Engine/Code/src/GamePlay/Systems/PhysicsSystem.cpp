@@ -126,6 +126,10 @@ namespace Engine
 		{
 			for (RigidBodyComponent* t_component : m_components)
 			{
+				if (!t_component)
+				{
+					continue;
+				}
 				t_component->Destroy();
 				delete t_component;
 			}
