@@ -92,8 +92,7 @@ namespace Engine
 			{
 				if (auto& comp = m_components[i])
 				{
-					comp->Destroy();
-					delete comp;
+					RemoveMeshComponent(i);
 				}
 				if (m_objectsDescriptors[i])
 				{
