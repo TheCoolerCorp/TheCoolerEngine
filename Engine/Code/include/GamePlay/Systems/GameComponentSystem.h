@@ -18,7 +18,7 @@ namespace Engine::GamePlay
 		ENGINE_API GameComponentSystem() = default;
 		ENGINE_API ~GameComponentSystem() override = default;
 
-		ENGINE_API void Create(Scene* a_scene);
+		ENGINE_API void Create(Scene* a_scene, Core::Window::IWindow* a_window);
 
 		ENGINE_API void Update() override;
 		ENGINE_API void Start();
@@ -33,6 +33,7 @@ namespace Engine::GamePlay
 		std::vector<int> m_availableIndexes{};
 
 		Scene* m_scene = nullptr;
+		Core::Window::IWindow* m_window = nullptr;
 	};
 }
 

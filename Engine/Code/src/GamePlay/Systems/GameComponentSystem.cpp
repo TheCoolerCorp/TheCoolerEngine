@@ -3,10 +3,11 @@
 #include "GamePlay/Systems/EventSystem.h"
 namespace Engine::GamePlay
 {
-	void GameComponentSystem::Create(Scene* a_scene)
+	void GameComponentSystem::Create(Scene* a_scene, Core::Window::IWindow* a_window)
 	{
 		m_gameComponents.reserve(50);
 		m_scene = a_scene;
+		m_window = a_window;
 		a_scene->GetBeginPlayEvent().AddListener([this]() {this->Start();});
 	}
 
@@ -47,6 +48,7 @@ namespace Engine::GamePlay
 	int GameComponentSystem::AddComponent(Engine::GamePlay::GameComponent* a_component)
 	{
 		a_component->SetScene(m_scene);
+		a_component->SetWindow(m_window);
 		if (m_availableIndexes.empty())
 		{
 			m_gameComponents.push_back(a_component);

@@ -17,7 +17,7 @@ namespace Engine
 {
 	namespace GamePlay
 	{
-		void Scene::Create(Core::Renderer* a_renderer, const char* a_name, int a_width, int a_height)
+		void Scene::Create(Core::Renderer* a_renderer, Core::Window::IWindow* a_window, const char* a_name, int a_width, int a_height)
 		{
 			m_renderer = a_renderer;
 			m_name = a_name;
@@ -33,7 +33,7 @@ namespace Engine
 			m_physicsSystem->Create();
 
 			m_gameComponentSystem = new GameComponentSystem;
-			m_gameComponentSystem->Create(this);
+			m_gameComponentSystem->Create(this, a_window);
 
 			Resource::ResourceManager* t_resourceManager = ServiceLocator::GetResourceManager();
 			ServiceLocator::ProvideTransformSystem(m_transformSystem);

@@ -60,6 +60,8 @@ namespace Engine::GamePlay
 		float m_maxUpAngle = 85.f;
 		float m_maxDownAngle = 85.f;
 
+		bool m_isMouseCaptured = false;
+
 		RigidBodyComponent* GetRigidbody();
 		TransformComponent* GetTransform();
 		TransformComponent* GetTransformRotate();
@@ -69,4 +71,4 @@ namespace Engine::GamePlay
 }
 
 
-#endif // !PLAYERCONTROLLERCOMPO NENT_H
+#endif // !PLAYERCONTROLLERCOMPONENT_H
