@@ -30,6 +30,8 @@ namespace Engine
 				.data<&RigidBodyData::mLockRotY>(t_hash("lock rotation Y"))
 				.data<&RigidBodyData::mLockRotZ>(t_hash("lock rotation Z"))
 				.data<&RigidBodyData::mMeshId>(t_hash("mesh ID"))
+				.data<&RigidBodyData::mFriction>(t_hash("friction")) // NEW
+				.data<&RigidBodyData::mRestitution>(t_hash("restitution")) // NEW
 				.data<&RigidBodyData::mMeshComponent>(t_hash("mesh component"));
 			
 			meta::reflect<RigidBodyComponent>(t_hash("RigidBodyComponent"))
@@ -345,20 +347,22 @@ namespace Engine
 		RigidBodyData RigidBodyComponent::GetRigidBodyData() const
 		{
 			const RigidBodyData t_data = {
-				.mBodyType= static_cast<int>(m_rigidBody->GetBodyType()),
-				.mLayer= static_cast<int>(m_rigidBody->GetLayer()),
-				.mColliderType= static_cast<int>(m_rigidBody->GetColliderType()),
-				.mPos= m_localPos,
-				.mScale= m_rigidBody->GetScale(),
-				.mRadius= m_rigidBody->GetRadius(),
-				.mHalfHeight= m_rigidBody->GetHalfHeight(),
-				.mRot= m_localRot,
-				.mMass= m_rigidBody->GetMass(),
-				.mEnable= m_rigidBody->IsActive(),
-				.mLockRotX= m_rigidBody->IsRotLockedX(),
-				.mLockRotY= m_rigidBody->IsRotLockedY(),
+				.mBodyType = static_cast<int>(m_rigidBody->GetBodyType()),
+				.mLayer = static_cast<int>(m_rigidBody->GetLayer()),
+				.mColliderType = static_cast<int>(m_rigidBody->GetColliderType()),
+				.mPos = m_localPos,
+				.mScale = m_rigidBody->GetScale(),
+				.mRadius = m_rigidBody->GetRadius(),
+				.mHalfHeight = m_rigidBody->GetHalfHeight(),
+				.mRot = m_localRot,
+				.mMass = m_rigidBody->GetMass(),
+				.mEnable = m_rigidBody->IsActive(),
+				.mLockRotX = m_rigidBody->IsRotLockedX(),
+				.mLockRotY = m_rigidBody->IsRotLockedY(),
 				.mLockRotZ = m_rigidBody->IsRotLockedZ(),
 				.mMeshId = GetMeshID(),
+				.mFriction = m_rigidBody->GetFriction(),
+				.mRestitution = m_rigidBody->GetRestitution(),
 				.mMeshComponent = GetMeshComponent()
 			};
 

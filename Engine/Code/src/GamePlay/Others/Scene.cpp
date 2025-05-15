@@ -553,6 +553,8 @@ namespace Engine
 					bool t_lockRotX = t_rigidBody.mLockRotX;
 					bool t_lockRotY = t_rigidBody.mLockRotY;
 					bool t_lockRotZ = t_rigidBody.mLockRotZ;
+					float t_friction = t_rigidBody.mFriction;
+					float t_restitution = t_rigidBody.mRestitution;
 					Math::Transform t_transform = *t_gameObject->GetComponent<TransformComponent>()->GetTransform();
 
 					switch (t_rigidBody.mColliderType)
@@ -579,6 +581,16 @@ namespace Engine
 					if (t_lockRotZ)
 					{
 						t_rigidBodyComponent->LockRotation('z');
+					}
+
+					if (t_friction)
+					{
+						t_rigidBodyComponent->GetBody()->SetFriction(t_friction);
+					}
+
+					if (t_restitution)
+					{
+						t_rigidBodyComponent->GetBody()->SetRestitution(t_restitution);
 					}
 				}
 
@@ -926,6 +938,20 @@ namespace Engine
 				t_json["lock rotation Z"] = t_lockRotZTypeAny.cast<bool>();
 			}
 
+			const meta::data t_frictionTypeField = t_rigidBodyDataType.data(t_hash("friction"));
+			if (t_frictionTypeField)
+			{
+				meta::any t_frictionTypeAny = t_frictionTypeField.get(t_rigidBodyDataHandle);
+				t_json["friction"] = t_frictionTypeAny.cast<float>();
+			}
+
+			const meta::data t_restitutionTypeField = t_rigidBodyDataType.data(t_hash("restitution"));
+			if (t_restitutionTypeField)
+			{
+				meta::any t_restitutionTypeAny = t_restitutionTypeField.get(t_rigidBodyDataHandle);
+				t_json["restitution"] = t_restitutionTypeAny.cast<float>();
+			}
+
 			return t_json;
 		}
 
@@ -974,6 +1000,10 @@ namespace Engine
 			t_outData.mLockRotY = a_json.at("lock rotation Y").get<bool>();
 
 			t_outData.mLockRotZ = a_json.at("lock rotation Z").get<bool>();
+
+			t_outData.mFriction = a_json.at("friction").get<float>();
+
+			t_outData.mRestitution = a_json.at("restitution").get<float>();
 
 			return t_outData;
 		}

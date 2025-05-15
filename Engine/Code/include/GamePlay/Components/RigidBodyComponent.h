@@ -36,6 +36,8 @@ namespace Engine
 			bool mLockRotY;
 			bool mLockRotZ;
 			int mMeshId;
+			float mFriction;
+			float mRestitution;
 			MeshComponent* mMeshComponent;
 		};
 
