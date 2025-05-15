@@ -623,6 +623,7 @@ namespace Engine
 			for (uint32_t i = 0; i < t_transformDatas.size(); ++i)
 			{
 				TransformComponent* t_transformComponent = GetGameObject(i)->GetComponent<TransformComponent>();
+				m_transformSystem->Update(); // Try something
 				t_transformComponent->SetParent(t_transformDatas[i].mParentId);
 			}
 			t_transformDatas.clear();
