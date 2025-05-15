@@ -200,12 +200,20 @@ namespace Engine
 		{
 			auto t_unaryPredicate1 = [&a_body1](const RigidBodyComponent* a_rigidBodyComponent)
 				{
+					if (!a_rigidBodyComponent)
+					{
+						return false;
+					}
 					return a_body1 == a_rigidBodyComponent->GetBody()->GetBodyID();
 				};
 			const auto t_it1 = std::ranges::find_if(m_components, t_unaryPredicate1);
 
 			auto t_unaryPredicate2 = [&a_body2](const RigidBodyComponent* a_rigidBodyComponent)
 				{
+					if (!a_rigidBodyComponent)
+					{
+						return false;
+					}
 					return a_body2 == a_rigidBodyComponent->GetBody()->GetBodyID();
 				};
 			const auto t_it2 = std::ranges::find_if(m_components, t_unaryPredicate2);
