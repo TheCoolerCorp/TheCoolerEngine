@@ -82,6 +82,7 @@ namespace Engine
 					return ComponentClass::GetComponent(t_id);
 				}
 
+
 				template<typename ComponentClass>
 				bool HasComponent()
 				{

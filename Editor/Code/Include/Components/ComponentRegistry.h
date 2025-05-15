@@ -19,6 +19,7 @@ namespace Editor::GamePlay
     /*
 	* ComponentRegistry is a singleton class that manages the registration and creation of editor game components.
 	* Editor Game Components that declare themselves in this class will automatically be available for use in the editor.
+	* In a nutshell, this is a mini reflection system.
     */
     class ComponentRegistry {
     public:
@@ -28,6 +29,8 @@ namespace Editor::GamePlay
             std::string name;
             std::type_index type;
             ComponentAdder addFunction;
+            // Given a GameObject, get the component instance (as EditorGameComponent*)
+            std::function<EditorGameComponent* (Engine::GamePlay::GameObject&)> getComponent;
         };
 
         static ComponentRegistry& Instance() {
@@ -38,17 +41,37 @@ namespace Editor::GamePlay
         template<typename T>
         void Register(const std::string& name) {
             Entry t_entry{
-            	name,
-				std::type_index(typeid(T)),
-				[](Engine::GamePlay::GameObject& obj) {
-					obj.AddComponent<T>();
-					}
+                name,
+                std::type_index(typeid(T)),
+                //adder function
+                [](Engine::GamePlay::GameObject& obj) {
+                    obj.AddComponent<T>();
+                    },
+                //getter function
+                [](Engine::GamePlay::GameObject& obj) -> EditorGameComponent* {
+                     if (T* comp = obj.GetComponent<T>()) {
+                        return dynamic_cast<EditorGameComponent*>(comp);
+                     }
+                     return nullptr;
+                }
             };
             entries.push_back(std::move(t_entry));
         }
 
         const std::vector<Entry>& GetEntries() const {
             return entries;
+        }
+
+        Entry* GetEntryFromId(std::type_index& a_typeIndex)
+        {
+			for (auto& entry : entries)
+			{
+				if (entry.type == a_typeIndex)
+				{
+					return &entry;
+				}
+			}
+			return nullptr;
         }
 
     private:
