@@ -27,7 +27,6 @@ void Editor::EditorLayer::Ui::UiMeshComponent::UiDraw()
 	if (m_isOutOfDate)
 	{
 		RefreshImageDescriptorSets();
-		Engine::Core::Audio::SoundManager::Get().PlaySound("Assets/Sounds/sparkle.wav");
 	}
 	ImGui::SeparatorText("Mesh Component");
 	ImGui::SameLine();
