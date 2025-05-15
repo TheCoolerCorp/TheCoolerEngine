@@ -1,5 +1,6 @@
 #include "Ressources/Mesh.h"
 
+#include "Core/Audio/SoundManager.h"
 #include "Core/Renderer/Renderer.h"
 
 namespace Engine
