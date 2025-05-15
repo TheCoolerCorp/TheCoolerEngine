@@ -11,6 +11,8 @@
 #include "InspectorComponent/UiPlayerControllerComponent.h"
 #include "InspectorComponent/UiRigidbodyComponent.h"
 
+#include "../Include/Components/ComponentRegistry.h"
+
 Editor::EditorLayer::Ui::InspectorUiWindow::~InspectorUiWindow()
 {
 }
@@ -127,31 +129,27 @@ void Editor::EditorLayer::Ui::InspectorUiWindow::RefreshSelectedObject()
 void Editor::EditorLayer::Ui::InspectorUiWindow::RefreshCurrentObject()
 {
 	ClearComponents();
-	for (Engine::GamePlay::ComponentType t_type : m_selectedObject->GetOwnedTypes())
+	for (std::type_index t_type : m_selectedObject->GetOwnedTypes())
 	{
-		switch (t_type)
+		if (t_type == Engine::GamePlay::Component::GetCompId<Engine::GamePlay::TransformComponent>())
 		{
-		case Engine::GamePlay::ComponentType::TRANSFORM:
 			AddComponent(new UiTransformComponent(m_layer, m_selectedObject->GetComponent<Engine::GamePlay::TransformComponent>()));
-			break;
-		case Engine::GamePlay::ComponentType::MESH:
+		}
+		if (t_type == Engine::GamePlay::Component::GetCompId<Engine::GamePlay::MeshComponent>())
+		{
 			AddComponent(new UiMeshComponent(m_layer, m_selectedObject->GetComponent<Engine::GamePlay::MeshComponent>()));
-			break;
-		case Engine::GamePlay::ComponentType::MATERIAL: //not implemented yet
-			//AddComponent(new UiMaterialComponent(m_layer, m_selectedObject->GetComponent<MaterialComponent>()));
-			break;
-		case Engine::GamePlay::ComponentType::COLLIDERMESH:
-			//AddComponent(new UiColliderMeshComponent(m_layer, m_selectedObject->GetComponent<ColliderMeshComponent>()));
-			break;
-		case Engine::GamePlay::ComponentType::RIGIDBODY:
+		}
+		if (t_type == Engine::GamePlay::Component::GetCompId<Engine::GamePlay::RigidBodyComponent>())
+		{
 			AddComponent(new UiRigidbodyComponent(m_layer, m_selectedObject->GetComponent<Engine::GamePlay::RigidBodyComponent>()));
-			break;
-		case Engine::GamePlay::ComponentType::LIGHT:
+		}
+		if (t_type == Engine::GamePlay::Component::GetCompId<Engine::GamePlay::LightComponent>())
+		{
 			AddComponent(new UiLightComponent(m_layer, m_selectedObject->GetComponent<Engine::GamePlay::LightComponent>()));
-			break;
-		case Engine::GamePlay::ComponentType::PLAYERCONTROLLER:
+		}
+		if (t_type == Engine::GamePlay::Component::GetCompId<Engine::GamePlay::PlayerControllerComponent>())
+		{
 			AddComponent(new UiPlayerControllerComponent(m_layer, m_selectedObject->GetComponent<Engine::GamePlay::PlayerControllerComponent>()));
-			break;
 		}
 	}
 }
@@ -277,6 +275,14 @@ void Editor::EditorLayer::Ui::InspectorUiWindow::UiDrawComponentAddWindow()
 			{
 				m_selectedObject->AddComponent<Engine::GamePlay::PlayerControllerComponent>();
 				MarkOutOfDate();
+			}
+		}
+		Editor::GamePlay::ComponentRegistry& t_registry = Editor::GamePlay::ComponentRegistry::Instance();
+		for (GamePlay::ComponentRegistry::Entry t_entry : t_registry.GetEntries())
+		{
+			if (ImGui::Selectable(t_entry.name.c_str()))
+			{
+				t_entry.addFunction(*m_selectedObject);
 			}
 		}
 		ImGui::EndCombo();

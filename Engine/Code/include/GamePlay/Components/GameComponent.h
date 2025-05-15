@@ -17,7 +17,7 @@ namespace Engine::GamePlay
 	class GameComponent : public Component
 	{
 	public:
-		ENGINE_API virtual ComponentType Create(int& a_outId) = 0;
+		ENGINE_API virtual void Create(int& a_outId) = 0;
 		ENGINE_API virtual void Destroy() = 0;
 
 		ENGINE_API virtual void Start() = 0;

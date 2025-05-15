@@ -27,13 +27,12 @@ namespace Engine
 				.data<&MeshComponent::SetFromData, &MeshComponent::GetData>(t_hash("Mesh"));
 		}
 
-		ComponentType MeshComponent::Create(int& a_outId)
+		void MeshComponent::Create(int& a_outId)
 		{
 			m_material = CreateRef<Material>();
 
 			a_outId = ServiceLocator::GetRendererSystem()->AddComponent(this);
 			SetId(a_outId);
-			return ComponentType::MESH;
 
 		}
 

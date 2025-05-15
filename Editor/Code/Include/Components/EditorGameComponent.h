@@ -16,10 +16,16 @@ namespace Editor::GamePlay
 	public:
 		EditorGameComponent() = default;
 		~EditorGameComponent() override = default;
+
+		virtual std::string GetTypeName() const = 0;
+
 		// Editor specific functions
 		virtual void DrawUI() = 0;
 
 		// GameComponent functions
+		void Create(int& a_outId) override {}
+		void Destroy() override {}
+
 		void Start() override {}
 		void Update() override {}
 		void SceneUpdate() override {}

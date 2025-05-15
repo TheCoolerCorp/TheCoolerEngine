@@ -11,40 +11,20 @@ namespace Engine
 {
 	namespace GamePlay
 	{
-		enum class ComponentType : uint8_t
-		{
-			TRANSFORM = 0,
-			MESH = 1,
-			MATERIAL = 2,
-			RIGIDBODY = 3,
-			COLLIDERMESH = 4,
-			LIGHT = 5,
-			CAMERA = 6,
-			GAMECOMPONENT = 7,
-			PLAYERCONTROLLER = 8,
-		};
 
 		class Component
-		{
-		private:
-			static int SetCompId()
-			{
-				static int t_id = 0;
-				return t_id++;
-			}
-			
+		{	
 		public:
 
 			template<typename T>
-			static int GetCompId()
+			static const std::type_info& GetCompId()
 			{
-				static int t_id = SetCompId();
-				return t_id;
+				return typeid(T);
 			}
 
 			ENGINE_API virtual ~Component() = default;
 
-			ENGINE_API virtual ComponentType Create(int& a_outId) = 0;
+			ENGINE_API virtual void Create(int& a_outId) = 0;
 			ENGINE_API virtual void Destroy() = 0;
 
 			ENGINE_API void SetGameObject(int a_gameObjectId) { m_gameObjectId = a_gameObjectId; }

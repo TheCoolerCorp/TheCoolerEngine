@@ -36,12 +36,11 @@ namespace Engine
 				.data<&RigidBodyComponent::SetFromData, &RigidBodyComponent::GetRigidBodyData>(t_hash("RigidBody")); 
 		}
 
-		ComponentType RigidBodyComponent::Create(int& a_outId)
+		void RigidBodyComponent::Create(int& a_outId)
 		{
 			m_rigidBody = new Physics::RigidBody;
 			a_outId = ServiceLocator::GetPhysicsSystem()->AddComponent(this);
 			SetId(a_outId);
-			return ComponentType::RIGIDBODY;
 		}
 
 		void RigidBodyComponent::CreateBoxRigidBody(Physics::BodyType a_type, Physics::CollisionLayer a_layer, Math::vec3 a_position, Math::vec3 a_scale,

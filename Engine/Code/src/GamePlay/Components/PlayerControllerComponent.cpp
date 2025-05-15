@@ -19,11 +19,10 @@ namespace Engine::GamePlay
 	PlayerControllerComponent::~PlayerControllerComponent()
 	{
 	}
-	Engine::GamePlay::ComponentType PlayerControllerComponent::Create(int& a_outId)
+	void PlayerControllerComponent::Create(int& a_outId)
 	{
 		a_outId = ServiceLocator::GetGameComponentSystem()->AddComponent(this);
 		SetId(a_outId);
-		return ComponentType::PLAYERCONTROLLER;
 	}
 	void PlayerControllerComponent::Destroy()
 	{

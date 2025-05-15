@@ -16,7 +16,7 @@ namespace Engine
 			ENGINE_API ~LightComponent() override = default;
 
 			ENGINE_API static void Register();
-			ENGINE_API ComponentType Create(int& a_outID) override;
+			ENGINE_API void Create(int& a_outID) override;
 			ENGINE_API void SetLight(Light& a_light);
 			ENGINE_API void SetLightFromData(const LightData& a_lightData);
 			ENGINE_API void Destroy() override;
@@ -24,7 +24,6 @@ namespace Engine
 			[[nodiscard]] ENGINE_API Light& GetLight() { return m_light; }
 			[[nodiscard]] ENGINE_API LightData GetData();
 
-			ENGINE_API static ComponentType GetType() { return ComponentType::LIGHT; }
 			
 			ENGINE_API static LightComponent* GetComponent(int a_id);
 

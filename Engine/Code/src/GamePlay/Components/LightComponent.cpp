@@ -22,11 +22,10 @@ namespace Engine
 				.data<&LightComponent::SetLightFromData, &LightComponent::GetData>(t_hash("Light"));
 		}
 
-		ComponentType LightComponent::Create(int& a_outID)
+		void LightComponent::Create(int& a_outID)
 		{
 			a_outID = ServiceLocator::GetRendererSystem()->AddComponent(this);
 			SetId(a_outID);
-			return ComponentType::LIGHT;
 		}
 
 		void LightComponent::SetLight(Light& a_light)

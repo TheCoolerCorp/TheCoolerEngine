@@ -35,12 +35,11 @@ namespace Engine
 				.data<&TransformComponent::Set, &TransformComponent::GetTransformData>(t_hash("Transform"));
 		}
 
-		ComponentType TransformComponent::Create(int& a_outId)
+		void TransformComponent::Create(int& a_outId)
 		{
 			m_transform = new Math::Transform();
 			m_uid = ServiceLocator::GetTransformSystem()->AddComponent(this);
 			a_outId = m_uid;
-			return ComponentType::TRANSFORM;
 		}
 
 		void TransformComponent::Destroy()

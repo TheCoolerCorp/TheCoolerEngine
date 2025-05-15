@@ -31,7 +31,7 @@ namespace Engine
 			ENGINE_API ~MeshComponent() override = default;
 
 			ENGINE_API static void Register();
-			ENGINE_API ComponentType Create(int& a_outId) override;
+			ENGINE_API void Create(int& a_outId) override;
 
 			ENGINE_API void Destroy() override;
 
@@ -40,8 +40,6 @@ namespace Engine
 			ENGINE_API void SetFromData(const MeshData& a_data) {}
 
 			ENGINE_API void SetMaterial(Ref<Material> a_material);
-
-			ENGINE_API static ComponentType GetType() { return ComponentType::MESH; }
 
 			ENGINE_API static MeshComponent* GetComponent(int a_id);
 

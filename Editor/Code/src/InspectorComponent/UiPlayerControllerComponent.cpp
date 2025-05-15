@@ -44,6 +44,13 @@ namespace Editor::EditorLayer::Ui
 		float t_rotationSpeed = m_playerController->GetRotationSpeed();
 		float t_jumpForce = m_playerController->GetJumpForce();
 		float t_moveSpeed = m_playerController->GetMoveSpeed();
+		ImGui::SameLine();
+		if (ImGui::Button(("Remove##PlayerController" + std::to_string(m_uid)).c_str()))
+		{
+			m_window->GetSelectedObject()->RemoveComponent<Engine::GamePlay::PlayerControllerComponent>();
+			m_window->MarkOutOfDate();
+			return;
+		}
 
 		if (ImGui::DragFloat(("Move Speed##"+std::to_string(m_uid)).c_str(), &t_moveSpeed, 0.1f, 0, FLT_MAX))
 		{
