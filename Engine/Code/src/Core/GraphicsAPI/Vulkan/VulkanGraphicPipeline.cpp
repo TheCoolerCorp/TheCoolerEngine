@@ -292,6 +292,11 @@ namespace Engine
 
 				for (int i = 0; i < a_objectsDescriptors.size(); ++i)
 				{
+					/*if (i >= static_cast<int>(a_vertexBuffers.size()))
+					{
+						continue;
+					}*/
+
 					if (!a_vertexBuffers.at(i))
 					{
 						continue;
