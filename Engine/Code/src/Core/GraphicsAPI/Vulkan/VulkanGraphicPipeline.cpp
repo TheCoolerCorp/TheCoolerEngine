@@ -1,3 +1,5 @@
+#include <utility>
+
 #include "Core/GraphicsAPI/Vulkan/VulkanGraphicPipeline.h"
 
 #include "Core/Assertion/Assertion.h"
@@ -292,10 +294,10 @@ namespace Engine
 
 				for (int i = 0; i < a_objectsDescriptors.size(); ++i)
 				{
-					/*if (i >= static_cast<int>(a_vertexBuffers.size()))
+					if (std::cmp_greater_equal(i, a_vertexBuffers.size()))
 					{
 						continue;
-					}*/
+					}
 
 					if (!a_vertexBuffers.at(i))
 					{
