@@ -156,6 +156,7 @@ namespace Engine
 			protected:
 				std::unordered_map<ComponentType, int> m_compsId = std::unordered_map<ComponentType, int>(0);
 
+
 				Math::mat4 m_colliderMat;
 
 				std::string m_name;

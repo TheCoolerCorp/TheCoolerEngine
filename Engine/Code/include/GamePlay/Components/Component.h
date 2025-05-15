@@ -26,7 +26,22 @@ namespace Engine
 
 		class Component
 		{
+		private:
+			static int SetCompId()
+			{
+				static int t_id = 0;
+				return t_id++;
+			}
+			
 		public:
+
+			template<typename T>
+			static int GetCompId()
+			{
+				static int t_id = SetCompId();
+				return t_id;
+			}
+
 			ENGINE_API virtual ~Component() = default;
 
 			ENGINE_API virtual ComponentType Create(int& a_outId) = 0;
@@ -36,9 +51,14 @@ namespace Engine
 			[[nodiscard]] ENGINE_API int GetGameObjectID() const { return m_gameObjectId; }
 			[[nodiscard]] ENGINE_API int GetID() const { return m_uid; }
 			ENGINE_API void SetId(int a_uid) { m_uid = a_uid; }
+
+
 		protected:
+
 			int m_gameObjectId = -1;
 			int m_uid = -1;
+
+		
 		};
 
 	}

@@ -8,7 +8,7 @@ file(GLOB_RECURSE EDITOR_SOURCES "Code/*.cpp")
 #---------------------------------------#
 #			BUILD MODE					#
 #---------------------------------------#
-add_executable(Editor ${EDITOR_SOURCES} "Code/Include/LoggerWindow.h" "Code/src/LoggerWindow.cpp" "Code/Include/InspectorComponent/UiRigidbodyComponent.h" "Code/src/InspectorComponent/UiRigidbodyComponent.cpp" "Code/Include/FileExplorerWindow.h" "Code/src/FileExplorerWindow.cpp" "Code/Include/Resources/ImGuiTexture.h" "Code/src/Resources/ImGuiTexture.cpp" "Code/src/Layer.cpp" "Code/Include/InspectorComponent/UiLightComponent.h" "Code/src/InspectorComponent/UiLightComponent.cpp")
+add_executable(Editor ${EDITOR_SOURCES} "Code/Include/LoggerWindow.h" "Code/src/LoggerWindow.cpp" "Code/Include/InspectorComponent/UiRigidbodyComponent.h" "Code/src/InspectorComponent/UiRigidbodyComponent.cpp" "Code/Include/FileExplorerWindow.h" "Code/src/FileExplorerWindow.cpp" "Code/Include/Resources/ImGuiTexture.h" "Code/src/Resources/ImGuiTexture.cpp" "Code/src/Layer.cpp" "Code/Include/InspectorComponent/UiLightComponent.h" "Code/src/InspectorComponent/UiLightComponent.cpp" "Code/Include/Components.h/ComponentRegistry.h" "Code/Include/Components.h/CustomComponents/PressurePlateComponent.h")
 
 #---------------------------------------#
 #				INCLUDE					#
