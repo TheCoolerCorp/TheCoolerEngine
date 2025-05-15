@@ -207,7 +207,6 @@ void main()
         vec3 lightVec;
         if (light_lhtValues.data[i].isDir)
         {
-            //lightVec = light_lhtValues.data[i].dir - inWorldPos;
             lightVec = -light_lhtValues.data[i].dir;
         }
         else
@@ -215,7 +214,8 @@ void main()
             lightVec = light_lhtValues.data[i].position - inWorldPos;
         }
 
-        vec3 lightDir = normalize(lightVec);
+        //vec3 lightDir = normalize(lightVec);
+        vec3 lightDir = lightVec; // I Think it's better but not sure
         vec3 halfwayVec = normalize(camDir + lightDir);
         
         vec3 radiance;
