@@ -131,23 +131,7 @@ namespace Engine
 				if (m_lastState != m_isPlaying)
 				{
 					m_mainCamera->SetFreeCam(true);
-					m_lastState = m_isPlaying;
-					for (int i = 0; i < m_objs.size(); ++i)
-					{
-						if (!m_objs[i])
-						{
-							continue;
-						}
-						delete m_objs[i];
-					}
-					m_objs.clear();
-
-					m_renderSystem->Destroy(a_renderer);
-					m_renderSystem->Create(a_renderer);
-					m_physicsSystem->RemoveAllComponents();
-					m_transformSystem->Destroy();
-					Load(a_renderer);
-					m_justReloaded = true;
+					Reload(a_renderer);
 				}
 				m_mainCamera->Update(a_renderer, a_inputHandler, a_window, a_deltatime);
 				m_gameComponentSystem->SceneUpdate();
@@ -627,6 +611,27 @@ namespace Engine
 				t_transformComponent->SetParent(t_transformDatas[i].mParentId);
 			}
 			t_transformDatas.clear();
+		}
+
+		void Scene::Reload(Core::Renderer* a_renderer)
+		{
+			m_lastState = m_isPlaying;
+			for (int i = 0; i < m_objs.size(); ++i)
+			{
+				if (!m_objs[i])
+				{
+					continue;
+				}
+				delete m_objs[i];
+			}
+			m_objs.clear();
+
+			m_renderSystem->Destroy(a_renderer);
+			m_renderSystem->Create(a_renderer);
+			m_physicsSystem->RemoveAllComponents();
+			m_transformSystem->Destroy();
+			Load(a_renderer);
+			m_justReloaded = true;
 		}
 		
 		bool Scene::SetMode(bool a_mode)

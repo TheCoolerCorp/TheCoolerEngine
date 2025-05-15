@@ -56,6 +56,7 @@ namespace Engine
 
 			ENGINE_API void Save();
 			ENGINE_API void Load(Core::Renderer* a_renderer);
+			ENGINE_API void Reload(Core::Renderer* a_renderer);
 			ENGINE_API bool SetMode(bool a_mode);
 			[[nodiscard]] ENGINE_API bool IsPlaying() const { return m_isPlaying; }
 			ENGINE_API bool IsPlaying() { return m_isPlaying; }
