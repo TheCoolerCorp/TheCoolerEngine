@@ -84,7 +84,7 @@
         "MeshComponent": {
             "mesh": "Assets\\Meshes\\ShowcaseAssets\\Ground.obj",
             "type": 1,
-            "albedo": "Assets\\Textures\\ShowcaseTextures\\ForestGround\\forrest_ground_01_diff_2k.jpg",
+            "albedo": "Assets\\Textures\\ShowcaseTextures\\Baked\\GroundBake.jpg",
             "normal": "Assets\\Textures\\ShowcaseTextures\\ForestGround\\forrest_ground_01_nor_dx_2k.jpg",
             "metallic": "",
             "roughness": "Assets\\Textures\\ShowcaseTextures\\ForestGround\\forrest_ground_01_rough_2k.jpg",
@@ -115,7 +115,7 @@
         "MeshComponent": {
             "mesh": "Assets\\Meshes\\ShowcaseAssets\\Path.obj",
             "type": 1,
-            "albedo": "Assets\\Textures\\ShowcaseTextures\\CobblestoneFloor\\cobblestone_floor_04_diff_2k.jpg",
+            "albedo": "Assets\\Textures\\ShowcaseTextures\\Baked\\StonePathBake.jpg",
             "normal": "Assets\\Textures\\ShowcaseTextures\\CobblestoneFloor\\cobblestone_floor_04_nor_dx_2k.jpg",
             "metallic": "",
             "roughness": "Assets\\Textures\\ShowcaseTextures\\CobblestoneFloor\\cobblestone_floor_04_rough_2k.jpg",
@@ -126,9 +126,9 @@
         "GameObject": "Light",
         "TransformComponent": {
             "position": {
-                "x": -0.019397079944610596,
-                "y": 3.5998058319091797,
-                "z": -0.3296009302139282
+                "x": -0.43998289108276367,
+                "y": 5.437141418457031,
+                "z": 0.576486349105835
             },
             "rotation": {
                 "x": 0.0,
@@ -145,16 +145,16 @@
         },
         "LightComponent": {
             "position": {
-                "x": -0.019397079944610596,
-                "y": 3.5998058319091797,
-                "z": -0.3296009302139282
+                "x": -0.43998289108276367,
+                "y": 5.437141418457031,
+                "z": 0.576486349105835
             },
             "color": {
-                "x": 0.563725471496582,
-                "y": 0.5273141264915466,
-                "z": 0.40897729992866516
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
             },
-            "intensity": 152.0,
+            "intensity": 156.89999389648438,
             "is dir": 0
         }
     },
@@ -162,9 +162,9 @@
         "GameObject": "Camera",
         "TransformComponent": {
             "position": {
-                "x": -0.017102420330047607,
-                "y": 0.8293474912643433,
-                "z": 3.1751925945281982
+                "x": -0.01710241660475731,
+                "y": 0.8293476700782776,
+                "z": 3.1751930713653564
             },
             "rotation": {
                 "x": 0.0,
@@ -227,7 +227,7 @@
         "MeshComponent": {
             "mesh": "Assets\\Meshes\\ShowcaseAssets\\Wall.obj",
             "type": 1,
-            "albedo": "Assets\\Textures\\ShowcaseTextures\\RedBrick\\red_brick_diff_2k.jpg",
+            "albedo": "Assets\\Textures\\ShowcaseTextures\\Baked\\Wall1Bake.jpg",
             "normal": "Assets\\Textures\\ShowcaseTextures\\RedBrick\\red_brick_nor_dx_2k.jpg",
             "metallic": "",
             "roughness": "Assets\\Textures\\ShowcaseTextures\\RedBrick\\red_brick_rough_2k.jpg",
@@ -244,9 +244,9 @@
             },
             "rotation": {
                 "x": 0.0,
-                "y": 1.0,
+                "y": 0.0,
                 "z": 0.0,
-                "w": -4.371138828673793e-08
+                "w": 1.0
             },
             "scale": {
                 "x": 1.0,
@@ -256,9 +256,9 @@
             "parent": -1
         },
         "MeshComponent": {
-            "mesh": "Assets\\Meshes\\ShowcaseAssets\\Wall.obj",
+            "mesh": "Assets\\Meshes\\ShowcaseAssets\\Wall2.obj",
             "type": 1,
-            "albedo": "Assets\\Textures\\ShowcaseTextures\\RedBrick\\red_brick_diff_2k.jpg",
+            "albedo": "Assets\\Textures\\ShowcaseTextures\\Baked\\Wall2Bake.jpg",
             "normal": "Assets\\Textures\\ShowcaseTextures\\RedBrick\\red_brick_nor_dx_2k.jpg",
             "metallic": "",
             "roughness": "Assets\\Textures\\ShowcaseTextures\\RedBrick\\red_brick_rough_2k.jpg",
@@ -296,9 +296,9 @@
                 "z": 0.0
             },
             "scale": {
-                "x": 0.0,
-                "y": 0.0,
-                "z": 0.0
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
             },
             "radius": 0.20000000298023224,
             "half height": 1.0,
@@ -371,9 +371,9 @@
                 "z": 0.0
             },
             "scale": {
-                "x": 0.0,
-                "y": 0.0,
-                "z": 0.0
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
             },
             "radius": 0.5,
             "half height": 0.5,
@@ -408,6 +408,380 @@
             "maxUpAngle": 85.0,
             "maxDownAngle": 85.0,
             "transformRotateComponentId": 4
+        }
+    },
+    {
+        "GameObject": "Gate",
+        "TransformComponent": {
+            "position": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0,
+                "w": 1.0
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "parent": -1
+        },
+        "MeshComponent": {
+            "mesh": "Assets\\Meshes\\ShowcaseAssets\\Large_Iron_Gate.obj",
+            "type": 1,
+            "albedo": "Assets\\Textures\\ShowcaseTextures\\Baked\\GateBake.jpg",
+            "normal": "Assets\\Textures\\ShowcaseTextures\\LargeIronGate\\large_iron_gate_nor_dx_1k.jpg",
+            "metallic": "Assets\\Textures\\ShowcaseTextures\\LargeIronGate\\large_iron_gate_metal_1k.jpg",
+            "roughness": "Assets\\Textures\\ShowcaseTextures\\LargeIronGate\\large_iron_gate_rough_1k.jpg",
+            "ao": "Assets\\Textures\\ShowcaseTextures\\LargeIronGate\\large_iron_gate_ao_1k.jpg"
+        }
+    },
+    {
+        "GameObject": "RockFace",
+        "TransformComponent": {
+            "position": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0,
+                "w": 1.0
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "parent": -1
+        },
+        "MeshComponent": {
+            "mesh": "Assets\\Meshes\\ShowcaseAssets\\RockFace.obj",
+            "type": 1,
+            "albedo": "Assets\\Textures\\ShowcaseTextures\\Baked\\StoneFacadeBake.jpg",
+            "normal": "Assets\\Textures\\ShowcaseTextures\\RockCliff\\namaqualand_cliff_02_nor_dx_2k.jpg",
+            "metallic": "",
+            "roughness": "Assets\\Textures\\ShowcaseTextures\\RockCliff\\namaqualand_cliff_02_rough_2k.jpg",
+            "ao": "Assets\\Textures\\ShowcaseTextures\\RockCliff\\namaqualand_cliff_02_ao_2k.jpg"
+        }
+    },
+    {
+        "GameObject": "Empty",
+        "TransformComponent": {
+            "position": {
+                "x": -4.83259916305542,
+                "y": 0.0,
+                "z": -0.059849679470062256
+            },
+            "rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0,
+                "w": 1.0
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "parent": 6
+        },
+        "RigidBodyComponent": {
+            "body type": 0,
+            "layer": 0,
+            "collider type": 0,
+            "position": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 0.800000011920929,
+                "y": 3.799999952316284,
+                "z": 10.0
+            },
+            "radius": 1.0,
+            "half height": 1.0,
+            "rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0,
+                "w": 1.0
+            },
+            "mass": 1.0,
+            "enable": true,
+            "lock rotation X": false,
+            "lock rotation Y": false,
+            "lock rotation Z": false,
+            "friction": 0.5,
+            "restitution": 0.0
+        }
+    },
+    {
+        "GameObject": "Empty",
+        "TransformComponent": {
+            "position": {
+                "x": 4.898440361022949,
+                "y": 0.0,
+                "z": 0.06127506494522095
+            },
+            "rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0,
+                "w": 1.0
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "parent": 5
+        },
+        "RigidBodyComponent": {
+            "body type": 0,
+            "layer": 0,
+            "collider type": 0,
+            "position": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 4.0,
+                "z": 9.600000381469727
+            },
+            "radius": 1.0,
+            "half height": 1.0,
+            "rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0,
+                "w": 1.0
+            },
+            "mass": 1.0,
+            "enable": true,
+            "lock rotation X": false,
+            "lock rotation Y": false,
+            "lock rotation Z": false,
+            "friction": 0.5,
+            "restitution": 0.0
+        }
+    },
+    {
+        "GameObject": "Empty",
+        "TransformComponent": {
+            "position": {
+                "x": -3.3305468559265137,
+                "y": 3.7881939078943105e-06,
+                "z": 4.881812572479248
+            },
+            "rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0,
+                "w": 1.0
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "parent": 6
+        },
+        "RigidBodyComponent": {
+            "body type": 0,
+            "layer": 0,
+            "collider type": 0,
+            "position": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 3.200000047683716,
+                "y": 3.799999952316284,
+                "z": 1.0
+            },
+            "radius": 1.0,
+            "half height": 1.0,
+            "rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0,
+                "w": 1.0
+            },
+            "mass": 1.0,
+            "enable": true,
+            "lock rotation X": false,
+            "lock rotation Y": false,
+            "lock rotation Z": false,
+            "friction": 0.5,
+            "restitution": 0.0
+        }
+    },
+    {
+        "GameObject": "Empty",
+        "TransformComponent": {
+            "position": {
+                "x": 2.959901809692383,
+                "y": 0.0,
+                "z": 4.900428295135498
+            },
+            "rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0,
+                "w": 1.0
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "parent": 5
+        },
+        "RigidBodyComponent": {
+            "body type": 0,
+            "layer": 0,
+            "collider type": 0,
+            "position": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 3.799999952316284,
+                "y": 3.799999952316284,
+                "z": 1.0
+            },
+            "radius": 1.0,
+            "half height": 1.0,
+            "rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0,
+                "w": 1.0
+            },
+            "mass": 1.0,
+            "enable": true,
+            "lock rotation X": false,
+            "lock rotation Y": false,
+            "lock rotation Z": false,
+            "friction": 0.5,
+            "restitution": 0.0
+        }
+    },
+    {
+        "GameObject": "Empty",
+        "TransformComponent": {
+            "position": {
+                "x": 0.21920257806777954,
+                "y": 0.0,
+                "z": -3.9053850173950195
+            },
+            "rotation": {
+                "x": -0.2174842804670334,
+                "y": 0.0,
+                "z": 0.0,
+                "w": 0.9760638475418091
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "parent": 10
+        },
+        "RigidBodyComponent": {
+            "body type": 0,
+            "layer": 0,
+            "collider type": 0,
+            "position": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 10.399999618530273,
+                "y": 7.599999904632568,
+                "z": 1.0
+            },
+            "radius": 1.0,
+            "half height": 1.0,
+            "rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0,
+                "w": 1.0
+            },
+            "mass": 1.0,
+            "enable": true,
+            "lock rotation X": false,
+            "lock rotation Y": false,
+            "lock rotation Z": false,
+            "friction": 0.5,
+            "restitution": 0.0
+        }
+    },
+    {
+        "GameObject": "Empty",
+        "TransformComponent": {
+            "position": {
+                "x": -0.400304913520813,
+                "y": 0.0,
+                "z": 5.079580307006836
+            },
+            "rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0,
+                "w": 1.0
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "parent": 9
+        },
+        "RigidBodyComponent": {
+            "body type": 0,
+            "layer": 0,
+            "collider type": 0,
+            "position": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 3.200000047683716,
+                "y": 3.5999999046325684,
+                "z": 1.0
+            },
+            "radius": 1.0,
+            "half height": 1.0,
+            "rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0,
+                "w": 1.0
+            },
+            "mass": 1.0,
+            "enable": true,
+            "lock rotation X": false,
+            "lock rotation Y": false,
+            "lock rotation Z": false,
+            "friction": 0.5,
+            "restitution": 0.0
         }
     }
 ]

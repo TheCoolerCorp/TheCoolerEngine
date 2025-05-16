@@ -45,7 +45,7 @@ namespace Engine
 
 			for (int i = 0; i < a_updatedMatrix.size(); ++i)
 			{
-				if (i > m_objectsDescriptors.size())
+				if (i >= m_objectsDescriptors.size())
 					continue;
 				int t_updatedMatrix = a_updatedMatrix[i].first;
 				if (!m_objectsDescriptors[i] || t_updatedMatrix == -1 || t_updatedMatrix >= static_cast<int>(m_objectsDescriptors.size()))
