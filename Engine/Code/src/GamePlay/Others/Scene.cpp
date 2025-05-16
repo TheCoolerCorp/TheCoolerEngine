@@ -154,7 +154,7 @@ namespace Engine
 				}
 				m_physicsSystem->Update(a_deltatime, this);
 				m_renderSystem->UpdateCamera(a_renderer, a_deltatime, a_window, a_inputHandler, m_gameCameraId, m_objs[m_mainCameraObjectId] ? m_objs[m_mainCameraObjectId]->GetComponent<TransformComponent>()->GetTransform()->GetTransformMatrix() : Math::mat4());
-				m_gameComponentSystem->Update();
+				m_gameComponentSystem->Update(a_deltatime);
 				if (m_processKeyboardInputs)
 				{
 					m_gameComponentSystem->ProcessInputs(a_inputHandler, a_deltatime);

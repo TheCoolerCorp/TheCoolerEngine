@@ -3,7 +3,6 @@
 
 #include "EngineExport.h"
 #include "Core/Window/IWindow.h"
-
 #include "GamePlay/Components/Component.h"
 
 namespace Engine::Core::Window
@@ -20,11 +19,14 @@ namespace Engine::GamePlay
 		ENGINE_API virtual void Create(int& a_outId) = 0;
 		ENGINE_API virtual void Destroy() = 0;
 
-		ENGINE_API virtual void Start() = 0;
+		ENGINE_API virtual std::string GetTypeName() const { return ""; }
 
-		ENGINE_API virtual void Update() = 0;
-		ENGINE_API virtual void SceneUpdate() = 0;
-		ENGINE_API virtual void ProcessInputs(Core::Window::IInputHandler* a_inputHandler, float a_deltaTime) = 0;
+		ENGINE_API virtual void DrawUI() {}
+
+		ENGINE_API virtual void Start() {}
+		ENGINE_API virtual void Update(float a_deltatime) {}
+		ENGINE_API virtual void SceneUpdate() {}
+		ENGINE_API virtual void ProcessInputs(Core::Window::IInputHandler* a_inputHandler, float a_deltaTime) {}
 
 		ENGINE_API void SetScene(Scene* a_scene) { m_scene = a_scene; }
 		ENGINE_API void SetWindow(Core::Window::IWindow* a_window) { m_window = a_window; }

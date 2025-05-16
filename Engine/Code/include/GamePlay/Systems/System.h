@@ -19,7 +19,7 @@ namespace Engine
 			ENGINE_API System() = default;
 			ENGINE_API virtual ~System() = default;
 
-			ENGINE_API virtual void Update() {}
+			ENGINE_API virtual void Update(float a_deltatime) {}
 			ENGINE_API virtual void SceneUpdate() {}
 			ENGINE_API virtual void ProcessInputs(Core::Window::IInputHandler* a_inputHandler, float a_deltaTime) {}
 		};
