@@ -1,5 +1,8 @@
 #include "GamePlay/ServiceLocator.h"
 
+#include "miniaudio.h"
+#include "GamePlay/Components/ReflectionComponents/ComponentRegistry.h"
+
 namespace Engine
 {
 	namespace GamePlay
@@ -11,6 +14,7 @@ namespace Engine
 		PhysicsSystem* ServiceLocator::m_physicsSystem = nullptr;
 		Core::Renderer* ServiceLocator::m_renderer = nullptr;
 		GameComponentSystem* ServiceLocator::m_gameComponentSystem = nullptr;
+		ComponentRegistry* ServiceLocator::m_registry = nullptr;
 
 		void ServiceLocator::ProvideThreadPool(Core::Multithread::ThreadPool* a_threadPool)
 		{
@@ -47,6 +51,11 @@ namespace Engine
 			m_gameComponentSystem = a_gameComponentSystem;
 		}
 
+		void ServiceLocator::ProvideComponentRegistry(ComponentRegistry* a_compRegistry)
+		{
+			m_registry = a_compRegistry;
+		}
+
 		GameComponentSystem* ServiceLocator::GetGameComponentSystem()
 		{
 			return m_gameComponentSystem;
@@ -81,5 +90,15 @@ namespace Engine
 		{
 			return m_renderer;
 		}
+
+		ComponentRegistry* ServiceLocator::GetComponentRegistry()
+		{
+			if (!m_registry)
+			{
+				ProvideComponentRegistry(&ComponentRegistry::Instance());
+			}
+			return m_registry;
+		}
+
 	}
 }

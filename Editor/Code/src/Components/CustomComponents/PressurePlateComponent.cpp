@@ -10,12 +10,33 @@ namespace Editor::GamePlay
 {
 	nlohmann::ordered_json PressurePlateComponent::Serialize()
 	{
-		return nlohmann::detail::value_t::null;
+		nlohmann::ordered_json t_json;
+		t_json["transformComponentId"] = m_transformComponentId;
+		t_json["collisionListenerGameObjectId"] = m_collisionListenerGameObjectId;
+		t_json["doorGameObjectId"] = m_doorGameObjectId;
+
+		t_json["position"] = 
+		{
+					{"x", m_doorActivePos.x},
+					{"y", m_doorActivePos.y},
+					{"z", m_doorActivePos.z}
+		};
+
+		return t_json;
 	}
 
 	void PressurePlateComponent::Deserialize(const nlohmann::ordered_json& a_json)
 	{
-		
+		m_transformComponentId = a_json["transformComponentId"];
+		m_collisionListenerGameObjectId = a_json["collisionListenerGameObjectId"];
+		m_doorGameObjectId = a_json["doorGameObjectId"];
+
+		const auto& t_pos = a_json.at("position");
+		m_doorActivePos = {
+			t_pos.at("x").get<float>(),
+			t_pos.at("y").get<float>(),
+			t_pos.at("z").get<float>()
+		};
 	}
 
 	void PressurePlateComponent::DrawUI()

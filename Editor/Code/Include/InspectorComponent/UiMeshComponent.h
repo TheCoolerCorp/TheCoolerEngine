@@ -2,6 +2,7 @@
 #define UIMESHCOMPONENT_H
 
 #include "UiInspectorComponent.h"
+#include "GamePlay/ComponentsBase/Material.h"
 
 namespace Engine::GamePlay
 {

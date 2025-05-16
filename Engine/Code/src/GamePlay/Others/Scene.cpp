@@ -464,7 +464,7 @@ namespace Engine
 
 				for (auto& t_typeIndex : t_obj->GetOwnedTypes())
 				{
-					ComponentRegistry::Entry* t_entry = ComponentRegistry::Instance().GetEntryFromId(t_typeIndex);
+					ComponentRegistry::Entry* t_entry = ServiceLocator::GetComponentRegistry()->GetEntryFromId(t_typeIndex);
 					if (t_entry)
 					{
 						GameComponent* t_comp = t_entry->getComponent(*t_obj);
@@ -547,7 +547,7 @@ namespace Engine
 				GameObject* t_gameObject = new GameObject(t_transform.mPos, t_transform.mRot, t_transform.mScale, t_name);
 				AddGameObject(t_gameObject);
 
-				for (auto& t_compEntry : ComponentRegistry::Instance().GetEntries())
+				for (auto& t_compEntry : ServiceLocator::GetComponentRegistry()->GetEntries())
 				{
 					if (t_entry.contains(t_compEntry.name))
 					{

@@ -6,8 +6,10 @@
 
 #include "GamePlay/Components/Meshcomponent.h"
 #include "Core/Utils.h"
+#include "GamePlay/Components/LightComponent.h"
 #include "GamePlay/Components/PlayerControllerComponent.h"
-
+#include "GamePlay/Components/TransformComponent.h"
+#include "GamePlay/Components/RigidBodyComponent.h"
 namespace Engine
 {
 	namespace GamePlay

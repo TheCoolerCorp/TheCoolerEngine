@@ -1,4 +1,5 @@
 #include "../Include/InspectorComponent/UiLightComponent.h"
+#include "GamePlay/Components/LightComponent.h"
 #include "GamePlay/Others/GameObject.h"
 
 Editor::EditorLayer::Ui::UiLightComponent::~UiLightComponent()

@@ -5,6 +5,7 @@
 #include "GamePlay/Components/Component.h"
 #include "GamePlay/Components/GameComponent.h"
 #include "Core/Window/IInputHandler.h"
+#include "Gameplay/ServiceLocator.h"
 #include "GamePlay/Others/GameObject.h"
 #include "GamePlay/Others/Scene.h"
 
