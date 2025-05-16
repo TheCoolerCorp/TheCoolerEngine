@@ -1,7 +1,10 @@
 #include "../../../Include/Components/CustomComponents/PressurePlateComponent.h"
-#include "../../../Include/Components/ComponentRegistry.h"
+
+#include "UiHelper.h"
+#include "Debugging/TCLogger.h"
+#include "GamePlay/Components/ReflectionComponents/ComponentRegistry.h"
 #include "GamePlay/Others/Scene.h"
-static inline bool pressurePlateRegistered = Editor::GamePlay::AutoRegisterComponent<Editor::GamePlay::PressurePlateComponent>::registered;
+static inline bool pressurePlateRegistered = Engine::GamePlay::AutoRegisterComponent<Editor::GamePlay::PressurePlateComponent>::registered;
 
 namespace Editor::GamePlay
 {
@@ -17,43 +20,63 @@ namespace Editor::GamePlay
 			GetGameObject()->RemoveComponent<PressurePlateComponent>();
 			return;
 		}
+		ImGui::Text("Pressed: %s", m_pressed ? "true" : "false");
 		ImGui::Text("Collision Target");
 		ImGui::SetItemTooltip("Set the target that will trigger the pressure plate component. Needs a ");
 
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(4, 4));
-		ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 8.0f);
-
-
-		// Compute child size manually (text size + padding * 2)
 		std::string t_text;
-		if (m_collisionListenerGameObject == -1)
+		if (m_collisionListenerGameObjectId == -1)
 		{
 			t_text = "Not Set!";
 		}
 		else
 		{
-			
-			t_text = m_scene->GetGameObject(m_collisionListenerGameObject)->GetName();
-		}
-		ImVec2 t_textSize = ImGui::CalcTextSize(t_text.c_str());
-		ImVec2 t_childSize = ImVec2(t_textSize.x + 8, t_textSize.y + 8);
 
-		ImGui::SetCursorPosX(ImGui::GetCursorPosX() - 4);
-		ImGui::BeginChild(("RotateOverrideDragDropTarget" + std::to_string(m_uid)).c_str(), t_childSize, true, ImGuiChildFlags_Border);
-		ImGui::PopStyleVar(2);
-		ImGui::Text(t_text.c_str());
-		ImGui::EndChild();
-	}
+			t_text = m_scene->GetGameObject(m_collisionListenerGameObjectId)->GetName();
+		}
+		UiHelper::UiAddObjectDragDropTarget(t_text.c_str(), m_uid, m_collisionListenerGameObjectId);
+
+		if (ImGui::TreeNode("Door Transform"))
+		{
+			//door transform that will be manipulated when the pressure plate is pressed
+			ImGui::Text("Door Transform");
+			ImGui::SetItemTooltip("The target that will be manipulated when the pressure plate is pressed.");
+			if (m_collisionListenerGameObjectId == -1)
+			{
+				t_text = "Not Set!";
+			}
+			else
+			{
+				t_text = m_scene->GetGameObject(m_doorGameObjectId)->GetName();
+			}
+			UiHelper::UiAddObjectDragDropTarget(t_text.c_str(), m_uid, m_doorGameObjectId);
+
+			UiHelper::UiDisplayVec3("Move Target Pos", m_uid, m_doorActivePos);
+			ImGui::SetItemTooltip("The position the door will be in when the pressure plate is pressed.");
+
+			ImGui::TreePop();
+		}
+		}
 
 	void PressurePlateComponent::Start()
 	{
 		EditorGameComponent::Start();
 		m_transformComponentId = GetGameObject()->GetComponentID<Engine::GamePlay::TransformComponent>();
+		if (Engine::GamePlay::RigidBodyComponent* t_component = GetGameObject()->GetComponent<Engine::GamePlay::RigidBodyComponent>())
+		{
+			t_component->GetOnTriggerEnterEvent().AddListener([this](Engine::GamePlay::RigidBodyComponent* a_component) {this->OnColisionEnter(a_component);});
+			t_component->GetOnTriggerExitEvent().AddListener([this](Engine::GamePlay::RigidBodyComponent* a_component) {this->OnColisionExit(a_component);});
+		}
+		else
+		{
+			//Log error on the editor logger
+			TCLOG_WARNING("Object Has no RigidBodyComponent!");
+		}
 	}
 
-	void PressurePlateComponent::Update()
+	void PressurePlateComponent::Update(float a_deltatime)
 	{
-		EditorGameComponent::Update();
+		EditorGameComponent::Update(a_deltatime);
 	}
 
 	void PressurePlateComponent::SceneUpdate()
@@ -80,8 +103,9 @@ namespace Editor::GamePlay
 	{
 		if (component)
 		{
-			if (component->GetGameObjectID() == m_collisionListenerGameObject)
+			if (component->GetGameObjectID() == m_collisionListenerGameObjectId)
 			{
+				m_pressed = true;
 				m_pressurePlatePressedEvent.Invoke(true);
 			}
 		}
@@ -91,26 +115,11 @@ namespace Editor::GamePlay
 	{
 		if (component)
 		{
-			if (component->GetGameObjectID() == m_collisionListenerGameObject)
+			if (component->GetGameObjectID() == m_collisionListenerGameObjectId)
 			{
+				m_pressed = false;
 				m_pressurePlatePressedEvent.Invoke(false);
 			}
-		}
-	}
-
-	void PressurePlateComponent::UiAddCollisionTargetDragDropTarget()
-	{
-		if (ImGui::BeginDragDropTarget())
-		{
-			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("SCENE_OBJECT_PAYLOAD"))
-			{
-				int t_id = *static_cast<int*>(payload->Data);
-				if (t_id != -1)
-				{
-					m_collisionListenerGameObject = t_id;
-				}
-			}
-			ImGui::EndDragDropTarget();
 		}
 	}
 }

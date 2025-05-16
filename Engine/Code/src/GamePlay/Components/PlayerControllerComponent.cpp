@@ -40,7 +40,7 @@ namespace Engine::GamePlay
 		CaptureCursor();
 	}
 
-	void PlayerControllerComponent::Update()
+	void PlayerControllerComponent::Update(float a_deltatime)
 	{
 	}
 	void PlayerControllerComponent::SceneUpdate()

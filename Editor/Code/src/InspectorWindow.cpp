@@ -11,7 +11,7 @@
 #include "InspectorComponent/UiPlayerControllerComponent.h"
 #include "InspectorComponent/UiRigidbodyComponent.h"
 #include "InspectorComponent/UiEditorGameComp.h"
-#include "../Include/Components/ComponentRegistry.h"
+#include "GamePlay/Components/ReflectionComponents/ComponentRegistry.h"
 
 Editor::EditorLayer::Ui::InspectorUiWindow::~InspectorUiWindow()
 {
@@ -152,10 +152,10 @@ void Editor::EditorLayer::Ui::InspectorUiWindow::RefreshCurrentObject()
 			AddComponent(new UiPlayerControllerComponent(m_layer, m_selectedObject->GetComponent<Engine::GamePlay::PlayerControllerComponent>()));
 		}
 		//check if the type is in the Component Registry, and if yes, create the component ui component with it
-		Editor::GamePlay::ComponentRegistry& t_registry = Editor::GamePlay::ComponentRegistry::Instance();
-		if (GamePlay::ComponentRegistry::Entry* t_entry = t_registry.GetEntryFromId(t_type))
+		Engine::GamePlay::ComponentRegistry& t_registry = Engine::GamePlay::ComponentRegistry::Instance();
+		if (Engine::GamePlay::ComponentRegistry::Entry* t_entry = t_registry.GetEntryFromId(t_type))
 		{
-			Editor::GamePlay::EditorGameComponent* t_component = t_entry->getComponent(*m_selectedObject);
+			Engine::GamePlay::GameComponent* t_component = t_entry->getComponent(*m_selectedObject);
 			if (t_component)
 			{
 				UiEditorGameComponent* m_component = new UiEditorGameComponent(m_layer, t_component, this);
@@ -301,15 +301,15 @@ void Editor::EditorLayer::Ui::InspectorUiWindow::UiDrawComponentAddWindow()
 				MarkOutOfDate();
 			}
 		}
-		Editor::GamePlay::ComponentRegistry& t_registry = Editor::GamePlay::ComponentRegistry::Instance();
-		for (GamePlay::ComponentRegistry::Entry t_entry : t_registry.GetEntries())
+		Engine::GamePlay::ComponentRegistry& t_registry = Engine::GamePlay::ComponentRegistry::Instance();
+		for (Engine::GamePlay::ComponentRegistry::Entry t_entry : t_registry.GetEntries())
 		{
 			if (UtilHasComponentOfType(t_entry.type))
 				continue;
 			if (ImGui::Selectable(t_entry.name.c_str()))
 			{
 				t_entry.addFunction(*m_selectedObject);
-				t_entry.getComponent(*m_selectedObject)->SetInspectorWindow(this);
+				static_cast<GamePlay::EditorGameComponent*>(t_entry.getComponent(*m_selectedObject))->SetInspectorWindow(this);
 				MarkOutOfDate();
 			}
 		}

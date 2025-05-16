@@ -2,7 +2,6 @@
 #define PRESSUREPLATECOMPONENT_H
 
 #include "../EditorGameComponent.h"
-#include "../ComponentRegistry.h"
 
 namespace Editor::GamePlay
 {
@@ -15,7 +14,7 @@ namespace Editor::GamePlay
 		void DrawUI() override;
 
 		void Start() override;
-		void Update() override;
+		void Update(float a_deltatime) override;
 		void SceneUpdate() override;
 		void ProcessInputs(Engine::Core::Window::IInputHandler* a_inputHandler, float a_deltaTime) override;
 
@@ -32,10 +31,15 @@ namespace Editor::GamePlay
 		CoolerEvent<bool>& GetPressurePlatePressedEvent() { return m_pressurePlatePressedEvent; }
 	private:
 		CoolerEvent<bool> m_pressurePlatePressedEvent;
-		void UiAddCollisionTargetDragDropTarget();
+
+		bool m_pressed = false;
 
 		int m_transformComponentId = -1;
-		int m_collisionListenerGameObject = -1;
+		int m_collisionListenerGameObjectId = -1;
+		int m_doorGameObjectId = -1;
+
+		//the position of the door when the pressure plate is pressed
+		Engine::Math::vec3 m_doorActivePos = { 0.f, 0.f, 0.f };
 	};
 }
 

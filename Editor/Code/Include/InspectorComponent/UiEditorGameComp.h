@@ -4,7 +4,7 @@
 #include "InspectorWindow.h"
 #include "../ImGuiLayer.h"
 #include "Components/EditorGameComponent.h"
-#include "Components/ComponentRegistry.h"
+#include "GamePlay/Components/ReflectionComponents/ComponentRegistry.h"
 #include "UiInspectorComponent.h"
 
 namespace Editor::EditorLayer::Ui
@@ -16,13 +16,13 @@ namespace Editor::EditorLayer::Ui
 	class UiEditorGameComponent : public InspectorComponent
 	{
 	public:
-		UiEditorGameComponent(ImGuiLayer* a_layer, GamePlay::EditorGameComponent* a_editorGameComponent, InspectorUiWindow* a_uiWindow)
+		UiEditorGameComponent(ImGuiLayer* a_layer, Engine::GamePlay::GameComponent* a_editorGameComponent, InspectorUiWindow* a_uiWindow)
 			:InspectorComponent(a_layer), m_editorGameComponent(a_editorGameComponent)
 		{
 			if (a_uiWindow)
 			{
 				m_window = a_uiWindow;
-				a_editorGameComponent->SetInspectorWindow(a_uiWindow);
+				static_cast<GamePlay::EditorGameComponent*>(a_editorGameComponent)->SetInspectorWindow(a_uiWindow);
 			}
 			
 
@@ -34,7 +34,7 @@ namespace Editor::EditorLayer::Ui
 		void Destroy() override;
 		UiComponentType GetType() override;
 	protected:
-		GamePlay::EditorGameComponent* m_editorGameComponent = nullptr;
+		Engine::GamePlay::GameComponent* m_editorGameComponent = nullptr;
 	};
 }
 

@@ -6,13 +6,13 @@
 #include <unordered_map>
 #include <vector>
 #include <typeindex>
-#include "EditorGameComponent.h"
+#include "GamePlay/Components/GameComponent.h"
 #include "GamePlay/Components/Component.h"
 #include "GamePlay/Others/GameObject.h"
-namespace Editor::GamePlay
+namespace Engine::GamePlay
 {
 
-    using ComponentFactory = std::function<EditorGameComponent* ()>;
+    using ComponentFactory = std::function<Engine::GamePlay::GameComponent* ()>;
 
 
 
@@ -30,7 +30,7 @@ namespace Editor::GamePlay
             std::type_index type;
             ComponentAdder addFunction;
             // Given a GameObject, get the component instance (as EditorGameComponent*)
-            std::function<EditorGameComponent* (Engine::GamePlay::GameObject&)> getComponent;
+            std::function<Engine::GamePlay::GameComponent* (Engine::GamePlay::GameObject&)> getComponent;
         };
 
         static ComponentRegistry& Instance() {
@@ -48,9 +48,9 @@ namespace Editor::GamePlay
                     obj.AddComponent<T>();
                     },
                 //getter function
-                [](Engine::GamePlay::GameObject& obj) -> EditorGameComponent* {
+                [](Engine::GamePlay::GameObject& obj) -> Engine::GamePlay::GameComponent* {
                      if (T* comp = obj.GetComponent<T>()) {
-                        return dynamic_cast<EditorGameComponent*>(comp);
+                        return dynamic_cast<Engine::GamePlay::GameComponent*>(comp);
                      }
                      return nullptr;
                 }
