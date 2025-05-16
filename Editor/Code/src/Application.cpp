@@ -11,6 +11,7 @@
 #include "InspectorWindow.h"
 #include "LoggerWindow.h"
 #include "Core/Audio/SoundManager.h"
+#include "GamePlay/Components/PlayerControllerComponent.h"
 
 using namespace Engine::Core;
 using namespace Engine::GamePlay;
@@ -193,6 +194,7 @@ namespace Editor
 			Engine::GamePlay::MeshComponent::Register();
 			Engine::GamePlay::LightComponent::Register();
 			Engine::GamePlay::CameraComponent::Register();
+			Engine::GamePlay::PlayerControllerComponent::Register();
 		}
 	}
 }

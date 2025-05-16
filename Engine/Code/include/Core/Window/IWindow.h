@@ -50,7 +50,7 @@ namespace Engine
 				{
 					return m_mouseCapturedEvent;
 				}
-			private:
+			protected:
 				CoolerEvent<bool> m_mouseCapturedEvent;
 			};
 		}

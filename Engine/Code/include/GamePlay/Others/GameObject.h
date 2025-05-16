@@ -22,6 +22,7 @@
 
 #include "Gameplay/ServiceLocator.h"
 #include "Core/Renderer/Renderer.h"
+#include <typeindex>
 
 namespace Engine
 {
@@ -50,14 +51,16 @@ namespace Engine
 					ComponentClass* t_newComponent = new ComponentClass();
 					t_newComponent->SetGameObject(m_id);
 					int id = -1;
-					ComponentType t_componentType = t_newComponent->Create(id);
 
-					if (m_compsId.contains(t_componentType))
+					t_newComponent->Create(id);
+					const std::type_info& t_componentIdentifier = Component::GetCompId<ComponentClass>();
+
+					if (m_compsId.contains(t_componentIdentifier))
 					{
 						return;
 					}
 
-					m_compsId.insert({ t_componentType, id });
+					m_compsId.insert({ t_componentIdentifier, id });
 				}
 
 				template<typename ComponentClass>
@@ -65,29 +68,27 @@ namespace Engine
 				{
 					static_assert(std::is_base_of<Component, ComponentClass>::value);
 					static_assert(!std::is_same<ComponentClass, Component>::value);
-					static_assert(std::is_invocable<decltype(&ComponentClass::GetType)>::value);
 					static_assert(std::is_invocable<decltype(&ComponentClass::GetComponent), uint32_t>::value);
 						
-					ComponentType t_componentType = ComponentClass::GetType();
+					const std::type_info& t_componentIdentifier = Component::GetCompId<ComponentClass>();
 
-					if (!m_compsId.contains(t_componentType))
+					if (!m_compsId.contains(t_componentIdentifier))
 					{
 						return nullptr;
 					}
 
-					int t_id = m_compsId.at(t_componentType);
+					int t_id = m_compsId.at(t_componentIdentifier);
 
 					return ComponentClass::GetComponent(t_id);
 				}
 
+
 				template<typename ComponentClass>
 				bool HasComponent()
 				{
-					static_assert(std::is_invocable<decltype(&ComponentClass::GetType)>::value);
+					const std::type_info& t_componentIdentifier = Component::GetCompId<ComponentClass>();
 
-					const ComponentType t_componentType = ComponentClass::GetType();
-
-					if (!m_compsId.contains(t_componentType))
+					if (!m_compsId.contains(t_componentIdentifier))
 					{
 						return false;
 					}
@@ -100,16 +101,15 @@ namespace Engine
 				{
 					static_assert(std::is_base_of<Component, ComponentClass>::value);
 					static_assert(!std::is_same<ComponentClass, Component>::value);
-					static_assert(std::is_invocable<decltype(&ComponentClass::GetType)>::value);
 
-					ComponentType t_componentType = ComponentClass::GetType();
+					const std::type_info& t_componentIdentifier = Component::GetCompId<ComponentClass>();
 
-					if (!m_compsId.contains(t_componentType))
+					if (!m_compsId.contains(t_componentIdentifier))
 					{
 						return -1;
 					}
 
-					return m_compsId.at(t_componentType);
+					return m_compsId.at(t_componentIdentifier);
 				}
 
 				template<typename ComponentClass>
@@ -117,20 +117,19 @@ namespace Engine
 				{
 					static_assert(std::is_base_of<Component, ComponentClass>::value);
 					static_assert(!std::is_same<ComponentClass, Component>::value);
-					static_assert(std::is_invocable<decltype(&ComponentClass::GetType)>::value);
 					static_assert(std::is_invocable<decltype(&ComponentClass::RemoveComponent), int>::value);
 
-					ComponentType t_componentType = ComponentClass::GetType();
+					const std::type_info& t_componentIdentifier = Component::GetCompId<ComponentClass>();
 
-					if (!m_compsId.contains(t_componentType))
+					if (!m_compsId.contains(t_componentIdentifier))
 					{
 						return;
 					}
 
-					int t_id = m_compsId.at(t_componentType);
+					int t_id = m_compsId.at(t_componentIdentifier);
 
 					ComponentClass::RemoveComponent(t_id);
-					m_compsId.erase(t_componentType);
+					m_compsId.erase(t_componentIdentifier);
 				}
 
 				ENGINE_API void SceneUpdate();
@@ -149,12 +148,14 @@ namespace Engine
 				[[nodiscard]] ENGINE_API std::vector<int> GetChildrenTransformIDs();
 				[[nodiscard]] ENGINE_API std::string GetName() const { return m_name; }
 				[[nodiscard]] ENGINE_API int GetId() const { return m_id; }
-				[[nodiscard]] ENGINE_API std::vector<ComponentType> GetOwnedTypes();
+				[[nodiscard]] ENGINE_API std::vector<std::type_index> GetOwnedTypes();
 					
 				ENGINE_API bool HasParent();
 				ENGINE_API bool HasChildren();
 			protected:
-				std::unordered_map<ComponentType, int> m_compsId = std::unordered_map<ComponentType, int>(0);
+				//the first int is the gameobjects Unique identifier. There is one for each class type that remains unique for the runtime
+				std::unordered_map<std::type_index, int> m_compsId = std::unordered_map<std::type_index, int>(0);
+
 
 				Math::mat4 m_colliderMat;
 

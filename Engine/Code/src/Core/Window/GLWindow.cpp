@@ -87,6 +87,7 @@ namespace Engine
 					t_value = GLFW_CURSOR_NORMAL;
 				}
 				glfwSetInputMode(m_window, GLFW_CURSOR, t_value);
+				m_mouseCapturedEvent.Invoke(a_capture);
 			}
 
 			void GLwindow::GetFramebufferSize(int* a_width, int* a_height)

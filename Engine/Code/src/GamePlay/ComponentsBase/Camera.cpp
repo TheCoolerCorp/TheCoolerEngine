@@ -5,6 +5,7 @@
 #include "Math/TheCoolerMath.h"
 #include "Core/Renderer/Renderer.h"
 #include "Core/Interfaces/IDescriptorPool.h"
+#include "GamePlay/Others/Scene.h"
 
 namespace Engine
 {
@@ -112,6 +113,8 @@ namespace Engine
 
 		void Camera::ComputeInputs(Core::Window::IInputHandler* a_inputHandler, Core::Window::IWindow* a_window, const float a_deltaTime)
 		{
+			if (!Scene::ProcessKeyboardInputs())
+				return;
 			if (!m_isFreeCam)
 			{
 				m_needToUpdate = true;

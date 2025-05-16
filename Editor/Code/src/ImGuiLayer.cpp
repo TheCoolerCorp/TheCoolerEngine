@@ -34,7 +34,19 @@ namespace Editor::EditorLayer::Ui
 		{
 			std::ifstream f(t_io.IniFilename);
 			if (!f.good())
+			{
 				ImGui::LoadIniSettingsFromDisk("Assets/defaultLayout.ini");
+			}
+		}
+	}
+
+	void ImGuiLayer::Setup()
+	{
+		if (!m_setup)
+		{
+			m_setup = true;
+			m_app->GetWindow()->GetMouseCapturedEvent().AddListener([this](bool a_captured) {this->MouseCursorCaptured(a_captured);});
+			m_app->GetCurrentScene()->GetBeginPlayEvent().AddListener([this]() {this->OnBeginPlay(); });
 		}
 	}
 
@@ -47,7 +59,8 @@ namespace Editor::EditorLayer::Ui
 	void ImGuiLayer::OnUpdate(float a_deltaTime)
 	{
 		Layer::OnUpdate(a_deltaTime);
-		
+		if (!m_setup) //just to set up the events
+			Setup();
 		m_imGui->Update();
 		/*
 		 * if any windows need to be deleted, it will be done here. This is to prevent the stale pointers that would if a window tried to delete itself
@@ -104,11 +117,17 @@ namespace Editor::EditorLayer::Ui
 				continue;
 			t_window->ProcessInputs(a_inputHandler, a_deltaTime);
 		}
-		ImGuiWindow* t_viewPortWindow = ImGui::FindWindowByName("Viewport");
 		//if the viewport window is focused, process inputs
-		//ActiveWindow didnt really work so HoveredWindow is an acceptable alternative
-		if (t_viewPortWindow && GImGui->HoveredWindow == t_viewPortWindow)
-		{
+		ImGuiWindow* focusedWindow = ImGui::GetCurrentContext()->NavWindow;
+		if (focusedWindow && strcmp(focusedWindow->Name, "Viewport") == 0) {
+			//recapture the mouse if we previously de-captured it, since the viewport is now in focus
+			//and reallow inputs
+			if (m_captureOverwritten)
+			{
+				Engine::GamePlay::Scene::SetProcessKeyboardInputs(true);
+				m_app->GetWindow()->CaptureCursor(m_mouseCaptured);
+				m_captureOverwritten = false;
+			}
 			if (a_inputHandler->IsKeyDown(Engine::Core::Window::Key::KEY_G))
 			{
 				GizmoSetCurrentOperation(ImGuizmo::TRANSLATE);
@@ -122,6 +141,37 @@ namespace Editor::EditorLayer::Ui
 				GizmoSetCurrentOperation(ImGuizmo::SCALE);
 			}
 		}
+		else //window isnt focused, prevent inputs
+		{
+			Engine::GamePlay::Scene::SetProcessKeyboardInputs(false);
+			bool t_previousState = m_mouseCaptured;
+			m_app->GetWindow()->CaptureCursor(false);
+			m_mouseCaptured = t_previousState;
+			m_captureOverwritten = true;
+		}
+		if (m_mouseCaptured && !m_captureOverwritten) //un-capture the mouse if we press ESC to allow us to use the app ui
+		{
+			if (a_inputHandler->IsKeyDown(Engine::Core::Window::Key::KEY_ESCAPE) )
+			{
+				//prevent the scene from processing inputs, as the game window is not focused
+				Engine::GamePlay::Scene::SetProcessKeyboardInputs(false);
+				bool t_previousState = m_mouseCaptured;
+				m_app->GetWindow()->CaptureCursor(false);
+				m_mouseCaptured = t_previousState;
+				m_captureOverwritten = true;
+
+				//'hack': unfocus the window
+				ImGuiContext* ctx = ImGui::GetCurrentContext();
+				ctx->NavWindow = nullptr;
+			}
+			
+		}
+	}
+
+	void ImGuiLayer::OnBeginPlay()
+	{
+		//Force the viewport to be focused when the game starts
+		ImGui::SetWindowFocus("Viewport");
 	}
 
 	void ImGuiLayer::Delete()
@@ -240,6 +290,11 @@ namespace Editor::EditorLayer::Ui
 
 			ImGui::EndMenu();
 		}
+	}
+
+	void ImGuiLayer::MouseCursorCaptured(bool a_captured)
+	{
+		m_mouseCaptured = a_captured;
 	}
 
 	void ImGuiLayer::GizmoBeginFrame()

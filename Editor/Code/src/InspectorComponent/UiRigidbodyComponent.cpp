@@ -139,7 +139,7 @@ void Editor::EditorLayer::Ui::UiRigidbodyComponent::UiShowColliderInfo()
 		float t_radius = m_rigidBody->GetBody()->GetRadius();
 		if (ImGui::DragFloat(("Radius##" + std::to_string(m_uid)).c_str(), &t_radius, 0.1f, 0.001f, +FLT_MAX))
 		{
-			t_radius = t_radius <= 0.f ? 0.001f : t_radius;
+			t_radius = std::clamp(t_radius, 0.01f, +FLT_MAX);
 			m_rigidBody->GetBody()->SetRadius(t_radius);
 		}
 		break;
@@ -151,12 +151,12 @@ void Editor::EditorLayer::Ui::UiRigidbodyComponent::UiShowColliderInfo()
 		float t_halfHeight = m_rigidBody->GetBody()->GetHalfHeight();
 		if (ImGui::DragFloat(("HalfHeight##" + std::to_string(m_uid)).c_str(), &t_halfHeight, 0.1f, 0.001f, +FLT_MAX))
 		{
-			t_halfHeight = t_halfHeight <= 0.f ? 0.001f : t_halfHeight;
+			t_halfHeight = std::clamp(t_halfHeight, 0.01f, +FLT_MAX);
 			m_rigidBody->GetBody()->SetHalfHeight(t_halfHeight);
 		}
 		if (ImGui::DragFloat(("Radius##" + std::to_string(m_uid)).c_str(), &t_radius, 0.1f, 0.001f, +FLT_MAX))
 		{
-			t_radius = t_radius <= 0.f ? 0.001f : t_radius;
+			t_radius = std::clamp(t_radius, 0.01f, +FLT_MAX);
 			m_rigidBody->GetBody()->SetRadius(t_radius);
 		}
 		break;

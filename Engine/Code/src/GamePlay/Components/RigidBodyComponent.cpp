@@ -38,12 +38,11 @@ namespace Engine
 				.data<&RigidBodyComponent::SetFromData, &RigidBodyComponent::GetRigidBodyData>(t_hash("RigidBody")); 
 		}
 
-		ComponentType RigidBodyComponent::Create(int& a_outId)
+		void RigidBodyComponent::Create(int& a_outId)
 		{
 			m_rigidBody = new Physics::RigidBody;
 			a_outId = ServiceLocator::GetPhysicsSystem()->AddComponent(this);
 			SetId(a_outId);
-			return ComponentType::RIGIDBODY;
 		}
 
 		void RigidBodyComponent::CreateBoxRigidBody(Physics::BodyType a_type, Physics::CollisionLayer a_layer, Math::vec3 a_position, Math::vec3 a_scale,
@@ -174,93 +173,35 @@ namespace Engine
 
 		void RigidBodyComponent::OnCollisionEnter(RigidBodyComponent* a_otherRigidBodyComponent) const
 		{
-			if (!m_onCollisionEnter)
-			{
-				return;
-			}
 
-			m_onCollisionEnter(a_otherRigidBodyComponent);
+			m_onCollisionEnterEvent.Invoke(a_otherRigidBodyComponent);
 		}
 
 		void RigidBodyComponent::OnCollisionStay(RigidBodyComponent* a_otherRigidBodyComponent) const
 		{
-			if (!m_onCollisionStay)
-			{
-				return;
-			}
-
-			m_onCollisionStay(a_otherRigidBodyComponent);
+			m_onCollisionStayEvent.Invoke(a_otherRigidBodyComponent);
 		}
 
 		void RigidBodyComponent::OnCollisionExit(RigidBodyComponent* a_otherRigidBodyComponent) const
 		{
-			if (!m_onCollisionExit)
-			{
-				return;
-			}
-
-			m_onCollisionExit(a_otherRigidBodyComponent);
+			m_onCollisionExitEvent.Invoke(a_otherRigidBodyComponent);
 		}
 
 		void RigidBodyComponent::OnTriggerEnter(RigidBodyComponent* a_otherRigidBodyComponent) const
 		{
-			if (!m_onTriggerEnter)
-			{
-				return;
-			}
-
-			m_onTriggerEnter(a_otherRigidBodyComponent);
+			m_onTriggerEnterEvent.Invoke(a_otherRigidBodyComponent);
 		}
 
 		void RigidBodyComponent::OnTriggerStay(RigidBodyComponent* a_otherRigidBodyComponent) const
 		{
-			if (!m_onTriggerStay)
-			{
-				return;
-			}
-
-			m_onTriggerStay(a_otherRigidBodyComponent);
+			m_onTriggerStayEvent.Invoke(a_otherRigidBodyComponent);
 		}
 
 		void RigidBodyComponent::OnTriggerExit(RigidBodyComponent* a_otherRigidBodyComponent) const
 		{
-			if (!m_onTriggerExit)
-			{
-				return;
-			}
-
-			m_onTriggerExit(a_otherRigidBodyComponent);
+			m_onTriggerExitEvent.Invoke(a_otherRigidBodyComponent);
 		}
 
-		void RigidBodyComponent::SetOnCollisionEnter(std::function<void(RigidBodyComponent*)> a_event)
-		{
-			m_onCollisionEnter = std::move(a_event);
-		}
-
-		void RigidBodyComponent::SetOnCollisionStay(std::function<void(RigidBodyComponent*)> a_event)
-		{
-			m_onCollisionStay = std::move(a_event);
-		}
-
-		void RigidBodyComponent::SetOnCollisionExit(std::function<void(RigidBodyComponent*)> a_event)
-		{
-			m_onCollisionExit = std::move(a_event);
-		}
-
-		void RigidBodyComponent::SetOnTriggerEnter(std::function<void(RigidBodyComponent*)> a_event)
-		{
-			m_onTriggerEnter = std::move(a_event);
-		}
-
-		void RigidBodyComponent::SetOnTriggerStay(std::function<void(RigidBodyComponent*)> a_event)
-		{
-			m_onTriggerStay = std::move(a_event);
-		}
-
-		void RigidBodyComponent::SetOnTriggerExit(std::function<void(RigidBodyComponent*)> a_event)
-		{
-			m_onTriggerExit = std::move(a_event);
-		}
 
 		void RigidBodyComponent::SetLinearVelocity(const Math::vec3 a_velocity) const
 		{
@@ -375,6 +316,12 @@ namespace Engine
 			const JPH::BodyID t_bodyId = m_rigidBody->GetBodyID();
 			const JPH::Vec3 t_velocity = t_bodyInterface->GetLinearVelocity(t_bodyId);
 			return { t_velocity.GetX(), t_velocity.GetY(), t_velocity.GetZ() };
+		}
+
+		//shapecast towards the ground to check if anything is colliding within a specific distance threshold
+		bool RigidBodyComponent::IsGrounded(Math::vec3 a_pos, Math::quat a_rot)
+		{
+			return m_rigidBody->IsGrounded(a_pos, a_rot);
 		}
 
 		RigidBodyComponent* RigidBodyComponent::GetComponent(const uint32_t a_id)

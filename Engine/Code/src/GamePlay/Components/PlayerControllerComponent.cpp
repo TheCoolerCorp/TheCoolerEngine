@@ -8,6 +8,9 @@
 #include "GamePlay/Systems/GameComponentSystem.h"
 #include "Math/TheCoolerMath.h"
 
+#include <meta/factory.hpp>
+#include <meta/meta.hpp>
+
 namespace Engine::GamePlay
 {
 	PlayerControllerComponent::PlayerControllerComponent()
@@ -16,11 +19,10 @@ namespace Engine::GamePlay
 	PlayerControllerComponent::~PlayerControllerComponent()
 	{
 	}
-	Engine::GamePlay::ComponentType PlayerControllerComponent::Create(int& a_outId)
+	void PlayerControllerComponent::Create(int& a_outId)
 	{
 		a_outId = ServiceLocator::GetGameComponentSystem()->AddComponent(this);
 		SetId(a_outId);
-		return ComponentType::PLAYERCONTROLLER;
 	}
 	void PlayerControllerComponent::Destroy()
 	{
@@ -35,7 +37,7 @@ namespace Engine::GamePlay
 		{
 			LOG_ERROR("Player Controller: no rigidbody assigned to gameobject!");
 		}
-
+		CaptureCursor();
 	}
 
 	void PlayerControllerComponent::Update()
@@ -69,32 +71,25 @@ namespace Engine::GamePlay
 		}
 		if (a_inputHandler->IsKeyDown(Core::Window::Key::KEY_SPACE))
 		{
-			t_rigidBody->AddImpulse(t_transform->GetUp() * a_deltaTime * m_jumpForce);
-		}
-		if (a_inputHandler->IsMouseButtonDown(Core::Window::MouseButton::MOUSE_BUTTON_RIGHT))
-		{
-			if (!m_isMouseCaptured)
+			if (t_rigidBody->GetVelocity().y < 0.01 && t_rigidBody->IsGrounded(t_transform->GetTransform()->GetGlobalPosition(), t_transform->GetTransform()->GetGlobalRotation())) //a rather simplistic solution for jumping,, for now
 			{
-				m_isMouseCaptured = true;
-				CaptureCursor();
+				t_rigidBody->AddImpulse(t_transform->GetUp() * m_jumpForce);
 			}
-			const Math::vec2 t_currentMousePos = a_inputHandler->GetCursorPosition();
-			Math::vec2 t_deltaMousePos = t_currentMousePos - m_oldMousePos;
-
-			float t_pitch = -t_deltaMousePos.y * m_sensitivity * a_deltaTime;
-			float t_yaw = -t_deltaMousePos.x * m_sensitivity * a_deltaTime;
-
-			Math::vec3 t_rotation = t_transformRotate->GetTransform()->GetEulerAngles();
-			t_rotation.x = ClampAngle(t_rotation.x+t_pitch);
-			t_rotation.y += t_yaw;
-			t_transformRotate->GetTransform()->SetRotation(t_rotation);
 		}
-		else if (a_inputHandler->IsMouseButtonReleased(Core::Window::MouseButton::MOUSE_BUTTON_RIGHT))
-		{
-			CaptureCursor(false);
-			m_isMouseCaptured = false;
-		}
+
+		//mouse movement
+		const Math::vec2 t_currentMousePos = a_inputHandler->GetCursorPosition();
+		Math::vec2 t_deltaMousePos = t_currentMousePos - m_oldMousePos;
+
+		float t_pitch = -t_deltaMousePos.y * m_sensitivity * a_deltaTime;
+		float t_yaw = -t_deltaMousePos.x * m_sensitivity * a_deltaTime;
+
+		Math::vec3 t_rotation = t_transformRotate->GetTransform()->GetEulerAngles();
+		t_rotation.x = ClampAngle(t_rotation.x+t_pitch);
+		t_rotation.y += t_yaw;
+		t_transformRotate->GetTransform()->SetRotation(t_rotation);
 		m_oldMousePos = a_inputHandler->GetCursorPosition();
+
 		if (Math::vec3::Norm(t_movement) >= 0.003 || Math::vec3::Norm(t_movement) <= -0.003)
 		{
 			t_movement = Math::vec3::Normalize(t_movement);
@@ -102,13 +97,51 @@ namespace Engine::GamePlay
 			t_rigidBody->AddForce(Math::vec3(t_movement.z, 0, t_movement.x));
 		}
 		Math::vec3 t_velocity = t_rigidBody->GetVelocity();
-		if (Math::vec3::Norm(Math::vec3(t_velocity.x, 0, t_velocity.z)) > m_maxSpeed)
+		float t_norm = Math::vec3::Norm(Math::vec3(t_velocity.x, 0, t_velocity.z));
+		if (t_norm > m_maxSpeed)
 		{
 			t_velocity = Math::vec3(t_velocity.x, 0, t_velocity.z);
-			t_velocity = Math::vec3::Normalize(t_velocity) * m_maxSpeed;;
+			t_velocity = Math::vec3::Normalize(t_velocity) * m_maxSpeed;
 			t_velocity.y = t_rigidBody->GetVelocity().y;
 			t_rigidBody->SetLinearVelocity(t_velocity);
 		}
+	}
+
+	void PlayerControllerComponent::Register()
+	{
+		constexpr std::hash<std::string_view> t_hash{};
+
+		meta::reflect<PlayerControllerData>(t_hash("PlayerControllerData"))
+			.data<&PlayerControllerData::m_maxSpeed>(t_hash("maxSpeed"))
+			.data<&PlayerControllerData::m_sensitivity>(t_hash("sensitivity"))
+			.data<&PlayerControllerData::m_jumpForce>(t_hash("jumpForce"))
+			.data<&PlayerControllerData::m_moveSpeed>(t_hash("moveSpeed"))
+			.data<&PlayerControllerData::m_maxUpAngle>(t_hash("maxUpAngle"))
+			.data<&PlayerControllerData::m_maxDownAngle>(t_hash("maxDownAngle"))
+			.data<&PlayerControllerData::m_transformRotateComponentId>(t_hash("transformRotateComponentId"));
+
+		meta::reflect<PlayerControllerComponent>(t_hash("PlayerControllerComponent"))
+			.data<&PlayerControllerComponent::Set, &PlayerControllerComponent::GetData>(t_hash("PlayerController"));
+	}
+
+	void PlayerControllerComponent::Set(const PlayerControllerData& a_data)
+	{
+		m_maxSpeed = a_data.m_maxSpeed;
+		m_sensitivity = a_data.m_sensitivity;
+		m_jumpForce = a_data.m_jumpForce;
+		m_moveSpeed = a_data.m_moveSpeed;
+		m_maxUpAngle = a_data.m_maxUpAngle;
+		m_maxDownAngle = a_data.m_maxDownAngle;
+		m_transformRotateComponentId = a_data.m_transformRotateComponentId;
+	}
+
+	PlayerControllerData PlayerControllerComponent::GetData() const
+	{
+		return { .m_maxSpeed= m_maxSpeed, .m_sensitivity= m_sensitivity, .m_jumpForce= m_jumpForce, .m_moveSpeed=
+			m_moveSpeed,
+			.m_maxUpAngle= m_maxUpAngle, .m_maxDownAngle= m_maxDownAngle, .m_transformRotateComponentId=
+			m_transformRotateComponentId
+		};
 	}
 
 	void PlayerControllerComponent::RemoveComponent(int a_id)

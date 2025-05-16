@@ -43,7 +43,7 @@ namespace Engine
 			ENGINE_API [[nodiscard]] JPH::Body* GetDummy() const { return m_dummy; }
 			ENGINE_API [[nodiscard]] uint32_t GetSize() const { return static_cast<uint32_t>(m_components.size()); }
 			ENGINE_API [[nodiscard]] JPH::BodyInterface* GetBodyInterface() const { return m_bodyInterface; }
-
+			ENGINE_API [[nodiscard]] JPH::PhysicsSystem* GetPhysicsSystem() { return &m_physicsSystem; }
 		private:
 			void UpdateTransforms(const Scene* a_scene) const;
 			void UpdateEnqueued();

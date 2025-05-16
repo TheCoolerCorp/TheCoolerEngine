@@ -6,6 +6,8 @@
 
 #include "GamePlay/Components/Meshcomponent.h"
 #include "Core/Utils.h"
+#include "GamePlay/Components/PlayerControllerComponent.h"
+
 namespace Engine
 {
 	namespace GamePlay
@@ -155,9 +157,9 @@ namespace Engine
 		/**
 		 * returns the type of every component owned by the GameObject
 		 */
-		std::vector<ComponentType> GameObject::GetOwnedTypes()
+		std::vector<std::type_index> GameObject::GetOwnedTypes()
 		{
-			std::vector<ComponentType> t_types;
+			std::vector<std::type_index> t_types;
 			for (const auto& t_key : m_compsId | std::views::keys)
 			{
 				t_types.push_back(t_key);
@@ -189,6 +191,7 @@ namespace Engine
 			RemoveComponent<MeshComponent>();
 			RemoveComponent<RigidBodyComponent>();
 			RemoveComponent<LightComponent>();
+			RemoveComponent<PlayerControllerComponent>();
 		}
 	}
 }

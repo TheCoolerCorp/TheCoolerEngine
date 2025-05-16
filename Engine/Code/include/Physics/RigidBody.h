@@ -34,6 +34,24 @@ namespace Engine
 			CAPSULE
 		};
 
+		// Custom filter to ignore a specific body
+		class IgnoreBodyFilter : public JPH::BodyFilter
+		{
+		public:
+			explicit IgnoreBodyFilter(JPH::BodyID bodyToIgnore)
+				: mBodyToIgnore(bodyToIgnore) {
+			}
+
+			virtual bool ShouldCollide(const JPH::BodyID& inBodyID) const override
+			{
+				return inBodyID != mBodyToIgnore;
+			}
+
+		private:
+			JPH::BodyID mBodyToIgnore;
+		};
+
+
 		class RigidBody
 		{
 		public:
@@ -72,11 +90,15 @@ namespace Engine
 			ENGINE_API [[nodiscard]] float GetMass() const { return m_mass; }
 			ENGINE_API [[nodiscard]] float GetFriction() const { return m_friction; }
 			ENGINE_API [[nodiscard]] float GetRestitution() const { return m_restitution; }
+
+			ENGINE_API bool IsGrounded(Math::vec3 a_pos, Math::quat a_rot);
+
 			ENGINE_API void Remove() const;
 			ENGINE_API void Destroy();
 
 		private:
 			JPH::Body* m_body = nullptr;
+			JPH::Shape* m_shape = nullptr;
 
 			Math::vec3 m_scale = Math::vec3(1.f);
 			float m_radius = 1.f, m_halfHeight = 1.f;
