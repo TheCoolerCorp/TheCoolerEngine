@@ -16,7 +16,8 @@ namespace Engine
 			meta::reflect<LightData>(t_hash("LightData"))
 				.data<&LightData::m_position>(t_hash("position"))
 				.data<&LightData::m_color>(t_hash("color"))
-				.data<&LightData::m_intensity>(t_hash("intensity"));
+				.data<&LightData::m_intensity>(t_hash("intensity"))
+				.data<&LightData::m_bDir>(t_hash("is dir"));
 
 			meta::reflect<LightComponent>(t_hash("LightComponent"))
 				.data<&LightComponent::SetLightFromData, &LightComponent::GetData>(t_hash("Light"));
