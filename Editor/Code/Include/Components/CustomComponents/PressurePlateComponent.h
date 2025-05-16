@@ -11,6 +11,9 @@ namespace Editor::GamePlay
 		PressurePlateComponent() = default;
 		~PressurePlateComponent() override = default;
 
+		nlohmann::ordered_json Serialize() override;
+		void Deserialize(const nlohmann::ordered_json& a_json) override;
+
 		void DrawUI() override;
 
 		void Start() override;

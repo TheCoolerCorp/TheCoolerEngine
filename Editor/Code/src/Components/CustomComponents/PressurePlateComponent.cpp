@@ -8,7 +8,15 @@ static inline bool pressurePlateRegistered = Engine::GamePlay::AutoRegisterCompo
 
 namespace Editor::GamePlay
 {
-	
+	nlohmann::ordered_json PressurePlateComponent::Serialize()
+	{
+		return nlohmann::detail::value_t::null;
+	}
+
+	void PressurePlateComponent::Deserialize(const nlohmann::ordered_json& a_json)
+	{
+		
+	}
 
 	void PressurePlateComponent::DrawUI()
 	{

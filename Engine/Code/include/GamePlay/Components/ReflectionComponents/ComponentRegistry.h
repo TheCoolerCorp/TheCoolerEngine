@@ -25,7 +25,8 @@ namespace Engine::GamePlay
     public:
         using ComponentAdder = std::function<void(Engine::GamePlay::GameObject&)>;
 
-        struct Entry {
+        struct Entry
+    	{
             std::string name;
             std::type_index type;
             ComponentAdder addFunction;
@@ -39,7 +40,8 @@ namespace Engine::GamePlay
         }
 
         template<typename T>
-        void Register(const std::string& name) {
+        void Register(const std::string& name)
+    	{
             Entry t_entry{
                 name,
                 std::type_index(typeid(T)),

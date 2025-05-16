@@ -28,6 +28,18 @@ namespace Engine::GamePlay
 	{
 	}
 
+	nlohmann::ordered_json PlayerControllerComponent::Serialize()
+	{
+
+
+		return nlohmann::detail::value_t::null;	
+	}
+
+	void PlayerControllerComponent::Deserialize(const nlohmann::ordered_json& a_json)
+	{
+		
+	}
+
 	void PlayerControllerComponent::Start()
 	{
 		GameObject* t_gameObject = m_scene->GetGameObject(m_gameObjectId);
