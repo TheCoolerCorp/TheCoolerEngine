@@ -154,7 +154,8 @@
                 "y": 0.5273141264915466,
                 "z": 0.40897729992866516
             },
-            "intensity": 152.0
+            "intensity": 152.0,
+            "is dir": 0
         }
     },
     {
@@ -326,7 +327,8 @@
                 "y": 0.47058820724487305,
                 "z": 1.0
             },
-            "intensity": 8.899999618530273
+            "intensity": 8.899999618530273,
+            "is dir": 0
         },
         "MeshComponent": {
             "mesh": "Assets\\Meshes\\BaseObjects\\Sphere.obj",

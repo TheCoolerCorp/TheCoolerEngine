@@ -1202,6 +1202,13 @@ namespace Engine
 				t_json["intensity"] = t_intensityAny.cast<float>();
 			}
 
+			const meta::data t_isDirField = t_lightDataType.data(t_hash("is dir"));
+			if (t_isDirField)
+			{
+				meta::any t_isDirAny = t_isDirField.get(t_lightDataHandle);
+				t_json["is dir"] = t_isDirAny.cast<uint32_t>();
+			}
+
 			return t_json;
 		}
 
@@ -1224,6 +1231,8 @@ namespace Engine
 			};
 
 			t_lightData.m_intensity = a_json.at("intensity").get<float>();
+
+			t_lightData.m_bDir = a_json.at("is dir").get<uint32_t>();
 
 			return t_lightData;
 		}
