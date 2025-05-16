@@ -152,7 +152,7 @@ namespace Engine
 					m_lastState = m_isPlaying;
 					m_physicsSystem->SetComponentsForPlay();
 				}
-				m_physicsSystem->Update(a_deltatime, this);
+				//m_physicsSystem->Update(a_deltatime, this);
 				m_renderSystem->UpdateCamera(a_renderer, a_deltatime, a_window, a_inputHandler, m_gameCameraId, m_objs[m_mainCameraObjectId] ? m_objs[m_mainCameraObjectId]->GetComponent<TransformComponent>()->GetTransform()->GetTransformMatrix() : Math::mat4());
 				m_gameComponentSystem->Update();
 				if (m_processKeyboardInputs)
@@ -172,6 +172,22 @@ namespace Engine
 			t_materialUpdate.clear();
 			t_cameraSyncro.clear();
 			m_justReloaded = false;
+		}
+
+		void Scene::FixedUpdate(const double a_fixedDeltaTime, const double a_accumulator)
+		{
+			if (!m_isPlaying)
+			{
+				return;
+			}
+			if (m_lastState != m_isPlaying)
+			{
+				return;
+			}
+
+			float t_alpha = static_cast<float>(a_fixedDeltaTime / a_accumulator);
+
+			m_physicsSystem->Update(static_cast<float>(a_fixedDeltaTime), this, t_alpha);
 		}
 
 		/**

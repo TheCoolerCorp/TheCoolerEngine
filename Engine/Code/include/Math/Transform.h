@@ -27,8 +27,10 @@ namespace Engine
 			ENGINE_API ~Transform() = default;
 
 			ENGINE_API void Translate(const vec3 a_translate) { m_pos += a_translate; m_needUpdate = true; }
+			ENGINE_API void TranslateLerp(vec3 a_translate, float a_alpha);
 
 			ENGINE_API void Rotate(const quat a_rotation) { m_rot *= a_rotation; m_needUpdate = true; }
+			ENGINE_API void RotateSlerp(quat a_rotation, float a_alpha);
 			ENGINE_API void Rotate(const vec3 a_rotation) { m_rot *= quat(a_rotation); m_needUpdate = true; }
 
 			ENGINE_API void Scale(const vec3 a_scale) { m_scale *= a_scale; m_needUpdate = true; }

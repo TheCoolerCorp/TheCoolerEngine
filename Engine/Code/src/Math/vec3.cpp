@@ -1,5 +1,6 @@
 #include "Math/vec3.h"
 #include "Math/mat4.h"
+#include "Math/TheCoolerMath.h"
 
 namespace Engine
 {
@@ -26,6 +27,15 @@ namespace Engine
                 return z;
             }
             return 0.f;
+        }
+
+        vec3 vec3::Lerp(vec3 a_v1, vec3 a_v2, const float a_alpha)
+        {
+            vec3 t_result;
+            t_result.x = Math::Lerp(a_v1.x, a_v2.x, a_alpha);
+            t_result.y = Math::Lerp(a_v1.y, a_v2.y, a_alpha);
+            t_result.z = Math::Lerp(a_v1.z, a_v2.z, a_alpha);
+            return t_result;
         }
 
         vec3 vec3::MidPoint(const vec3 a_v1, const vec3 a_v2)

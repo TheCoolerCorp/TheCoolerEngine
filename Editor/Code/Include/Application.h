@@ -50,9 +50,12 @@ namespace Editor
 			Engine::GamePlay::Scene* m_currentScene;
 			std::vector<Engine::GamePlay::Scene*> m_scenes;
 			std::chrono::high_resolution_clock::time_point m_lastTime = std::chrono::high_resolution_clock::now();
-			float m_deltaTime = 0.0f;
+			double m_deltaTime = 0.0f;
 
 			std::vector<EditorLayer::Layer*> m_layers;
+
+			double m_fixedDeltaTime = 1.0 / 60.0;
+			double m_accumulator = 0.0;
 
 			void UpdateDeltaTime();
 		};

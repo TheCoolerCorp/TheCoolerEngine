@@ -55,7 +55,7 @@ namespace Engine
 			ENGINE_API void CreateCapsuleRigidBody(Physics::BodyType a_type, Physics::CollisionLayer a_layer, Math::vec3 a_position, float a_halfHeight, float a_radius, Math::quat a_rotation, const Math::Transform& a_transform, float a_mass = 1.f, bool a_enable = true);
 
 			ENGINE_API void UpdateFromTransform(const Math::Transform* a_transform, bool a_enable = true);
-			ENGINE_API void UpdateObjectTransform(Math::Transform* a_transform);
+			ENGINE_API void UpdateObjectTransform(Math::Transform* a_transform, float a_alpha);
 
 			ENGINE_API void NotifyCollision(JPH::CollisionEvent a_collisionEvent, RigidBodyComponent* a_otherRigidBodyComponent) const;
 

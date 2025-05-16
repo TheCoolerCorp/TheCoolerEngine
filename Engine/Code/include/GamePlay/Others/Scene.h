@@ -34,6 +34,7 @@ namespace Engine
 
 			ENGINE_API void Create(Core::Renderer* a_renderer, Core::Window::IWindow* a_window, const char* a_name, int a_width, int a_height);
 			ENGINE_API void Update(Core::Renderer* a_renderer, Core::Window::IWindow* a_window, Core::Window::IInputHandler* a_inputHandler, float a_deltatime);
+			ENGINE_API void FixedUpdate(double a_fixedDeltaTime, double a_accumulator);
 			ENGINE_API void Destroy(Core::Renderer* a_renderer);
 
 			[[nodiscard]] ENGINE_API std::unordered_map<Core::RHI::DescriptorSetPipelineTarget, std::vector<Core::RHI::IBuffer*>> GetVertexBuffers();

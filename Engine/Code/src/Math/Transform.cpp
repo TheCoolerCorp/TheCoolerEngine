@@ -44,6 +44,18 @@ namespace Engine
 			SetGlobalScaleFromMatrix();
 		}
 
+		void Transform::TranslateLerp(const vec3 a_translate, float a_alpha)
+		{
+			m_pos = vec3::Lerp(m_pos, a_translate, a_alpha);
+			m_needUpdate = true;
+		}
+
+		void Transform::RotateSlerp(const quat a_rotation, const float a_alpha)
+		{
+			m_rot = quat::Slerp(m_rot, a_rotation, a_alpha);
+			m_needUpdate = true;
+		}
+
 		void Transform::SetGlobalPositionFromMatrix()
 		{
 			m_globalPos = vec3::GetPosition(m_transform);

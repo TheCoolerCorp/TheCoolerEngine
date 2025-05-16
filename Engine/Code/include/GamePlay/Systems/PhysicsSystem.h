@@ -20,7 +20,7 @@ namespace Engine
 			ENGINE_API ~PhysicsSystem() override = default;
 
 			ENGINE_API void Create();
-			ENGINE_API void Update(const float a_deltaTime, Scene* a_scene);
+			ENGINE_API void Update(const float a_deltaTime, const Scene* a_scene, float a_alpha);
 			ENGINE_API void UpdatesFromTransforms(Scene* a_scene) const;
 			ENGINE_API void SetComponentsForPlay() const;
 			ENGINE_API void Destroy();
@@ -45,7 +45,7 @@ namespace Engine
 			ENGINE_API [[nodiscard]] JPH::BodyInterface* GetBodyInterface() const { return m_bodyInterface; }
 			ENGINE_API [[nodiscard]] JPH::PhysicsSystem* GetPhysicsSystem() { return &m_physicsSystem; }
 		private:
-			void UpdateTransforms(const Scene* a_scene) const;
+			void UpdateTransforms(const Scene* a_scene, float a_alpha) const;
 			void UpdateEnqueued();
 
 			std::vector<RigidBodyComponent*> m_components{};

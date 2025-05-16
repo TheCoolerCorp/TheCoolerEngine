@@ -39,14 +39,15 @@ namespace Engine
             ENGINE_API float operator[](int a_index) const; // get a component with an index
 
             ENGINE_API static vec3 Add(vec3 a_v1, vec3 a_v2); // adds two vectors
-            ENGINE_API  static vec3 Multiply(vec3 a_v1, vec3 a_v2); // multiplies two vectors
+            ENGINE_API static vec3 Multiply(vec3 a_v1, vec3 a_v2); // multiplies two vectors
+            ENGINE_API static vec3 Lerp(vec3 a_v1, vec3 a_v2, float a_alpha);
             ENGINE_API static vec3 MidPoint(vec3 a_v1, vec3 a_v2); // get the mid-point of two points
-            ENGINE_API  static float Distance(vec3 a_p1, vec3 a_p2); // get the distance between two points
+            ENGINE_API static float Distance(vec3 a_p1, vec3 a_p2); // get the distance between two points
             ENGINE_API static float SquaredNorm(vec3 a_v); // returns the squared norm of a vector
             ENGINE_API static float Norm(vec3 a_v); // returns the norm of a vector
             ENGINE_API static vec3 Normalize(vec3 a_v); //returns normalized vector
-            ENGINE_API  static float DotProduct(vec3 a_v1, vec3 a_v2); // returns the dot product of two vectors
-            ENGINE_API  static vec3 CrossProduct(vec3 a_v1, vec3 a_v2); // returns the cross product of two vectors
+            ENGINE_API static float DotProduct(vec3 a_v1, vec3 a_v2); // returns the dot product of two vectors
+            ENGINE_API static vec3 CrossProduct(vec3 a_v1, vec3 a_v2); // returns the cross product of two vectors
             ENGINE_API static float GetAngle(vec3 a_v1, vec3 a_v2); // returns the angle between two vectors
             ENGINE_API static vec3 GetPosition(const mat4& a_m);
             ENGINE_API static vec3 GetScale(const mat4& a_m);

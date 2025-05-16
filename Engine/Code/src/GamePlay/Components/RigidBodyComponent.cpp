@@ -130,7 +130,7 @@ namespace Engine
 			m_bodyRot = t_worldRot;
 		}
 
-		void RigidBodyComponent::UpdateObjectTransform(Math::Transform* a_transform)
+		void RigidBodyComponent::UpdateObjectTransform(Math::Transform* a_transform, const float a_alpha)
 		{
 			const JPH::BodyInterface* t_bodyInterface = ServiceLocator::GetPhysicsSystem()->GetBodyInterface();
 			const JPH::BodyID t_bodyId = m_rigidBody->GetBodyID();
@@ -142,9 +142,9 @@ namespace Engine
 			const Math::vec3 t_finalPos = t_worldPos - (t_worldRot * m_localPos);
 			const Math::quat t_finalRot = t_worldRot * Math::quat::Conjugate(m_localRot);
 
-			a_transform->Translate(t_finalPos - a_transform->GetGlobalPosition());
+			a_transform->TranslateLerp(t_finalPos, a_alpha);
 			m_bodyPos = t_worldPos;
-			a_transform->Rotate(Math::quat::Normalize(t_finalRot) * Math::quat::Normalize(Math::quat::Conjugate(a_transform->GetGlobalRotation())));
+			a_transform->RotateSlerp(Math::quat::Normalize(t_finalRot), a_alpha);
 			m_bodyRot = t_worldRot;
 		}
 

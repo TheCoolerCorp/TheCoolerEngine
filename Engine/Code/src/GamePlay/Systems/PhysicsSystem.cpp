@@ -42,7 +42,7 @@ namespace Engine
 			m_bodyInterface->AddBody(m_dummy->GetID(), JPH::EActivation::DontActivate);
 		}
 
-		void PhysicsSystem::Update(const float a_deltaTime, Scene* a_scene)
+		void PhysicsSystem::Update(const float a_deltaTime, const Scene* a_scene, float a_alpha)
 		{
 			constexpr float t_stepSize = 1.0f / 60.0f;
 			const int t_collisionSteps = static_cast<int>(ceil(a_deltaTime / t_stepSize));
@@ -56,7 +56,7 @@ namespace Engine
 
 			m_physicsSystem.Update(a_deltaTime, t_collisionSteps, m_tempAllocator, m_jobSystem);
 
-			UpdateTransforms(a_scene);
+			UpdateTransforms(a_scene, a_alpha);
 		}
 
 		void PhysicsSystem::Destroy()
@@ -254,13 +254,13 @@ namespace Engine
 			}
 		}
 
-		void PhysicsSystem::UpdateTransforms(const Scene* a_scene) const
+		void PhysicsSystem::UpdateTransforms(const Scene* a_scene, const float a_alpha) const
 		{
 			for (size_t i = 0; i < m_components.size(); ++i)
 			{
 				if (m_components[i] == nullptr)
 					continue;
-				m_components[i]->UpdateObjectTransform(a_scene->GetGameObject(m_components[i]->GetGameObjectID())->GetComponent<TransformComponent>()->GetTransform());
+				m_components[i]->UpdateObjectTransform(a_scene->GetGameObject(m_components[i]->GetGameObjectID())->GetComponent<TransformComponent>()->GetTransform(), a_alpha);
 			}
 		}
 

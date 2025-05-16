@@ -67,6 +67,7 @@ namespace Editor
 
 			m_currentScene = new Scene();
 			m_currentScene->Create(m_renderer, m_mainWindow, "MainScene", a_width, a_height);
+			m_currentScene->SetMode(true);
 
 			t_imguiLayer->AddWindow(new Ui::SceneGraphUiWindow(m_renderer, t_imguiLayer, m_currentScene));
 			t_imguiLayer->AddWindow(new Ui::InspectorUiWindow(m_renderer, t_imguiLayer));
@@ -81,9 +82,17 @@ namespace Editor
 			while (!m_mainWindow->ShouldClose())
 			{
 				UpdateDeltaTime();
-				m_currentScene->Update(m_renderer, m_mainWindow, m_inputHandler, m_deltaTime);
+
+				m_accumulator += m_deltaTime;
+				while (m_accumulator >= m_fixedDeltaTime) 
+				{
+					m_currentScene->FixedUpdate(m_fixedDeltaTime, m_accumulator);
+					m_accumulator -= m_fixedDeltaTime;
+				}
+
+				m_currentScene->Update(m_renderer, m_mainWindow, m_inputHandler, static_cast<float>(m_deltaTime));
 				UpdateLayers();
-				LayerProcessInput(m_inputHandler, m_deltaTime);
+				LayerProcessInput(m_inputHandler, static_cast<float>(m_deltaTime));
 
 				/*
 				 * Basic begin frame to acquire the next image index in the swapchain to draw in for presentation on screen
@@ -151,7 +160,7 @@ namespace Editor
 		void Application::UpdateDeltaTime()
 		{
 			auto t_now = std::chrono::high_resolution_clock::now();
-			m_deltaTime = std::chrono::duration<float>(t_now - m_lastTime).count();
+			m_deltaTime = std::chrono::duration<double>(t_now - m_lastTime).count();
 			m_lastTime = t_now;
 		}
 
@@ -165,7 +174,7 @@ namespace Editor
 		{
 			for (Layer* layer : m_layers)
 			{
-				layer->OnUpdate(m_deltaTime);
+				layer->OnUpdate(static_cast<float>(m_deltaTime));
 			}
 		}
 
