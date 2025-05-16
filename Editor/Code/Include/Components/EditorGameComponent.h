@@ -10,6 +10,10 @@
 
 namespace Editor::GamePlay
 {
+	/*
+	* Editor-Integrated GameComponent.
+	* Offers further functionality like UI draw and automatic registration for easier usage in the ui.
+	*/
 	class EditorGameComponent : public Engine::GamePlay::GameComponent
 	{
 	public:
@@ -52,9 +56,6 @@ namespace Editor::GamePlay
 		}
 	};
 
-	/*
-	* Editor-Integrated GameComponent.
-	* Offers further functionality like UI draw and automatic registration for easier usage in the ui.
-	*/
+	
 }
 #endif // !EDITORGAMECOMPONENT_H

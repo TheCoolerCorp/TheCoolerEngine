@@ -40,6 +40,9 @@ namespace Editor::GamePlay
 
 		//the position of the door when the pressure plate is pressed
 		Engine::Math::vec3 m_doorActivePos = { 0.f, 0.f, 0.f };
+		Engine::Math::vec3 m_doorInactivePos = { 0.f, 0.f, 0.f };
+
+		void MoveTowards(Engine::Math::vec3& a_pos, const Engine::Math::vec3 a_targetPos, float a_deltatime, float a_maxSpeed);
 	};
 }
 

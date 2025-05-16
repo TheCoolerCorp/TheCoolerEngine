@@ -15,7 +15,7 @@
 int UiHelper::UiAddObjectDragDropTarget(const char* a_text, int a_id)
 {
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(4, 4));
-	ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 8.0f);
+	ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 4.0f);
 
 
 	ImVec2 t_textSize = ImGui::CalcTextSize(a_text);
@@ -39,18 +39,19 @@ int UiHelper::UiAddObjectDragDropTarget(const char* a_text, int a_id)
 	return -1;
 }
 
-void UiHelper::UiAddObjectDragDropTarget(const char* a_text, int a_id, int& a_outId)
+bool UiHelper::UiAddObjectDragDropTarget(const char* a_text, int a_id, int& a_outId)
 {
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(4, 4));
-	ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 8.0f);
+	ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 4.0f);
 
 
 	ImVec2 t_textSize = ImGui::CalcTextSize(a_text);
-	ImVec2 t_childSize = ImVec2(t_textSize.x + 8, t_textSize.y + 8);
+	ImVec2 t_childSize = ImVec2(ImGui::GetContentRegionAvail().x, t_textSize.y + 8);
 
 	ImGui::SetCursorPosX(ImGui::GetCursorPosX() - 4);
-	ImGui::BeginChild(a_text, t_childSize, true, ImGuiChildFlags_Border);
+	ImGui::BeginChild((a_text+std::to_string(a_id)).c_str(), t_childSize, true, ImGuiChildFlags_Border);
 	ImGui::PopStyleVar(2);
+	ImGui::SetCursorPosX((ImGui::GetContentRegionAvail().x / 2) - (t_textSize.x / 2.0f));
 	ImGui::Text(a_text);
 	ImGui::EndChild();
 
@@ -59,9 +60,11 @@ void UiHelper::UiAddObjectDragDropTarget(const char* a_text, int a_id, int& a_ou
 		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("SCENE_OBJECT_PAYLOAD"))
 		{
 			a_outId = *static_cast<int*>(payload->Data);
+			return true;
 		}
 		ImGui::EndDragDropTarget();
 	}
+	return false;
 }
 
 bool UiHelper::UiDisplayVec3(std::string a_label, int a_id, Engine::Math::vec3& a_vec3, float a_speed, float a_min,

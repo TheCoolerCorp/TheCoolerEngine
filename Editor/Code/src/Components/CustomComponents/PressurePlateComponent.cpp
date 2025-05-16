@@ -21,10 +21,10 @@ namespace Editor::GamePlay
 			return;
 		}
 		ImGui::Text("Pressed: %s", m_pressed ? "true" : "false");
-		ImGui::Text("Collision Target");
-		ImGui::SetItemTooltip("Set the target that will trigger the pressure plate component. Needs a ");
 
 		std::string t_text;
+		ImGui::Text("Collision Target: ");
+		ImGui::SameLine();
 		if (m_collisionListenerGameObjectId == -1)
 		{
 			t_text = "Not Set!";
@@ -35,27 +35,33 @@ namespace Editor::GamePlay
 			t_text = m_scene->GetGameObject(m_collisionListenerGameObjectId)->GetName();
 		}
 		UiHelper::UiAddObjectDragDropTarget(t_text.c_str(), m_uid, m_collisionListenerGameObjectId);
+		
+		ImGui::SetItemTooltip("Set the target that will trigger the pressure plate component. Needs a ");
 
-		if (ImGui::TreeNode("Door Transform"))
+		ImGui::Text("Door Transform: ");
+		ImGui::SameLine();
+		//door transform that will be manipulated when the pressure plate is pressed
+		if (m_doorGameObjectId == -1)
 		{
-			//door transform that will be manipulated when the pressure plate is pressed
-			ImGui::Text("Door Transform");
-			ImGui::SetItemTooltip("The target that will be manipulated when the pressure plate is pressed.");
-			if (m_collisionListenerGameObjectId == -1)
-			{
-				t_text = "Not Set!";
-			}
-			else
-			{
-				t_text = m_scene->GetGameObject(m_doorGameObjectId)->GetName();
-			}
-			UiHelper::UiAddObjectDragDropTarget(t_text.c_str(), m_uid, m_doorGameObjectId);
-
-			UiHelper::UiDisplayVec3("Move Target Pos", m_uid, m_doorActivePos);
-			ImGui::SetItemTooltip("The position the door will be in when the pressure plate is pressed.");
-
-			ImGui::TreePop();
+			t_text = "Not Set!";
 		}
+		else
+		{
+			t_text = m_scene->GetGameObject(m_doorGameObjectId)->GetName();
+		}
+		if (UiHelper::UiAddObjectDragDropTarget(t_text.c_str(), m_uid+1000, m_doorGameObjectId))
+		{
+			if (Engine::GamePlay::TransformComponent* t_transform = m_scene->GetGameObject(m_doorGameObjectId)->GetComponent<Engine::GamePlay::TransformComponent>())
+			{
+				m_doorInactivePos = t_transform->GetTransform()->GetPosition();
+			}
+		}
+		ImGui::SetItemTooltip("The target that will be manipulated when the pressure plate is pressed.");
+
+		UiHelper::UiDisplayVec3("Move Target Pos", m_uid, m_doorActivePos);
+		ImGui::SetItemTooltip("The position the door will be in when the pressure plate is pressed.");
+
+
 		}
 
 	void PressurePlateComponent::Start()
@@ -77,6 +83,17 @@ namespace Editor::GamePlay
 	void PressurePlateComponent::Update(float a_deltatime)
 	{
 		EditorGameComponent::Update(a_deltatime);
+		if (m_pressed)
+		{
+			//get the target transform and move it towards the target position
+			Engine::GamePlay::TransformComponent* t_transform = m_scene->GetGameObject(m_doorGameObjectId)->GetComponent<Engine::GamePlay::TransformComponent>();
+			if (t_transform)
+			{
+				Engine::Math::vec3 t_pos = t_transform->GetTransform()->GetPosition();
+				MoveTowards(t_pos, m_doorInactivePos+m_doorActivePos, a_deltatime, 2.f);
+				t_transform->SetPosition(t_pos);
+			}
+		}
 	}
 
 	void PressurePlateComponent::SceneUpdate()
@@ -119,6 +136,22 @@ namespace Editor::GamePlay
 			{
 				m_pressed = false;
 				m_pressurePlatePressedEvent.Invoke(false);
+			}
+		}
+	}
+
+	void PressurePlateComponent::MoveTowards(Engine::Math::vec3& a_pos, const Engine::Math::vec3 a_targetPos,
+		float a_deltatime, float a_maxSpeed)
+	{
+		Engine::Math::vec3 t_dir = a_targetPos - a_pos;
+		float t_distance = Engine::Math::vec3::Norm(t_dir);
+		if (t_distance > 0.01f)
+		{
+			t_dir = Engine::Math::vec3::Normalize(t_dir);
+			a_pos += t_dir * a_maxSpeed * a_deltatime;
+			if (t_distance < a_maxSpeed * a_deltatime)
+			{
+				a_pos = a_targetPos;
 			}
 		}
 	}
