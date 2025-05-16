@@ -4,6 +4,8 @@
 #include "EngineExport.h"
 #include "Core/Window/IWindow.h"
 #include "GamePlay/Components/Component.h"
+#include "nlohmann/json.hpp"
+
 
 namespace Engine::Core::Window
 {
@@ -18,6 +20,9 @@ namespace Engine::GamePlay
 	public:
 		ENGINE_API virtual void Create(int& a_outId) = 0;
 		ENGINE_API virtual void Destroy() = 0;
+
+		ENGINE_API virtual nlohmann::ordered_json Serialize() = 0;
+		ENGINE_API virtual void Deserialize(const nlohmann::ordered_json& a_json) = 0;
 
 		ENGINE_API virtual std::string GetTypeName() const { return ""; }
 

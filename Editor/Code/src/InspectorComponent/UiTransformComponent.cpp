@@ -1,5 +1,5 @@
 #include "InspectorComponent/UiTransformComponent.h"
-
+#include "GamePlay/Components/TransformComponent.h"
 #include "imgui.h"
 #include "Math/TheCoolerMath.h"
 #include "Math/vec3.h"

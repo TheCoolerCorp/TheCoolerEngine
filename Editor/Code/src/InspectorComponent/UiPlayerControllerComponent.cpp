@@ -1,5 +1,6 @@
 #include "../../Include/InspectorComponent/UiPlayerControllerComponent.h"
 
+#include "Gameplay/ServiceLocator.h"
 #include "GamePlay/Others/Scene.h"
 
 namespace Editor::EditorLayer::Ui

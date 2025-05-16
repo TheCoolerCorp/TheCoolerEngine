@@ -35,6 +35,10 @@ namespace Engine::GamePlay
 	public:
 		ENGINE_API PlayerControllerComponent();
 		ENGINE_API ~PlayerControllerComponent() override;
+
+		ENGINE_API nlohmann::ordered_json Serialize() override;
+		ENGINE_API void Deserialize(const nlohmann::ordered_json& a_json) override;
+
 		ENGINE_API void Create(int& a_outId) override;
 		ENGINE_API void Destroy() override;
 		ENGINE_API void Start() override;

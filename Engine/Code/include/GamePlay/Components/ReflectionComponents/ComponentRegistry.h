@@ -6,8 +6,9 @@
 #include <unordered_map>
 #include <vector>
 #include <typeindex>
+
+#include "Gameplay/ServiceLocator.h"
 #include "GamePlay/Components/GameComponent.h"
-#include "GamePlay/Components/Component.h"
 #include "GamePlay/Others/GameObject.h"
 namespace Engine::GamePlay
 {
@@ -25,7 +26,8 @@ namespace Engine::GamePlay
     public:
         using ComponentAdder = std::function<void(Engine::GamePlay::GameObject&)>;
 
-        struct Entry {
+        struct Entry
+    	{
             std::string name;
             std::type_index type;
             ComponentAdder addFunction;
@@ -39,7 +41,8 @@ namespace Engine::GamePlay
         }
 
         template<typename T>
-        void Register(const std::string& name) {
+        void Register(const std::string& name)
+    	{
             Entry t_entry{
                 name,
                 std::type_index(typeid(T)),
@@ -86,7 +89,7 @@ namespace Engine::GamePlay
     struct AutoRegisterComponent {
         static inline bool registered = [] {
             auto name = T::StaticTypeName();
-            ComponentRegistry::Instance().Register<T>(name);
+            GamePlay::ServiceLocator::GetComponentRegistry()->Register<T>(name);
             return true;
             }();
     };

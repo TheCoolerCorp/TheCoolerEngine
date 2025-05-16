@@ -152,8 +152,8 @@ void Editor::EditorLayer::Ui::InspectorUiWindow::RefreshCurrentObject()
 			AddComponent(new UiPlayerControllerComponent(m_layer, m_selectedObject->GetComponent<Engine::GamePlay::PlayerControllerComponent>()));
 		}
 		//check if the type is in the Component Registry, and if yes, create the component ui component with it
-		Engine::GamePlay::ComponentRegistry& t_registry = Engine::GamePlay::ComponentRegistry::Instance();
-		if (Engine::GamePlay::ComponentRegistry::Entry* t_entry = t_registry.GetEntryFromId(t_type))
+		Engine::GamePlay::ComponentRegistry* t_registry = Engine::GamePlay::ServiceLocator::GetComponentRegistry();
+		if (Engine::GamePlay::ComponentRegistry::Entry* t_entry = t_registry->GetEntryFromId(t_type))
 		{
 			Engine::GamePlay::GameComponent* t_component = t_entry->getComponent(*m_selectedObject);
 			if (t_component)
@@ -301,8 +301,8 @@ void Editor::EditorLayer::Ui::InspectorUiWindow::UiDrawComponentAddWindow()
 				MarkOutOfDate();
 			}
 		}
-		Engine::GamePlay::ComponentRegistry& t_registry = Engine::GamePlay::ComponentRegistry::Instance();
-		for (Engine::GamePlay::ComponentRegistry::Entry t_entry : t_registry.GetEntries())
+		Engine::GamePlay::ComponentRegistry* t_registry = Engine::GamePlay::ServiceLocator::GetComponentRegistry();
+		for (Engine::GamePlay::ComponentRegistry::Entry t_entry : t_registry->GetEntries())
 		{
 			if (UtilHasComponentOfType(t_entry.type))
 				continue;

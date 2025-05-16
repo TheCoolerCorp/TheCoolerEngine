@@ -9,20 +9,17 @@
 #include <vector>
 #include <string>
 
-#include "Core/Logger/Logger.h"
 
 #include "GamePlay/Components/Component.h"
 
-#include "Math/Transform.h"
-#include "GamePlay/Components/Component.h"
-#include "Ressources/ResourceManager.h"
-
-
-#include "Core/Interfaces/ApiInterface.h"
-
-#include "Gameplay/ServiceLocator.h"
-#include "Core/Renderer/Renderer.h"
+//#include "Gameplay/ServiceLocator.h"
+#include "Math/vec3.h"
+#include "Math/mat4.h"
 #include <typeindex>
+
+#include <unordered_map>
+
+#include "Core/Window/IInputHandler.h"
 
 namespace Engine
 {

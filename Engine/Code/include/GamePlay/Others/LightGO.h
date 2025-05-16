@@ -5,6 +5,7 @@
 
 #include "Core/Logger/Logger.h"
 #include "GameObject.h"
+#include "GamePlay/Components/LightComponent.h"
 
 namespace Engine
 {

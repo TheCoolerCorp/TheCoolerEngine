@@ -4,6 +4,7 @@
 #include "UiWindow.h"
 
 #include "Core/Renderer/Renderer.h"
+#include "Gameplay/ServiceLocator.h"
 #include "GamePlay/Others/Scene.h"
 
 namespace Editor::EditorLayer::Ui

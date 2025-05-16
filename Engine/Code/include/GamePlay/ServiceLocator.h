@@ -17,6 +17,8 @@ namespace Engine
 {
 	namespace GamePlay
 	{
+
+		class ComponentRegistry;
 		class ServiceLocator
 		{
 		public:
@@ -27,6 +29,7 @@ namespace Engine
 			ENGINE_API static void ProvidePhysicsSystem(PhysicsSystem* a_physicsSystem);
 			ENGINE_API static void ProvideRenderer(Core::Renderer* a_renderer);
 			ENGINE_API static void ProvideGameComponentSystem(GameComponentSystem* a_gameComponentSystem);
+			ENGINE_API static void ProvideComponentRegistry(ComponentRegistry* a_gameComponentSystem);
 
 			ENGINE_API static Core::Multithread::ThreadPool* GetThreadPool();
 			ENGINE_API static Resource::ResourceManager* GetResourceManager();
@@ -35,6 +38,7 @@ namespace Engine
 			ENGINE_API static PhysicsSystem* GetPhysicsSystem();
 			ENGINE_API static Core::Renderer* GetRenderer();
 			ENGINE_API static GameComponentSystem* GetGameComponentSystem();
+			ENGINE_API static ComponentRegistry* GetComponentRegistry();
 
 		private:
 			static Core::Multithread::ThreadPool* m_threadPool;
@@ -44,6 +48,7 @@ namespace Engine
 			static PhysicsSystem* m_physicsSystem;
 			static GameComponentSystem* m_gameComponentSystem;
 			static Core::Renderer* m_renderer;
+			static ComponentRegistry* m_registry;
 		};
 	}
 }
