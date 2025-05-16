@@ -50,6 +50,10 @@ void Editor::EditorLayer::Ui::UiTransformComponent::UiDraw()
 	}
 	if(ImGui::DragFloat3(("Scale##" + t_uid).c_str(), t_fScale, 0.1f, 0, +FLT_MAX))
 	{
+		for (int i = 0; i < 4; i++)
+		{
+			t_fScale[i] = std::max(t_fScale[i], 0.001f);
+		}
 		t_transform->SetScale(vec3(t_fScale[0], t_fScale[1], t_fScale[2]));
 	}
 }
