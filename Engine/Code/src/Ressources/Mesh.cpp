@@ -1,5 +1,6 @@
 #include "Ressources/Mesh.h"
 
+#include "Core/Audio/SoundManager.h"
 #include "Core/Renderer/Renderer.h"
 
 namespace Engine
@@ -74,6 +75,8 @@ namespace Engine
 
             m_isBound.store(true, std::memory_order_release);
             m_isBinding.store(false, std::memory_order_release);
+
+            Engine::Core::Audio::SoundManager::Get().PlaySound("Assets/Sounds/sparkle.wav");
 		}
 
         void Mesh::Unload(Core::Renderer* a_renderer)

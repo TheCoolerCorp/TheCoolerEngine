@@ -9,6 +9,11 @@ namespace Engine
 	{
 		void IResource::LoadAsync()
 		{
+			if (m_isLoaded.load(std::memory_order_acquire))
+			{
+				return;
+			}
+
 			Core::Multithread::ThreadPool* t_threadPool =  GamePlay::ServiceLocator::GetThreadPool();
 			if (t_threadPool)
 			{

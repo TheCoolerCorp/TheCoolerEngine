@@ -77,7 +77,9 @@
             "enable": true,
             "lock rotation X": false,
             "lock rotation Y": false,
-            "lock rotation Z": false
+            "lock rotation Z": false,
+            "friction": 0.5,
+            "restitution": 0.5
         },
         "MeshComponent": {
             "mesh": "Assets\\Meshes\\ShowcaseAssets\\Ground.obj",
@@ -152,7 +154,8 @@
                 "y": 0.5273141264915466,
                 "z": 0.40897729992866516
             },
-            "intensity": 152.0
+            "intensity": 152.0,
+            "is dir": 0
         }
     },
     {
@@ -309,7 +312,9 @@
             "enable": true,
             "lock rotation X": false,
             "lock rotation Y": false,
-            "lock rotation Z": false
+            "lock rotation Z": false,
+            "friction": 0.5,
+            "restitution": 0.5
         },
         "LightComponent": {
             "position": {
@@ -322,7 +327,8 @@
                 "y": 0.47058820724487305,
                 "z": 1.0
             },
-            "intensity": 8.899999618530273
+            "intensity": 8.899999618530273,
+            "is dir": 0
         },
         "MeshComponent": {
             "mesh": "Assets\\Meshes\\BaseObjects\\Sphere.obj",
@@ -381,7 +387,9 @@
             "enable": true,
             "lock rotation X": true,
             "lock rotation Y": true,
-            "lock rotation Z": true
+            "lock rotation Z": true,
+            "friction": 0.5,
+            "restitution": 0.5
         },
         "MeshComponent": {
             "mesh": "Assets\\Meshes\\BaseObjects\\Capsule.obj",

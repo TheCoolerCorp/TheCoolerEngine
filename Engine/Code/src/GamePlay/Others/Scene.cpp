@@ -134,22 +134,7 @@ namespace Engine
 				if (m_lastState != m_isPlaying)
 				{
 					m_mainCamera->SetFreeCam(true);
-					m_lastState = m_isPlaying;
-					for (int i = 0; i < m_objs.size(); ++i)
-					{
-						if (!m_objs[i])
-						{
-							continue;
-						}
-						delete m_objs[i];
-					}
-					m_objs.clear();
-
-					m_renderSystem->Destroy(a_renderer);
-					m_renderSystem->Create(a_renderer);
-					m_physicsSystem->RemoveAllComponents();
-					Load(a_renderer);
-					m_justReloaded = true;
+					Reload(a_renderer);
 				}
 				m_mainCamera->Update(a_renderer, a_inputHandler, a_window, a_deltatime);
 				m_gameComponentSystem->SceneUpdate();
@@ -433,8 +418,26 @@ namespace Engine
 				if (!t_obj)
 					continue;
 				json t_objJson;
+
+				int newIndex = 0;
+				std::vector<std::pair<int, int>> t_oldAndNewIndexes;
+
+				for (int oldIndex = 0; oldIndex < m_transformSystem->GetSize(); ++oldIndex)
+				{
+					if (m_transformSystem->GetComponent(oldIndex) != nullptr)
+					{
+						if (oldIndex != newIndex)
+						{
+							t_oldAndNewIndexes.emplace_back(oldIndex, newIndex);
+						}
+						++newIndex;
+					}
+				}
+
 				t_objJson["GameObject"] = t_obj->GetName();
-				t_objJson["TransformComponent"] = SerializeTransformComponent(*t_obj->GetComponent<TransformComponent>());
+				t_objJson["TransformComponent"] = SerializeTransformComponent(*t_obj->GetComponent<TransformComponent>(), t_oldAndNewIndexes);
+
+
 				if (const RigidBodyComponent* t_rigidBodyComponent = t_obj->GetComponent<RigidBodyComponent>())
 				{
 					t_objJson["RigidBodyComponent"] = SerializeRigidBodyComponent(*t_rigidBodyComponent);
@@ -478,6 +481,8 @@ namespace Engine
 			json t_scene;
 			t_file >> t_scene;
 
+			std::vector<TransformData> t_transformDatas{};
+
 			for (const auto& t_entry : t_scene) {
 				bool t_hasLight = false;
 				bool t_hasRigidBody = false;
@@ -488,6 +493,7 @@ namespace Engine
 				std::string t_name = t_entry.at("GameObject").get<std::string>();
 
 				TransformData t_transform = DeserializeTransformComponent(t_entry.at("TransformComponent"));
+				t_transformDatas.emplace_back(t_transform);
 
 				LightData t_light{};
 				if (t_entry.contains("LightComponent"))
@@ -549,6 +555,8 @@ namespace Engine
 					bool t_lockRotX = t_rigidBody.mLockRotX;
 					bool t_lockRotY = t_rigidBody.mLockRotY;
 					bool t_lockRotZ = t_rigidBody.mLockRotZ;
+					float t_friction = t_rigidBody.mFriction;
+					float t_restitution = t_rigidBody.mRestitution;
 					Math::Transform t_transform = *t_gameObject->GetComponent<TransformComponent>()->GetTransform();
 
 					switch (t_rigidBody.mColliderType)
@@ -575,6 +583,16 @@ namespace Engine
 					if (t_lockRotZ)
 					{
 						t_rigidBodyComponent->LockRotation('z');
+					}
+
+					if (t_friction)
+					{
+						t_rigidBodyComponent->GetBody()->SetFriction(t_friction);
+					}
+
+					if (t_restitution)
+					{
+						t_rigidBodyComponent->GetBody()->SetRestitution(t_restitution);
 					}
 				}
 
@@ -620,13 +638,35 @@ namespace Engine
 					t_gameObject->GetComponent<PlayerControllerComponent>()->Set(t_playerController);
 				}
 			}
-			int i = 0;
-			for (const auto& t_entry : t_scene)
+
+			for (uint32_t i = 0; i < t_transformDatas.size(); ++i)
 			{
-				TransformData t_transform = DeserializeTransformComponent(t_entry.at("TransformComponent"));
-				GetGameObject(i)->GetComponent<TransformComponent>()->SetParent(t_transform.mParentId);
-				i++;
+				TransformComponent* t_transformComponent = GetGameObject(i)->GetComponent<TransformComponent>();
+				m_transformSystem->Update(); // Try something
+				t_transformComponent->SetParent(t_transformDatas[i].mParentId);
 			}
+			t_transformDatas.clear();
+		}
+
+		void Scene::Reload(Core::Renderer* a_renderer)
+		{
+			m_lastState = m_isPlaying;
+			for (int i = 0; i < m_objs.size(); ++i)
+			{
+				if (!m_objs[i])
+				{
+					continue;
+				}
+				delete m_objs[i];
+			}
+			m_objs.clear();
+
+			m_renderSystem->Destroy(a_renderer);
+			m_renderSystem->Create(a_renderer);
+			m_physicsSystem->RemoveAllComponents();
+			m_transformSystem->Destroy();
+			Load(a_renderer);
+			m_justReloaded = true;
 		}
 		
 		bool Scene::SetMode(bool a_mode)
@@ -663,7 +703,7 @@ namespace Engine
 			return false;
 		}
 
-		nlohmann::ordered_json Scene::SerializeTransformComponent(const TransformComponent& a_transform)
+		nlohmann::ordered_json Scene::SerializeTransformComponent(const TransformComponent& a_transform, std::vector<std::pair<int, int>> a_oldAndNewIndexes)
 		{
 			json t_json;
 			constexpr std::hash<std::string_view> t_hash{};
@@ -737,6 +777,18 @@ namespace Engine
 			if (t_parentField)
 			{
 				meta::any t_parentAny = t_parentField.get(t_transformDataHandle);
+
+
+				if (t_parentAny.cast<int>() != -1)
+				{
+					for (int i = 0; i < a_oldAndNewIndexes.size(); ++i)
+					{
+						if (a_oldAndNewIndexes[i].first == t_parentAny.cast<int>())
+						{
+							t_parentAny = a_oldAndNewIndexes[i].second;
+						}
+					}
+				}
 				t_json["parent"] = t_parentAny.cast<int>();
 			}
 
@@ -914,6 +966,20 @@ namespace Engine
 				t_json["lock rotation Z"] = t_lockRotZTypeAny.cast<bool>();
 			}
 
+			const meta::data t_frictionTypeField = t_rigidBodyDataType.data(t_hash("friction"));
+			if (t_frictionTypeField)
+			{
+				meta::any t_frictionTypeAny = t_frictionTypeField.get(t_rigidBodyDataHandle);
+				t_json["friction"] = t_frictionTypeAny.cast<float>();
+			}
+
+			const meta::data t_restitutionTypeField = t_rigidBodyDataType.data(t_hash("restitution"));
+			if (t_restitutionTypeField)
+			{
+				meta::any t_restitutionTypeAny = t_restitutionTypeField.get(t_rigidBodyDataHandle);
+				t_json["restitution"] = t_restitutionTypeAny.cast<float>();
+			}
+
 			return t_json;
 		}
 
@@ -962,6 +1028,10 @@ namespace Engine
 			t_outData.mLockRotY = a_json.at("lock rotation Y").get<bool>();
 
 			t_outData.mLockRotZ = a_json.at("lock rotation Z").get<bool>();
+
+			t_outData.mFriction = a_json.at("friction").get<float>();
+
+			t_outData.mRestitution = a_json.at("restitution").get<float>();
 
 			return t_outData;
 		}
@@ -1132,6 +1202,13 @@ namespace Engine
 				t_json["intensity"] = t_intensityAny.cast<float>();
 			}
 
+			const meta::data t_isDirField = t_lightDataType.data(t_hash("is dir"));
+			if (t_isDirField)
+			{
+				meta::any t_isDirAny = t_isDirField.get(t_lightDataHandle);
+				t_json["is dir"] = t_isDirAny.cast<uint32_t>();
+			}
+
 			return t_json;
 		}
 
@@ -1154,6 +1231,8 @@ namespace Engine
 			};
 
 			t_lightData.m_intensity = a_json.at("intensity").get<float>();
+
+			t_lightData.m_bDir = a_json.at("is dir").get<uint32_t>();
 
 			return t_lightData;
 		}

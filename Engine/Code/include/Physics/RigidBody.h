@@ -100,7 +100,7 @@ namespace Engine
 			JPH::Body* m_body = nullptr;
 			JPH::Shape* m_shape = nullptr;
 
-			Math::vec3 m_scale = Math::vec3();
+			Math::vec3 m_scale = Math::vec3(1.f);
 			float m_radius = 1.f, m_halfHeight = 1.f;
 
 			ColliderType m_colliderType = ColliderType::BOX;

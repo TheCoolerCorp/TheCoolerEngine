@@ -36,6 +36,8 @@ namespace Engine
 			bool mLockRotY;
 			bool mLockRotZ;
 			int mMeshId;
+			float mFriction;
+			float mRestitution;
 			MeshComponent* mMeshComponent;
 		};
 
@@ -69,6 +71,8 @@ namespace Engine
 			ENGINE_API void AddImpulse(Math::vec3 a_impulse) const;
 
 			ENGINE_API void SetFromData(const RigidBodyData& a_data) {}
+
+			ENGINE_API void SetColliderType(Physics::ColliderType a_type);
 
 			ENGINE_API void Destroy();
 

@@ -181,7 +181,7 @@ namespace Engine
 
 			t_transformData.mParentId = m_parentId;
 
-			Set(t_transformData);
+			Set(t_transformData);// mat empty
 
 			ServiceLocator::GetTransformSystem()->GetComponent(m_parentId)->AddChild(m_uid);
 			m_transform->SetNeedToUpdate(true);

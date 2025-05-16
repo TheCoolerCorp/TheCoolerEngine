@@ -45,11 +45,12 @@ namespace Engine
 
 			for (int i = 0; i < a_updatedMatrix.size(); ++i)
 			{
-				if (a_updatedMatrix[i].first == -1)
+				int t_updatedMatrix = a_updatedMatrix[i].first;
+				if (t_updatedMatrix == -1 || t_updatedMatrix >= static_cast<int>(m_objectsDescriptors.size()))
 					continue;
-				if (m_objectsDescriptors[a_updatedMatrix[i].first]->GetPipelineTargetType() == SKYBOX)
+				if (m_objectsDescriptors[t_updatedMatrix]->GetPipelineTargetType() == SKYBOX)
 					continue;
-				m_objectsDescriptors[a_updatedMatrix[i].first]->UpdateUniforms(t_logicalDevice, 0, &a_updatedMatrix[i].second, sizeof(Math::UniformMatrixs), a_renderer->GetSwapChain()->GetCurrentFrame());
+				m_objectsDescriptors[t_updatedMatrix]->UpdateUniforms(t_logicalDevice, 0, &a_updatedMatrix[i].second, sizeof(Math::UniformMatrixs), a_renderer->GetSwapChain()->GetCurrentFrame());
 			}
 			for (int i = 0; i < a_lightsUpdate.size(); ++i)
 			{
@@ -485,7 +486,7 @@ namespace Engine
 		{
 			for (int i = 0; i < m_lightsPendingComponents.size() && m_lightComponents.size() <= MAX_LIGHTS; ++i)
 			{
-				m_lightsData[i] = m_lightComponents[m_lightsPendingComponents[i]]->GetLight().GetData();
+				m_lightsData[m_lightsPendingComponents[i]] = m_lightComponents[m_lightsPendingComponents[i]]->GetLight().GetData();
 			}
 			m_lightsPendingComponents.clear();
 		}
@@ -511,6 +512,11 @@ namespace Engine
 
 			for (int i = 0; i < a_indexes.size(); ++i)
 			{
+				if (!m_components[a_indexes[i]]->GetMesh()->IsBound())
+				{
+					continue;
+				}
+
 				Core::RHI::IObjectDescriptor* t_newRenderObject = apiInterface->InstantiateObjectDescriptor();
 
 				Ref<Material> t_material = m_components[a_indexes[i]]->GetMaterial();

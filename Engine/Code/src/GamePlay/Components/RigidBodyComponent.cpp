@@ -30,6 +30,8 @@ namespace Engine
 				.data<&RigidBodyData::mLockRotY>(t_hash("lock rotation Y"))
 				.data<&RigidBodyData::mLockRotZ>(t_hash("lock rotation Z"))
 				.data<&RigidBodyData::mMeshId>(t_hash("mesh ID"))
+				.data<&RigidBodyData::mFriction>(t_hash("friction")) // NEW
+				.data<&RigidBodyData::mRestitution>(t_hash("restitution")) // NEW
 				.data<&RigidBodyData::mMeshComponent>(t_hash("mesh component"));
 			
 			meta::reflect<RigidBodyComponent>(t_hash("RigidBodyComponent"))
@@ -275,6 +277,26 @@ namespace Engine
 			ServiceLocator::GetPhysicsSystem()->EnqueueAddImpulse(m_rigidBody->GetBodyID(), a_impulse);
 		}
 
+		void RigidBodyComponent::SetColliderType(Physics::ColliderType a_type)
+		{
+			m_rigidBody->SetColliderType(a_type);
+
+			Core::Renderer* t_renderer = ServiceLocator::GetRenderer();
+
+			switch (a_type)
+			{
+			case Physics::ColliderType::BOX:
+				m_meshComponent->SetMesh("Assets/Meshes/WireframeCube.obj", t_renderer);
+				break;
+			case Physics::ColliderType::SPHERE:
+				m_meshComponent->SetMesh("Assets/Meshes/WireframeSphere.obj", t_renderer);
+				break;
+			case Physics::ColliderType::CAPSULE:
+				m_meshComponent->SetMesh("Assets/Meshes/WireframeCapsule.obj", t_renderer);
+				break;
+			}
+		}
+
 		void RigidBodyComponent::Destroy()
 		{
 			m_rigidBody->Remove();
@@ -325,20 +347,22 @@ namespace Engine
 		RigidBodyData RigidBodyComponent::GetRigidBodyData() const
 		{
 			const RigidBodyData t_data = {
-				.mBodyType= static_cast<int>(m_rigidBody->GetBodyType()),
-				.mLayer= static_cast<int>(m_rigidBody->GetLayer()),
-				.mColliderType= static_cast<int>(m_rigidBody->GetColliderType()),
-				.mPos= m_localPos,
-				.mScale= m_rigidBody->GetScale(),
-				.mRadius= m_rigidBody->GetRadius(),
-				.mHalfHeight= m_rigidBody->GetHalfHeight(),
-				.mRot= m_localRot,
-				.mMass= m_rigidBody->GetMass(),
-				.mEnable= m_rigidBody->IsActive(),
-				.mLockRotX= m_rigidBody->IsRotLockedX(),
-				.mLockRotY= m_rigidBody->IsRotLockedY(),
+				.mBodyType = static_cast<int>(m_rigidBody->GetBodyType()),
+				.mLayer = static_cast<int>(m_rigidBody->GetLayer()),
+				.mColliderType = static_cast<int>(m_rigidBody->GetColliderType()),
+				.mPos = m_localPos,
+				.mScale = m_rigidBody->GetScale(),
+				.mRadius = m_rigidBody->GetRadius(),
+				.mHalfHeight = m_rigidBody->GetHalfHeight(),
+				.mRot = m_localRot,
+				.mMass = m_rigidBody->GetMass(),
+				.mEnable = m_rigidBody->IsActive(),
+				.mLockRotX = m_rigidBody->IsRotLockedX(),
+				.mLockRotY = m_rigidBody->IsRotLockedY(),
 				.mLockRotZ = m_rigidBody->IsRotLockedZ(),
 				.mMeshId = GetMeshID(),
+				.mFriction = m_rigidBody->GetFriction(),
+				.mRestitution = m_rigidBody->GetRestitution(),
 				.mMeshComponent = GetMeshComponent()
 			};
 

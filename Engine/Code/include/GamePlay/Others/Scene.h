@@ -58,6 +58,7 @@ namespace Engine
 
 			ENGINE_API void Save();
 			ENGINE_API void Load(Core::Renderer* a_renderer);
+			ENGINE_API void Reload(Core::Renderer* a_renderer);
 			ENGINE_API bool SetMode(bool a_mode);
 			[[nodiscard]] ENGINE_API bool IsPlaying() const { return m_isPlaying; }
 			ENGINE_API bool IsPlaying() { return m_isPlaying; }
@@ -65,7 +66,7 @@ namespace Engine
 			ENGINE_API static void SetProcessKeyboardInputs(bool a_process) { m_processKeyboardInputs = a_process; }
 
 		private:
-			static nlohmann::ordered_json SerializeTransformComponent(const TransformComponent& a_transform);
+			static nlohmann::ordered_json SerializeTransformComponent(const TransformComponent& a_transform, std::vector<std::pair<int, int>> a_oldAndNewIndexes);
 			static TransformData DeserializeTransformComponent(const nlohmann::ordered_json& a_json);
 			static nlohmann::ordered_json SerializeRigidBodyComponent(const RigidBodyComponent& a_rigidBody);
 			static RigidBodyData DeserializeRigidBodyComponent(const nlohmann::ordered_json& a_json);
