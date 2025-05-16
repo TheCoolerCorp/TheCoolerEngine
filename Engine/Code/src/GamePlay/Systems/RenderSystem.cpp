@@ -486,7 +486,7 @@ namespace Engine
 		{
 			for (int i = 0; i < m_lightsPendingComponents.size() && m_lightComponents.size() <= MAX_LIGHTS; ++i)
 			{
-				m_lightsData[i] = m_lightComponents[m_lightsPendingComponents[i]]->GetLight().GetData();
+				m_lightsData[m_lightsPendingComponents[i]] = m_lightComponents[m_lightsPendingComponents[i]]->GetLight().GetData();
 			}
 			m_lightsPendingComponents.clear();
 		}
