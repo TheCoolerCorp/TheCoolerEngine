@@ -48,7 +48,7 @@ namespace Engine
 				if (i > m_objectsDescriptors.size())
 					continue;
 				int t_updatedMatrix = a_updatedMatrix[i].first;
-				if (!m_objectsDescriptors[t_updatedMatrix] || t_updatedMatrix == -1 || t_updatedMatrix >= static_cast<int>(m_objectsDescriptors.size()))
+				if (std::find(m_pendingComponents.begin(), m_pendingComponents.end(), t_updatedMatrix) != m_pendingComponents.end()|| !m_objectsDescriptors[t_updatedMatrix] || t_updatedMatrix == -1 || t_updatedMatrix >= static_cast<int>(m_objectsDescriptors.size()))
 					continue;
 				if (m_objectsDescriptors[t_updatedMatrix]->GetPipelineTargetType() == SKYBOX)
 					continue;
