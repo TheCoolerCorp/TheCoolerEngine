@@ -48,7 +48,7 @@ namespace Engine
 				if (i >= m_objectsDescriptors.size())
 					continue;
 				int t_updatedMatrix = a_updatedMatrix[i].first;
-				if (std::find(m_pendingComponents.begin(), m_pendingComponents.end(), t_updatedMatrix) != m_pendingComponents.end()|| !m_objectsDescriptors[t_updatedMatrix] || t_updatedMatrix == -1 || t_updatedMatrix >= static_cast<int>(m_objectsDescriptors.size()))
+				if (t_updatedMatrix == -1 || std::find(m_pendingComponents.begin(), m_pendingComponents.end(), t_updatedMatrix) != m_pendingComponents.end()|| !m_objectsDescriptors[t_updatedMatrix] ||  t_updatedMatrix >= static_cast<int>(m_objectsDescriptors.size()))
 					continue;
 				if (m_objectsDescriptors[t_updatedMatrix]->GetPipelineTargetType() == SKYBOX)
 					continue;
@@ -464,6 +464,8 @@ namespace Engine
 				
 				if (m_pendingComponents[i] >= static_cast<int>(m_objectsDescriptors.size()))
 				{
+					while (m_pendingComponents[i] > static_cast<int>(m_objectsDescriptors.size()))
+						m_objectsDescriptors.push_back(nullptr);
 					m_objectsDescriptors.push_back(t_newRenderObject);
 				}
 				else
