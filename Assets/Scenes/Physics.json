@@ -1,0 +1,765 @@
+[
+    {
+        "GameObject": "Camera",
+        "TransformComponent": {
+            "position": {
+                "x": 0.033479951322078705,
+                "y": 17.15696907043457,
+                "z": -43.3671875
+            },
+            "rotation": {
+                "x": 6.5494156764600575e-09,
+                "y": 0.9887112975120544,
+                "z": 0.1498330980539322,
+                "w": -4.321795188388933e-08
+            },
+            "scale": {
+                "x": 0.4000000059604645,
+                "y": 0.4000000059604645,
+                "z": 0.4000000059604645
+            },
+            "parent": -1
+        },
+        "CameraComponent": {
+            "up": {
+                "x": 0.0,
+                "y": 1.0,
+                "z": 0.0
+            },
+            "center": {
+                "x": 0.0,
+                "y": 1.0,
+                "z": 0.0
+            },
+            "eye": {
+                "x": 0.0,
+                "y": 1.0,
+                "z": 0.0
+            },
+            "fovY": 1.2217304706573486,
+            "aspect": 1.9028741121292114,
+            "near": 0.10000000149011612,
+            "far": 1000.0,
+            "speed": 10.0,
+            "sensitivity": 20.0
+        }
+    },
+    {
+        "GameObject": "Cube",
+        "TransformComponent": {
+            "position": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0,
+                "w": 1.0
+            },
+            "scale": {
+                "x": 261.9530029296875,
+                "y": 0.1189589723944664,
+                "z": 205.2270050048828
+            },
+            "parent": -1
+        },
+        "RigidBodyComponent": {
+            "body type": 0,
+            "layer": 0,
+            "collider type": 0,
+            "position": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 200.0,
+                "y": 1.0,
+                "z": 200.0
+            },
+            "radius": 1.0,
+            "half height": 1.0,
+            "rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0,
+                "w": 1.0
+            },
+            "mass": 1.0,
+            "enable": true,
+            "lock rotation X": false,
+            "lock rotation Y": false,
+            "lock rotation Z": false,
+            "friction": 0.5,
+            "restitution": 0.0,
+            "is trigger": false
+        },
+        "MeshComponent": {
+            "mesh": "Assets\\Meshes\\BaseObjects\\Cube.obj",
+            "type": 1,
+            "albedo": "Assets\\Textures\\ColliderTexture.png",
+            "normal": "",
+            "metallic": "",
+            "roughness": "",
+            "ao": ""
+        }
+    },
+    {
+        "GameObject": "Point Light",
+        "TransformComponent": {
+            "position": {
+                "x": 0.0,
+                "y": 46.57306671142578,
+                "z": 0.0
+            },
+            "rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0,
+                "w": 1.0
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "parent": -1
+        },
+        "LightComponent": {
+            "position": {
+                "x": 0.0,
+                "y": 46.57306671142578,
+                "z": 0.0
+            },
+            "color": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "intensity": 213.5,
+            "is dir": 0
+        }
+    },
+    {
+        "GameObject": "Sphere",
+        "TransformComponent": {
+            "position": {
+                "x": 32.7380485534668,
+                "y": 1.4999867677688599,
+                "z": -4.852378845214844
+            },
+            "rotation": {
+                "x": -0.3633492887020111,
+                "y": 0.2905735671520233,
+                "z": -0.7264833450317383,
+                "w": 0.5057334303855896
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 0.9999999403953552
+            },
+            "parent": -1
+        },
+        "RigidBodyComponent": {
+            "body type": 2,
+            "layer": 1,
+            "collider type": 1,
+            "position": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "radius": 1.0,
+            "half height": 1.0,
+            "rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0,
+                "w": 1.0
+            },
+            "mass": 1.0,
+            "enable": true,
+            "lock rotation X": false,
+            "lock rotation Y": false,
+            "lock rotation Z": false,
+            "friction": 0.5,
+            "restitution": 0.0,
+            "is trigger": false
+        },
+        "MeshComponent": {
+            "mesh": "Assets\\Meshes\\BaseObjects\\Sphere.obj",
+            "type": 1,
+            "albedo": "Assets\\Textures\\BaseObjectTexture.png",
+            "normal": "",
+            "metallic": "",
+            "roughness": "",
+            "ao": ""
+        }
+    },
+    {
+        "GameObject": "Sphere",
+        "TransformComponent": {
+            "position": {
+                "x": -28.35414695739746,
+                "y": 1.4999903440475464,
+                "z": -15.277512550354004
+            },
+            "rotation": {
+                "x": 0.5639435052871704,
+                "y": 0.22903068363666534,
+                "z": 0.20932155847549438,
+                "w": 0.7653084993362427
+            },
+            "scale": {
+                "x": 0.9999999403953552,
+                "y": 1.0,
+                "z": 0.9999999403953552
+            },
+            "parent": -1
+        },
+        "RigidBodyComponent": {
+            "body type": 2,
+            "layer": 1,
+            "collider type": 1,
+            "position": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "radius": 1.0,
+            "half height": 1.0,
+            "rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0,
+                "w": 1.0
+            },
+            "mass": 1.0,
+            "enable": true,
+            "lock rotation X": false,
+            "lock rotation Y": false,
+            "lock rotation Z": false,
+            "friction": 0.5,
+            "restitution": 0.0,
+            "is trigger": false
+        },
+        "MeshComponent": {
+            "mesh": "Assets\\Meshes\\BaseObjects\\Sphere.obj",
+            "type": 1,
+            "albedo": "Assets\\Textures\\BaseObjectTexture.png",
+            "normal": "",
+            "metallic": "",
+            "roughness": "",
+            "ao": ""
+        }
+    },
+    {
+        "GameObject": "Sphere",
+        "TransformComponent": {
+            "position": {
+                "x": -5.891585350036621,
+                "y": 1.4796199798583984,
+                "z": -22.56891441345215
+            },
+            "rotation": {
+                "x": -0.7770518660545349,
+                "y": -0.02566666714847088,
+                "z": 0.3083360195159912,
+                "w": 0.5481427907943726
+            },
+            "scale": {
+                "x": 0.9999999403953552,
+                "y": 0.9999999403953552,
+                "z": 1.0
+            },
+            "parent": -1
+        },
+        "RigidBodyComponent": {
+            "body type": 2,
+            "layer": 1,
+            "collider type": 1,
+            "position": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "radius": 1.0,
+            "half height": 1.0,
+            "rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0,
+                "w": 1.0
+            },
+            "mass": 1.0,
+            "enable": true,
+            "lock rotation X": false,
+            "lock rotation Y": false,
+            "lock rotation Z": false,
+            "friction": 0.5,
+            "restitution": 0.0,
+            "is trigger": false
+        },
+        "MeshComponent": {
+            "mesh": "Assets\\Meshes\\BaseObjects\\Sphere.obj",
+            "type": 1,
+            "albedo": "Assets\\Textures\\BaseObjectTexture.png",
+            "normal": "",
+            "metallic": "",
+            "roughness": "",
+            "ao": ""
+        }
+    },
+    {
+        "GameObject": "Sphere",
+        "TransformComponent": {
+            "position": {
+                "x": 15.642674446105957,
+                "y": 1.4794018268585205,
+                "z": -22.136598587036133
+            },
+            "rotation": {
+                "x": 0.5747842192649841,
+                "y": -0.05840343236923218,
+                "z": 0.8154091238975525,
+                "w": 0.0363326258957386
+            },
+            "scale": {
+                "x": 1.0000001192092896,
+                "y": 1.000000238418579,
+                "z": 1.0000001192092896
+            },
+            "parent": -1
+        },
+        "RigidBodyComponent": {
+            "body type": 2,
+            "layer": 1,
+            "collider type": 1,
+            "position": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "radius": 1.0,
+            "half height": 1.0,
+            "rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0,
+                "w": 1.0
+            },
+            "mass": 1.0,
+            "enable": true,
+            "lock rotation X": false,
+            "lock rotation Y": false,
+            "lock rotation Z": false,
+            "friction": 0.5,
+            "restitution": 0.0,
+            "is trigger": false
+        },
+        "MeshComponent": {
+            "mesh": "Assets\\Meshes\\BaseObjects\\Sphere.obj",
+            "type": 1,
+            "albedo": "Assets\\Textures\\BaseObjectTexture.png",
+            "normal": "",
+            "metallic": "",
+            "roughness": "",
+            "ao": ""
+        }
+    },
+    {
+        "GameObject": "Sphere",
+        "TransformComponent": {
+            "position": {
+                "x": -22.535425186157227,
+                "y": 1.476485013961792,
+                "z": 55.46693420410156
+            },
+            "rotation": {
+                "x": -0.838943362236023,
+                "y": 0.07853997498750687,
+                "z": -0.19913418591022491,
+                "w": 0.5003509521484375
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 0.9999998807907104,
+                "z": 0.9999998807907104
+            },
+            "parent": -1
+        },
+        "RigidBodyComponent": {
+            "body type": 2,
+            "layer": 1,
+            "collider type": 1,
+            "position": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "radius": 1.0,
+            "half height": 1.0,
+            "rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0,
+                "w": 1.0
+            },
+            "mass": 1.0,
+            "enable": true,
+            "lock rotation X": false,
+            "lock rotation Y": false,
+            "lock rotation Z": false,
+            "friction": 0.5,
+            "restitution": 0.0,
+            "is trigger": false
+        },
+        "MeshComponent": {
+            "mesh": "Assets\\Meshes\\BaseObjects\\Sphere.obj",
+            "type": 1,
+            "albedo": "Assets\\Textures\\BaseObjectTexture.png",
+            "normal": "",
+            "metallic": "",
+            "roughness": "",
+            "ao": ""
+        }
+    },
+    {
+        "GameObject": "Sphere",
+        "TransformComponent": {
+            "position": {
+                "x": -18.402572631835938,
+                "y": 1.4789971113204956,
+                "z": 24.95148277282715
+            },
+            "rotation": {
+                "x": -0.25000619888305664,
+                "y": -0.6332911849021912,
+                "z": -0.018382737413048744,
+                "w": 0.7321893572807312
+            },
+            "scale": {
+                "x": 0.9999999403953552,
+                "y": 1.0,
+                "z": 0.9999999403953552
+            },
+            "parent": -1
+        },
+        "RigidBodyComponent": {
+            "body type": 2,
+            "layer": 1,
+            "collider type": 1,
+            "position": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "radius": 1.0,
+            "half height": 1.0,
+            "rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0,
+                "w": 1.0
+            },
+            "mass": 1.0,
+            "enable": true,
+            "lock rotation X": false,
+            "lock rotation Y": false,
+            "lock rotation Z": false,
+            "friction": 0.5,
+            "restitution": 0.0,
+            "is trigger": false
+        },
+        "MeshComponent": {
+            "mesh": "Assets\\Meshes\\BaseObjects\\Sphere.obj",
+            "type": 1,
+            "albedo": "Assets\\Textures\\BaseObjectTexture.png",
+            "normal": "",
+            "metallic": "",
+            "roughness": "",
+            "ao": ""
+        }
+    },
+    {
+        "GameObject": "Sphere",
+        "TransformComponent": {
+            "position": {
+                "x": -11.657258033752441,
+                "y": 1.4791367053985596,
+                "z": 28.58208656311035
+            },
+            "rotation": {
+                "x": 0.27858966588974,
+                "y": -0.10203637927770615,
+                "z": 0.9101925492286682,
+                "w": 0.2890084981918335
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "parent": -1
+        },
+        "RigidBodyComponent": {
+            "body type": 2,
+            "layer": 1,
+            "collider type": 1,
+            "position": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "radius": 1.0,
+            "half height": 1.0,
+            "rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0,
+                "w": 1.0
+            },
+            "mass": 1.0,
+            "enable": true,
+            "lock rotation X": false,
+            "lock rotation Y": false,
+            "lock rotation Z": false,
+            "friction": 0.5,
+            "restitution": 0.0,
+            "is trigger": false
+        },
+        "MeshComponent": {
+            "mesh": "Assets\\Meshes\\BaseObjects\\Sphere.obj",
+            "type": 1,
+            "albedo": "Assets\\Textures\\BaseObjectTexture.png",
+            "normal": "",
+            "metallic": "",
+            "roughness": "",
+            "ao": ""
+        }
+    },
+    {
+        "GameObject": "Sphere",
+        "TransformComponent": {
+            "position": {
+                "x": 9.468428611755371,
+                "y": 1.47905695438385,
+                "z": 33.27568435668945
+            },
+            "rotation": {
+                "x": -0.6132145524024963,
+                "y": 0.15741994976997375,
+                "z": 0.1529550552368164,
+                "w": 0.7588093876838684
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "parent": -1
+        },
+        "RigidBodyComponent": {
+            "body type": 2,
+            "layer": 1,
+            "collider type": 1,
+            "position": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "radius": 1.0,
+            "half height": 1.0,
+            "rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0,
+                "w": 1.0
+            },
+            "mass": 1.0,
+            "enable": true,
+            "lock rotation X": false,
+            "lock rotation Y": false,
+            "lock rotation Z": false,
+            "friction": 0.5,
+            "restitution": 0.0,
+            "is trigger": false
+        },
+        "MeshComponent": {
+            "mesh": "Assets\\Meshes\\BaseObjects\\Sphere.obj",
+            "type": 1,
+            "albedo": "Assets\\Textures\\BaseObjectTexture.png",
+            "normal": "",
+            "metallic": "",
+            "roughness": "",
+            "ao": ""
+        }
+    },
+    {
+        "GameObject": "Sphere",
+        "TransformComponent": {
+            "position": {
+                "x": 15.051076889038086,
+                "y": 1.4794436693191528,
+                "z": -19.32280921936035
+            },
+            "rotation": {
+                "x": 0.7461574077606201,
+                "y": 0.4356333613395691,
+                "z": 0.4788755774497986,
+                "w": 0.15540552139282227
+            },
+            "scale": {
+                "x": 1.0000001192092896,
+                "y": 1.000000238418579,
+                "z": 1.0000001192092896
+            },
+            "parent": -1
+        },
+        "RigidBodyComponent": {
+            "body type": 2,
+            "layer": 1,
+            "collider type": 1,
+            "position": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "radius": 1.0,
+            "half height": 1.0,
+            "rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0,
+                "w": 1.0
+            },
+            "mass": 1.0,
+            "enable": true,
+            "lock rotation X": false,
+            "lock rotation Y": false,
+            "lock rotation Z": false,
+            "friction": 0.5,
+            "restitution": 0.0,
+            "is trigger": false
+        },
+        "MeshComponent": {
+            "mesh": "Assets\\Meshes\\BaseObjects\\Sphere.obj",
+            "type": 1,
+            "albedo": "Assets\\Textures\\BaseObjectTexture.png",
+            "normal": "",
+            "metallic": "",
+            "roughness": "",
+            "ao": ""
+        }
+    },
+    {
+        "GameObject": "Sphere",
+        "TransformComponent": {
+            "position": {
+                "x": 6.25262975692749,
+                "y": 1.4798725843429565,
+                "z": 9.50827693939209
+            },
+            "rotation": {
+                "x": -0.053813766688108444,
+                "y": 0.19635389745235443,
+                "z": 0.30344560742378235,
+                "w": 0.930843710899353
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "parent": -1
+        },
+        "RigidBodyComponent": {
+            "body type": 2,
+            "layer": 1,
+            "collider type": 1,
+            "position": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "radius": 1.0,
+            "half height": 1.0,
+            "rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0,
+                "w": 1.0
+            },
+            "mass": 1.0,
+            "enable": true,
+            "lock rotation X": false,
+            "lock rotation Y": false,
+            "lock rotation Z": false,
+            "friction": 0.5,
+            "restitution": 0.0,
+            "is trigger": false
+        },
+        "MeshComponent": {
+            "mesh": "Assets\\Meshes\\BaseObjects\\Sphere.obj",
+            "type": 1,
+            "albedo": "Assets\\Textures\\BaseObjectTexture.png",
+            "normal": "",
+            "metallic": "",
+            "roughness": "",
+            "ao": ""
+        }
+    }
+]
