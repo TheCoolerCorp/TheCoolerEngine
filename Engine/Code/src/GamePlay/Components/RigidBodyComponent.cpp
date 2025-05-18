@@ -32,7 +32,8 @@ namespace Engine
 				.data<&RigidBodyData::mMeshId>(t_hash("mesh ID"))
 				.data<&RigidBodyData::mFriction>(t_hash("friction")) // NEW
 				.data<&RigidBodyData::mRestitution>(t_hash("restitution")) // NEW
-				.data<&RigidBodyData::mMeshComponent>(t_hash("mesh component"));
+				.data<&RigidBodyData::mMeshComponent>(t_hash("mesh component"))
+				.data<&RigidBodyData::mIsTrigger>(t_hash("is trigger"));
 			
 			meta::reflect<RigidBodyComponent>(t_hash("RigidBodyComponent"))
 				.data<&RigidBodyComponent::SetFromData, &RigidBodyComponent::GetRigidBodyData>(t_hash("RigidBody")); 
@@ -304,7 +305,8 @@ namespace Engine
 				.mMeshId = GetMeshID(),
 				.mFriction = m_rigidBody->GetFriction(),
 				.mRestitution = m_rigidBody->GetRestitution(),
-				.mMeshComponent = GetMeshComponent()
+				.mMeshComponent = GetMeshComponent(),
+				.mIsTrigger = m_rigidBody->IsTrigger()
 			};
 
 			return t_data;

@@ -96,6 +96,7 @@ namespace Editor::GamePlay
 	void PressurePlateComponent::Start()
 	{
 		EditorGameComponent::Start();
+		m_pressed = false;
 		m_transformComponentId = GetGameObject()->GetComponentID<Engine::GamePlay::TransformComponent>();
 		if (Engine::GamePlay::RigidBodyComponent* t_component = GetGameObject()->GetComponent<Engine::GamePlay::RigidBodyComponent>())
 		{
@@ -120,6 +121,17 @@ namespace Editor::GamePlay
 			{
 				Engine::Math::vec3 t_pos = t_transform->GetTransform()->GetPosition();
 				MoveTowards(t_pos, m_doorInactivePos+m_doorActivePos, a_deltatime, 2.f);
+				t_transform->SetPosition(t_pos);
+			}
+		}
+		else
+		{
+			//get the target transform and move it towards the rest position
+			Engine::GamePlay::TransformComponent* t_transform = m_scene->GetGameObject(m_doorGameObjectId)->GetComponent<Engine::GamePlay::TransformComponent>();
+			if (t_transform)
+			{
+				Engine::Math::vec3 t_pos = t_transform->GetTransform()->GetPosition();
+				MoveTowards(t_pos, m_doorInactivePos, a_deltatime, 2.f);
 				t_transform->SetPosition(t_pos);
 			}
 		}

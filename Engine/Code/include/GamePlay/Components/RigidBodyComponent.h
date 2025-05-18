@@ -40,6 +40,7 @@ namespace Engine
 			float mFriction;
 			float mRestitution;
 			MeshComponent* mMeshComponent;
+			bool mIsTrigger;
 		};
 
 		class RigidBodyComponent : public Component

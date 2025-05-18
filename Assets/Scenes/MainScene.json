@@ -79,7 +79,8 @@
             "lock rotation Y": false,
             "lock rotation Z": false,
             "friction": 0.5,
-            "restitution": 0.5
+            "restitution": 0.5,
+            "is trigger": false
         },
         "MeshComponent": {
             "mesh": "Assets\\Meshes\\ShowcaseAssets\\Ground.obj",
@@ -162,15 +163,15 @@
         "GameObject": "Camera",
         "TransformComponent": {
             "position": {
-                "x": -0.01710241660475731,
-                "y": 0.8293476700782776,
-                "z": 3.1751930713653564
+                "x": 0.03348350152373314,
+                "y": 1.2293473482131958,
+                "z": -2.1693804264068604
             },
             "rotation": {
                 "x": 0.0,
-                "y": 0.0,
+                "y": 1.0,
                 "z": 0.0,
-                "w": 1.0
+                "w": -4.371138828673793e-08
             },
             "scale": {
                 "x": 0.4000000059604645,
@@ -314,7 +315,8 @@
             "lock rotation Y": false,
             "lock rotation Z": false,
             "friction": 0.5,
-            "restitution": 0.5
+            "restitution": 0.5,
+            "is trigger": false
         },
         "LightComponent": {
             "position": {
@@ -344,15 +346,15 @@
         "GameObject": "Player",
         "TransformComponent": {
             "position": {
-                "x": -0.017102420330047607,
-                "y": 0.8293474912643433,
-                "z": 3.1751925945281982
+                "x": 0.03348350524902344,
+                "y": 0.8293473124504089,
+                "z": -2.169379949569702
             },
             "rotation": {
                 "x": 0.0,
-                "y": 0.0,
+                "y": 1.0,
                 "z": 0.0,
-                "w": 1.0
+                "w": -4.371138828673793e-08
             },
             "scale": {
                 "x": 0.4000000059604645,
@@ -389,7 +391,8 @@
             "lock rotation Y": true,
             "lock rotation Z": true,
             "friction": 0.5,
-            "restitution": 0.5
+            "restitution": 0.5,
+            "is trigger": false
         },
         "MeshComponent": {
             "mesh": "Assets\\Meshes\\BaseObjects\\Capsule.obj",
@@ -521,7 +524,8 @@
             "lock rotation Y": false,
             "lock rotation Z": false,
             "friction": 0.5,
-            "restitution": 0.0
+            "restitution": 0.0,
+            "is trigger": false
         }
     },
     {
@@ -573,7 +577,8 @@
             "lock rotation Y": false,
             "lock rotation Z": false,
             "friction": 0.5,
-            "restitution": 0.0
+            "restitution": 0.0,
+            "is trigger": false
         }
     },
     {
@@ -625,7 +630,8 @@
             "lock rotation Y": false,
             "lock rotation Z": false,
             "friction": 0.5,
-            "restitution": 0.0
+            "restitution": 0.0,
+            "is trigger": false
         }
     },
     {
@@ -677,7 +683,8 @@
             "lock rotation Y": false,
             "lock rotation Z": false,
             "friction": 0.5,
-            "restitution": 0.0
+            "restitution": 0.0,
+            "is trigger": false
         }
     },
     {
@@ -729,7 +736,8 @@
             "lock rotation Y": false,
             "lock rotation Z": false,
             "friction": 0.5,
-            "restitution": 0.0
+            "restitution": 0.0,
+            "is trigger": false
         }
     },
     {
@@ -781,7 +789,80 @@
             "lock rotation Y": false,
             "lock rotation Z": false,
             "friction": 0.5,
-            "restitution": 0.0
+            "restitution": 0.0,
+            "is trigger": false
+        }
+    },
+    {
+        "GameObject": "Cube",
+        "TransformComponent": {
+            "position": {
+                "x": 3.7298829555511475,
+                "y": 0.0,
+                "z": 3.865560531616211
+            },
+            "rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0,
+                "w": 1.0
+            },
+            "scale": {
+                "x": 0.4000000059604645,
+                "y": 0.10000000149011612,
+                "z": 0.4000000059604645
+            },
+            "parent": -1
+        },
+        "RigidBodyComponent": {
+            "body type": 0,
+            "layer": 2,
+            "collider type": 0,
+            "position": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "radius": 1.0,
+            "half height": 1.0,
+            "rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0,
+                "w": 1.0
+            },
+            "mass": 1.0,
+            "enable": true,
+            "lock rotation X": false,
+            "lock rotation Y": false,
+            "lock rotation Z": false,
+            "friction": 0.5,
+            "restitution": 0.0,
+            "is trigger": true
+        },
+        "MeshComponent": {
+            "mesh": "Assets\\Meshes\\BaseObjects\\Cube.obj",
+            "type": 1,
+            "albedo": "Assets\\Textures\\metal_plate_diff_2k.png",
+            "normal": "Assets\\Textures\\metal_plate_nor_dx_2k.png",
+            "metallic": "Assets\\Textures\\metal_plate_metal_2k.png",
+            "roughness": "Assets\\Textures\\metal_plate_rough_2k.png",
+            "ao": "Assets\\Textures\\metal_plate_ao_2k.png"
+        },
+        "PressurePlateComponent": {
+            "transformComponentId": 17,
+            "collisionListenerGameObjectId": 7,
+            "doorGameObjectId": 9,
+            "position": {
+                "x": 0.0,
+                "y": -5.0,
+                "z": 0.0
+            }
         }
     }
 ]

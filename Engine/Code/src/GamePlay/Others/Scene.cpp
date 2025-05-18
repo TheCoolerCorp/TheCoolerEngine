@@ -618,6 +618,11 @@ namespace Engine
 					{
 						t_rigidBodyComponent->GetBody()->SetRestitution(t_restitution);
 					}
+
+					if (t_rigidBody.mIsTrigger)
+					{
+						t_rigidBodyComponent->SetIsTrigger(t_rigidBody.mIsTrigger);
+					}
 				}
 
 				if (t_hasMesh)
@@ -1006,6 +1011,13 @@ namespace Engine
 				t_json["restitution"] = t_restitutionTypeAny.cast<float>();
 			}
 
+			const meta::data t_isTriggerFiled = t_rigidBodyDataType.data(t_hash("is trigger"));
+			if (t_isTriggerFiled)
+			{
+				meta::any t_isTriggerAny = t_isTriggerFiled.get(t_rigidBodyDataHandle);
+				t_json["is trigger"] = t_isTriggerAny.cast<bool>();
+			}
+
 			return t_json;
 		}
 
@@ -1058,6 +1070,8 @@ namespace Engine
 			t_outData.mFriction = a_json.at("friction").get<float>();
 
 			t_outData.mRestitution = a_json.at("restitution").get<float>();
+
+			t_outData.mIsTrigger = a_json.at("is trigger").get<bool>();
 
 			return t_outData;
 		}

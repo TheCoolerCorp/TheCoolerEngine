@@ -127,7 +127,7 @@ void Editor::EditorLayer::Ui::UiRigidbodyComponent::UiShowColliderInfo()
 		{
 			for (int i = 0; i < 4; i++)
 			{
-				t_fScale[i] = std::max(t_fScale[i], 0.001f);
+				t_fScale[i] = std::max(t_fScale[i], 0.01f);
 			}
 			m_rigidBody->GetBody()->SetScale(Engine::Math::vec3(t_fScale[0], t_fScale[1], t_fScale[2]));
 		}
