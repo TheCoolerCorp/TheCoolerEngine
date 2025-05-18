@@ -56,25 +56,34 @@ namespace Engine::GamePlay
 		Math::vec3 t_movement = Math::vec3(0,0,0);
 		if (a_inputHandler->IsKeyDown(Core::Window::Key::KEY_W))
 		{
-			t_movement += t_transformRotate->GetRight();
+			t_movement += t_transformRotate->GetForward();
 		}
 		if (a_inputHandler->IsKeyDown(Core::Window::Key::KEY_S))
 		{
-			t_movement -= t_transformRotate->GetRight();
+			t_movement -= t_transformRotate->GetForward();
 		}
 		if (a_inputHandler->IsKeyDown(Core::Window::Key::KEY_A))
 		{
-			t_movement += t_transformRotate->GetForward();
+			t_movement -= t_transformRotate->GetRight();
 		}
 		if (a_inputHandler->IsKeyDown(Core::Window::Key::KEY_D))
 		{
-			t_movement -= t_transformRotate->GetForward();
+			t_movement += t_transformRotate->GetRight();
 		}
+
+		if (m_jumpTimer > 0.0f)
+		{
+			m_jumpTimer -= a_deltaTime;
+		}
+
 		if (a_inputHandler->IsKeyDown(Core::Window::Key::KEY_SPACE))
 		{
-			if (t_rigidBody->GetVelocity().y < 0.01 && t_rigidBody->IsGrounded(t_transform->GetTransform()->GetGlobalPosition(), t_transform->GetTransform()->GetGlobalRotation())) //a rather simplistic solution for jumping,, for now
+			if (m_jumpTimer <= 0.0f &&
+				t_rigidBody->GetVelocity().y < 0.01 &&
+				t_rigidBody->IsGrounded(t_transform->GetTransform()->GetGlobalPosition(), t_transform->GetTransform()->GetGlobalRotation()))
 			{
 				t_rigidBody->AddImpulse(t_transform->GetUp() * m_jumpForce);
+				m_jumpTimer = m_jumpCooldown;
 			}
 		}
 
@@ -95,7 +104,7 @@ namespace Engine::GamePlay
 		{
 			t_movement = Math::vec3::Normalize(t_movement);
 			t_movement = t_movement * 100 * m_moveSpeed * a_deltaTime;
-			t_rigidBody->AddForce(Math::vec3(t_movement.z, 0, t_movement.x));
+			t_rigidBody->AddForce(Math::vec3(t_movement.x, 0, t_movement.z));
 		}
 		Math::vec3 t_velocity = t_rigidBody->GetVelocity();
 		float t_norm = Math::vec3::Norm(Math::vec3(t_velocity.x, 0, t_velocity.z));

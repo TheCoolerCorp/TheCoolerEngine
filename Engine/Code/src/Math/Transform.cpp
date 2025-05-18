@@ -73,24 +73,18 @@ namespace Engine
 
 		vec3 Transform::GetForward()
 		{
-			Math::vec3 t_forward = vec3(0, 0, -1);
-			Math::vec3 t_result = m_globalRot * t_forward;
-			t_result.x = -t_result.x;
-			return t_result;
+			return vec3::Normalize(m_globalRot * vec3(0.f, 0.f, -1.f));
 		}
 
 		vec3 Transform::GetRight()
 		{
-			Math::vec3 t_right = vec3(1, 0, 0);
-			Math::vec3 t_result = m_globalRot * t_right;
-			t_result.x = -t_result.x;
-			return t_result;
+			return vec3::Normalize(m_globalRot * vec3(1.f, 0.f, 0.f));
 		}
 
 		vec3 Transform::GetUp()
 		{
-			Math::vec3 t_up = vec3(0, 1, 0);
-			return m_globalRot * t_up;
+			Math::vec3 t_up = vec3(0.f, 1.f, 0.f);
+			return vec3::Normalize(m_globalRot * t_up);
 		}
 
 		UniformMatrixs& Transform::GetUniformsMatrixs()

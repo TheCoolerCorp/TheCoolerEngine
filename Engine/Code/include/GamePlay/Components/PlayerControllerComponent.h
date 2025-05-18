@@ -74,6 +74,9 @@ namespace Engine::GamePlay
 		float m_jumpForce = 10.f;
 		float m_moveSpeed = 30.f;
 
+		float m_jumpCooldown = 0.5f;
+		float m_jumpTimer = 0.0f;
+
 		float m_maxUpAngle = 85.f;
 		float m_maxDownAngle = 85.f;
 
