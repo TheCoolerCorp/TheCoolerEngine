@@ -206,7 +206,10 @@ namespace Engine
 
 				Set(t_transformData);
 
-				ServiceLocator::GetTransformSystem()->GetComponent(m_parentId)->RemoveChild(m_uid);
+				if (TransformComponent* t_parent = ServiceLocator::GetTransformSystem()->GetComponent(m_parentId))
+				{
+					t_parent->RemoveChild(m_uid);
+				}
 				m_parentId = -1;
 			}
 		}
