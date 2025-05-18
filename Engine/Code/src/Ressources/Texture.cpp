@@ -122,8 +122,6 @@ namespace Engine
 
             m_isCreated.store(true, std::memory_order_release);
             m_isCreating.store(false, std::memory_order_release);
-
-            Engine::Core::Audio::SoundManager::Get().PlaySound("Assets/Sounds/sparkle.wav");
         }
 
         void Texture::CreateImageAsync(Core::Renderer* a_renderer)
