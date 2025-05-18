@@ -164,7 +164,7 @@
         "TransformComponent": {
             "position": {
                 "x": 0.03348350152373314,
-                "y": 1.2293473482131958,
+                "y": 1.2293474674224854,
                 "z": -2.1693804264068604
             },
             "rotation": {
@@ -848,11 +848,11 @@
         "MeshComponent": {
             "mesh": "Assets\\Meshes\\BaseObjects\\Cube.obj",
             "type": 1,
-            "albedo": "Assets\\Textures\\metal_plate_diff_2k.png",
-            "normal": "Assets\\Textures\\metal_plate_nor_dx_2k.png",
-            "metallic": "Assets\\Textures\\metal_plate_metal_2k.png",
-            "roughness": "Assets\\Textures\\metal_plate_rough_2k.png",
-            "ao": "Assets\\Textures\\metal_plate_ao_2k.png"
+            "albedo": "Assets\\Textures\\PBR\\pbr_diff.png",
+            "normal": "Assets\\Textures\\PBR\\pbr_nor.png",
+            "metallic": "Assets\\Textures\\PBR\\pbr_metal.png",
+            "roughness": "Assets\\Textures\\PBR\\pbr_rough.png",
+            "ao": "Assets\\Textures\\PBR\\pbr_ao.png"
         },
         "PressurePlateComponent": {
             "transformComponentId": 17,
