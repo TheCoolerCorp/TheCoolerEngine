@@ -27,7 +27,8 @@ namespace Engine
 
 			bool GLInputHandler::IsKeyDown(Key a_key)
 			{
-				return (m_currentKeyStatus[static_cast<int>(a_key)] == GLFW_PRESS);
+				return (m_currentKeyStatus[static_cast<int>(a_key)] == GLFW_PRESS) ||
+					(m_currentKeyStatus[static_cast<int>(a_key)] == GLFW_REPEAT);
 			}
 
 			bool GLInputHandler::IsKeyPressed(Key a_key)

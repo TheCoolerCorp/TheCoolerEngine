@@ -99,8 +99,7 @@ namespace Engine::GamePlay
 		t_rotation.y += t_yaw;
 		t_transformRotate->GetTransform()->SetRotation(t_rotation);
 		m_oldMousePos = a_inputHandler->GetCursorPosition();
-
-		if (Math::vec3::Norm(t_movement) >= 0.003 || Math::vec3::Norm(t_movement) <= -0.003)
+		if (Math::vec3::Norm(t_movement) >= 0.003)
 		{
 			t_movement = Math::vec3::Normalize(t_movement);
 			t_movement = t_movement * 100 * m_moveSpeed * a_deltaTime;
