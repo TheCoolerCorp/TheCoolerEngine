@@ -20,7 +20,7 @@ namespace Engine::GamePlay
 
 		ENGINE_API void Create(Scene* a_scene, Core::Window::IWindow* a_window);
 
-		ENGINE_API void Update() override;
+		ENGINE_API void Update(float a_deltatime) override;
 		ENGINE_API void Start();
 		ENGINE_API void SceneUpdate() override;
 		ENGINE_API void ProcessInputs(Engine::Core::Window::IInputHandler* a_inputHandler, float a_deltaTime) override;

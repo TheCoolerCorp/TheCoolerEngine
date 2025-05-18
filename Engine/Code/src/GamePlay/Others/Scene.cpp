@@ -7,13 +7,12 @@
 #include "Gameplay/ServiceLocator.h"
 #include "GamePlay/Components/PlayerControllerComponent.h"
 #include "GamePlay/Others/GameObject.h"
-#include "GamePlay/Others/LightGO.h"
 #include "GamePlay/Others/CameraGO.h"
 #include "Math/TheCoolerMath.h"
+#include "GamePlay/Components/ReflectionComponents/ComponentRegistry.h"
 
 using json = nlohmann::ordered_json;
 
-#include "Core/GraphicsAPI/Vulkan/VulkanShader.h"
 namespace Engine
 {
 	namespace GamePlay
@@ -154,7 +153,7 @@ namespace Engine
 				}
 				//m_physicsSystem->Update(a_deltatime, this);
 				m_renderSystem->UpdateCamera(a_renderer, a_deltatime, a_window, a_inputHandler, m_gameCameraId, m_objs[m_mainCameraObjectId] ? m_objs[m_mainCameraObjectId]->GetComponent<TransformComponent>()->GetTransform()->GetTransformMatrix() : Math::mat4());
-				m_gameComponentSystem->Update();
+				m_gameComponentSystem->Update(a_deltatime);
 				if (m_processKeyboardInputs)
 				{
 					m_gameComponentSystem->ProcessInputs(a_inputHandler, a_deltatime);
@@ -438,6 +437,9 @@ namespace Engine
 				int newIndex = 0;
 				std::vector<std::pair<int, int>> t_oldAndNewIndexes;
 
+
+
+
 				for (int oldIndex = 0; oldIndex < m_transformSystem->GetSize(); ++oldIndex)
 				{
 					if (m_transformSystem->GetComponent(oldIndex) != nullptr)
@@ -449,6 +451,7 @@ namespace Engine
 						++newIndex;
 					}
 				}
+
 
 				t_objJson["GameObject"] = t_obj->GetName();
 				t_objJson["TransformComponent"] = SerializeTransformComponent(*t_obj->GetComponent<TransformComponent>(), t_oldAndNewIndexes);
@@ -474,6 +477,17 @@ namespace Engine
 				{
 					t_objJson["PlayerControllerComponent"] = SerializePlayerControllerComponent(*t_playerControllerComponent);
 				}
+
+				for (auto& t_typeIndex : t_obj->GetOwnedTypes())
+				{
+					ComponentRegistry::Entry* t_entry = ServiceLocator::GetComponentRegistry()->GetEntryFromId(t_typeIndex);
+					if (t_entry)
+					{
+						GameComponent* t_comp = t_entry->getComponent(*t_obj);
+						t_objJson[t_entry->name] = t_comp->Serialize();
+					}
+				}
+
 				t_scene.push_back(t_objJson);
 			}
 
@@ -549,6 +563,16 @@ namespace Engine
 				GameObject* t_gameObject = new GameObject(t_transform.mPos, t_transform.mRot, t_transform.mScale, t_name);
 				AddGameObject(t_gameObject);
 
+				for (auto& t_compEntry : ServiceLocator::GetComponentRegistry()->GetEntries())
+				{
+					if (t_entry.contains(t_compEntry.name))
+					{
+						t_compEntry.addFunction(*t_gameObject);
+
+						t_compEntry.getComponent(*t_gameObject)->Deserialize(t_entry.at(t_compEntry.name));
+					}
+				}
+
 				if (t_hasLight)
 				{
 					t_gameObject->AddComponent<LightComponent>();
@@ -610,6 +634,11 @@ namespace Engine
 					{
 						t_rigidBodyComponent->GetBody()->SetRestitution(t_restitution);
 					}
+
+					if (t_rigidBody.mIsTrigger)
+					{
+						t_rigidBodyComponent->SetIsTrigger(t_rigidBody.mIsTrigger);
+					}
 				}
 
 				if (t_hasMesh)
@@ -653,6 +682,8 @@ namespace Engine
 					t_gameObject->AddComponent<PlayerControllerComponent>();
 					t_gameObject->GetComponent<PlayerControllerComponent>()->Set(t_playerController);
 				}
+
+
 			}
 
 			for (uint32_t i = 0; i < t_transformDatas.size(); ++i)
@@ -996,6 +1027,13 @@ namespace Engine
 				t_json["restitution"] = t_restitutionTypeAny.cast<float>();
 			}
 
+			const meta::data t_isTriggerFiled = t_rigidBodyDataType.data(t_hash("is trigger"));
+			if (t_isTriggerFiled)
+			{
+				meta::any t_isTriggerAny = t_isTriggerFiled.get(t_rigidBodyDataHandle);
+				t_json["is trigger"] = t_isTriggerAny.cast<bool>();
+			}
+
 			return t_json;
 		}
 
@@ -1048,6 +1086,8 @@ namespace Engine
 			t_outData.mFriction = a_json.at("friction").get<float>();
 
 			t_outData.mRestitution = a_json.at("restitution").get<float>();
+
+			t_outData.mIsTrigger = a_json.at("is trigger").get<bool>();
 
 			return t_outData;
 		}

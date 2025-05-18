@@ -2,7 +2,7 @@
 #define UITRANSFORMCOMPONENT_H
 
 #include "UiInspectorComponent.h"
-
+#include "Math/Transform.h"
 namespace Engine::GamePlay
 {
 	class TransformComponent;

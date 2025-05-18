@@ -39,11 +39,11 @@ namespace Engine
 		{
 			return m_camera.GetCameraData();
 		}
-		ComponentType CameraComponent::Create(int& a_outID)
+
+		void CameraComponent::Create(int& a_outID)
 		{
 			a_outID = ServiceLocator::GetRendererSystem()->AddComponent(this);
 			SetId(a_outID);
-			return ComponentType::CAMERA;
 		}
 
 		void CameraComponent::SetCamera(Camera& a_camera)

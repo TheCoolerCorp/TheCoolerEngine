@@ -20,7 +20,7 @@ namespace Engine::GamePlay
 		ComponentSystem() = default;
 		~ComponentSystem() override = default;
 
-		void Update() override {}
+		void Update(float a_deltatime) override {}
 		void SceneUpdate() override {}
 		void ProcessInputs(Engine::Core::Window::IInputHandler* a_inputHandler, float a_deltaTime) override {}
 

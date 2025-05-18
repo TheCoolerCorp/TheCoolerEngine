@@ -10,6 +10,8 @@
 #include "InspectorComponent/UiLightComponent.h"
 #include "InspectorComponent/UiPlayerControllerComponent.h"
 #include "InspectorComponent/UiRigidbodyComponent.h"
+#include "InspectorComponent/UiEditorGameComp.h"
+#include "GamePlay/Components/ReflectionComponents/ComponentRegistry.h"
 
 Editor::EditorLayer::Ui::InspectorUiWindow::~InspectorUiWindow()
 {
@@ -127,31 +129,38 @@ void Editor::EditorLayer::Ui::InspectorUiWindow::RefreshSelectedObject()
 void Editor::EditorLayer::Ui::InspectorUiWindow::RefreshCurrentObject()
 {
 	ClearComponents();
-	for (Engine::GamePlay::ComponentType t_type : m_selectedObject->GetOwnedTypes())
+	for (std::type_index t_type : m_selectedObject->GetOwnedTypes())
 	{
-		switch (t_type)
+		if (t_type == Engine::GamePlay::Component::GetCompId<Engine::GamePlay::TransformComponent>())
 		{
-		case Engine::GamePlay::ComponentType::TRANSFORM:
 			AddComponent(new UiTransformComponent(m_layer, m_selectedObject->GetComponent<Engine::GamePlay::TransformComponent>()));
-			break;
-		case Engine::GamePlay::ComponentType::MESH:
+		}
+		if (t_type == Engine::GamePlay::Component::GetCompId<Engine::GamePlay::MeshComponent>())
+		{
 			AddComponent(new UiMeshComponent(m_layer, m_selectedObject->GetComponent<Engine::GamePlay::MeshComponent>()));
-			break;
-		case Engine::GamePlay::ComponentType::MATERIAL: //not implemented yet
-			//AddComponent(new UiMaterialComponent(m_layer, m_selectedObject->GetComponent<MaterialComponent>()));
-			break;
-		case Engine::GamePlay::ComponentType::COLLIDERMESH:
-			//AddComponent(new UiColliderMeshComponent(m_layer, m_selectedObject->GetComponent<ColliderMeshComponent>()));
-			break;
-		case Engine::GamePlay::ComponentType::RIGIDBODY:
+		}
+		if (t_type == Engine::GamePlay::Component::GetCompId<Engine::GamePlay::RigidBodyComponent>())
+		{
 			AddComponent(new UiRigidbodyComponent(m_layer, m_selectedObject->GetComponent<Engine::GamePlay::RigidBodyComponent>()));
-			break;
-		case Engine::GamePlay::ComponentType::LIGHT:
+		}
+		if (t_type == Engine::GamePlay::Component::GetCompId<Engine::GamePlay::LightComponent>())
+		{
 			AddComponent(new UiLightComponent(m_layer, m_selectedObject->GetComponent<Engine::GamePlay::LightComponent>()));
-			break;
-		case Engine::GamePlay::ComponentType::PLAYERCONTROLLER:
+		}
+		if (t_type == Engine::GamePlay::Component::GetCompId<Engine::GamePlay::PlayerControllerComponent>())
+		{
 			AddComponent(new UiPlayerControllerComponent(m_layer, m_selectedObject->GetComponent<Engine::GamePlay::PlayerControllerComponent>()));
-			break;
+		}
+		//check if the type is in the Component Registry, and if yes, create the component ui component with it
+		Engine::GamePlay::ComponentRegistry* t_registry = Engine::GamePlay::ServiceLocator::GetComponentRegistry();
+		if (Engine::GamePlay::ComponentRegistry::Entry* t_entry = t_registry->GetEntryFromId(t_type))
+		{
+			Engine::GamePlay::GameComponent* t_component = t_entry->getComponent(*m_selectedObject);
+			if (t_component)
+			{
+				UiEditorGameComponent* m_component = new UiEditorGameComponent(m_layer, t_component, this);
+				AddComponent(m_component);
+			}
 		}
 	}
 }
@@ -199,6 +208,19 @@ void Editor::EditorLayer::Ui::InspectorUiWindow::ClearComponents()
 		delete t_component;
 	}
 	m_objectComponents.clear();
+}
+
+/**
+ * Checks if the selected object has a component of the given type
+ */
+bool Editor::EditorLayer::Ui::InspectorUiWindow::UtilHasComponentOfType(std::type_index& a_typeIndex)
+{
+	for (std::type_index& t_typeIndex : m_selectedObject->GetOwnedTypes())
+	{
+		if (t_typeIndex == a_typeIndex)
+			return true;
+	}
+	return false;
 }
 
 /**
@@ -276,6 +298,18 @@ void Editor::EditorLayer::Ui::InspectorUiWindow::UiDrawComponentAddWindow()
 			if (ImGui::Selectable("PlayerController"))
 			{
 				m_selectedObject->AddComponent<Engine::GamePlay::PlayerControllerComponent>();
+				MarkOutOfDate();
+			}
+		}
+		Engine::GamePlay::ComponentRegistry* t_registry = Engine::GamePlay::ServiceLocator::GetComponentRegistry();
+		for (Engine::GamePlay::ComponentRegistry::Entry t_entry : t_registry->GetEntries())
+		{
+			if (UtilHasComponentOfType(t_entry.type))
+				continue;
+			if (ImGui::Selectable(t_entry.name.c_str()))
+			{
+				t_entry.addFunction(*m_selectedObject);
+				static_cast<GamePlay::EditorGameComponent*>(t_entry.getComponent(*m_selectedObject))->SetInspectorWindow(this);
 				MarkOutOfDate();
 			}
 		}

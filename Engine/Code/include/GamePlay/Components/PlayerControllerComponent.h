@@ -35,10 +35,14 @@ namespace Engine::GamePlay
 	public:
 		ENGINE_API PlayerControllerComponent();
 		ENGINE_API ~PlayerControllerComponent() override;
-		ENGINE_API ComponentType Create(int& a_outId) override;
+
+		ENGINE_API nlohmann::ordered_json Serialize() override;
+		ENGINE_API void Deserialize(const nlohmann::ordered_json& a_json) override;
+
+		ENGINE_API void Create(int& a_outId) override;
 		ENGINE_API void Destroy() override;
 		ENGINE_API void Start() override;
-		ENGINE_API void Update() override;
+		ENGINE_API void Update(float a_deltatime) override;
 		ENGINE_API void SceneUpdate() override;
 		ENGINE_API void ProcessInputs(Engine::Core::Window::IInputHandler* a_inputHandler, float a_deltaTime) override;
 
@@ -46,7 +50,6 @@ namespace Engine::GamePlay
 		ENGINE_API void Set(const PlayerControllerData& a_data);
 		ENGINE_API PlayerControllerData GetData() const;
 
-		ENGINE_API static ComponentType GetType() { return ComponentType::PLAYERCONTROLLER; }
 		ENGINE_API static void RemoveComponent(int a_id);
 		ENGINE_API static PlayerControllerComponent* GetComponent(int a_id);
 

@@ -4,6 +4,7 @@
 #include "EngineExport.h"
 
 #include "Gameplay/Systems/TransformSystem.h"
+#include "Gameplay/Systems/PhysicsSystem.h"
 #include "Gameplay/Systems/RenderSystem.h"
 #include "Core/Renderer/Renderer.h"
 #include "Ressources/ResourceManager.h"
@@ -13,6 +14,8 @@
 #include "GamePlay/Components/PlayerControllerComponent.h"
 #include "GamePlay/ComponentsBase/Camera.h"
 #include "GamePlay/Systems/EventSystem.h"
+#include "GamePlay/Systems/GameComponentSystem.h"
+
 namespace Engine
 {
 	namespace GamePlay

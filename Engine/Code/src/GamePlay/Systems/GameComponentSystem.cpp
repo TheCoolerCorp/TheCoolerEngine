@@ -11,11 +11,11 @@ namespace Engine::GamePlay
 		a_scene->GetBeginPlayEvent().AddListener([this]() {this->Start();});
 	}
 
-	void GameComponentSystem::Update()
+	void GameComponentSystem::Update(float a_deltatime)
 	{
 		for (auto& component : m_gameComponents)
 		{
-			component->Update();
+			component->Update(a_deltatime);
 		}
 	}
 	void GameComponentSystem::Start()

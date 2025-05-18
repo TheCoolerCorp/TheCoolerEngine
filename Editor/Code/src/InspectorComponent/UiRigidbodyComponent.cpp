@@ -127,7 +127,7 @@ void Editor::EditorLayer::Ui::UiRigidbodyComponent::UiShowColliderInfo()
 		{
 			for (int i = 0; i < 4; i++)
 			{
-				t_fScale[i] = std::max(t_fScale[i], 0.1f);
+				t_fScale[i] = std::max(t_fScale[i], 0.01f);
 			}
 			m_rigidBody->GetBody()->SetScale(Engine::Math::vec3(t_fScale[0], t_fScale[1], t_fScale[2]));
 		}
@@ -139,7 +139,7 @@ void Editor::EditorLayer::Ui::UiRigidbodyComponent::UiShowColliderInfo()
 		float t_radius = m_rigidBody->GetBody()->GetRadius();
 		if (ImGui::DragFloat(("Radius##" + std::to_string(m_uid)).c_str(), &t_radius, 0.1f, 0.001f, +FLT_MAX))
 		{
-			t_radius = std::clamp(t_radius, 0.01f, +FLT_MAX);
+			t_radius = std::clamp(t_radius, 0.001f, +FLT_MAX);
 			m_rigidBody->GetBody()->SetRadius(t_radius);
 		}
 		break;
@@ -151,12 +151,12 @@ void Editor::EditorLayer::Ui::UiRigidbodyComponent::UiShowColliderInfo()
 		float t_halfHeight = m_rigidBody->GetBody()->GetHalfHeight();
 		if (ImGui::DragFloat(("HalfHeight##" + std::to_string(m_uid)).c_str(), &t_halfHeight, 0.1f, 0.001f, +FLT_MAX))
 		{
-			t_halfHeight = std::clamp(t_halfHeight, 0.01f, +FLT_MAX);
+			t_halfHeight = std::clamp(t_halfHeight, 0.001f, +FLT_MAX);
 			m_rigidBody->GetBody()->SetHalfHeight(t_halfHeight);
 		}
 		if (ImGui::DragFloat(("Radius##" + std::to_string(m_uid)).c_str(), &t_radius, 0.1f, 0.001f, +FLT_MAX))
 		{
-			t_radius = std::clamp(t_radius, 0.01f, +FLT_MAX);
+			t_radius = std::clamp(t_radius, 0.001f, +FLT_MAX);
 			m_rigidBody->GetBody()->SetRadius(t_radius);
 		}
 		break;

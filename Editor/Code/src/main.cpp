@@ -3,6 +3,7 @@
 #include "Core/Assertion/Assertion.h"
 #include "Debugging/TCLogger.h"
 #include "Core/Multithread/ThreadPool.h"
+#include "Gameplay/ServiceLocator.h"
 
 int main()
 {

@@ -25,7 +25,7 @@ namespace Engine
 			ENGINE_API ~TransformComponent() override = default;
 
 			ENGINE_API static void Register();
-			ENGINE_API ComponentType Create(int& a_outId) override;
+			ENGINE_API void Create(int& a_outId) override;
 
 			ENGINE_API void Destroy() override;
 
@@ -65,9 +65,6 @@ namespace Engine
 
 			ENGINE_API static TransformComponent* GetComponent(int a_id);
 			ENGINE_API static void RemoveComponent(int a_id);
-
-			ENGINE_API static ComponentType GetType() { return ComponentType::TRANSFORM; }
-
 		private:
 			Math::Transform* m_transform = nullptr;
 

@@ -19,14 +19,47 @@ namespace Engine::GamePlay
 	PlayerControllerComponent::~PlayerControllerComponent()
 	{
 	}
-	Engine::GamePlay::ComponentType PlayerControllerComponent::Create(int& a_outId)
+	void PlayerControllerComponent::Create(int& a_outId)
 	{
 		a_outId = ServiceLocator::GetGameComponentSystem()->AddComponent(this);
 		SetId(a_outId);
-		return ComponentType::PLAYERCONTROLLER;
 	}
 	void PlayerControllerComponent::Destroy()
 	{
+	}
+
+	nlohmann::ordered_json PlayerControllerComponent::Serialize()
+	{
+		nlohmann::ordered_json t_json;
+
+		//t_json["transformComponentId"] = m_transformComponentId;
+		//t_json["transformRotateComponentId"] = m_transformRotateComponentId;
+		//t_json["rigidBodyComponentId"] = m_rigidBodyComponentId;
+		//
+		//t_json["maxSpeed"] = m_maxSpeed;
+		//t_json["sensitivity"] = m_sensitivity;
+		//t_json["jumpForce"] = m_jumpForce;
+		//t_json["m_moveSpeed"] = m_moveSpeed;
+		//
+		//t_json["maxUpAngle"] = m_maxUpAngle;
+		//t_json["maxDownAngle"] = m_maxDownAngle;
+
+		return t_json;
+	}
+
+	void PlayerControllerComponent::Deserialize(const nlohmann::ordered_json& a_json)
+	{
+		//m_transformComponentId = a_json["transformComponentId"];
+		//m_transformRotateComponentId = a_json["transformRotateComponentId"];
+		//m_rigidBodyComponentId = a_json["rigidBodyComponentId"];
+		//
+		//m_maxSpeed = a_json["maxSpeed"];
+		//m_sensitivity = a_json["sensitivity"];
+		//m_jumpForce = a_json["jumpForce"];
+		//m_moveSpeed = a_json["m_moveSpeed"];
+		//
+		//m_maxUpAngle = a_json["maxUpAngle"];
+		//m_maxDownAngle = a_json["maxDownAngle"];
 	}
 
 	void PlayerControllerComponent::Start()
@@ -41,7 +74,7 @@ namespace Engine::GamePlay
 		CaptureCursor();
 	}
 
-	void PlayerControllerComponent::Update()
+	void PlayerControllerComponent::Update(float a_deltatime)
 	{
 	}
 	void PlayerControllerComponent::SceneUpdate()

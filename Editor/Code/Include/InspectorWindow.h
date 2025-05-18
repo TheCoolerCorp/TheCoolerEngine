@@ -14,7 +14,8 @@ namespace Editor::EditorLayer::Ui
 		MESH,
 		RIGIDBODY,
 		LIGHT,
-		PLAYERCONTROLLER
+		PLAYERCONTROLLER,
+		EDITORGAMECOMPONENT,
 	};
 
 	class InspectorComponent;
@@ -51,6 +52,9 @@ namespace Editor::EditorLayer::Ui
 		bool IsObjectOutOfDate() const;
 		void AddComponent(InspectorComponent* a_component);
 		void ClearComponents();
+
+		//Utils
+		bool UtilHasComponentOfType(std::type_index& a_typeIndex);
 
 		//ui helpers
 		void UiCreateNameTextField();
