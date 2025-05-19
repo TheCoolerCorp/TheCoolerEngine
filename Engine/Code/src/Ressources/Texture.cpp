@@ -20,7 +20,8 @@ namespace Engine
 
         void Texture::Destroy()
         {
-	        delete m_data;
+            stbi_image_free(m_data);
+	        //delete m_data;
         }
 
         void Texture::Load()
@@ -74,11 +75,13 @@ namespace Engine
                 m_height = t_tileHeight;
                 m_type = TextureType::RGB;
                 m_imageType = Core::RHI::ImageType::CUBEMAP;
+                stbi_image_free(t_pixels);
             }
             else
             {
                 m_type = TextureType::SRGB;
             }
+
             m_isLoaded.store(true, std::memory_order_release);
             m_isLoading.store(false, std::memory_order_release);
         }
@@ -113,12 +116,11 @@ namespace Engine
 				m_image->Create(m_imageType, Core::RHI::ImageFormat::FORMAT_R8G8B8A8_SRBG, t_imageData, t_physicalDevice, t_logicalDevice, t_commandPool); // Modif here
                 break;
             case TextureType::RGB:
-                // Normal, metallic, roughness, etc...  
                 m_image->Create(m_imageType, Core::RHI::ImageFormat::FORMAT_R8G8B8A8_UNORM, t_imageData, t_physicalDevice, t_logicalDevice, t_commandPool);
                 break;
             }
 
-            //delete m_data;
+           
 
             m_isCreated.store(true, std::memory_order_release);
             m_isCreating.store(false, std::memory_order_release);
