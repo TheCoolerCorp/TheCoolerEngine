@@ -74,7 +74,7 @@ namespace Editor
 			t_imguiLayer->AddWindow(new Ui::UiLoggerWindow(m_renderer, t_imguiLayer));
 			t_imguiLayer->AddWindow(new Ui::FileExplorerWindow(m_renderer, t_imguiLayer));
 
-			Audio::SoundManager::Get().PlaySound("Assets/Sounds/oxp.wav");
+			Audio::SoundManager::Get().PlaySound("Assets/Sounds/monkey.mp3");
 		}
 
 		void Application::Run()

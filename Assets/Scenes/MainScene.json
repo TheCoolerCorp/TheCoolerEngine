@@ -79,7 +79,7 @@
             "lock rotation Y": false,
             "lock rotation Z": false,
             "friction": 0.5,
-            "restitution": 0.5,
+            "restitution": 0.0,
             "is trigger": false
         },
         "MeshComponent": {
@@ -163,15 +163,15 @@
         "GameObject": "Camera",
         "TransformComponent": {
             "position": {
-                "x": 0.03348350152373314,
+                "x": 0.033483508974313736,
                 "y": 1.2293474674224854,
-                "z": -2.1693804264068604
+                "z": -2.169379472732544
             },
             "rotation": {
                 "x": 0.0,
-                "y": 1.0,
+                "y": 0.0,
                 "z": 0.0,
-                "w": -4.371138828673793e-08
+                "w": 1.0
             },
             "scale": {
                 "x": 0.4000000059604645,
@@ -352,9 +352,9 @@
             },
             "rotation": {
                 "x": 0.0,
-                "y": 1.0,
+                "y": 0.0,
                 "z": 0.0,
-                "w": -4.371138828673793e-08
+                "w": 1.0
             },
             "scale": {
                 "x": 0.4000000059604645,
@@ -391,7 +391,7 @@
             "lock rotation Y": true,
             "lock rotation Z": true,
             "friction": 0.5,
-            "restitution": 0.5,
+            "restitution": 0.0,
             "is trigger": false
         },
         "MeshComponent": {
@@ -863,6 +863,445 @@
                 "y": -5.0,
                 "z": 0.0
             }
+        }
+    },
+    {
+        "GameObject": "Platform1",
+        "TransformComponent": {
+            "position": {
+                "x": 0.0,
+                "y": 0.0077059268951416016,
+                "z": 7.426974296569824
+            },
+            "rotation": {
+                "x": -0.7071066498756409,
+                "y": 0.0,
+                "z": 0.0,
+                "w": 0.70710688829422
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 0.9999999403953552,
+                "z": 0.9999999403953552
+            },
+            "parent": -1
+        },
+        "RigidBodyComponent": {
+            "body type": 0,
+            "layer": 0,
+            "collider type": 0,
+            "position": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 2.0,
+                "y": 2.0,
+                "z": 2.0
+            },
+            "radius": 1.0,
+            "half height": 1.0,
+            "rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0,
+                "w": 1.0
+            },
+            "mass": 1.0,
+            "enable": true,
+            "lock rotation X": false,
+            "lock rotation Y": false,
+            "lock rotation Z": false,
+            "friction": 0.5,
+            "restitution": 0.0,
+            "is trigger": false
+        },
+        "MeshComponent": {
+            "mesh": "Assets\\Meshes\\CompanionCube.fbx",
+            "type": 0,
+            "albedo": "Assets\\Textures\\CompanionCube.png",
+            "normal": "",
+            "metallic": "",
+            "roughness": "",
+            "ao": ""
+        }
+    },
+    {
+        "GameObject": "Platform2",
+        "TransformComponent": {
+            "position": {
+                "x": -0.7953313589096069,
+                "y": 0.46105003356933594,
+                "z": 11.300957679748535
+            },
+            "rotation": {
+                "x": -0.7071066498756409,
+                "y": 0.0,
+                "z": 0.0,
+                "w": 0.70710688829422
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 0.9999999403953552,
+                "z": 0.9999999403953552
+            },
+            "parent": -1
+        },
+        "RigidBodyComponent": {
+            "body type": 0,
+            "layer": 0,
+            "collider type": 0,
+            "position": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 2.0,
+                "y": 2.0,
+                "z": 2.0
+            },
+            "radius": 1.0,
+            "half height": 1.0,
+            "rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0,
+                "w": 1.0
+            },
+            "mass": 1.0,
+            "enable": true,
+            "lock rotation X": false,
+            "lock rotation Y": false,
+            "lock rotation Z": false,
+            "friction": 0.5,
+            "restitution": 0.0,
+            "is trigger": false
+        },
+        "MeshComponent": {
+            "mesh": "Assets\\Meshes\\CompanionCube.fbx",
+            "type": 0,
+            "albedo": "Assets\\Textures\\CompanionCube.png",
+            "normal": "",
+            "metallic": "",
+            "roughness": "",
+            "ao": ""
+        }
+    },
+    {
+        "GameObject": "Platform3",
+        "TransformComponent": {
+            "position": {
+                "x": 0.9995846748352051,
+                "y": 1.1206847429275513,
+                "z": 14.323830604553223
+            },
+            "rotation": {
+                "x": -0.7071066498756409,
+                "y": 0.0,
+                "z": 0.0,
+                "w": 0.70710688829422
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 0.9999999403953552,
+                "z": 0.9999999403953552
+            },
+            "parent": -1
+        },
+        "RigidBodyComponent": {
+            "body type": 0,
+            "layer": 0,
+            "collider type": 0,
+            "position": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 2.0,
+                "y": 2.0,
+                "z": 2.0
+            },
+            "radius": 1.0,
+            "half height": 1.0,
+            "rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0,
+                "w": 1.0
+            },
+            "mass": 1.0,
+            "enable": true,
+            "lock rotation X": false,
+            "lock rotation Y": false,
+            "lock rotation Z": false,
+            "friction": 0.5,
+            "restitution": 0.0,
+            "is trigger": false
+        },
+        "MeshComponent": {
+            "mesh": "Assets\\Meshes\\CompanionCube.fbx",
+            "type": 0,
+            "albedo": "Assets\\Textures\\CompanionCube.png",
+            "normal": "",
+            "metallic": "",
+            "roughness": "",
+            "ao": ""
+        }
+    },
+    {
+        "GameObject": "Platform4",
+        "TransformComponent": {
+            "position": {
+                "x": 2.3268632888793945,
+                "y": 1.8210234642028809,
+                "z": 17.94109344482422
+            },
+            "rotation": {
+                "x": -0.7071066498756409,
+                "y": 0.0,
+                "z": 0.0,
+                "w": 0.70710688829422
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 0.9999999403953552,
+                "z": 0.9999999403953552
+            },
+            "parent": -1
+        },
+        "RigidBodyComponent": {
+            "body type": 0,
+            "layer": 0,
+            "collider type": 0,
+            "position": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 2.0,
+                "y": 2.0,
+                "z": 2.0
+            },
+            "radius": 1.0,
+            "half height": 1.0,
+            "rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0,
+                "w": 1.0
+            },
+            "mass": 1.0,
+            "enable": true,
+            "lock rotation X": false,
+            "lock rotation Y": false,
+            "lock rotation Z": false,
+            "friction": 0.5,
+            "restitution": 0.0,
+            "is trigger": false
+        },
+        "MeshComponent": {
+            "mesh": "Assets\\Meshes\\CompanionCube.fbx",
+            "type": 0,
+            "albedo": "Assets\\Textures\\CompanionCube.png",
+            "normal": "",
+            "metallic": "",
+            "roughness": "",
+            "ao": ""
+        }
+    },
+    {
+        "GameObject": "Platform5",
+        "TransformComponent": {
+            "position": {
+                "x": 2.402446746826172,
+                "y": -6.057764053344727,
+                "z": 23.71954917907715
+            },
+            "rotation": {
+                "x": -0.7071066498756409,
+                "y": 0.0,
+                "z": 0.0,
+                "w": 0.70710688829422
+            },
+            "scale": {
+                "x": 1.0,
+                "y": 0.9999999403953552,
+                "z": 0.9999999403953552
+            },
+            "parent": -1
+        },
+        "RigidBodyComponent": {
+            "body type": 0,
+            "layer": 0,
+            "collider type": 0,
+            "position": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 2.0,
+                "y": 2.0,
+                "z": 2.0
+            },
+            "radius": 1.0,
+            "half height": 1.0,
+            "rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0,
+                "w": 1.0
+            },
+            "mass": 1.0,
+            "enable": true,
+            "lock rotation X": false,
+            "lock rotation Y": false,
+            "lock rotation Z": false,
+            "friction": 0.5,
+            "restitution": 0.0,
+            "is trigger": false
+        },
+        "MeshComponent": {
+            "mesh": "Assets\\Meshes\\CompanionCube.fbx",
+            "type": 0,
+            "albedo": "Assets\\Textures\\CompanionCube.png",
+            "normal": "",
+            "metallic": "",
+            "roughness": "",
+            "ao": ""
+        }
+    },
+    {
+        "GameObject": "Platform6",
+        "TransformComponent": {
+            "position": {
+                "x": 3.648958206176758,
+                "y": -6.1404218673706055,
+                "z": 28.813243865966797
+            },
+            "rotation": {
+                "x": -0.7071066498756409,
+                "y": 0.0,
+                "z": 0.0,
+                "w": 0.70710688829422
+            },
+            "scale": {
+                "x": 2.0,
+                "y": 1.9999992847442627,
+                "z": 1.9999992847442627
+            },
+            "parent": -1
+        },
+        "RigidBodyComponent": {
+            "body type": 0,
+            "layer": 0,
+            "collider type": 0,
+            "position": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0
+            },
+            "scale": {
+                "x": 4.0,
+                "y": 4.0,
+                "z": 4.0
+            },
+            "radius": 1.0,
+            "half height": 1.0,
+            "rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0,
+                "w": 1.0
+            },
+            "mass": 1.0,
+            "enable": true,
+            "lock rotation X": false,
+            "lock rotation Y": false,
+            "lock rotation Z": false,
+            "friction": 0.5,
+            "restitution": 0.0,
+            "is trigger": false
+        },
+        "MeshComponent": {
+            "mesh": "Assets\\Meshes\\CompanionCube.fbx",
+            "type": 0,
+            "albedo": "Assets\\Textures\\CompanionCube.png",
+            "normal": "",
+            "metallic": "",
+            "roughness": "",
+            "ao": ""
+        }
+    },
+    {
+        "GameObject": "Gorilla",
+        "TransformComponent": {
+            "position": {
+                "x": 3.5885066986083984,
+                "y": -3.578179359436035,
+                "z": 29.787809371948242
+            },
+            "rotation": {
+                "x": 0.0,
+                "y": 0.7071066498756409,
+                "z": 0.0,
+                "w": 0.70710688829422
+            },
+            "scale": {
+                "x": 1.1999993324279785,
+                "y": 1.2000000476837158,
+                "z": 1.1999993324279785
+            },
+            "parent": -1
+        },
+        "MeshComponent": {
+            "mesh": "Assets\\Meshes\\Gorilla\\uploads_files_5169645_untitled.fbx",
+            "type": 1,
+            "albedo": "Assets\\Textures\\Gorilla\\texture_0.png",
+            "normal": "",
+            "metallic": "",
+            "roughness": "",
+            "ao": ""
+        }
+    },
+    {
+        "GameObject": "Point Light",
+        "TransformComponent": {
+            "position": {
+                "x": 4.314737319946289,
+                "y": -2.0749645233154297,
+                "z": 27.93929672241211
+            },
+            "rotation": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0,
+                "w": 1.0
+            },
+            "scale": {
+                "x": 2.0,
+                "y": 2.0,
+                "z": 2.0
+            },
+            "parent": -1
+        },
+        "LightComponent": {
+            "position": {
+                "x": 4.314737319946289,
+                "y": -2.0749645233154297,
+                "z": 27.93929672241211
+            },
+            "color": {
+                "x": 0.9492502808570862,
+                "y": 1.0,
+                "z": 0.5686274766921997
+            },
+            "intensity": 91.69999694824219,
+            "is dir": 0
         }
     }
 ]
