@@ -63,6 +63,12 @@ namespace Engine
 					vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
 					auto bindingDescription = Resource::VulkanVertexSpec::getBindingDescription();
 					auto attributeDescriptions = Resource::VulkanVertexSpec::getAttributeDescriptions();
+					for (const auto& desc : attributeDescriptions) {
+						std::cout << "Attr loc " << desc.location
+							<< " | bind: " << desc.binding
+							<< " | format: " << desc.format
+							<< " | offset: " << desc.offset;
+					}
 					vertexInputInfo.vertexBindingDescriptionCount = 1;
 					vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());
 					vertexInputInfo.pVertexBindingDescriptions = &bindingDescription;

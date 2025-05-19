@@ -11,6 +11,8 @@
 #include <meta/factory.hpp>
 #include <meta/meta.hpp>
 
+#include "Core/Audio/SoundManager.h"
+
 namespace Engine::GamePlay
 {
 	PlayerControllerComponent::PlayerControllerComponent()
@@ -117,6 +119,7 @@ namespace Engine::GamePlay
 			{
 				t_rigidBody->AddImpulse(t_transform->GetUp() * m_jumpForce);
 				m_jumpTimer = m_jumpCooldown;
+				Core::Audio::SoundManager::Get().PlaySound("Assets/Sounds/jump.wav");
 			}
 		}
 
